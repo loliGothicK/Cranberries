@@ -30,7 +30,7 @@ int main()
 
     cout << "least squares method" << endl;
     cout << "========================" << endl;
-    for ( auto e : lstsq<4, 1>( { { 1., 2., 3., 4. } }, { { 2.,3.9,5.8,8. } } ) )
+    for ( auto e : lstsq<1,4>( { { 1., 2., 3., 4. } }, { { 2.,3.9,5.8,8. } } ) )
         cout << e << endl;
 
     //lagra<3>({ 1, 2, 3 }, { 2,4,6 }, 1.);

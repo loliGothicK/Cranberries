@@ -18,7 +18,7 @@ namespace Cranberries {
             // array<Type,Dim+1> lstsq<Dim,N,Type>(array<Type,N> x,array<Type,N> y)
             // N個の2次元の点を表す2つのarray<Type,N> x,y から
             // Dim次の多項式係数を格納したarray<Type,Dim+1>を返す
-            template < size_t N, size_t Dim, typename Type = long double >
+            template < size_t Dim, size_t N, typename Type = long double >
             std::array<Type,Dim+1> lstsq(std::array<Type,N> const& x, std::array<Type,N> const& y)
             {
                 std::array<Type,Dim+1> c{};
@@ -44,7 +44,8 @@ namespace Cranberries {
                 }
                 a[0] = N;
                 for (i = 0; i < mp1; ++i)
-                    for (j = 0; j < mp1; ++j)	if (i || j)	a[i * mp2 + j] = w[i + j - 1];
+                    for (j = 0; j < mp1; ++j)
+                      if (i || j)	a[i * mp2 + j] = w[i + j - 1];
 
                 w1 = 0.;
                 for (i = 0; i < N; ++i)	w1 += y[i];
