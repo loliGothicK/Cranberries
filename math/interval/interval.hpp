@@ -135,255 +135,135 @@ namespace Cranberries
 
   namespace constants
   {
+    template < typename T >
+    struct Traits {
+      static T invoke( T x ) { return x; }
+    };
 
     template < typename T >
-    constexpr auto pi() -> decltype( static_cast<T>( 0.0L ) )
+    struct Traits<interval<T>> {
+      static interval<T> invoke( T x ) {
+        DOWNWARD_POLICY;
+        auto l = x;
+        UPWARD_POLICY;
+        auto r = x;
+        return interval<T>{l, r};
+      }
+    };
+
+    template < typename T >
+    constexpr auto pi()
     {
-      return static_cast<T>( 3.141592653589793238462643383279L );
+      return Traits<T>::invoke( 3.141592653589793238462643383279L );
     }
 
     template < typename T >
-    constexpr auto e() -> decltype( static_cast<T>( 0.0L ) )
+    constexpr auto e()
     {
-      return static_cast<T>( 2.718281828459045235360287471352L );
+      return Traits<T>::invoke( 2.718281828459045235360287471352L );
     }
 
     template < typename T >
-    constexpr auto ln2() -> decltype( static_cast<T>( 0.0L ) )
+    constexpr auto ln2()
     {
-      return static_cast<T>( 0.693147180559945309417232121458L );
+      return Traits<T>::invoke( 0.693147180559945309417232121458L );
     }
 
     template < typename T >
-    constexpr auto ln10() -> decltype( static_cast<T>( 0.0L ) )
+    constexpr auto ln10()
     {
-      return static_cast<T>( 2.302585092994045684017991454684L );
+      return Traits<T>::invoke( 2.302585092994045684017991454684L );
     }
 
     template < typename T >
-    constexpr auto golden() -> decltype( static_cast<T>( 0.0L ) )
+    constexpr auto golden()
     {
-      return static_cast<T>( 1.61803398874989484820458683436563811L );
+      return Traits<T>::invoke( 1.61803398874989484820458683436563811L );
     }
 
     template < typename T >
-    constexpr auto c_0() -> decltype( static_cast<T>( 0.0L ) )
+    constexpr auto c_0()
     {
-      return static_cast<T>( 299792458.0L );
+      return Traits<T>::invoke( 299792458.0L );
     }
 
     template < typename T >
-    constexpr auto mu_0() -> decltype( static_cast<T>( 0.0L ) )
+    constexpr auto mu_0()
     {
-      return static_cast<T>( 4.0L*pi<long double>()*1E-7L );
+      return Traits<T>::invoke( 4.0L*pi<long double>()*1E-7L );
     }
 
     template < typename T >
-    constexpr auto epsilon_0() -> decltype( static_cast<T>( 0.0L ) )
+    constexpr auto epsilon_0()
     {
-      return static_cast<T>( 8.854187817L );
+      return Traits<T>::invoke( 8.854187817L );
     }
 
     template < typename T >
-    constexpr auto z_0() -> decltype( static_cast<T>( 0.0L ) )
+    constexpr auto z_0()
     {
-      return static_cast<T>( 376.730313461L );
+      return Traits<T>::invoke( 376.730313461L );
     }
 
     template < typename T >
-    constexpr auto g() -> decltype( static_cast<T>( 0.0L ) )
+    constexpr auto g()
     {
-      return static_cast<T>( 6.67408E-11L );
+      return Traits<T>::invoke( 6.67408E-11L );
     }
 
     template < typename T >
-    constexpr auto planck() -> decltype( static_cast<T>( 0.0L ) )
+    constexpr auto planck()
     {
-      return static_cast<T>( 6.626070040E-34L );
+      return Traits<T>::invoke( 6.626070040E-34L );
     }
 
     template < typename T >
-    constexpr auto dirac() -> decltype( static_cast<T>( 0.0L ) )
+    constexpr auto dirac()
     {
-      return static_cast<T>( 1.054571800E-34L );
+      return Traits<T>::invoke( 1.054571800E-34L );
     }
 
     template < typename T >
-    constexpr auto electron() -> decltype( static_cast<T>( 0.0L ) )
+    constexpr auto electron()
     {
-      return static_cast<T>( 1.6021766208E-19L );
+      return Traits<T>::invoke( 1.6021766208E-19L );
     }
 
     template < typename T >
-    constexpr auto phi_0() -> decltype( static_cast<T>( 0.0L ) )
+    constexpr auto phi_0()
     {
-      return static_cast<T>( 2.067833831E-15L );
+      return Traits<T>::invoke( 2.067833831E-15L );
     }
 
     template < typename T >
-    constexpr auto g_0() -> decltype( static_cast<T>( 0.0L ) )
+    constexpr auto g_0()
     {
-      return static_cast<T>( 7.7480917310E-5L );
+      return Traits<T>::invoke( 7.7480917310E-5L );
     }
 
     template < typename T >
-    constexpr auto r_0() -> decltype( static_cast<T>( 0.0L ) )
+    constexpr auto r_0()
     {
-      return static_cast<T>( 12906.4037278L );
+      return Traits<T>::invoke( 12906.4037278L );
     }
 
     template < typename T >
-    constexpr auto max() -> decltype( std::numeric_limits<T>::max() )
+    constexpr auto max()
     {
       return std::numeric_limits<T>::max();
     }
 
     template < typename T >
-    constexpr auto zero() -> decltype( static_cast<T>( 0.0L ) )
+    constexpr auto zero()
     {
-      return static_cast<T>( 0.0L );
+      return Traits<T>::invoke( 0.0L );
     }
 
     template < typename T >
-    constexpr auto one() -> decltype( static_cast<T>( 0.0L ) )
+    constexpr auto one()
     {
-      return static_cast<T>( 1.0L );
+      return Traits<T>::invoke( 1.0L );
     }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T pi()
-    {
-      CRANBERRIES_ASSERT(detail::is_interval_v<T>);
-      return interval<U>{ constants::pi<U>(), constants::pi<U>() };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T e()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ constants::e<U>(), constants::e<U>() };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T ln2()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ constants::ln2<U>(), constants::ln2<U>() };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T ln10()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ constants::ln10<U>(), constants::ln10<U>() };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T golden()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ constants::golden<U>(), constants::golden<U>() };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T c_0()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ constants::c_0<U>(), constants::c_0<U>() };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T mu_0()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ constants::mu_0<U>(), constants::mu_0<U>() };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T epsilon_0()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ constants::epsilon_0<U>(), constants::epsilon_0<U>() };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T z_0()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ constants::z_0<U>(), constants::z_0<U>() };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T g()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ static_cast<U>( 6.67377E-11L ), static_cast<U>( 6.67439E-11L ) };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T planck()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ static_cast<U>( 6.626069959E-34L ), static_cast<U>( 6.626070121E-34L ) };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T dirac()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ static_cast<U>( 1.054571753E-34L ), static_cast<U>( 1.054571847E-34L ) };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T electron()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ static_cast<U>( 1.6021766110E-19L ), static_cast<U>( 1.6021766306E-19L ) };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T phi_0()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ static_cast<U>( 2.067833818E-15L ), static_cast<U>( 2.067833844E-15L ) };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T g_0()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ static_cast<U>( 7.7480917292E-5L ), static_cast<U>( 7.7480917328E-5L ) };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T r_0()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ static_cast<U>( 12906.4037249L ), static_cast<U>( 12906.4037307L ) };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T max()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ constants::max<U>(), constants::max<U>() };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T zero()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ constants::zero<U>(), constants::zero<U>() };
-    }
-
-    template < typename T, typename U = typename T::value_type >
-    constexpr T one()
-    {
-      CRANBERRIES_ASSERT( detail::is_interval_v<T> );
-      return interval<U>{ constants::one<U>(), constants::one<U>() };
-    }
-
-
   }
   template < typename T >
   T upward( T&& x )
@@ -6355,8 +6235,15 @@ namespace Cranberries
   inline interval<T> hull( T&& low, T&& up )
   {
     CRANBERRIES_INVALID_ARGUMENT_THROW_WITH_MSG_IF( low > up, "upper_bound less than lower_bound!" )
-    return interval<T>( std::forward<T>( low ), std::forward<T>( up ) );
+      return interval<T>{ std::forward<T>( low ), std::forward<T>( up ) };
   }
+
+  template < typename T >
+  inline interval<T> hull( T&& x )
+  {
+    return interval<T>{ std::forward<T>( x ) };
+  }
+
 
   //-----------------------------------//
   /*   interval relational functions   */
