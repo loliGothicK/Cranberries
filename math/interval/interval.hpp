@@ -137,16 +137,18 @@ namespace Cranberries
   {
     template < typename T >
     struct Traits {
-      static T invoke( T x ) { return x; }
+      template < typename U >
+      static T invoke( U x ) { return static_cast<T>(x); }
     };
 
     template < typename T >
     struct Traits<interval<T>> {
-      static interval<T> invoke( T x ) {
+      template < typename U >
+      static interval<T> invoke( U x ) {
         DOWNWARD_POLICY;
-        auto l = x;
+        auto l = static_cast<T>( x );
         UPWARD_POLICY;
-        auto r = x;
+        auto r = static_cast<T>( x );
         return interval<T>{l, r};
       }
     };
