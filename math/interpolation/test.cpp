@@ -4,9 +4,9 @@
 
 using std::cout;
 using std::endl;
-using Cranberries::math::chebyshev;
-using Cranberries::math::lstsq;
-//using Cranberries::math::lagra;
+using cranberries::math::chebyshev;
+using cranberries::math::lstsq;
+//using cranberries::math::lagra;
 
 template < typename T >
 constexpr T PI = T( 3.1415926535 );
@@ -15,7 +15,7 @@ int main()
 {
     cout << "polynomial evaluation" << endl;
     cout << "========================" << endl;
-    cout << Cranberries::math::polynomial( std::vector<int>{ 0, 1, 2, 3, 4 }, 2 ) << endl;
+    cout << cranberries::math::polynomial( std::vector<int>{ 0, 1, 2, 3, 4 }, 2 ) << endl;
 
     cout << endl;
 

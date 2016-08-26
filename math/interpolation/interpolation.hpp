@@ -6,7 +6,7 @@
 #include <vector>
 #include <tuple>
 
-namespace Cranberries {
+namespace cranberries {
     namespace math {
         
         template < typename T >

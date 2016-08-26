@@ -6,7 +6,7 @@
 #include <type_traits>
 #include "../../exception/exception.hpp"
 
-namespace Cranberries
+namespace cranberries
 {
   namespace math
   {
@@ -377,6 +377,6 @@ namespace Cranberries
     }
   }
 }
-inline Cranberries::math::dual_number<long double> operator "" _dual( long double x ) { return Cranberries::math::make_dual( x, 0.0L ); }
+inline cranberries::math::dual_number<long double> operator "" _dual( long double x ) { return cranberries::math::make_dual( x, 0.0L ); }
 
 #endif
