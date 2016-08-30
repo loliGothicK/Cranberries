@@ -87,7 +87,7 @@ namespace Cranberries
     };
 
     template < typename Resolution = std::chrono::milliseconds, typename F >
-    inline void time_elapsed( F body, std::ostream& o = std::cout )
+    inline void time_elapsed( F&& body, std::ostream& o = std::cout )
     {
         auto t0 = std::chrono::high_resolution_clock::now();
         body();
@@ -96,7 +96,7 @@ namespace Cranberries
         o << std::chrono::duration_cast<Resolution>( t1 - t0 ).count() << resolution<Resolution>::str << std::endl;
     }
     template < std::size_t N, typename Resolution = std::chrono::milliseconds, typename F >
-    inline void time_elapsed_rep( F body, std::ostream& o = std::cout )
+    inline void time_elapsed_rep( F&& body, std::ostream& o = std::cout )
     {
         auto t0 = std::chrono::high_resolution_clock::now();
         for ( std::size_t i{}; i < N; ++i )
@@ -107,7 +107,7 @@ namespace Cranberries
     }
 
     template < typename F >
-    void time_elapsed_no( F body )
+    void time_elapsed_no( F&& body )
     {
         body();
     }
