@@ -28,10 +28,12 @@
 #include <utility>
 #include <functional>
 #include <future>
-
+// exception
+#include "stream_error.hpp"
 
 namespace cranberries {
-namespace stream_api {
+namespace stream {
+
 	//--------//
 	// detail //
 	//--------//
@@ -49,6 +51,7 @@ namespace stream_api {
 	struct chainable{};
 	struct connectable{};
 	struct unconectable{};
+	struct generator {};
 
 	// Unary Operator Callable Checker Implementation
 	struct isAvailableUnaryOpImpl
@@ -117,7 +120,7 @@ namespace stream_api {
 	template < typename Chainable >
 	struct Chain
 	{
-		using conect_tag = chainable;
+		using connect_tag = chainable;
 		using tree_tag = not_tree;
 		template <
 			typename STREAM
@@ -137,7 +140,7 @@ namespace stream_api {
 	template < typename Connectable >
 	struct Connection
 	{
-		using conect_tag = connectable;
+		using connect_tag = connectable;
 		using tree_tag = not_tree;
 
 		template <
@@ -153,6 +156,69 @@ namespace stream_api {
 			return std::forward<STREAM>(stream);
 		}
 		Connectable f;
+	};
+
+	template < typename Pred >
+	struct ConnectAll
+	{
+		using connect_tag = unconectable;
+		using tree_tag = not_tree;
+
+		template <
+			typename STREAM
+		>
+		inline
+		decltype(auto)
+		operator()
+		(
+			STREAM&& stream
+		) {
+			for (auto&& e : stream)	if (!pred(e)) return false;
+			return true;
+		}
+		Pred pred;
+	};
+
+	template < typename Pred >
+	struct ConnectAny
+	{
+		using connect_tag = unconectable;
+		using tree_tag = not_tree;
+
+		template <
+			typename STREAM
+		>
+		inline
+		decltype(auto)
+		operator()
+		(
+			STREAM&& stream
+		) {
+			for (auto&& e : stream)	if (pred(e)) return true;
+			return false;
+		}
+		Pred pred;
+	};
+
+	template < typename Pred >
+	struct ConnectNone
+	{
+		using connect_tag = unconectable;
+		using tree_tag = not_tree;
+
+		template <
+			typename STREAM
+		>
+		inline
+		decltype(auto)
+		operator()
+		(
+			STREAM&& stream
+		) {
+			for (auto&& e : stream)	if (pred(e)) return false;
+			return true;
+		}
+		Pred pred;
 	};
 
 
@@ -173,8 +239,9 @@ namespace stream_api {
 	>
 	struct OperationTree
 	{
-		using conect_tag = typename Op2::conect_tag;
+		using connect_tag = typename Op2::connect_tag;
 		using tree_tag = is_tree;
+
 		template <
 			typename STREAM
 		>
@@ -199,7 +266,7 @@ namespace stream_api {
 
 	struct RootOperation
 	{
-		using conect_tag = unconectable;
+		using connect_tag = unconectable;
 		using tree_tag = not_tree;
 
 		template <
@@ -230,6 +297,13 @@ namespace stream_api {
 		}
 	};
 
+	template < typename Pred >
+	struct All;
+	template < typename Pred >
+	struct Any;
+	template < typename Pred >
+	struct None;
+
 	template < typename IsTree >
 	struct ConnectTraits{};
 
@@ -255,6 +329,36 @@ namespace stream_api {
 		static constexpr auto connecting(Op1&& op1, Op2&& op2)
 		{
 			return make_connect<Connection>([f1 = std::move(op1.f), f2 = std::move(op2.f)](auto&& arg){ f1(arg),f2(arg); });
+		}
+		template < typename Op1, typename Pred >
+		static constexpr auto connect_all(Op1&& op1, Pred&& pred)
+		{
+			return make_connect<ConnectAll>([f1 = std::move(op1.f), f2 = std::move(pred)](auto&& arg){ return f1(arg), f2(arg); });
+		}
+		template < typename Op1, typename Pred >
+		static constexpr auto chain_all(Op1&& op1, Pred&& pred)
+		{
+			return make_connect<ConnectAll>([f1 = std::move(op1.f), f2 = std::move(pred)](auto&& arg){ return f2(f1(arg)); });
+		}
+		template < typename Op1, typename Pred >
+		static constexpr auto connect_any(Op1&& op1, Pred&& pred)
+		{
+			return make_connect<ConnectAny>([f1 = std::move(op1.f), f2 = std::move(pred)](auto&& arg){ return f1(arg), f2(arg); });
+		}
+		template < typename Op1, typename Pred >
+		static constexpr auto chain_any(Op1&& op1, Pred&& pred)
+		{
+			return make_connect<ConnectAny>([f1 = std::move(op1.f), f2 = std::move(pred)](auto&& arg){ return f2(f1(arg)); });
+		}
+		template < typename Op1, typename Pred >
+		static constexpr auto connect_none(Op1&& op1, Pred&& pred)
+		{
+			return make_connect<ConnectNone>([f1 = std::move(op1.f), f2 = std::move(pred)](auto&& arg){ return f1(arg), f2(arg); });
+		}
+		template < typename Op1, typename Pred >
+		static constexpr auto chain_none(Op1&& op1, Pred&& pred)
+		{
+			return make_connect<ConnectNone>([f1 = std::move(op1.f), f2 = std::move(pred)](auto&& arg){ return f2(f1(arg)); });
 		}
 	};
 
@@ -293,6 +397,22 @@ namespace stream_api {
 				make_connect<Connection>([f1 = std::move(op1.op2.f), f2 = std::move(op2.f)](auto&& arg){ f1(arg), f2(arg); })
 			);
 		}
+		template < typename Op1, typename Pred >
+		static constexpr auto connect_all(Op1&& op1, Pred&& pred)
+		{
+			return make_op_tree(
+				std::move(op1.op1),
+				make_connect<ConnectAll>([f1 = std::move(op1.op2.f), f2 = std::move(pred)](auto&& arg){ f1(arg), f2(arg); })
+			);
+		}
+		template < typename Op1, typename Pred >
+		static constexpr auto chain_all(Op1&& op1, Pred&& pred)
+		{
+			return make_op_tree(
+				std::move(op1.op1),
+				make_connect<ConnectAll>([f1 = std::move(op1.op2.f), f2 = std::move(pred)](auto&& arg){ f2(f1(arg)); })
+			);
+		}
 	};
 
 
@@ -321,7 +441,41 @@ namespace stream_api {
 	{
 		return ConnectTraits<typename Op1::tree_tag>::connecting(std::forward<Op1>(op1), std::forward<Op2>(op2));
 	}
+	template < typename Op1, typename Pred >
+	inline constexpr auto make_op_tree(Op1&& op1, All<Pred>&& all, connectable, unconectable)
+	{
+		return ConnectTraits<typename Op1::tree_tag>::connect_all(std::forward<Op1>(op1), std::move(all.pred));
+	}
+	template < typename Op1, typename Pred >
+	inline constexpr auto make_op_tree(Op1&& op1, All<Pred>&& all, chainable, unconectable)
+	{
+		return ConnectTraits<typename Op1::tree_tag>::chain_all(std::forward<Op1>(op1), std::move(all.pred));
+	}
+	template < typename Op1, typename Pred >
+	inline constexpr auto make_op_tree(Op1&& op1, Any<Pred>&& any, connectable, unconectable)
+	{
+		return ConnectTraits<typename Op1::tree_tag>::connect_any(std::forward<Op1>(op1), std::move(any.pred));
+	}
+	template < typename Op1, typename Pred >
+	inline constexpr auto make_op_tree(Op1&& op1, Any<Pred>&& any, chainable, unconectable)
+	{
+		return ConnectTraits<typename Op1::tree_tag>::chain_any(std::forward<Op1>(op1), std::move(any.pred));
+	}
+	template < typename Op1, typename Pred >
+	inline constexpr auto make_op_tree(Op1&& op1, None<Pred>&& none, connectable, unconectable)
+	{
+		return ConnectTraits<typename Op1::tree_tag>::connect_none(std::forward<Op1>(op1), std::move(none.pred));
+	}
+	template < typename Op1, typename Pred >
+	inline constexpr auto make_op_tree(Op1&& op1, None<Pred>&& none, chainable, unconectable)
+	{
+		return ConnectTraits<typename Op1::tree_tag>::chain_none(std::forward<Op1>(op1), std::move(none.pred));
+	}
 
+	template < typename F >
+	struct MapProxy {
+		F f;
+	};
 
 	//------------//
 	// Operations //
@@ -350,7 +504,7 @@ namespace stream_api {
 	// Print each element of range stream has.
 	struct Printer
 	{
-		using conect_tag = unconectable;
+		using connect_tag = unconectable;
 		using tree_tag = not_tree;
 
 		template <
@@ -385,7 +539,7 @@ namespace stream_api {
 	>
 	struct ForEach
 	{
-		using conect_tag = connectable;
+		using connect_tag = connectable;
 		using tree_tag = not_tree;
 
 		template <
@@ -411,7 +565,7 @@ namespace stream_api {
 	>
 	struct Map
 	{
-		using conect_tag = chainable;
+		using connect_tag = chainable;
 		using tree_tag = not_tree;
 
 		template <
@@ -432,14 +586,13 @@ namespace stream_api {
 		UnaryFunc f;
 	};
 
-
-	// Intermidiate Operation
 	template <
-		typename Pred
+		typename OldStream,
+		typename UnaryFunc
 	>
-	struct Filter
+	struct Endomorphism
 	{
-		using conect_tag = unconectable;
+		using connect_tag = chainable;
 		using tree_tag = not_tree;
 
 		template <
@@ -451,9 +604,38 @@ namespace stream_api {
 		(
 			STREAM&& stream
 		) {
-			auto&& data = stream.get();
-			for (auto&& iter = data.begin(); iter != data.end(); ) {
-				if (pred(*iter)) iter = data.erase(iter);
+			stream.reserve(old.size());
+			for (auto&& e : old) stream.emplace_back(f(e));
+			return std::forward<STREAM>(stream);
+		}
+
+		// member
+		OldStream old;
+		UnaryFunc f;
+	};
+
+
+	// Intermidiate Operation
+	template <
+		typename Pred
+	>
+	struct Filter
+	{
+		using connect_tag = unconectable;
+		using tree_tag = not_tree;
+
+		template <
+			typename STREAM
+		>
+		inline
+		decltype(auto)
+		operator()
+		(
+			STREAM&& stream
+		) {
+			auto&& source = stream.get();
+			for (auto&& iter = source.begin(); iter != source.end(); ) {
+				if (pred(*iter)) iter = source.erase(iter);
 				else ++iter;
 			}
 			stream.shrink_to_fit();
@@ -471,7 +653,7 @@ namespace stream_api {
 	>
 	struct Sort
 	{
-		using conect_tag = unconectable;
+		using connect_tag = unconectable;
 		using tree_tag = not_tree;
 
 		template <
@@ -498,7 +680,7 @@ namespace stream_api {
 		defaulted // lookup operator < using ADL.
 	>
 	{
-		using conect_tag = unconectable;
+		using connect_tag = unconectable;
 		using tree_tag = not_tree;
 		template <
 			typename STREAM
@@ -516,7 +698,7 @@ namespace stream_api {
 	// Intermidiate Operation
 	struct Distinct
 	{
-		using conect_tag = unconectable;
+		using connect_tag = unconectable;
 		using tree_tag = not_tree;
 
 		template <
@@ -528,9 +710,9 @@ namespace stream_api {
 		(
 			STREAM&& stream
 		) {
-			auto&& data = stream.get();
-			std::sort(data.begin(), data.end());
-			data.erase(std::unique(data.begin(), data.end()), data.end());
+			auto&& source = stream.get();
+			std::sort(source.begin(), source.end());
+			source.erase(std::unique(source.begin(), source.end()), source.end());
 			return std::forward<STREAM>( stream );
 		}
 	};
@@ -538,7 +720,7 @@ namespace stream_api {
 	// Intermidiate Operation
 	struct Skip
 	{
-		using conect_tag = unconectable;
+		using connect_tag = unconectable;
 		using tree_tag = not_tree;
 
 		template <
@@ -550,8 +732,8 @@ namespace stream_api {
 		operator()(
 			STREAM&& stream
 		) {
-			auto&& data = stream.get();
-			Range{ data.begin() + n, data.end() }.swap(data); // swap trick
+			auto&& source = stream.get();
+			Range{ source.begin() + n, source.end() }.swap(source); // swap trick
 			return std::forward<STREAM>( stream );
 		}
 
@@ -563,7 +745,7 @@ namespace stream_api {
 	// Intermidiate Operation
 	struct Limit
 	{
-		using conect_tag = unconectable;
+		using connect_tag = unconectable;
 		using tree_tag = not_tree;
 
 		template <
@@ -576,8 +758,8 @@ namespace stream_api {
 		(
 			STREAM&& stream
 		) {
-			auto&& data = stream.get();
-			Range{ data.begin(), data.begin() + n }.swap(data); // swap trick
+			auto&& source = stream.get();
+			Range{ source.begin(), source.begin() + n }.swap(source); // swap trick
 			return std::forward<STREAM>( stream );
 		}
 
@@ -592,7 +774,7 @@ namespace stream_api {
 	>
 	struct PushBack
 	{
-		using conect_tag = unconectable;
+		using connect_tag = unconectable;
 		using tree_tag = not_tree;
 
 		template <
@@ -616,7 +798,7 @@ namespace stream_api {
 	// Intermidiate Operation
 	struct PopBack
 	{
-		using conect_tag = unconectable;
+		using connect_tag = unconectable;
 		using tree_tag = not_tree;
 
 		template <
@@ -636,7 +818,7 @@ namespace stream_api {
 	// Intermidiate Operation
 	struct Reverse
 	{
-		using conect_tag = unconectable;
+		using connect_tag = unconectable;
 		using tree_tag = not_tree;
 
 		template <
@@ -659,7 +841,7 @@ namespace stream_api {
 	>
 	struct AdjacentForEach
 	{
-		using conect_tag = unconectable;
+		using connect_tag = unconectable;
 		using tree_tag = not_tree;
 
 		template <
@@ -698,7 +880,7 @@ namespace stream_api {
 	>
 	struct Concatenate
 	{
-		using conect_tag = unconectable;
+		using connect_tag = unconectable;
 		using tree_tag = not_tree;
 
 		// for evaluate Branch Stream only once
@@ -719,15 +901,15 @@ namespace stream_api {
 		decltype(auto)
 		operator()
 		(
-			STREAM&& left
+			STREAM&& stream
 		) {
 			once(); // perfectly call once
-			auto&& lv = left.get();
+			auto&& lv = stream.get();
 			auto&& rv = branch.get();
 			if (lv.capacity() < lv.size() + rv.size())
 				lv.reserve(lv.size() + rv.size());
 			lv.insert(lv.end(), rv.begin(), rv.end());
-			return std::forward<STREAM>(left);
+			return std::forward<STREAM>( stream );
 		}
 
 		// member
@@ -735,10 +917,70 @@ namespace stream_api {
 		Branch branch; // Branch Stream
 	};
 
+	template < typename To >
+	struct MapToProxy{};
+
+	struct ToString{};
+
+	template <
+		typename FromStream,
+		typename To
+	>
+	struct MapTo
+	{
+		using connect_tag = unconectable;
+		using tree_tag = not_tree;
+
+		template <
+			typename STREAM
+		>
+		inline
+		decltype(auto)
+		operator()
+		(
+			STREAM&& stream
+		) {
+			from.eval();
+			stream.get() = std::vector<To>{ from.begin(), from.end() };
+			return std::forward<STREAM>(stream);
+		}
+
+		FromStream from;
+	};
+
+	template <
+		typename FromStream
+	>
+	struct MapTo<
+		FromStream,
+		std::string
+	>
+	{
+		using connect_tag = unconectable;
+		using tree_tag = not_tree;
+
+		template <
+			typename STREAM
+		>
+		inline
+		decltype(auto)
+		operator()
+		(
+			STREAM&& stream
+		)	{
+			using std::to_string; // For ADL
+			from.eval();
+			for (auto&& e : from) stream.emplace_back( to_string(e) );
+			return std::forward<STREAM>(stream);
+		}
+
+		FromStream from;
+	};
+
 	template < typename Pred >
 	struct All
 	{
-		using conect_tag = unconectable;
+		using connect_tag = unconectable;
 		using tree_tag = not_tree;
 
 		template <
@@ -759,6 +1001,57 @@ namespace stream_api {
 
 		Pred pred;
 	};
+
+	template < typename Pred >
+	struct Any
+	{
+		using connect_tag = unconectable;
+		using tree_tag = not_tree;
+
+		template <
+			typename STREAM
+		>
+		inline
+		decltype(auto)
+		operator ()
+		(
+			STREAM&& stream
+		) {
+			for (auto&& e : stream)
+				if (pred(e)) return true;
+			return false;
+		}
+
+		// member
+
+		Pred pred;
+	};
+
+	template < typename Pred >
+	struct None
+	{
+		using connect_tag = unconectable;
+		using tree_tag = not_tree;
+
+		template <
+			typename STREAM
+		>
+		inline
+		decltype(auto)
+		operator ()
+		(
+			STREAM&& stream
+		) {
+			for (auto&& e : stream)
+				if (pred(e)) return false;
+			return true;
+		}
+
+		// member
+
+		Pred pred;
+	};
+
 
 	//------------------------------//
 	// Just Time Evaluate Operation //
@@ -782,7 +1075,7 @@ namespace stream_api {
 	>
 	struct Invoker
 	{
-		using conect_tag = unconectable;
+		using connect_tag = unconectable;
 		using tree_tag = not_tree;
 
 		template <
@@ -794,7 +1087,8 @@ namespace stream_api {
 		(
 			STREAM&& stream
 		) {
-			return op(stream);
+			op(stream);
+			return std::forward<STREAM>(stream);
 		}
 
 		// member
@@ -815,7 +1109,7 @@ namespace stream_api {
 
 	<< Stream Create Phase >>
 	Stream<T> is able to construct from Range<T>, iterator pair has element_type as T and initializer_list<T>.
-	Template parameter T is data type. In Stream, data manageed as vector<T>.
+	Template parameter T is source type. In Stream, source manageed as vector<T>.
 	Template parameter Operation is Operation Tree.
 	Root Operation is default setting at creating Stream<T> .
 
@@ -861,6 +1155,14 @@ namespace stream_api {
 	public:
 		typedef T element_type;
 		typedef std::vector<T> range_type;
+		typedef typename std::vector<T>::reference reference;
+		typedef typename std::vector<T>::const_reference const_reference;
+		typedef typename std::vector<T>::iterator iterator;
+		typedef typename std::vector<T>::const_iterator const_iterator;
+		typedef typename std::vector<T>::size_type size_type;
+		typedef typename std::vector<T>::difference_type difference_type;
+		typedef typename std::vector<T>::reverse_iterator reverse_iterator;
+		typedef typename std::vector<T>::const_reverse_iterator const_reverse_iterator;
 
 		template <
 			typename Iterator
@@ -871,7 +1173,7 @@ namespace stream_api {
 			Iterator last,
 			Operation q
 		)
-			: data{ first,last }
+			: source{ first,last }
 			, operation{ q }
 		{}
 
@@ -880,7 +1182,7 @@ namespace stream_api {
 			std::initializer_list<T> init_list,
 			Operation q
 		)
-			: data{ init_list }
+			: source{ init_list }
 			, operation{ q }
 		{}
 
@@ -892,7 +1194,7 @@ namespace stream_api {
 			Range&& range,
 			Operation&& q
 		)
-			: data{ range.begin(), range.end() }
+			: source{ range.begin(), range.end() }
 			, operation{ q }
 		{}
 
@@ -904,7 +1206,7 @@ namespace stream_api {
 			Iterator first,
 			Iterator last
 		)
-			: data{ first,last }
+			: source{ first,last }
 			, operation{ RootOperation{} }
 		{}
 
@@ -912,7 +1214,7 @@ namespace stream_api {
 		(
 			std::initializer_list<T> init_list
 		)
-			: data{ init_list }
+			: source{ init_list }
 			, operation{ RootOperation{} }
 		{}
 
@@ -923,12 +1225,12 @@ namespace stream_api {
 		(
 			Range&& range
 		)
-			: data{ range.begin(), range.end() }
+			: source{ range.begin(), range.end() }
 			, operation{ RootOperation{} }
 		{}
 
 		Stream()
-			: data{}
+			: source{}
 			, operation{ RootOperation{} }
 		{}
 
@@ -950,29 +1252,77 @@ namespace stream_api {
 		)
 			const
 		{
-			return TargetRange{ data.begin(), data.end() };
+			return TargetRange{ source.begin(), source.end() };
 		}
 
 		// Range wrappers
 
-		inline decltype(auto) begin() { return data.begin(); }
+		inline decltype(auto) begin() { return source.begin(); }
 
-		inline decltype(auto) end() { return data.end(); }
+		inline decltype(auto) end() { return source.end(); }
 
-		inline decltype(auto) begin() const { return data.cbegin(); }
+		inline decltype(auto) begin() const { return source.cbegin(); }
 
-		inline decltype(auto) end() const { return data.cend(); }
+		inline decltype(auto) end() const { return source.cend(); }
 
-		inline auto size() { return data.size(); }
+		inline decltype(auto) cbegin() const { return source.cbegin(); }
 
-		inline void push_back(T const& v) { data.push_back(v); }
+		inline decltype(auto) cend() const { return source.cend(); }
 
-		inline void pop_back() { data.pop_back(); }
+		inline decltype(auto) rbegin() { return source.rbegin(); }
 
-		inline void shrink_to_fit() { data.shrink_to_fit(); }
+		inline decltype(auto) rend() { return source.rend(); }
+
+		inline decltype(auto) crbegin() const { return source.crbegin(); }
+
+		inline decltype(auto) crend() const { return source.crend(); }
+
+		inline decltype(auto) size() { return source.size(); }
+
+		inline decltype(auto) max_size() { return source.max_size(); }
+
+		inline decltype(auto) resize(size_t n) { return source.resize(n); }
+
+		inline decltype(auto) capacity() { return source.capacity(); }
+
+		inline bool empty() { return source.empty(); }
+
+		inline decltype(auto) reserve(size_t n) { return source.reserve(n); }
+
+		inline decltype(auto) insert(const_iterator pos, T const& v) { return source.insert(pos, v); }
+
+		inline decltype(auto) insert(const_iterator pos, T&& v) { return source.insert(pos, std::move(v)); }
+
+		inline decltype(auto) insert(const_iterator pos,size_type n, T const& v) { return source.insert(pos, n, v) }
+
+		template <class InputIterator>
+		decltype(auto) insert(
+			const_iterator pos,
+			InputIterator first,
+			InputIterator last
+		) {
+			return source.insert( pos, first, last );
+		}
+
+		inline decltype(auto) insert(
+			const_iterator pos,
+			std::initializer_list<T> il
+		) {
+			return source.insert( pos, il );
+		}
+
+		template < typename U >
+		inline void push_back( U&& v ) { source.push_back(v); }
+
+		inline void pop_back() { source.pop_back(); }
+
+		template < typename U >
+		inline void emplace_back( U&& v ) { source.emplace_back(v); }
+
+		inline void shrink_to_fit() { source.shrink_to_fit(); }
 
 		// resource getter
-		inline auto& get() { return data; }
+		inline auto& get() { return source; }
 
 
 		// Operator Registration
@@ -985,30 +1335,29 @@ namespace stream_api {
 			Operator&& op
 		) {
 			return make_stream_with_op(
-				std::move(data), // move resource
+				std::move(source), // move resource
 				make_op_tree(
 					std::move(operation),
 					std::move(op),
-					typename Operation::conect_tag{},
-					typename std::decay_t<Operator>::conect_tag{}
+					typename Operation::connect_tag{},
+					typename std::decay_t<Operator>::connect_tag{}
 				) // make operation tree
 			);
 		}
 
 		// execute lazy evaluation
 		inline
-		Stream&
+		decltype(auto)
 		eval()
 		{
-			operation(*this); // evaluate operation tree
-			return *this;
+			return operation(*this); // evaluate operation tree
 		}
 
 		// members
 	private:
 
-		// data source
-		std::vector<T> data{};
+		// source source
+		std::vector<T> source{};
 
 		// Operation Tree
 		Operation operation{};
@@ -1049,55 +1398,342 @@ namespace stream_api {
 		return stream.end();
 	}
 
+	template < typename T >
+	struct RangeStream {
 
-	//-----------------------//
-	// Stream Create Process //
-	//-----------------------//
+		template <
+			typename STREAM
+		>
+		decltype(auto)
+		operator ()
+		(
+			STREAM&& stream
+		) {
+			for (; first < last; first+=step)
+				stream.emplace_back(first);
+			return std::forward<STREAM>(stream);
+		}
+
+
+		T first;
+		T last;
+		T step;
+	};
+
+	template < typename Op1, typename Op2 >
+	struct OperatingExpression {
+		template < typename T >
+		decltype(auto) operator()(T&& arg) { return op2(op1(arg)); }
+		Op1 op1;
+		Op2 op2;
+	};
+
+
+	struct Identity {
+		template < typename T >
+		T operator () (T a) {
+			return a;
+		}
+	};
+
+	template < typename InfiniteStream >
+	struct Limited{
+		using connect_tag = generator;
+		using tree_tag = not_tree;
+		using E = typename InfiniteStream::element_type;
+
+		template < typename STREAM >
+		decltype(auto)
+		operator()
+		(
+			STREAM&& stream
+		) {
+			stream.reserve(lim);
+			std::pair<bool, E> tmp;
+			for (size_t count{}; count < lim;) {
+				tmp = inf.get();
+				if (tmp.first) {
+					stream.emplace_back(tmp.second);
+					++count;
+				}
+				inf.advance();
+			}
+			return std::forward<STREAM>(stream);
+		}
+		InfiniteStream inf;
+		size_t lim;
+	};
 
 	template <
-		typename Iterator,
-		typename T = typename Iterator::value_type
+		typename InfiniteStream,
+		typename Pred
 	>
-	inline
-	Stream<T>
-	makeStream
-	(
-		Iterator first,
-		Iterator last
-	)
-		noexcept
-	{
-		return Stream<T>{ first, last };
+	struct Taken {
+		using connect_tag = generator;
+		using tree_tag = not_tree;
+		using E = typename InfiniteStream::element_type;
+
+		template < typename STREAM >
+		decltype(auto)
+		operator()
+		(
+			STREAM&& stream
+		) {
+			std::pair<bool, E> tmp;
+			do {
+				tmp = inf.get();
+				if (tmp.first) stream.emplace_back(tmp.second);
+				inf.advance();
+			}
+			while ( tmp.first ? pred(tmp.second) : true );
+			return std::forward<STREAM>(stream);
+		}
+		InfiniteStream inf;
+		Pred pred;
+	};
+
+
+	template <
+		typename T,
+		typename Func,
+		typename Operation = Identity
+	>
+	struct IterateStream {
+		using element_type = std::result_of_t<Operation(T)>;
+
+		std::pair<bool,element_type> get() try {
+			return std::make_pair(true,op(init));
+		}
+		catch (except::filtered_except const&) {
+			return std::make_pair(false, element_type{});
+		}
+
+		void advance() { init = f(init); }
+
+		template < typename F >
+		IterateStream<T, Func, OperatingExpression<Operation, F>> push_expr(F&& func) {
+			return{ std::move(init), std::move(f), OperatingExpression<Operation, F>{std::move(op),std::move(func)} };
+		}
+
+		T init;
+		Func f;
+		Operation op;
+	};
+
+	template < typename Pred >
+	struct TakeWhile {
+		Pred pred;
+	};
+
+	template < typename Pred >
+	inline TakeWhile<Pred> takeWhile(Pred&& pred) noexcept{
+		return{ std::forward<Pred>(pred) };
 	}
 
 	template <
-		typename Range,
-		typename T = typename Range::value_type
+		typename T,
+		typename F,
+		typename Op,
+		typename Pred,
+		typename E = typename IterateStream<T, F, Op>::element_type
 	>
 	inline
-	Stream<T>
-	makeStream
+	auto
+	operator >>
 	(
-		Range&& range
-	)
-		noexcept
-	{
-		return Stream<T>{ range.begin(), range.end() };
+		IterateStream<T, F, Op>&& iter,
+		TakeWhile<Pred>&& tw
+	) {
+		using Inf = IterateStream<T, F, Op>;
+		return Stream<E, Taken<Inf, Pred>>{ std::vector<E>{}, Taken<Inf, Pred>{ std::move(iter), std::move(tw.pred) } };
+	}
+
+
+	template <
+		typename T,
+		typename F,
+		typename Op,
+		typename E = typename IterateStream<T, F, Op>::element_type
+	>
+	inline
+	auto
+	operator >>
+	(
+		IterateStream<T, F, Op>&& iter,
+		Limit&& lim
+	) {
+		using Inf = IterateStream<T, F, Op>;
+		return Stream<E, Limited<Inf>>{ std::vector<E>{}, Limited<Inf>{ std::move(iter), std::move(lim.n) } };
 	}
 
 	template <
-		typename T
+		typename T,
+		typename F,
+		typename Op,
+		typename M
 	>
 	inline
-	Stream<T>
-	makeStream
+	auto
+	operator >>
 	(
-		std::initializer_list<T> li
-	)
-		noexcept
-	{
-		return Stream<T>{ li };
+		IterateStream<T, F, Op>&& iter,
+		MapProxy<M>&& proxy
+	) {
+		return iter.push_expr(proxy.f);
 	}
+
+	template <
+		typename T,
+		typename F,
+		typename Op,
+		typename To
+	>
+	inline
+	auto
+	operator >>
+	(
+		IterateStream<T, F, Op>&& iter,
+		MapToProxy<To>&& proxy
+	) {
+		iter.push_expr([](auto&& a){ return static_cast<To>(a); });
+	}
+
+	template <
+		typename T,
+		typename F,
+		typename Op,
+		typename UnaryOp
+	>
+	inline
+	auto
+	operator >>
+	(
+		IterateStream<T, F, Op>&& iter,
+		ForEach<UnaryOp>&& proxy
+	) {
+		iter.push_expr([f = proxy.f](auto&& a) { return f(a),a; });
+	}
+
+	//------------------//
+	// Stream Generator //
+	//------------------//
+
+	struct makeStream {
+		template <
+			typename Iterator,
+			typename T = typename std::decay_t<Iterator>::value_type
+		>
+		static
+		Stream<T>
+		of
+		(
+			Iterator first,
+			Iterator last
+		)
+			noexcept
+		{
+			return Stream<T>{ first, last };
+		}
+
+		template <
+			typename T
+		>
+		static
+		Stream<T>
+		of
+		(
+			std::initializer_list<T> il
+		)
+			noexcept
+		{
+			return Stream<T>{ il };
+		}
+
+
+		template <
+			typename Range,
+			typename T = typename std::decay_t<Range>::value_type
+		>
+		static
+		auto
+		from
+		(
+			Range&& range
+		)
+			noexcept -> decltype(range.begin(), range.end(), Stream<T>{})
+		{
+			return Stream<T>{ range.begin(), range.end() };
+		}
+
+		template <
+			typename T
+		>
+		static
+		Stream<T,RangeStream<T>>
+		range
+		(
+			T first,
+			T last,
+			T step = 1
+		) {
+			return Stream<T, RangeStream<T>>{ std::vector<T>{}, RangeStream<T>{first,last,step} };
+		}
+
+		template <
+			typename T,
+			typename F
+		>
+		static
+		auto
+		iterate
+		(
+			T&& init,
+			F&& f
+		) {
+			return IterateStream<T, F>{ std::forward<T>(init), std::forward<F>(f), Identity{} };
+		}
+
+		template <
+			typename Iterable
+		>
+		static
+		auto
+		counter
+		(
+			Iterable init
+		) {
+			auto next = [](auto&& a) { return a + 1; };
+			return IterateStream<Iterable, decltype(next)>{ init, std::move(next), Identity{} };
+		}
+
+		template <
+			typename T
+		>
+		static
+		auto
+		repeat
+		(
+			T val
+		) {
+			return IterateStream<T, Identity>{ val, Identity{}, Identity{} };
+		}
+
+		template <
+			typename T
+		>
+		static
+		auto
+		repeat
+		(
+			T val,
+			size_t lim
+		) {
+			return Stream<T>{std::vector<T>(lim,val)};
+		}
+
+
+	};
+
 
 	template <
 		typename STR
@@ -1118,40 +1754,6 @@ namespace stream_api {
 		auto&& str = std::string{ s };
 		return{ std::sregex_token_iterator(str.begin(),str.end(), sp.r_, -1), std::sregex_token_iterator{} };
 	}
-
-	static constexpr Creator to_stream{};
-
-	template <
-		typename T
-	>
-	inline
-	auto
-	operator /
-	(
-		T&& v,
-		Creator
-	)
-		noexcept
-	{
-		return makeStream(std::forward<T>(v));
-	}
-
-	template <
-		typename T
-	>
-	inline
-	auto
-	operator /
-	(
-		std::initializer_list<T> li,
-		Creator
-	)
-		noexcept
-	{
-		return makeStream( std::move(li) );
-	}
-
-
 
 	//----------------------//
 	// Intermediate process //
@@ -1192,15 +1794,19 @@ namespace stream_api {
 
 	inline Distinct distinct() noexcept	{	return{};	}
 
-	inline Skip skip(std::size_t n)	{	return{ n }; }
+	inline Skip skip(std::size_t n)	noexcept {	return{ n }; }
 
-	inline Limit limit(std::size_t n)	{ return{ n }; }
+	inline Limit limit(std::size_t n) noexcept	{ return{ n }; }
 
 	template < typename T >
 	inline PushBack<std::decay_t<T>> push_back(T&& v) noexcept { return{ v };	}
 
-
 	inline PopBack pop_back()	noexcept {	return{};	}
+
+	template < typename To >
+	inline MapToProxy<To> map_to() noexcept { return{}; }
+
+	inline MapToProxy<std::string> to_string() noexcept { return{}; }
 
 	inline Repeat repeat(size_t times = 1) noexcept { return{ times };	}
 
@@ -1412,7 +2018,7 @@ namespace stream_api {
 		typename UnaryFunc
 	>
 	inline
-	Map<UnaryFunc>
+	MapProxy<UnaryFunc>
 	map_
 	(
 		UnaryFunc&& func
@@ -1441,7 +2047,7 @@ namespace stream_api {
 		static_assert(
 			std::is_same<
 				void,
-				decltype( std::declval<UnaryOp>()( std::declval<E>() ) )
+				std::result_of_t<UnaryOp(E)>
 			>::value,
 			"Can not call UnaryOp with an arg of STREAM::element_type."
 		);
@@ -1453,26 +2059,61 @@ namespace stream_api {
 	template <
 		typename STREAM,
 		typename UnaryOp,
-		typename E = typename STREAM::element_type
+		typename E = typename STREAM::element_type,
+		typename R = std::result_of_t<UnaryOp(E)>,
+		std::enable_if_t<
+			std::is_same<E,R>::value,
+			std::nullptr_t
+		> = nullptr
 	>
 	inline
 	decltype(auto)
 	operator >>
 	(
 		STREAM&& stream,
-		Map<UnaryOp>&& f
+		MapProxy<UnaryOp>&& proxy
 	)
 		noexcept
 	{
-		static_assert(
-			!std::is_same<
-			void,
-			decltype(std::declval<UnaryOp>()(std::declval<E>()))
-			>::value,
-			"void not accept."
-			);
+		return stream.lazy(Map<UnaryOp>{proxy.f});
+	}
 
-		return stream.lazy(f);
+	template <
+		typename STREAM,
+		typename UnaryOp,
+		typename E = typename STREAM::element_type,
+		typename R = std::result_of_t<UnaryOp(E)>,
+		std::enable_if_t<
+			!std::is_same<E, R>::value,
+			std::nullptr_t
+		> = nullptr
+	>
+	inline
+	decltype(auto)
+	operator >>
+	(
+		STREAM&& stream,
+		MapProxy<UnaryOp>&& proxy
+	)
+		noexcept
+	{
+		return Stream<R, Endomorphism<STREAM, UnaryOp>>{ std::vector<R>{}, Endomorphism<STREAM, UnaryOp>{ std::move(stream), std::move(proxy.f) } };
+	}
+
+	template <
+		typename STREAM,
+		typename To
+	>
+	inline
+	auto
+	operator >>
+	(
+		STREAM&& stream,
+		MapToProxy<To>
+	)
+		noexcept
+	{
+		return Stream<To, MapTo<STREAM, To>>{ std::vector<To>{}, MapTo<STREAM, To>{ std::forward<STREAM>(stream) } };
 	}
 
 	template <
@@ -1561,9 +2202,39 @@ namespace stream_api {
 	(
 		Pred&& pred
 	)
+		noexcept
 	{
 		return{ std::forward<Pred>( pred ) };
 	}
+
+	template <
+		typename Pred
+	>
+	inline
+	Any<Pred>
+	any
+	(
+		Pred&& pred
+	)
+		noexcept
+	{
+		return{ std::forward<Pred>(pred) };
+	}
+
+	template <
+		typename Pred
+	>
+	inline
+	None<Pred>
+	none
+	(
+		Pred&& pred
+	)
+		noexcept
+	{
+		return{ std::forward<Pred>(pred) };
+	}
+
 
 	template <
 		typename STREAM, typename UnaryOp,
@@ -1609,7 +2280,7 @@ namespace stream_api {
 		Printer&& p
 	)
 	{
-		stream.lazy(p).eval();
+		p(stream.eval());
 		return;
 	}
 
@@ -1634,8 +2305,57 @@ namespace stream_api {
 			"Can not call Pred with an arg of type STREAM::element_type."
 		);
 
-		return all( stream.eval() );
+		return stream.lazy(all).eval();
 	}
+
+	template <
+		typename STREAM,
+		typename Pred
+	>
+	inline
+	bool
+	operator ||
+	(
+		STREAM&& stream,
+		Any<Pred> any
+	)
+		noexcept
+	{
+		static_assert(
+			std::is_same<
+			bool,
+			decltype(std::declval<Pred>()(std::declval<typename STREAM::element_type>()))
+			>::value,
+			"Can not call Pred with an arg of type STREAM::element_type."
+			);
+
+		return stream.lazy(any).eval();
+	}
+
+	template <
+		typename STREAM,
+		typename Pred
+	>
+	inline
+	bool
+	operator ||
+	(
+		STREAM&& stream,
+		None<Pred> none
+	)
+		noexcept
+	{
+		static_assert(
+			std::is_same<
+			bool,
+			decltype(std::declval<Pred>()(std::declval<typename STREAM::element_type>()))
+			>::value,
+			"Can not call Pred with an arg of type STREAM::element_type."
+			);
+
+		return stream.lazy(none).eval();
+	}
+
 
 	//----------------------------//
 	// Just Time Evaluate Process //
@@ -1688,7 +2408,7 @@ namespace stream_api {
 	{
 		STREAM stream_;
 	public:
-		ImplicitStreamConverter(STREAM stream) : stream_{ stream } {}
+		ImplicitStreamConverter(STREAM stream) : stream_{ std::forward<STREAM>(stream) } {}
 
 		template < typename Target >
 		inline operator Target() const {
@@ -1742,12 +2462,12 @@ namespace stream_api {
 			typename ConvertTo<Target>::template type<
 				  typename std::decay_t<STREAM>::element_type
 			>
-		>::convert(stream.eval());
+		>::convert(std::forward<STREAM>(stream.eval()));
 	}
 
 	template < typename STREAM >
 	inline decltype(auto) operator || (STREAM&& stream, ConvertAny) noexcept {
-		return ImplicitStreamConvertInvoker::invoke( stream.eval() );
+		return ImplicitStreamConvertInvoker::invoke( std::forward<STREAM>(stream.eval()) );
 	}
 
 
@@ -1764,7 +2484,9 @@ namespace stream_api {
 		typename STREAM,
 		typename Func
 	>
-	inline decltype(auto) operator >>
+	inline
+	decltype(auto)
+	operator >>
 	(
 		STREAM&& stream,
 		Invoker<Func>&& f
@@ -1793,9 +2515,7 @@ namespace stream_api {
 	(
 		STREAM&& stream,
 		Invoker<F>&& f
-	)
-		noexcept
-	{
+	)	{
 		return f(stream.eval());
 	}
 
