@@ -16,7 +16,7 @@
 
 
 namespace cranberries {
-namespace stream {
+namespace streams {
 namespace except {
 
 	class stream_empty_error : public cranberries::runtime_error
@@ -32,7 +32,6 @@ namespace except {
 		{}
 	};
 
-	struct filtered_except{};
 
 
 }

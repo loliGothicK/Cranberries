@@ -56,7 +56,7 @@ namespace cranberries
 {
   class message_tag {};
 
-  //  ALL interval error 
+  //  
   class runtime_error : public std::runtime_error
   {
   public:
