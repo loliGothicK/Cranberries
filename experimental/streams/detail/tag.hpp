@@ -5,12 +5,12 @@ namespace cranberries {
 namespace streams {
 namespace detail {
 
-	// Defaluted Tag
-	struct defaulted {};
+  // Defaluted Tag
+  struct defaulted {};
 
-	// for tree traits
-	struct is_tree {};
-	struct not_tree {};
+  // for tree traits
+  struct is_tree {};
+  struct not_tree {};
 
 
 } // ! namespace detail

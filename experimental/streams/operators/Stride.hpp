@@ -1,27 +1,20 @@
-#ifndef CRANBERRIES_STREAMS_OPERATORS_UNIQUE_HPP
-#define CRANBERRIES_STREAMS_OPERATORS_UNIQUE_HPP
+#ifndef CRANBERRIES_STREAMS_OPERATORS_STRIDE_HPP
+#define CRANBERRIES_STREAMS_OPERATORS_STRIDE_HPP
 #include <utility>
-#include <type_traits>
-#include <algorithm>
+#include "..\detail\tag.hpp"
 #include "..\utility.hpp"
 
 namespace cranberries {
 namespace streams {
 namespace operators {
 
-  struct UniqueProxy{};
-
   // Intermidiate Operation
-  template <
-    typename T
-  >
-  class Unique
+  class Stride
     : private detail::IntermidiateStreamOperatorBase
     , private detail::StreamFilterBase
   {
   public:
-
-    Unique() = default;
+    Stride(size_t s) : step{s}, i{} {}
 
     template <
       typename Stream
@@ -33,39 +26,33 @@ namespace operators {
       Stream&& stream_
     ) {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
-      auto&& source = stream_.get();
-      source.erase( std::unique( source.begin(), source.end() ), source.end() );
+      auto&& src = stream_.get();
+      for ( auto&& iter = src.begin(); iter != src.end(); ++i ) {
+        if ( i%step == 0 ) ++iter;
+        else { iter = src.erase( iter ); }
+      }
+      src.shrink_to_fit();
       return std::forward<Stream>(stream_);
     }
 
     template <
       typename T
     >
-    bool
+    inline
+    decltype(auto)
     operator[]
     (
-      T&& arg
+      T&& // ! no use
     )
       noexcept
     {
-      once( arg );
-      if ( arg == prev ) {
-        return true;
-      }
-      prev = arg;
-      return false;
-    }
-
-    void once( T const& a ) {
-      prev = a + 1;
-      once_flag = false;
+      return ++i%step!=1; 
     }
 
   private:
-    T prev;
-    bool once_flag = true;
+    size_t i{};
+    size_t step;
   };
-
 
 } // ! namespace operators
 } // ! namespace stream

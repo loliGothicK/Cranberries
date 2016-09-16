@@ -1,50 +1,60 @@
-#ifndef CRANBERRIES_STREAMS_OPERATORS_SKIP_HPP
-#define CRANBERRIES_STREAMS_OPERATORS_SKIP_HPP
+#ifndef CRANBERRIES_STREAMS_OPERATORS_DROP_HPP
+#define CRANBERRIES_STREAMS_OPERATORS_DROP_HPP
 #include <utility>
-#include "../detail/tag.hpp"
+#include <type_traits>
+#include "../utility.hpp"
 
 namespace cranberries {
 namespace streams {
 namespace operators {
 
-	// Intermidiate Operation
-	struct Drop
-	{
-		using tree_tag = detail::not_tree;
-
-		template <
-			typename STREAM,
-      typename E = typename std::decay_t<STREAM>::element_type,
-      std::enable_if_t<detail::is_range_v<std::decay_t<STREAM>>,std::nullptr_t> = nullptr
-		>
-		inline
-		decltype(auto)
-		operator()(
-			STREAM&& stream
-		) {
-			auto&& source = stream.get();
-			Range{ source.begin() + n, source.end() }.swap(source); // swap trick
-			return std::forward<STREAM>(stream);
-		}
+  // Intermidiate Operation
+  class Drop
+    : private detail::IntermidiateStreamOperatorBase
+    , private detail::StreamFilterBase
+  {
+  public:
+    Drop( size_t n ) : count{}, n_{ n } {}
 
     template <
-      typename T,
-      std::enable_if_t<!detail::is_range_v<std::decay_t<T>>,std::nullptr_t> = nullptr
+      typename STREAM,
+      std::enable_if_t<is_range_v<std::decay_t<STREAM>>,std::nullptr_t> = nullptr
     >
-    bool operator()(T&&) noexcept
+    inline
+    decltype(auto)
+    operator()(
+      STREAM&& stream_
+    ) {
+      CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
+      auto&& src = stream_.get();
+      // deletion
+      for ( auto&& iter = src.begin(); count<n_; ++count ) {
+        iter = src.erase( iter );
+      }
+      return std::forward<STREAM>(stream_);
+    }
+
+    template <
+      typename T
+    >
+    bool
+    operator[]
+    (
+      T&& // not use
+    )
+      noexcept
     {
-      static size_t count = 0;
-      if ( count < n ) {
+      if ( count < n_ ) {
         ++count;
         return true;
       }
       return false;
     }
 
-		// member
-
-		std::size_t n;
-	};
+  private:
+    size_t count{};
+    std::size_t n_;
+  };
 
 
 

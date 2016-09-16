@@ -9,14 +9,12 @@ namespace cranberries {
 namespace streams {
 namespace operators {
 
-	struct Splitter
-	{
-		Splitter(std::string s) : r_{ s } {}
+  struct Splitter
+  {
+    Splitter(std::string s) : r_{ s } {}
 
-		// member
-
-		std::regex r_{};
-	};
+    std::regex r_{};
+  };
 
 
 

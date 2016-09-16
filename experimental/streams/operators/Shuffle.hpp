@@ -1,38 +1,45 @@
-#ifndef CRANBERRIES_STREAMS_OPERATORS_LIMIT_HPP
-#define CRANBERRIES_STREAMS_OPERATORS_LIMIT_HPP
+#ifndef CRANBERRIES_STREAMS_OPERATORS_SHUFFLE_HPP
+#define CRANBERRIES_STREAMS_OPERATORS_SHUFFLE_HPP
 #include <utility>
-#include "..\utility.hpp"
+#include <type_traits>
+#include <algorithm>
+#include <random>
+#include "../utility.hpp"
 
 namespace cranberries {
 namespace streams {
 namespace operators {
 
   // Intermidiate Operation
-  class Take
+  template <
+    typename Engine
+  >
+  class Shuffle
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    Take( size_t n ) : lim{ n } {}
-    
+    Shuffle( Engine e ) : engine_{ std::forward<Engine>( e ) } {}
+
+    Shuffle() = default;
+
     template <
-      typename Stream,
-      typename Range = typename std::decay_t<Stream>::range_type
+      typename Stream
     >
     inline
     decltype(auto)
-    operator()
-    (
+    operator()(
       Stream&& stream_
     ) {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
-      auto&& src = stream_.get();
-      auto&& iter = src.begin() + lim;
-      while ( iter != src.end() ) iter = src.erase( iter );
+      std::shuffle( stream_.begin(), stream_.end(), engine_ );
       return std::forward<Stream>(stream_);
     }
 
-    std::size_t lim;
+  private:
+    Engine engine_;
   };
+
+
 
 } // ! namespace operators
 } // ! namespace stream

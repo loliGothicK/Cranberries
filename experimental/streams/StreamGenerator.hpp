@@ -15,6 +15,8 @@
 namespace cranberries {
 namespace streams {
 
+
+
   //------------------//
   // stream Generator //
   //------------------//
@@ -23,6 +25,12 @@ namespace streams {
   struct Generate{
     T operator()() { return value_; }
     T value_;
+  };
+
+  struct PlusOne
+  {
+    template < typename T >
+    std::decay_t<T> operator()( T&& a ) { return a + 1; }
   };
 
   template <
@@ -84,7 +92,9 @@ namespace streams {
     Engine engine_;
   };
 
-  struct make_stream {
+  struct make_stream
+  {
+
     template <
       typename Iterator,
       typename T = typename std::decay_t<Iterator>::value_type
@@ -104,12 +114,12 @@ namespace streams {
     template <
       typename T
     >
-      static
-      stream<T>
-      of
-      (
-        std::initializer_list<T> il
-      )
+    static
+    stream<T>
+    of
+    (
+      std::initializer_list<T> il
+    )
       noexcept
     {
       return stream<T>{ il };
@@ -118,31 +128,32 @@ namespace streams {
 
     template <
       typename Range,
-      typename T = typename std::decay_t<Range>::value_type
+      typename T = typename std::decay_t<Range>::value_type,
+      std::enable_if_t<is_range_v<std::decay_t<Range>>,std::nullptr_t> = nullptr
     >
-      static
-      auto
-      from
-      (
-        Range&& range
-      )
-      noexcept -> decltype(range.begin(), range.end(), stream<T>{})
+    static
+    auto
+    from
+    (
+      Range&& range
+    )
+      noexcept
     {
-      return stream<T>{ range.begin(), range.end() };
+      return stream<T>{ range };
     }
 
     template <
-    	typename T
+      typename T
     >
-    	static
-    	stream<T, Ranged<T>>
-    	range
-    	(
-    		T first,
-    		T last,
-    		T step = 1
-    	) {
-    	return stream<T, Ranged<T>>{ std::vector<T>{}, Ranged<T>{first, last, step} };
+    static
+    stream<T, Ranged<T>>
+    range
+    (
+      T first,
+      T last,
+      T step = 1
+    ) {
+      return stream<T, Ranged<T>>{ std::vector<T>{}, Ranged<T>{first, last, step} };
     }
 
     template <
@@ -172,8 +183,7 @@ namespace streams {
     )
       noexcept
     {
-      auto next = [](auto&& a) { return a + 1; };
-      return IterateStream<Iterable, decltype(next)>{ init, std::move(next) };
+      return IterateStream<Iterable, PlusOne>{ init };
     }
 
     template <
@@ -607,11 +617,15 @@ namespace streams {
       return{ { degree_of_freedom, seed } };
     }
  
-    //------------------------------------------------//
-    // Uniform Distribution Random Stream (Infinite)  //
-    // that has been deployed (virtually normalized)  //
-    // to the real interval [ 0.0, 1.0 ).             //
-    //------------------------------------------------//
+    /***************************************************
+    
+    
+    | Uniform Distribution Random Stream (Infinite)  
+    | that has been deployed (virtually normalized)  
+    | to the real interval [ 0.0, 1.0 ).             
+    
+    
+    ***************************************************/
 
 
     template <
@@ -639,8 +653,8 @@ namespace streams {
     typename STR
   >
   inline
-  stream<std::string>
-  operator /
+  decltype(auto)
+  operator |
   (
     STR&& s,
     operators::Splitter&& sp
@@ -652,7 +666,10 @@ namespace streams {
       "Can not construct std::string from STR."
     );
     auto&& str = std::string{ s };
-    return{ std::sregex_token_iterator(str.begin(),str.end(), sp.r_, -1), std::sregex_token_iterator{} };
+    return std::vector<std::string>{
+      std::sregex_token_iterator{ str.begin(), str.end(), sp.r_, -1 },
+      std::sregex_token_iterator{}
+    };
   }
 
 } // ! namespace stream

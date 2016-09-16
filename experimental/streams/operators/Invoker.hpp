@@ -1,63 +1,76 @@
 #ifndef CRANBERRIES_STREAMS_OPERATORS_INVOKER_HPP
 #define CRANBERRIES_STREAMS_OPERATORS_INVOKER_HPP
 #include <utility>
-#include "../detail/tag.hpp"
+#include <type_traits>
+#include "..\utility.hpp"
 
 namespace cranberries {
 namespace streams {
 namespace operators {
 
-	// Adaptor for user defined operation and Stream operation interface.
-	// Concept : Operator must call with arg of any Stream and return it.
-	template <
-		typename Operator // user defined operation
-	>
-	struct Tinvoker
-	{
-		using tree_tag = detail::not_tree;
+  // Adaptor for user defined operation and Stream operation interface.
+  // Concept : Operator must call with arg of any Stream and return it.
+  template <
+    typename Operator // user defined operation
+  >
+  class Tinvoker
+    : detail::TerminateStreamOperatorBase
+  {
+  public:
+    Tinvoker( Operator op ) :op_{ std::forward<Operator>( op ) } {}
 
-		template <
-			typename STREAM
-		>
-		inline
-		decltype(auto)
-		operator()
-		(
-			STREAM&& stream
-		) {
-			op(stream);
-			return std::forward<STREAM>(stream);
-		}
+    template <
+      typename Stream
+    >
+    inline
+    decltype(auto)
+    operator()
+    (
+      Stream&& stream_
+    ) {
+      static_assert(
+        is_callable_v<Operator,Stream&&>,
+        "Invalid operator designated."
+      );
+      CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
+      op_(stream_);
+      return std::forward<Stream>(stream_);
+    }
 
-		// member
-
-		Operator op;
-	};
+  private:
+    Operator op_;
+  };
 
   template <
-		typename Operator // user defined operation
-	>
-	struct Iinvoker
-	{
-		using tree_tag = detail::not_tree;
+    typename Operator // user defined operation
+  >
+  class Iinvoker
+    : detail::IntermidiateStreamOperatorBase
+  {
+  public:
+    Iinvoker( Operator op ) : op_{ std::forward<Operator>( op ) } {}
 
-		template <
-			typename STREAM
-		>
-		inline
-		decltype(auto)
-		operator()
-		(
-			STREAM&& stream
-		) {
-			op(stream);
-			return std::forward<STREAM>(stream);
-		}
+    template <
+      typename Stream
+    >
+    inline
+    decltype(auto)
+    operator()
+    (
+      Stream&& stream
+    ) {
+      static_assert(
+        is_callable_v<Operator,Stream&&>,
+        "Invalid operator designated."
+      );
+      CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
+      op_(stream);
+      return std::forward<Stream>(stream);
+    }
 
-		// member
-
-		Operator op;
-	};
+  private:
+    Operator op_;
+  };
 
 
 

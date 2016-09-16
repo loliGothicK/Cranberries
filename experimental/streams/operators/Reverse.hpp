@@ -1,30 +1,32 @@
 #ifndef CRANBERRIES_STREAMS_OPERATORS_REVERSE_HPP
 #define CRANBERRIES_STREAMS_OPERATORS_REVERSE_HPP
 #include <utility>
-#include "../detail/tag.hpp"
+#include "../utility.hpp"
 
 namespace cranberries {
 namespace streams {
 namespace operators {
 
-	// Intermidiate Operation
-	struct Reverse
-	{
-		using tree_tag = detail::not_tree;
-
-		template <
-			typename STREAM
-		>
-		inline
-		decltype(auto)
-		operator()
-		(
-			STREAM&& stream
-		) {
-			std::reverse(stream.begin(), stream.end());
-			return std::forward<STREAM>(stream);
-		}
-	};
+  // Intermidiate Operation
+  class Reverse
+    : private detail::IntermidiateStreamOperatorBase
+  {
+  public:
+    
+    template <
+      typename Stream
+    >
+    inline
+    decltype(auto)
+    operator()
+    (
+      Stream&& stream
+    ) {
+      CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
+      std::reverse(stream.begin(), stream.end());
+      return std::forward<Stream>(stream);
+    }
+  };
 
 
 } // ! namespace operators

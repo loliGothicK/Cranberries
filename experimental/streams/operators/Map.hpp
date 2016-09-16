@@ -8,83 +8,89 @@ namespace streams {
 namespace operators {
 
 
-	template < typename F >
-	struct MapProxy {
-		F f;
-	};
+  template < typename F >
+  struct MapProxy {
+    F f;
+  };
 
-	template <
-		typename UnaryFunc
-	>
-	struct Transform
-	{
-		using tree_tag = detail::not_tree;
+  template <
+    typename UnaryFunc
+  >
+  class Transform
+    : private detail::IntermidiateStreamOperatorBase
+    , private detail::StreamOperatorBase
+  {
+  public:
+    Transform( UnaryFunc f ) : f_{ std::forward<UnaryFunc>( f ) } {}
 
     template < typename F, typename T >
     void apply( F&& f, T&& a ) {
       a =  f(std::forward<T>(a));
     }
 
-		template <
-			typename STREAM,
-      std::enable_if_t<detail::is_range_v<std::decay_t<STREAM>>,std::nullptr_t> = nullptr
-		>
-		inline
-		decltype(auto)
-		operator()
-		(
-			STREAM&& stream_
-		) {
+    template <
+      typename Stream,
+      std::enable_if_t<is_range_v<std::decay_t<Stream>>,std::nullptr_t> = nullptr
+    >
+    inline
+    decltype(auto)
+    operator()
+    (
+      Stream&& stream_
+    ) {
       auto&& v = stream_.get();
       size_t i{};
       for(;i<v.size() % 8;++i)
-          apply(f,v[i]);
+          apply(f_,v[i]);
       for(; i<v.size();i+=8){
-          apply(f,v[i]);
-          apply(f,v[i+1]);
-          apply(f,v[i+2]);
-          apply(f,v[i+3]);
-          apply(f,v[i+4]);
-          apply(f,v[i+5]);
-          apply(f,v[i+6]);
-          apply(f,v[i+7]);
+          apply(f_,v[i]);
+          apply(f_,v[i+1]);
+          apply(f_,v[i+2]);
+          apply(f_,v[i+3]);
+          apply(f_,v[i+4]);
+          apply(f_,v[i+5]);
+          apply(f_,v[i+6]);
+          apply(f_,v[i+7]);
       }
-      return std::forward<STREAM>(stream_);
-		}
+      return std::forward<Stream>(stream_);
+    }
 
     template <
-      typename T,
-      std::enable_if_t<!detail::is_range_v<std::decay_t<T>>,std::nullptr_t> = nullptr
+      typename T
     >
-		auto operator()(T&& a) const noexcept {
-			return f(a);
-		}
+    auto operator[](T&& a) const noexcept {
+      return f_(a);
+    }
 
 
 
-		// mapper
+    // mapper
 
-		UnaryFunc f;
-	};
+    UnaryFunc f_;
+  };
 
-	template <
-		typename OldStream,
-		typename UnaryFunc
-	>
-	struct Map
-	{
-		using tree_tag = detail::not_tree;
+  template <
+    typename OldStream,
+    typename UnaryFunc
+  >
+  class Map
+    : private detail::IntermidiateStreamOperatorBase
+  {
+  public:
+    Map( OldStream old, UnaryFunc f ) : old{ std::forward<OldStream>( old ) }, f_{ std::forward<UnaryFunc >> ( f ) } {}
 
     template <
-			typename STREAM
-		>
-		inline
-		decltype(auto)
-		operator()
-		(
-			STREAM&& stream_
-		) {
-			stream_.reserve(old.size());
+      typename Stream
+    >
+    inline
+    decltype(auto)
+    operator()
+    (
+      Stream&& stream_
+    ) {
+      old.eval();
+      CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( old.empty() );
+      stream_.reserve(old.size());
       auto&& v = old.get();
       size_t i{};
       for(;i<v.size() % 8;++i)
@@ -99,13 +105,13 @@ namespace operators {
           stream_.emplace_back(v[i+6]);
           stream_.emplace_back(v[i+7]);
       }
-			return std::forward<STREAM>(stream_);
-		}
+      return std::forward<Stream>(stream_);
+    }
 
-		// member
-		OldStream old;
-		UnaryFunc f;
-	};
+    // member
+    OldStream old;
+    UnaryFunc f_;
+  };
 
 } // ! namespace operators
 } // ! namespace stream

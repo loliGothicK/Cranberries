@@ -1,51 +1,76 @@
 #ifndef CRANBERRIES_STREAMS_OPERATORS_DROPWHILE_HPP
 #define CRANBERRIES_STREAMS_OPERATORS_DROPWHILE_HPP
+#include <utility>
 #include <type_traits>
-#include "..\detail\tag.hpp"
+#include "..\utility.hpp"
 
 namespace cranberries {
 namespace streams {
 namespace operators {
 
-	template <
-		typename Pred
-	>
-	struct DropWhile
-	{
-		using tree_tag = detail::not_tree;
+  template <
+    typename Pred
+  >
+  class DropWhile
+    : private detail::IntermidiateStreamOperatorBase
+    , private detail::StreamFilterBase
+  {
+  public:
+    DropWhile( Pred p ) : pred_{ std::forward<Pred>( p ) } {}
 
-		template <
-			typename STREAM,
-      std::enable_if_t<detail::is_range_v<std::decay_t<STREAM>>,std::nullptr_t> = nullptr
-		>
-		inline
-		decltype(auto)
-		operator()
-		(
-			STREAM&& stream_
-		) {
-			using Range = typename std::decay_t<STREAM>::range_type;
-			// peel loop
-			auto&& source = stream_.get();
-			auto iter = source.begin();
-			for (; iter != source.end() && pred(*iter); ++iter);
-			Range{ iter,source.end() }.swap(source);
-			return std::forward<STREAM>(stream_);
-		}
-
-		template <
-      typename T,
-      std::enable_if_t<!detail::is_range_v<std::decay_t<T>>,std::nullptr_t> = nullptr
+    template <
+      typename Stream,
+      typename E = typename std::decay_t<Stream>::element_type,
+      std::enable_if_t<is_range_v<std::decay_t<Stream>>,std::nullptr_t> = nullptr
     >
-		bool operator()(T&& a) const noexcept {
-			static bool flag = true;
-			if (flag)	return flag = pred(a);
-			return false;
-		}
+    inline
+    decltype(auto)
+    operator()
+    (
+      Stream&& stream_
+    ) {
+      static_assert(
+        is_callable_v<Pred,E&>,
+        "Invalid predicate designated."
+      );
+      static_assert(
+        std::is_same<
+        bool,std::result_of_t<Pred(E&)>
+        >::value,
+        "Predicate must be return bool."
+      );
+      CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
+      auto&& src = stream_.get();
+      auto&& iter = src.begin();
+      // peel loop
+      while ( pred_(*iter) ) iter = src.erase(iter);
+      return std::forward<Stream>(stream_);
+    }
 
+    template <
+      typename T,
+      std::enable_if_t<!is_range_v<std::decay_t<T>>,std::nullptr_t> = nullptr
+    >
+    bool operator[](T&& a) const noexcept
+    {
+      static_assert(
+        is_callable_v<Pred,T&&>,
+        "Invalid predicate designated."
+      );
+      static_assert(
+        std::is_same<
+        bool,std::result_of_t<Pred(T&&)>
+        >::value,
+        "Predicate must be return bool."
+      );
 
-		Pred pred;
-	};
+      if (flag)  return flag = pred_(a);
+      return false;
+    }
+  private:
+    size_t flag = true;
+    Pred pred_;
+  };
 
 } // ! namespace operators
 } // ! namespace stream

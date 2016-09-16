@@ -33,17 +33,15 @@
 // exception
 #include "streams\exception.hpp"
 #include "streams\stream_error.hpp"
-#include "streams\stream.hpp"
-#include "streams\InfiniteStream.hpp"
-#include "streams\InfiniteOperations.hpp"
-#include "streams\StreamGenerator.hpp"
 #include "streams\detail\tag.hpp"
-#include "streams\detail\connector.hpp"
-#include "streams\detail\connections.hpp"
 #include "streams\forward.hpp"
 #include "streams\operators.hpp"
-#include "streams\utility.hpp"
 #include "streams\operatoins.hpp"
-#include "streams\intermidiate.hpp"
-#include "streams\termination.hpp"
+#include "streams\utility.hpp"
+#include "streams\adaptors.hpp"
+#include "streams\stream.hpp"
+#include "streams\InfiniteStream.hpp"
+#include "streams\StreamGenerator.hpp"
+
+
 #endif

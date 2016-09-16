@@ -6,104 +6,151 @@
 
 namespace cranberries {
 namespace streams {
+
+  template < typename T, typename Operation = operators::Identity >
+  class stream;
+
 namespace operators {
 
 
-	template < typename BinaryFunc >
-	struct AdjacentForEach;
+  template < typename BinaryFunc >
+  class AdjacentForEach;
 
-	template < typename Pred >
-	struct All;
+  template < typename Pred >
+  class AllOf;
 
-	template < typename Pred >
-	struct Any;
+  template < typename Pred >
+  class AnyOf;
 
-	template < typename Branch >
-	struct Concatenate;
+  template < typename Branch >
+  class Concatenate;
 
-	struct DistinctProxy;
+  struct DistinctProxy;
 
-	template < typename T >
-	struct Distinct;
+  template < typename T >
+  class Distinct;
 
-	template < typename Pred >
-	struct Filter;
+  template < typename Pred >
+  class Filter;
 
-	template < typename F >
-	struct Tinvoker;
+  template < typename F >
+  class Tinvoker;
 
-	template < typename F >
-	struct Iinvoker;
+  template < typename F >
+  class Iinvoker;
 
-	struct Take;
+  class Take;
 
-	struct Taker;
+  class Taker;
 
-	template < typename OldStream, typename UnaryFunc	>
-	struct Map;
+  template < typename OldStream, typename UnaryFunc  >
+  class Map;
 
-	template < typename FromStream,	typename To	>
-	struct MapTo;
+  template < typename FromStream,  typename To  >
+  class MapTo;
 
-	template < typename Pred >
-	struct None;
+  template < typename Pred >
+  class NoneOf;
 
-	template < typename F >
-	struct MapProxy;
+  template < typename F >
+  struct MapProxy;
 
-	template < typename UnaryFunc	>
-	struct Transform;
+  template < typename UnaryFunc  >
+  class Transform;
 
-	template < typename T >
-	struct PushBack;
+  struct Repetition;
 
-	struct PopBack;
+  class Reverse;
 
-	struct Repetition;
+  struct Identity;
 
-	struct Reverse;
+  class Drop;
 
-	struct Identity;
+  template < typename Pred = detail::defaulted >
+  class Sort;
 
-	struct Drop;
+  struct Splitter;
 
-	template < typename Pred = detail::defaulted >
-	struct Sort;
+  template < typename To >
+  struct MapToProxy;
 
-	struct Splitter;
+  struct Run;
 
-	template < typename To >
-	struct MapToProxy;
+  class Printer;
 
-	struct Run;
+  template < typename Pred >
+  class TakeWhile;
 
-	struct Printer;
+  template < typename UnaryOp >
+  class ForEach;
 
-	template < typename Pred >
-	struct TakeWhile;
+  template < typename UnaryOp >
+  class Peek;
 
-	template < typename UnaryOp >
-	struct ForEach;
+  template < typename Pred >
+  class DropWhile;
 
-	template < typename UnaryOp >
-	struct Peek;
+  template < typename Pred >
+  class DropperWhile;
 
-	template < typename Pred >
-	struct DropWhile;
+  template < typename Stream >
+  class MergeProxy;
 
-	template < typename Pred >
-	struct DropperWhile;
+  template < typename Rnage,bool,bool >
+  class Merge;
 
-	template < typename Stream >
-	struct MergeProxy;
+  struct UniqueProxy;
 
-	template < typename Stream >
-	struct Merge;
+  template < typename T >
+  class Unique;
+  
+  template <
+    typename InitialType = detail::defaulted,
+    typename BinaryOp = detail::defaulted
+  >
+  class Accumulate;
 
-	struct UniqueProxy;
+  class Product;
 
-	template < typename T >
-	struct Unique;
+  template < typename Pred >
+  class SumIf;
+
+  template < typename Target >
+  class Count;
+
+  template < typename Pred >
+  class CountIf;
+
+  class Average;
+
+  class Median;
+
+  class Mode;
+
+  class Stride;
+
+  class Slice;
+
+  template < typename Engine = std::mt19937 >
+  class Shuffle;
+
+  template < typename ElemType >
+  class Replace;
+
+  template < typename UnaryOp, typename New >
+  class ReplaceIf;
+
+  template < typename Range >
+  class SetUnion;
+
+  template < typename Range >
+  class SetIntersection;
+
+  template < typename Range >
+  class SetDiff;
+
+  template < typename Range >
+  class SetSymmetricDiff;
 
 } // ! namesapce operators
 } // ! namespace stream

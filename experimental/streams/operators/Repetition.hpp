@@ -7,15 +7,15 @@ namespace cranberries {
 namespace streams {
 namespace operators {
 
-	//------------------------------//
-	// Just Time Evaluate Operation //
-	//------------------------------//
+  //------------------------------//
+  // Just Time Evaluate Operation //
+  //------------------------------//
 
-	// Just Time Evaluate Operation
-	struct Repetition { size_t times; };
+  // Just Time Evaluate Operation
+  struct Repetition { size_t times; };
 
-	// Just Time Evaluate Operation
-	struct Run {};
+  // Just Time Evaluate Operation
+  struct Run {};
 
 
 

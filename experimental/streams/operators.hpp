@@ -13,8 +13,6 @@
 #include "operators\Map.hpp"
 #include "operators\MapTo.hpp"
 #include "operators\None.hpp"
-#include "operators\PopBack.hpp"
-#include "operators\PushBack.hpp"
 #include "operators\Repetition.hpp"
 #include "operators\Reverse.hpp"
 #include "operators\Identity.hpp"
@@ -27,5 +25,11 @@
 #include "operators\Unique.hpp"
 #include "operators\Merge.hpp"
 #include "operators\Peek.hpp"
+#include "operators\Reducers.hpp"
+#include "operators\Stride.hpp"
+#include "operators\Slice.hpp"
+#include "operators\Shuffle.hpp"
+#include "operators\Replace.hpp"
+#include "operators\SetOperation.hpp"
 
 #endif

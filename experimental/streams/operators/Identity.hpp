@@ -10,26 +10,24 @@ namespace operators {
 
   struct Identity
   {
-    using tree_tag = detail::not_tree;
-
     template <
-      typename STREAM,
-      std::enable_if_t<detail::is_range_v<std::decay_t<STREAM>>,std::nullptr_t> = nullptr
+      typename Stream,
+      std::enable_if_t<is_range_v<std::decay_t<Stream>>,std::nullptr_t> = nullptr
     >
     inline
     decltype(auto)
     operator()
     (
-      STREAM&& stream
+      Stream&& stream_
     )
       noexcept
     {
-      return std::forward<STREAM>(stream);
+      return std::forward<Stream>(stream_);
     }
 
     template <
       typename T,
-      std::enable_if_t<!detail::is_range_v<std::decay_t<T>>,std::nullptr_t> = nullptr
+      std::enable_if_t<!is_range_v<std::decay_t<T>>,std::nullptr_t> = nullptr
     >
     decltype(auto)
     operator()( T&& a ) {

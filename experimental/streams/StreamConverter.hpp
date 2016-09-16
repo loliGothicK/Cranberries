@@ -7,79 +7,66 @@ namespace cranberries {
 namespace streams {
 namespace detail {
 
-		//----------------------------//
-		// stream to Range Converters //
-		//----------------------------//
+    //----------------------------//
+    // stream to Range Converters //
+    //----------------------------//
 
 
-		// Converter temporary proxy object
-		// Convert stream to any container
-		template < class STREAM >
-		class ImplicitStreamConverter
-		{
-			STREAM stream_;
-		public:
-			ImplicitStreamConverter(STREAM stream) : stream_{ std::forward<STREAM>(stream) } {}
+    // Converter temporary proxy object
+    // Convert stream to any container
+    template < class Stream >
+    class ImplicitStreamConverter
+    {
+      Stream stream_;
+    public:
+      ImplicitStreamConverter(Stream stream) : stream_{ std::forward<Stream>(stream) } {}
 
-			template < typename Target >
-			inline operator Target() const {
-				return stream_. template convert<Target>();
-			}
-		};
+      template < typename Target >
+      inline operator Target() const {
+        return stream_. template convert<Target>();
+      }
+    };
 
-		// Implicit convert traits
-		struct ImplicitStreamConvertInvoker {
-			template < typename STREAM >
-			static constexpr auto invoke(STREAM&& stream) {
-				return ImplicitStreamConverter<STREAM>(std::forward<STREAM>(stream));
-			}
-		};
+    // Implicit convert traits
+    struct ImplicitStreamConvertInvoker {
+      template < typename Stream >
+      static constexpr auto invoke(Stream&& stream) {
+        return ImplicitStreamConverter<Stream>(std::forward<Stream>(stream));
+      }
+    };
 
-		// Explicit convert traits
-		template < class Target >
-		struct ExplicitStreamConverter {
-			template < typename STREAM >
-			static constexpr auto convert(STREAM&& stream) {
-				return Target{ stream.begin(), stream.end() };
-			}
-		};
-
-
-		struct ConvertAny {};
-
-		template < template<class T, class Allocator = std::allocator<T>> class Cont >
-		struct ConvertTo {
-			template < typename T >
-			using type = Cont<T>;
-		};
+    // Explicit convert traits
+    template < class Target >
+    struct ExplicitStreamConverter {
+      template < typename Stream >
+      static constexpr auto convert(Stream&& stream) {
+        return Target{ stream.begin(), stream.end() };
+      }
+    };
 
 
-		// Convert Terminate Operation
-		template <
-			typename STREAM,
-			template<class, class> class Target
-		>
-			inline constexpr decltype(auto) operator || (STREAM&& stream, ConvertTo<Target>) noexcept {
-			return ExplicitStreamConverter<
-				typename ConvertTo<Target>::template type<
-				typename std::decay_t<STREAM>::element_type
-				>
-			>::convert(std::forward<STREAM>(stream.eval()));
-		}
+    struct ConvertAny {};
+
+    template < template<class T, class Allocator = std::allocator<T>> class Cont >
+    struct ConvertTo {
+      template < typename T >
+      using type = Cont<T>;
+    };
+
 
 
 
 } // ! namespace detail
 
-	constexpr detail::ConvertAny convert{};
+  //constexpr detail::ConvertAny convert{};
 
-	template < template<class, class> class Target >
-	constexpr auto convert_to = detail::ConvertTo<Target>{};
+  //template < template<class, class> class Target >
+  //constexpr auto convert_to = detail::ConvertTo<Target>{};
 
-	inline constexpr detail::ConvertAny converter() noexcept { return{}; }
+  inline constexpr detail::ConvertAny convert() noexcept { return{}; }
 
-	template < template<class, class> class Target >
-	inline constexpr detail::ConvertTo<Target> converter() noexcept { return{}; }
+  template < template<class, class> class Target >
+  inline constexpr detail::ConvertTo<Target> convert_to() noexcept { return{}; }
 
 } // ! namespace stream
 } // ! namespace cranberries

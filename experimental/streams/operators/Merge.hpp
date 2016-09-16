@@ -2,34 +2,114 @@
 #define CRANBERRIES_STREAMS_OPERATORS_MERGE_HPP
 #include <string>
 #include <iostream>
-#include "..\detail\tag.hpp"
+#include <utility>
+#include <type_traits>
+#include "..\utility.hpp"
 
 namespace cranberries {
 namespace streams {
 namespace operators {
 
 
-  template < typename Stream >
-  struct Merge
+  template <
+    typename Range,
+    bool IsFiniteStream = detail::is_finite_stream_v<std::decay_t<Range>>,
+    bool IsInfiniteStream = detail::is_infinite_stream_v<std::decay_t<Range>>
+  >
+  class Merge
+    : private detail::IntermidiateStreamOperatorBase
   {
-    template < typename Range >
+  public:
+    Merge( Range range ) : range_{ std::forward<Range>( range ) } {}
+
+    template <
+      typename Stream,
+      typename E = typename std::decay_t<Stream>::element_type
+    >
     decltype(auto)
     operator()
     (
-      Range&& range
-    ){
-      typename std::decay_t<Range>::range_type result{};
-      auto&& lv = range.get();
-      auto&& rv = stream_.eval().get();
-      result.reserve(lv.size()+rv.size());
-      std::merge(lv.begin(), lv.end(),
-             rv.begin(), rv.end(),
-             std::back_inserter(result));
-      result.swap( lv );
-      return std::forward<Range>( range );
+      Stream&& stream_
+    ) {
+      static_assert(
+        std::is_constructible<
+          E, typename std::decay_t<Range>::value_type
+        >::value,
+        "" // TODO
+      );
+      typename std::decay_t<Stream>::range_type result{};
+      auto&& lv = stream_.get();
+      auto&& rv = range_.get();
+      lv.reserve( lv.size() + rv.size() );
+      auto&& first = lv.begin();
+      auto&& middle = lv.end();
+      lv.insert(middle, rv.begin(), rv.end());
+      std::inplace_merge( first, middle, lv.end() );
+      return std::forward<Stream>( stream_ );
     }
 
-    Stream stream_;
+    decltype( auto ) release() { return std::move( range_ ); }
+
+  private:
+    Range range_;
+  };
+
+  template <
+    typename Range
+  >
+  class Merge<
+    Range,false,false
+  >
+    : private detail::IntermidiateStreamOperatorBase
+  {
+  public:
+    Merge( Range range ) : range_{ std::forward<Range>( range ) } {}
+
+    template <
+      typename Stream,
+      typename E = typename std::decay_t<Stream>::element_type
+    >
+    decltype(auto)
+    operator()
+    (
+      Stream&& stream_
+    ) {
+      static_assert(
+        std::is_constructible<
+          E, typename std::decay_t<Range>::value_type
+        >::value,
+        "" // TODO
+      );
+      typename std::decay_t<Stream>::range_type result{};
+      auto&& lv = stream_.get();
+      lv.reserve( lv.size() + range_.size() );
+      auto&& first = lv.begin();
+      auto&& middle = lv.end();
+      lv.insert(middle, range_.begin(), range_.end());
+      std::inplace_merge( first, middle, lv.end() );
+      return std::forward<Stream>( stream_ );
+    }
+
+    decltype( auto ) release() { return stream<typename std::decay_t<Range>::value_type>{std::move( range_ )}; }
+
+    Range range_;
+  };
+
+  template <
+    typename Range
+  >
+  class Merge<
+    Range,false,true
+  >
+    : private detail::StreamOperatorBase
+  {
+  public:
+    Merge( Range range ) : range_{ std::forward<Range>( range ) } {}
+
+    decltype( auto ) release() { return std::move( range_ ); }
+
+  private:
+    Range range_;
   };
 
 
