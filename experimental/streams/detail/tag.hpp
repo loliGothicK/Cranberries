@@ -3,15 +3,16 @@
 
 namespace cranberries {
 namespace streams {
+
+  enum class opt {
+    ordered,
+    unordered,
+  };
+
 namespace detail {
 
   // Defaluted Tag
   struct defaulted {};
-
-  // for tree traits
-  struct is_tree {};
-  struct not_tree {};
-
 
 } // ! namespace detail
 } // ! namespace stream

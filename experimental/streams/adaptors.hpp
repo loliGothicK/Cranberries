@@ -104,7 +104,7 @@ namespace streams{
   template <
     typename Stream,
     typename UnaryOp,
-    typename E = typename Stream::element_type,
+    typename E = typename std::decay_t<Stream>::element_type,
     typename R = std::result_of_t<UnaryOp(E)>,
     std::enable_if_t<
       std::is_same<E, R>::value,
@@ -127,7 +127,7 @@ namespace streams{
   template <
     typename Stream,
     typename UnaryOp,
-    typename E = typename Stream::element_type,
+    typename E = typename std::decay_t<Stream>::element_type,
     typename R = std::result_of_t<UnaryOp(E)>,
     std::enable_if_t<
       !std::is_same<E, R>::value,
@@ -177,7 +177,7 @@ namespace streams{
     noexcept
   {
     static_assert(
-      std::is_same<typename Stream1::element_type, typename Stream2::element_type>::value,
+      std::is_same<typename std::decay_t<Stream1>::element_type, typename std::decay_t<Stream2>::element_type>::value,
       "Call 'concat' with different element_type."
     );
 
@@ -200,7 +200,7 @@ namespace streams{
 
   template <
     typename Stream,
-    typename E = typename Stream::elemtnet_type
+    typename E = typename std::decay_t<Stream>::elemtnet_type
   >
   inline
   decltype(auto)
@@ -234,7 +234,7 @@ namespace streams{
 
   template <
     typename Stream,
-    typename T = typename Stream::type,
+    typename T = typename std::decay_t<Stream>::element_type,
     std::enable_if_t<
       detail::is_infinite_stream_v<std::decay_t<Stream>>,
       std::nullptr_t
@@ -256,7 +256,7 @@ namespace streams{
 
   template <
     typename Stream,
-    typename T = typename std::decay_t<Stream>::type,
+    typename T = typename std::decay_t<Stream>::element_type,
     std::enable_if_t<
       detail::is_infinite_stream_v<std::decay_t<Stream>>,
       std::nullptr_t
@@ -315,7 +315,7 @@ namespace streams{
   template <
     typename Stream,
     typename Pred,
-    typename T = typename Stream::type,
+    typename T = typename std::decay_t<Stream>::element_type,
     std::enable_if_t<
       detail::is_infinite_stream_v<std::decay_t<Stream>>,
       std::nullptr_t
@@ -356,7 +356,7 @@ namespace streams{
 
   template <
     typename Stream,
-    typename T = typename std::decay_t<Stream>::type,
+    typename T = typename std::decay_t<Stream>::element_type,
     std::enable_if_t<
       detail::is_infinite_stream_v<std::decay_t<Stream>>,
       std::nullptr_t
@@ -376,7 +376,7 @@ namespace streams{
 
   template <
     typename Stream,
-    typename T = typename std::decay_t<Stream>::type,
+    typename T = typename std::decay_t<Stream>::element_type,
     std::enable_if_t<
       detail::is_infinite_stream_v<std::decay_t<Stream>>,
       std::nullptr_t
@@ -393,6 +393,28 @@ namespace streams{
   {
     return{ std::forward<Stream>( stream_ ), operators::Unique<T>{} };
   }
+
+  template <
+    typename Stream,
+    typename F,
+    typename T = typename std::decay_t<Stream>::element_type,
+    std::enable_if_t<
+    detail::is_infinite_stream_v<std::decay_t<Stream>>,
+    std::nullptr_t
+    > = nullptr
+  >
+  inline
+  StreamFlatTransformer<Stream,operators::FlatMap<F>>
+  operator >>
+  (
+    Stream&& stream_,
+    operators::FlatMap<F>&& fm_
+  )
+    noexcept
+  {
+    return{ std::forward<Stream>(stream_), std::move(fm_) };
+  }
+
 
   template <
     typename Stream

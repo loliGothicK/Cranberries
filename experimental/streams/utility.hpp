@@ -1,9 +1,63 @@
 #ifndef CRANBERRIES_STREAMS_OPERATORS_UTILITY_HPP
 #define CRANBERRIES_STREAMS_OPERATORS_UTILITY_HPP
 #include <utility>
-#include "detail/tag.hpp"
+#include <iterator>
 
 namespace cranberries {
+
+  template < typename ...Dummy >
+  using void_t = void;
+
+  template < class, class = void >
+  struct has_value_type : std::false_type
+  {};
+
+  template < class T >
+  struct has_value_type<T,
+    void_t<decltype(std::declval<typename std::decay_t<T>::value_type>())>
+  > : std::true_type
+  {};
+
+  template <
+    typename T,
+	bool B = std::is_array<T>::value
+  >
+  struct value_type_of
+  {
+    using type = std::remove_extent_t<T>;
+  };
+
+  template <
+	  typename T
+  >
+  struct value_type_of<T,false>
+  {
+	  using type = typename std::decay_t<T>::value_type;
+  };
+
+  template < typename T >
+  using value_type_of_t = typename value_type_of<T>::type;
+
+  template < class, class = void >
+  struct is_iterator : std::false_type {};
+
+  template < typename T >
+  struct is_iterator<T,
+    std::enable_if_t<
+      std::is_base_of<
+        std::input_iterator_tag,
+        typename std::iterator_traits<T>::iterator_category
+      >::value || 
+      std::is_base_of<
+        std::output_iterator_tag,
+        typename std::iterator_traits<T>::iterator_category
+      >::value
+    >
+  > : std::true_type
+  {};
+
+  template < typename T >
+  constexpr bool is_iterator_v = is_iterator<T>::value;
 
   template < typename F >
   class Finally
@@ -157,66 +211,86 @@ namespace detail{
 
 namespace detail{
 
-  struct is_range_impl1
-  {
-    template < typename T >
-    static auto check(T&& v)->decltype(begin(v), end(v), std::true_type{});
-  
-    template < typename T >
-    static std::false_type check(...);
-  };
+  template < class, class = void >
+  struct enable_std_begin_end : std::false_type
+  {};
 
-  struct is_range_impl2
-  {
-    template < typename T >
-    static auto check(T&& v)->decltype(v.begin(), v.end(), std::true_type{});
-  
-    template < typename T >
-    static std::false_type check(...);
-  };
+  template < class T >
+  struct enable_std_begin_end<T,
+    void_t<decltype( std::begin(std::declval<T>()), std::end(std::declval<T>()) )>
+  > : std::true_type
+  {};
 
-  template < typename T >
-  class is_range1 : public decltype( is_range_impl1::check<T>( std::declval<T>() ) ) {};
+  template < class, class = void >
+  struct enable_adl_begin_end : std::false_type
+  {};
 
-  template < typename T >
-  class is_range2 : public decltype( is_range_impl2::check<T>( std::declval<T>() ) ) {};
+  template < class T >
+  struct enable_adl_begin_end<T,
+    void_t<decltype( begin(std::declval<T>()), end(std::declval<T>()) )>
+  > : std::true_type
+  {};
 
 } // ! namespace detail
 
   template < typename T >
-  class is_range : public std::conditional_t<detail::is_range1<T>::value || detail::is_range2<T>::value,std::true_type,std::false_type> {};
+  struct is_range
+    : std::conditional_t<
+       detail::enable_std_begin_end<T>::value
+    || detail::enable_adl_begin_end<T>::value,
+    std::true_type,std::false_type
+    > 
+  {};
 
   template < typename T >
   constexpr bool is_range_v = is_range<std::decay_t<T>>::value;
 
-  template< typename T,typename U, typename = void >
+  template< class, class = void >
   struct is_equality_comparable : std::false_type
   {};
 
-  template< typename T, typename U >
-  struct is_equality_comparable<T,U,
-    std::enable_if_t<
-        true, 
-        decltype(std::declval<T&>() == std::declval<U&>(), (void)0)
-        >
+  template< class T >
+  struct is_equality_comparable<T,
+    void_t<decltype(std::declval<T&>() == std::declval<T&>() )>
     > : std::true_type
   {};
 
-  template< typename T >
-  struct is_equality_comparable<T,T,
-    std::enable_if_t<
-        true, 
-        decltype(std::declval<T&>() == std::declval<T&>(), (void)0)
-        >
+  template< class, class, class = void >
+  struct is_equality_comparable_to : std::false_type
+  {};
+
+
+  template< typename T, typename U >
+  struct is_equality_comparable_to<T,U,
+    void_t<decltype( std::declval<T&>() == std::declval<U&>() )>
     > : std::true_type
   {};
 
 
   template < typename T, typename U >
-  constexpr bool is_equality_comparable_to_v = is_equality_comparable<T,U>::value;
+  constexpr bool is_equality_comparable_to_v = is_equality_comparable_to<T,U>::value;
 
   template < typename T >
-  constexpr bool is_equality_comparable_v = is_equality_comparable<T,T>::value;
+  constexpr bool is_equality_comparable_v = is_equality_comparable<T>::value;
+
+namespace detail
+{
+  template < class T, class... >
+  struct is_tuple_impl : std::false_type
+  {};
+
+  template < class...Args >
+  struct is_tuple_impl<std::tuple<Args...>, void> : std::true_type
+  {};
+
+} // ! namespace detail
+  template < typename T >
+  struct is_tuple : detail::is_tuple_impl<T, void>
+  {};
+
+  template < typename T >
+  constexpr bool is_tuple_v = is_tuple<T>::value;
+
 
 namespace streams {
 namespace detail {
@@ -279,32 +353,9 @@ namespace detail {
   }
 
 
-  template < typename F, typename Range >
-  void
-  expanded_loop
-  (
-    F&& f,
-    Range&& v
-  ) {
-    size_t i{};
-    for ( ; i < v.size() % 8; ++i )
-        apply( f, v[i] );
-    for ( ; i < v.size(); i += 8 )
-    {
-        apply( f, v[i] );
-        apply( f, v[i + 1] );
-        apply( f, v[i + 2] );
-        apply( f, v[i + 3] );
-        apply( f, v[i + 4] );
-        apply( f, v[i + 5] );
-        apply( f, v[i + 6] );
-        apply( f, v[i + 7] );
-    }
-  }
-
- }
 
 
+} // ! namespace detail
 } // ! namespace stream
 
   template <

@@ -29,14 +29,14 @@ namespace operators{
     decltype(auto)
     operator()
     (
-      Stream&& range
+      Stream&& stream_
     ) {
       static_assert(
         is_callable_v<BinaryOp,InitialType&,E&>,
         "Invalid binary operator (or invalid initial type) designated."
       );
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
-      return std::accumulate( range.begin(), range.end(), init_, op_ );
+      return std::accumulate( stream_.begin(), stream_.end(), init_, op_ );
     }
   private:
     InitialType init_;

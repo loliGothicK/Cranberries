@@ -3,17 +3,71 @@
 
 using std::cout;
 using std::endl;
+using cranberries::make_finally;
+
 
 int main()
 {
   using namespace cranberries::streams;
   std::cout << std::boolalpha;
 
-  make_stream::range( 1, 6 )
-    >> replaced_if( []( auto&& a ) { return a % 2 == 0; }, 4 )
-    >> print_to();
+  auto grouped = make_stream::range( 1, 9 )
+    >> partitioning_by_hash<std::deque>( []( auto&& a ) { return a % 2 == 0; } )
+    ;
 
-  make_stream::iterate( 1, [prev2 = 0, prev1 = 0]( auto&& a )mutable{ return prev2 = prev1, prev1 = a, prev1 + prev2; } )
+  cout << "even : ";
+  for (auto&& e : grouped[true])
+    cout << e << ", ";
+  cout << endl;
+  
+  cout << "odd : ";
+  for (auto&& e : grouped[false])
+    cout << e << ", ";
+  cout << endl;
+
+  make_stream::range( 1, 4 ) // [ 1, 4 )
+    >> flat_map( []( auto const& a ) { return std::make_tuple( a, a ); } ) // [ i, i ]
+    >> print_to() // [ 1, 1, 2, 2, 3, 3 ]
+    ;
+  make_stream::range( 1, 4 ) // [ 1, 4 )
+    >> flat_map( []( auto const& a ) { return std::vector<std::decay_t<decltype(a)>>( a, a ); } ) // vector<T>( i, i )
+    >> print_to() // [ 1, 2, 2, 3, 3, 3 ]
+    ;
+  make_stream::range( 1, 4 ) // [ 1, 4 )
+    >> flat_map( []( auto const& a ) { return make_stream::range(0,a); } ) // [ 0... < i ]
+    >> print_to() // [ 0, 0, 1, 0, 1, 2 ]
+    ;
+  make_stream::counter(1)
+    >> flat_map([](auto const& a) { return std::make_tuple(a, a); }) // [ i, i ]
+    >> taken(7)
+    >> print_to()
+    ;
+
+  make_stream::cyclic( { 1, 2, 3 } )// [ 1, 2, 3, 1, 2, 3, 1, ... ]
+    >> taken( 7 )
+    >> print_to()
+    ;
+
+  std::list<int> li{ 1, 2, 3 };
+
+  make_stream::cyclic( li ) // from range
+    >> taken( 7 ) // take first nth(7th) element
+    >> print_to()
+    ;
+  make_stream::cyclic( li.begin(), li.end() ) // from iterator pair
+    >> taken( 7 )
+    >> print_to()
+    ;
+  make_stream::range( 1, 6 ) // [ 1, 6 )
+    >> replaced_if( []( auto&& a ) { return a % 2 == 0; }, 4 ) // replace odd to 4
+    >> print_to(); // [ 1, 4, 3, 4, 5 ]
+
+  // generate fibonacci series
+  // iterator stream generate i+1 th element using i th element
+  make_stream::iterate( 1,
+    [ prev = 0 ]( auto&& a ) mutable {
+      return make_finally([&]{ prev = a; }), prev + a;
+    })
     >> taken( 10 )
     >> shuffled()
     >> print_to()
@@ -54,7 +108,6 @@ int main()
     >> transformed( []( auto&& a ) { return a * 2; } )
     >> strided( 2 )
     >> sliced(2,5)
-    //>> taken(5)
     >> print_to()
     ;
 
@@ -62,9 +115,9 @@ int main()
 
   cout << ( make_stream::of( { 1,2,3,4,5,5,6,6 } ) >> mode() ) << endl;
 
-  cout << ( make_stream::range( 1, 11 ) >> sum() ) << endl;
+  cout << ( make_stream::range( 1, 11 ) >> accumulate( 1, []( auto&& a, auto&& b ) {return a*b; } ) ) << endl;
 
-  cout << ( make_stream::range( 1, 4 ) >> prod() ) << endl;
+  cout << ( make_stream::range( 1, 4 ) >> product() ) << endl;
 
   make_stream::range( 1, 7 )
     .transform( []( auto&& a ) {return a * 2; } )

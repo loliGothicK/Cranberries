@@ -17,8 +17,6 @@ namespace streams {
   >
   struct OperationTree
   {
-    using tree_tag = detail::is_tree;
-
     template <
       typename Stream
     >
@@ -248,6 +246,25 @@ namespace streams {
     ) {
       return source.insert(pos, il);
     }
+
+    iterator erase( const_iterator pos ) { return source.erase( pos ); }
+
+    iterator erase( const_iterator first, const_iterator last ) { return source.erase( first, last ); }
+
+    void swap( std::vector<T> v ) { source.swap( v ); }
+
+    reference at( size_type n ) { return source.at( n ); }
+
+    template <class InputIterator>
+    void assign( InputIterator first, InputIterator last ) { source.assign( first, last ); }
+
+    void assign( size_type n, const T& u ) { source.assign( n, u ); }
+
+    void assign( std::initializer_list<T> il ) { source.assign( il ); }
+
+    reference front() { return source.front(); }
+
+    reference back() { return source.back(); }
 
     template < typename U >
     inline void push_back(U&& v) { source.push_back(v); }
