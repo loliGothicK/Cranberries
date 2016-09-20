@@ -74,6 +74,9 @@ namespace operators {
   template < typename To >
   struct MapToProxy;
 
+  template < typename UnaryOp >
+  class FlatMap;
+
   struct Run;
 
   class Printer;
@@ -151,6 +154,21 @@ namespace operators {
 
   template < typename Range >
   class SetSymmetricDiff;
+
+  template <
+    opt Option,
+    template <class, class> class Seeq,
+    typename Keygen
+  >
+  class GroupingBy;
+
+  template <
+    opt Option,
+    template <class, class> class Seeq,
+    typename Keygen
+  >
+  class PartitioningBy;
+
 
 } // ! namesapce operators
 } // ! namespace stream

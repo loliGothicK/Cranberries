@@ -31,5 +31,8 @@
 #include "operators\Shuffle.hpp"
 #include "operators\Replace.hpp"
 #include "operators\SetOperation.hpp"
+#include "operators\FlatMap.hpp"
+#include "operators\Grouping_by.hpp"
+#include "operators\PartitioningBy.hpp"
 
 #endif

@@ -291,7 +291,7 @@ namespace streams {
   template < typename Pred >
   inline operators::SumIf<Pred> sum_if( Pred&& pred_ ) noexcept { return{ Pred_ }; }
 
-  inline operators::Product prod() noexcept { return{}; }
+  inline operators::Product product() noexcept { return{}; }
 
   inline operators::Average average() noexcept { return{}; }
 
@@ -299,9 +299,36 @@ namespace streams {
 
   inline operators::Mode mode() noexcept { return{}; }
 
+  template <
+    template <class T, class Allocator = std::allocator<T>> class Seeq = std::vector,
+    typename Keygen
+  >
+  inline operators::GrouingBy<opt::ordered, Seeq, Keygen> grouping_by( Keygen&& keygen ) { return{ std::forward<Keygen>( keygen ) }; }
+  
+  template <
+    template <class T, class Allocator = std::allocator<T>> class Seeq = std::vector,
+    typename Keygen
+  >
+  inline operators::PartitioningBy<opt::unordered, Seeq, Keygen> grouping_by_hash( Keygen&& pred ) { return{ std::forward<Keygen>( pred ) }; }
+
+  template <
+    template <class T, class Allocator = std::allocator<T>> class Seeq = std::vector,
+    typename Pred
+  >
+  inline operators::PartitioningBy<opt::ordered, Seeq, Pred> partitioning_by( Pred&& pred ) { return{ std::forward<Pred>( pred ) }; }
+
+  template <
+    template <class T, class Allocator = std::allocator<T>> class Seeq = std::vector,
+    typename Pred
+  >
+  inline operators::PartitioningBy<opt::unordered, Seeq, Pred> partitioning_by_hash( Pred&& pred ) { return{ std::forward<Pred>( pred ) }; }
+
   inline operators::Stride strided( size_t step ) noexcept { return{ step }; }
 
   inline operators::Slice sliced( size_t low, size_t up ) noexcept { return{ low,up }; }
+
+  template < typename UnaryOp >
+  inline operators::FlatMap<UnaryOp> flat_map( UnaryOp&& op ) noexcept { return{ std::forward<UnaryOp>( op ) }; }
 
   template <
     typename Pred

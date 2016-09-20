@@ -12,10 +12,16 @@ namespace cranberries {
 namespace streams {
 
   template < typename T >
-  struct Ranged{
-
-    template < typename Range >
-    decltype(auto) operator()(Range&& range){
+  struct Ranged
+  {
+    template <
+      typename Range
+    >
+    decltype(auto)
+    operator()
+    (
+      Range&& range
+    ){
       range.reserve( static_cast<size_t>((last-first)/step) );
       for ( ;first < last; first+=step )
       {
@@ -29,21 +35,24 @@ namespace streams {
     T step;
   };
 
-  template < typename T, typename Gen >
+  template <
+    typename T,
+    typename Gen
+  >
   class GenerateStream
     : private detail::InfiniteStreamBase
     , public detail::enable_men_fn_inf<GenerateStream<T,Gen>>
   {
   public:
-    using type = T;
+    using element_type = T;
 
     GenerateStream( Gen gen ) : current_{ gen() }, gen_{ std::forward<Gen>( gen ) } {}
 
-    type get() noexcept { return current_; }
+    element_type get() noexcept { return current_; }
 
-    type advance() noexcept { return current_ = gen_(); }
+    element_type advance() noexcept { return current_ = gen_(); }
 
-    type current() { return current_; }
+    element_type current() { return current_; }
 
   private:
     T current_;
@@ -56,7 +65,7 @@ namespace streams {
     , public detail::enable_men_fn_inf<IterateStream<InitType,Func>>
   {
   public:
-    using type = InitType;
+    using element_type = InitType;
 
     IterateStream( InitType init, Func func ) noexcept : current_{ init }, next_{ std::forward<Func>(func) } {}
     IterateStream( InitType init ) noexcept : current_{ init }, next_{} {}
@@ -64,15 +73,54 @@ namespace streams {
     IterateStream( IterateStream&& ) = default;
     IterateStream& operator=( IterateStream&& ) = default;
 
-    type get() noexcept { return current_; }
+    element_type get() noexcept { return current_; }
 
-    type advance() noexcept { return current_ = next_( current_ ); }
+    element_type advance() noexcept { return current_ = next_( current_ ); }
 
-    type current() { return current_; }
+    element_type current() { return current_; }
 
   private:
     std::decay_t<InitType> current_;
     Func next_;
+  };
+
+  template < typename T >
+  class CyclicStream
+    : private detail::InfiniteStreamBase
+    , public detail::enable_men_fn_inf<CyclicStream<T>>
+  {
+  public:
+
+    using element_type = T;
+
+    template <
+      typename Range,
+      std::enable_if_t<is_range_v<std::decay_t<Range>>,std::nullptr_t> = nullptr
+    >
+    CyclicStream( Range&& range ) : cycle_{ range.begin(), range.end() }, current_{cycle_.begin()} {}
+
+   template <
+      typename Iterator,
+      std::enable_if_t<
+        is_iterator_v<Iterator>
+     && std::is_same<T, typename Iterator::value_type>::value,
+        std::nullptr_t
+      > = nullptr
+    >
+    CyclicStream( Iterator first, Iterator last ) : cycle_{ first, last }, current_{cycle_.begin()} {}
+
+
+    CyclicStream( std::initializer_list<T> il ) : cycle_{ il }, current_{cycle_.begin()} {}
+
+    element_type get() { return *current_; }
+
+    element_type advance() { return *( ++current_ == cycle_.end() ? (current_ = cycle_.begin()) : current_ ); }
+
+    element_type current() { return *current_; }
+
+  private:
+    std::vector<T> cycle_;
+    typename std::vector<T>::iterator current_;
   };
 
   template <
@@ -84,7 +132,7 @@ namespace streams {
     , public detail::enable_men_fn_inf<StreamOperator<Stream,Operator>>
   {
   public:
-    using type = decltype( std::declval<Stream>().get() );
+    using element_type = typename std::decay_t<Stream>::element_type;
 
     StreamOperator( Stream x, Operator op ) noexcept
       : current_{ op[ x.get() ] }
@@ -92,14 +140,14 @@ namespace streams {
       , op_{ std::forward<Operator>(op) }
     {}
 
-    type get() noexcept { return current_; }
+    element_type get() noexcept { return current_; }
 
-    type advance() noexcept { return current_ = op_[stream_.advance(),stream_.get()]; }
+    element_type advance() noexcept { return current_ = op_[stream_.advance(),stream_.get()]; }
 
-    type current() { return current_; }
+    element_type current() { return current_; }
 
   private:
-    type current_;
+    element_type current_;
     Stream stream_;
     Operator op_;
   };
@@ -113,24 +161,163 @@ namespace streams {
     , public detail::enable_men_fn_inf<StreamFilter<Stream,Filter>>
   {
   public:
-    using type = typename std::decay_t<Stream>::type;
+    using element_type = typename std::decay_t<Stream>::element_type;
 
     StreamFilter( Stream x, Filter pred ) noexcept : stream_{ std::forward<Stream>(x) }, pred_{ std::forward<Filter>(pred) } {}
 
-    type get() noexcept {
+    element_type get() noexcept {
       while ( pred_[stream_.get()] ) advance();
       return stream_.current();
     }
 
-    type advance() noexcept {
+    element_type advance() noexcept {
       return stream_.advance();
     }
 
-    type current() { return stream_.current(); }
+    element_type current() { return stream_.current(); }
 
   private:
     Stream stream_;
     Filter pred_;
+  };
+
+  namespace {
+  namespace workaround {
+  
+  template <
+    bool IsStream
+  >
+    struct for_msvc
+  {
+    template <
+      typename Stream,
+      typename Range
+    >
+    static
+    void
+    invoke
+    (
+      Stream&& stream_,
+      Range&& proj_
+    ) {
+      stream_.insert(stream_.end(), proj_.rbegin(), proj_.rend());
+    }
+  };
+
+  template < >
+  struct for_msvc<true>
+  {
+    template <
+      typename Stream,
+      typename Range
+    >
+    static
+    void
+    invoke
+    (
+      Stream&& stream_,
+      Range&& proj_
+    ) {
+      proj_.eval();
+      stream_.insert(stream_.end(), proj_.rbegin(), proj_.rend());
+    }
+  };
+
+} // ! namespace workaround
+} // ! anonymous-namespace
+
+
+  template <
+    typename Stream,
+    typename Operator
+  >
+  class StreamFlatTransformer
+    : private detail::InfiniteStreamBase
+    , public detail::enable_men_fn_inf<StreamFlatTransformer<Stream,Operator>>
+  {
+  public:
+    using element_type = typename std::decay_t<Stream>::element_type;
+
+    StreamFlatTransformer(Stream x, Operator op)
+      : stream_{ std::forward<Stream>(x) }
+      , op_{ std::forward<Operator>(op) }
+      , proj_{}
+    {
+      push(op_[stream_.get()]);
+    }
+
+    template <
+      typename T
+    >
+    void
+    push_tuple
+    (
+      T&& arg
+    ) {
+      proj_.emplace_back(std::move(arg));
+    }
+
+    template <
+      typename Head,
+      typename ...Tail
+    >
+    void
+    push_tuple(
+      Head&& head,
+      Tail&& ...tail
+    ) {
+      return push_tuple(std::forward<Tail>(tail)...), proj_.emplace_back(std::move(head));
+    }
+
+    template <
+      typename Range,
+      std::enable_if_t<is_range_v<std::decay_t<Range>>,std::nullptr_t> = nullptr
+    >
+    void
+    push
+    (
+      Range&& range
+    )
+      noexcept
+    {
+      workaround::for_msvc<
+        detail::is_finite_stream_v<std::decay_t<Range>>
+      >::invoke(proj_, std::forward<Range>(range));
+    }
+
+    template <
+      typename Tuple,
+      std::enable_if_t<is_tuple_v<std::decay_t<Tuple>>, std::nullptr_t> = nullptr
+    >
+    void
+    push
+    (
+      Tuple&& tup
+    )
+      noexcept
+    {
+      apply( [&](auto&& ...args) { push_tuple(std::forward<decltype(args)>(args)...); }, std::forward<Tuple>(tup) );
+    }
+
+
+
+    element_type get() noexcept { return proj_.back(); }
+
+    element_type advance() noexcept {
+      proj_.pop_back();
+      if (proj_.empty()) {
+        stream_.advance();
+        push(op_[stream_.get()]);
+      }
+      return proj_.back();
+    }
+
+    element_type current() noexcept { return proj_.back(); }
+
+  private:
+    Stream stream_;
+    Operator op_;
+    std::vector<element_type> proj_;
   };
 
   template <
@@ -144,7 +331,7 @@ namespace streams {
     , public detail::enable_men_fn_inf<StreamMerger<Stream1,Stream2,IsFinite1,IsFinite2>>
   {
     static_assert(!(IsFinite1&&IsFinite2),"internal critical error!");
-    using type = decltype( std::declval<Stream1>().get() );
+    using element_type = typename std::decay_t<Stream1>::element_type;
 
     StreamMerger( Stream1 x, Stream2 y ) noexcept
       : current_{ x.get() <= y.get() ? x.get() : y.get() }
@@ -153,11 +340,11 @@ namespace streams {
       , flag{ x.current() <= y.current() }
     {}
 
-    type get() noexcept {
+    element_type get() noexcept {
       return current_;
     }
 
-    type advance() noexcept {
+    element_type advance() noexcept {
       return current_ =
         flag
         ? ( stream_1.advance(), stream_1.get() <= stream_2.get() )
@@ -168,10 +355,10 @@ namespace streams {
         : ( flag = false, stream_2.get() );
     }
 
-    type current() { return current_; }
+    element_type current() { return current_; }
 
   private:
-    type current_;
+    element_type current_;
     Stream1 stream_1;
     Stream2 stream_2;
     bool flag;
@@ -188,7 +375,7 @@ namespace streams {
     : private detail::InfiniteStreamBase
     , public detail::enable_men_fn_inf<StreamMerger<Stream1,Stream2,true,false>>
   {
-    using type = typename std::decay_t<Stream1>::element_type;
+    using element_type = typename std::decay_t<Stream1>::element_type;
 
     StreamMerger( Stream1 x, Stream2 y ) noexcept
       : current_{ x.current() <= y.get() ? x.current() : y.get() }
@@ -197,9 +384,9 @@ namespace streams {
       , flag{ x.current() <= y.current() }
     {}
 
-    type get() noexcept { return current_; }
+    element_type get() noexcept { return current_; }
 
-    type advance() noexcept {
+    element_type advance() noexcept {
       if ( flag ) {
         return current_ = stream_1.is_next()
           ? stream_1.current() <= stream_2.get()
@@ -215,10 +402,10 @@ namespace streams {
       }
     }
 
-    type current() { return current_; }
+    element_type current() { return current_; }
 
   private:
-    type current_;
+    element_type current_;
     Stream1 stream_1;
     Stream2 stream_2;
     bool flag;
@@ -236,7 +423,7 @@ namespace streams {
     : private detail::InfiniteStreamBase
     , public detail::enable_men_fn_inf<StreamMerger<Stream1,Stream2,false,true>>
   {
-    using type = decltype(std::declval<Stream1>().get());
+    using element_type = decltype(std::declval<Stream1>().get());
 
     StreamMerger( Stream1 x, Stream2 y ) noexcept
       : current_{ x.get() <= y.current() ? x.get() : y.current() }
@@ -245,9 +432,9 @@ namespace streams {
       , flag{ x.current() <= y.current() }
     {}
 
-    type get() noexcept { return current_; }
+    element_type get() noexcept { return current_; }
 
-    type advance() noexcept {
+    element_type advance() noexcept {
       if ( flag ) {
         return current_ = stream_2.is_end()
           ? ( flag = false, stream_1.advance(), stream_1.current() )
@@ -263,10 +450,10 @@ namespace streams {
       }
     }
 
-    type current() { return current_; }
+    element_type current() { return current_; }
 
   private:
-    type current_;
+    element_type current_;
     Stream1 stream_1;
     Stream2 stream_2;
     bool flag;
@@ -286,7 +473,7 @@ namespace streams {
       "" // TODO
     );
   public:
-    using type = typename std::decay_t<Stream1>::element_type;
+    using element_type = typename std::decay_t<Stream1>::element_type;
 
     StreamConcatenator
     (
@@ -297,9 +484,9 @@ namespace streams {
       , current_{ stream_1.current() }
     {}
 
-    type get() { return current_; }
+    element_type get() { return current_; }
 
-    type advance() {
+    element_type advance() {
       if ( flag )
       {
         return current_ =
@@ -313,12 +500,12 @@ namespace streams {
       }
     }
 
-    type current() { return current_; }
+    element_type current() { return current_; }
 
   private:
     Stream1 stream_1;
     Stream2 stream_2;
-    type current_;
+    element_type current_;
     bool flag = true;
   };
 

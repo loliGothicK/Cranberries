@@ -215,8 +215,58 @@ namespace streams {
       return stream<T>{std::vector<T>(lim, val)};
     }
 
+    template <
+      typename Range,
+      typename T = typename std::decay_t<Range>::value_type,
+      std::enable_if_t<
+        is_range_v<std::decay_t<Range>>,
+        std::nullptr_t
+      > = nullptr
+    >
+    static
+    auto
+    cyclic
+    (
+      Range&& range
+    )
+      noexcept
+    {
+      return CyclicStream<T>{ std::forward<Range>(range) };
+    }
 
+    template <
+      typename T
+    >
+    static
+    auto
+    cyclic
+    (
+      std::initializer_list<T> il
+    )
+      noexcept
+    {
+      return CyclicStream<T>{ il };
+    }
 
+    template <
+      typename Iterator,
+      typename T = typename Iterator::value_type,
+      std::enable_if_t<
+        is_iterator_v<Iterator>,
+        std::nullptr_t
+      > = nullptr
+    >
+    static
+    auto
+    cyclic
+    (
+      Iterator first,
+      Iterator last
+    )
+      noexcept
+    {
+      return CyclicStream<T>{ first, last };
+    }
 
     //------------------------------------------------------//
 
