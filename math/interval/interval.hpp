@@ -20,7 +20,7 @@
 
 using std::nextafter;
 
-namespace Cranberries
+namespace cranberries
 {
   /*  version  */
   enum class version_tag
@@ -671,7 +671,7 @@ namespace Cranberries
       return interval<T>{ -constants::one<T>(), constants::one<T>() };
     }
     /*  base point reset  */
-    auto pi = Cranberries::constants::pi<T>();
+    auto pi = cranberries::constants::pi<T>();
     DOWNWARD_POLICY;
     auto base1 = std::ceil( a / ( 2. * pi ) );
     auto base2 = std::ceil( a / ( 2. * pi ) - 0.5 );
@@ -738,7 +738,7 @@ namespace Cranberries
       return interval<T>{ -constants::one<T>(), constants::one<T>() };
     }
     /*  base point reset  */
-    auto pi = Cranberries::constants::pi<T>();
+    auto pi = cranberries::constants::pi<T>();
     DOWNWARD_POLICY;
     auto base1 = std::ceil( a / ( 2. * pi ) - 0.25 );
     auto base2 = std::ceil( a / ( 2. * pi ) - 0.75 );
@@ -1900,12 +1900,12 @@ namespace Cranberries
   auto y = hull( 1.2, 1.8 ) ;
   x < y ; // OK! default ordering_policy is total_ordering_policy.
   {
-  using namespace Cranberries::weak_ordering::policy; // valid. only constants::one ordering_policy.
+  using namespace cranberries::weak_ordering::policy; // valid. only constants::one ordering_policy.
   y < x ; // OK! equals weal_less( y, x ) ;
   }
   {
-  using namespace Cranberries::weak_ordering::policy;
-  using namespace Cranberries::weak_ordering::policy; // invalid! Two or more ordering_policy.
+  using namespace cranberries::weak_ordering::policy;
+  using namespace cranberries::weak_ordering::policy; // invalid! Two or more ordering_policy.
   x < y ; // overload conflict occur.
   }
   - end example ]
@@ -4563,11 +4563,11 @@ namespace Cranberries
   {
     switch ( x )
     {
-    case Cranberries::interval_ordering::less:
+    case cranberries::interval_ordering::less:
       return std::string( "less" );
-    case Cranberries::interval_ordering::greater:
+    case cranberries::interval_ordering::greater:
       return std::string( "greater" );
-    case Cranberries::interval_ordering::unordered:
+    case cranberries::interval_ordering::unordered:
       return std::string( "unordered" );
     default:
       return std::string( "niether" );
@@ -4579,11 +4579,11 @@ namespace Cranberries
   {
     switch ( x )
     {
-    case Cranberries::partial_ordering::less:
+    case cranberries::partial_ordering::less:
       return std::string( "less" );
-    case Cranberries::partial_ordering::greater:
+    case cranberries::partial_ordering::greater:
       return std::string( "greater" );
-    case Cranberries::partial_ordering::unordered:
+    case cranberries::partial_ordering::unordered:
       return std::string( "unordered" );
     default:
       return std::string( "niether" );
@@ -4595,11 +4595,11 @@ namespace Cranberries
   {
     switch ( x )
     {
-    case Cranberries::weak_ordering::less:
+    case cranberries::weak_ordering::less:
       return std::string( "less" );
-    case Cranberries::weak_ordering::greater:
+    case cranberries::weak_ordering::greater:
       return std::string( "greater" );
-    case Cranberries::weak_ordering::equivalent:
+    case cranberries::weak_ordering::equivalent:
       return std::string( "equivalent" );
     default:
       return std::string( "niether" );
@@ -4611,11 +4611,11 @@ namespace Cranberries
   {
     switch ( x )
     {
-    case Cranberries::total_ordering::less:
+    case cranberries::total_ordering::less:
       return std::string( "less" );
-    case Cranberries::total_ordering::greater:
+    case cranberries::total_ordering::greater:
       return std::string( "greater" );
-    case Cranberries::total_ordering::equal:
+    case cranberries::total_ordering::equal:
       return std::string( "equal" );
     default:
       return std::string( "niether" );
@@ -4627,29 +4627,29 @@ namespace Cranberries
   {
     switch ( x )
     {
-    case Cranberries::interval_relation::interval_less:
+    case cranberries::interval_relation::interval_less:
       return std::string( "interval_less" );
-    case Cranberries::interval_relation::interval_greater:
+    case cranberries::interval_relation::interval_greater:
       return std::string( "interval_greater" );
-    case Cranberries::interval_relation::partial_less:
+    case cranberries::interval_relation::partial_less:
       return std::string( "partial_less" );
-    case Cranberries::interval_relation::partial_greater:
+    case cranberries::interval_relation::partial_greater:
       return std::string( "partial_greater" );
-    case Cranberries::interval_relation::weak_less:
+    case cranberries::interval_relation::weak_less:
       return std::string( "weak_less" );
-    case Cranberries::interval_relation::weak_greater:
+    case cranberries::interval_relation::weak_greater:
       return std::string( "weak_greater" );
-    case Cranberries::interval_relation::total_less:
+    case cranberries::interval_relation::total_less:
       return std::string( "total_less" );
-    case Cranberries::interval_relation::total_greater:
+    case cranberries::interval_relation::total_greater:
       return std::string( "total_greater" );
-    case Cranberries::interval_relation::contain:
+    case cranberries::interval_relation::contain:
       return std::string( "contain" );
-    case Cranberries::interval_relation::part_of:
+    case cranberries::interval_relation::part_of:
       return std::string( "part_of" );
-    case Cranberries::interval_relation::equal:
+    case cranberries::interval_relation::equal:
       return std::string( "equal" );
-    case Cranberries::interval_relation::niether:
+    case cranberries::interval_relation::niether:
       return std::string( "niether" );
     }
     CRANBERRIES_LOGIC_ERROR_THROW_WITH_MSG( "unknown enumerator." )
@@ -4725,7 +4725,7 @@ namespace Cranberries
   auto x = hull( 1.0L, 2.0L ) ;
   auto y = hull( -1.0L, 1.0L ) ;
   {
-  using namespace Cranberries::nomal_accuracy;
+  using namespace cranberries::nomal_accuracy;
   x - x //  returns [ -1.0L, 1.0L ]
   y - y //  returns [ -1.0L, 1.0L ]
   x / x //  returns [ 0.5L, 2.0L ]
@@ -6219,7 +6219,7 @@ namespace Cranberries
   /*  function returns interval into C style string  */
 
   template < typename T >
-  inline const char* Cranberries::interval<T>::c_str() const noexcept
+  inline const char* cranberries::interval<T>::c_str() const noexcept
   {
     auto s = new std::string( "[ " + std::to_string( this->lower() ) + ", " + std::to_string( this->upper() ) + " ]" );
     return s->c_str();
@@ -6633,51 +6633,51 @@ namespace Cranberries
   /*  Interval Ordering  */
 
   template < typename L, typename R >
-  inline Cranberries::interval_ordering interval_order( interval<L> const& x, interval<R> const& y ) noexcept
+  inline cranberries::interval_ordering interval_order( interval<L> const& x, interval<R> const& y ) noexcept
   {
     if ( interval_less( x, y ) )
     {
-      return Cranberries::interval_ordering::less;
+      return cranberries::interval_ordering::less;
     }
     else if ( interval_greater( x, y ) )
     {
-      return Cranberries::interval_ordering::greater;
+      return cranberries::interval_ordering::greater;
     }
-    return Cranberries::interval_ordering::unordered;
+    return cranberries::interval_ordering::unordered;
   }
 
   template < typename L, typename R >
-  inline Cranberries::interval_ordering interval_order( R const& x, interval<L> const& y ) noexcept
+  inline cranberries::interval_ordering interval_order( R const& x, interval<L> const& y ) noexcept
   {
     if ( interval_less( x, y ) )
     {
-      return Cranberries::interval_ordering::less;
+      return cranberries::interval_ordering::less;
     }
     else if ( interval_greater( x, y ) )
     {
-      return Cranberries::interval_ordering::greater;
+      return cranberries::interval_ordering::greater;
     }
-    return Cranberries::interval_ordering::unordered;
+    return cranberries::interval_ordering::unordered;
   }
 
   template < typename L, typename R >
-  inline Cranberries::interval_ordering interval_order( interval<L> const& x, R const& y ) noexcept
+  inline cranberries::interval_ordering interval_order( interval<L> const& x, R const& y ) noexcept
   {
     if ( interval_less( x, y ) )
     {
-      return Cranberries::interval_ordering::less;
+      return cranberries::interval_ordering::less;
     }
     else if ( interval_greater( x, y ) )
     {
-      return Cranberries::interval_ordering::greater;
+      return cranberries::interval_ordering::greater;
     }
-    return Cranberries::interval_ordering::unordered;
+    return cranberries::interval_ordering::unordered;
   }
 
   /*  Partial Ordering  */
 
   template < typename L, typename R >
-  inline Cranberries::partial_ordering partial_order( interval<L> const& x, interval<R> const& y ) noexcept
+  inline cranberries::partial_ordering partial_order( interval<L> const& x, interval<R> const& y ) noexcept
   {
     if ( partial_less( x, y ) )
     {
@@ -6691,7 +6691,7 @@ namespace Cranberries
   }
 
   template < typename L, typename R >
-  inline Cranberries::partial_ordering partial_order( R const& x, interval<L> const& y ) noexcept
+  inline cranberries::partial_ordering partial_order( R const& x, interval<L> const& y ) noexcept
   {
     if ( partial_less( x, y ) )
     {
@@ -6705,7 +6705,7 @@ namespace Cranberries
   }
 
   template < typename L, typename R >
-  inline Cranberries::partial_ordering partial_order( interval<L> const& x, R const& y ) noexcept
+  inline cranberries::partial_ordering partial_order( interval<L> const& x, R const& y ) noexcept
   {
     if ( partial_less( x, y ) )
     {
@@ -6721,7 +6721,7 @@ namespace Cranberries
   /*  Weak ordering  */
 
   template < typename L, typename R >
-  inline Cranberries::weak_ordering weak_order( interval<L> const& x, interval<R> const& y ) noexcept
+  inline cranberries::weak_ordering weak_order( interval<L> const& x, interval<R> const& y ) noexcept
   {
     if ( weak_less( x, y ) )
     {
@@ -6735,7 +6735,7 @@ namespace Cranberries
   }
 
   template < typename L, typename R >
-  inline Cranberries::weak_ordering weak_order( R const& x, interval<L> const& y ) noexcept
+  inline cranberries::weak_ordering weak_order( R const& x, interval<L> const& y ) noexcept
   {
     if ( weak_less( x, y ) )
     {
@@ -6749,7 +6749,7 @@ namespace Cranberries
   }
 
   template < typename L, typename R >
-  inline Cranberries::weak_ordering weak_order( interval<L> const& x, R const& y ) noexcept
+  inline cranberries::weak_ordering weak_order( interval<L> const& x, R const& y ) noexcept
   {
     if ( weak_less( x, y ) )
     {
@@ -6765,7 +6765,7 @@ namespace Cranberries
   /*  Total Ordering  */
 
   template < typename L, typename R >
-  inline Cranberries::total_ordering total_order( interval<L> const& x, interval<R> const& y ) noexcept
+  inline cranberries::total_ordering total_order( interval<L> const& x, interval<R> const& y ) noexcept
   {
     if ( total_less( x, y ) )
     {
@@ -6779,7 +6779,7 @@ namespace Cranberries
   }
 
   template < typename L, typename R >
-  inline Cranberries::total_ordering total_order( R const& x, interval<L> const& y ) noexcept
+  inline cranberries::total_ordering total_order( R const& x, interval<L> const& y ) noexcept
   {
     if ( total_less( x, y ) )
     {
@@ -6793,7 +6793,7 @@ namespace Cranberries
   }
 
   template < typename L, typename R >
-  inline Cranberries::total_ordering total_order( interval<L> const& x, R const& y ) noexcept
+  inline cranberries::total_ordering total_order( interval<L> const& x, R const& y ) noexcept
   {
     if ( total_less( x, y ) )
     {
@@ -7963,6 +7963,6 @@ namespace Cranberries
     }
   }
 
-}//end namespace Cranberries
+}//end namespace cranberries
 
 #endif //!CRANBERRIES_INTERVAL

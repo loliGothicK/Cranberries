@@ -4,55 +4,55 @@
 #include <stdexcept>
 #include <string>
 
-#define CRANBERRIES_RUNTIME_ERROR_THROW_IF( EXPR ) if( EXPR ){ throw Cranberries::runtime_error("runtime_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_RUNTIME_ERROR_THROW_ELSE_IF( EXPR ) else if( EXPR ){ throw Cranberries::runtime_error("runtime_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_RUNTIME_ERROR_THROW_ELSE else{ throw Cranberries::runtime_error("runtime_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_RUNTIME_ERROR_THROW_WITH_MSG_IF( EXPR, MESSAGE ) if( EXPR ){ throw Cranberries::runtime_error("runtime_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
-#define CRANBERRIES_RUNTIME_ERROR_THROW_WITH_MSG_ELSE_IF( EXPR, MESSAGE ) else if( EXPR ){ throw Cranberries::runtime_error("runtime_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
-#define CRANBERRIES_RUNTIME_ERROR_THROW_WITH_MSG_ELSE( MESSAGE ) else{ throw Cranberries::runtime_error("runtime_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, Cranberries::message_tag{} ); }
-#define CRANBERRIES_RUNTIME_ERROR_THROW_WITH_MSG( MESSAGE ) throw Cranberries::runtime_error("runtime_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, Cranberries::message_tag{} );
+#define CRANBERRIES_RUNTIME_ERROR_THROW_IF( EXPR ) if( EXPR ){ throw cranberries::runtime_error("runtime_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_RUNTIME_ERROR_THROW_ELSE_IF( EXPR ) else if( EXPR ){ throw cranberries::runtime_error("runtime_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_RUNTIME_ERROR_THROW_ELSE else{ throw cranberries::runtime_error("runtime_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_RUNTIME_ERROR_THROW_WITH_MSG_IF( EXPR, MESSAGE ) if( EXPR ){ throw cranberries::runtime_error("runtime_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
+#define CRANBERRIES_RUNTIME_ERROR_THROW_WITH_MSG_ELSE_IF( EXPR, MESSAGE ) else if( EXPR ){ throw cranberries::runtime_error("runtime_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
+#define CRANBERRIES_RUNTIME_ERROR_THROW_WITH_MSG_ELSE( MESSAGE ) else{ throw cranberries::runtime_error("runtime_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, cranberries::message_tag{} ); }
+#define CRANBERRIES_RUNTIME_ERROR_THROW_WITH_MSG( MESSAGE ) throw cranberries::runtime_error("runtime_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, cranberries::message_tag{} );
 
-#define CRANBERRIES_RANGE_ERROR_THROW_IF( EXPR ) if( EXPR ){ throw Cranberries::range_error( "range_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_RANGE_ERROR_THROW_ELSE_IF( EXPR ) else if( EXPR ){ throw Cranberries::range_error( "range_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_RANGE_ERROR_THROW_ELSE else{ throw Cranberries::range_error( "range_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_RANGE_ERROR_THROW_WITH_MSG_IF( EXPR, MESSAGE ) if( EXPR ){ throw Cranberries::range_error( "range_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
-#define CRANBERRIES_RANGE_ERROR_THROW_WITH_MSG_ELSE_IF( EXPR, MESSAGE ) else if( EXPR ){ throw Cranberries::range_error( "range_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
-#define CRANBERRIES_RANGE_ERROR_THROW_WITH_MSG_ELSE( MESSAGE ) else{ throw Cranberries::range_error( "range_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, Cranberries::message_tag{} ); }
-#define CRANBERRIES_RANGE_ERROR_THROW_WITH_MSG( MESSAGE ) throw Cranberries::range_error( "range_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, Cranberries::message_tag{} );
+#define CRANBERRIES_RANGE_ERROR_THROW_IF( EXPR ) if( EXPR ){ throw cranberries::range_error( "range_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_RANGE_ERROR_THROW_ELSE_IF( EXPR ) else if( EXPR ){ throw cranberries::range_error( "range_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_RANGE_ERROR_THROW_ELSE else{ throw cranberries::range_error( "range_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_RANGE_ERROR_THROW_WITH_MSG_IF( EXPR, MESSAGE ) if( EXPR ){ throw cranberries::range_error( "range_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
+#define CRANBERRIES_RANGE_ERROR_THROW_WITH_MSG_ELSE_IF( EXPR, MESSAGE ) else if( EXPR ){ throw cranberries::range_error( "range_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
+#define CRANBERRIES_RANGE_ERROR_THROW_WITH_MSG_ELSE( MESSAGE ) else{ throw cranberries::range_error( "range_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, cranberries::message_tag{} ); }
+#define CRANBERRIES_RANGE_ERROR_THROW_WITH_MSG( MESSAGE ) throw cranberries::range_error( "range_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, cranberries::message_tag{} );
 
-#define CRANBERRIES_OVER_FLOW_THROW_IF( EXPR ) if( EXPR ){ throw Cranberries::over_flow( "over_flow", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_OVER_FLOW_THROW_ELSE_IF( EXPR ) else if( EXPR ){ throw Cranberries::over_flow( "over_flow", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_OVER_FLOW_THROW_ELSE else{ throw Cranberries::over_flow( "over_flow", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_OVER_FLOW_THROW_WITH_MSG_IF( EXPR, MESSAGE ) if( EXPR ){ throw Cranberries::over_flow( "over_flow", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
-#define CRANBERRIES_OVER_FLOW_THROW_WITH_MSG_ELSE_IF( EXPR, MESSAGE ) else if( EXPR ){ throw Cranberries::over_flow( "over_flow", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
-#define CRANBERRIES_OVER_FLOW_THROW_WITH_MSG_ELSE( MESSAGE ) else{ throw Cranberries::over_flow( "over_flow", __FILE__, __FUNCTION__, __LINE__, MESSAGE, Cranberries::message_tag{} ); }
-#define CRANBERRIES_OVER_FLOW_THROW_WITH_MSG( MESSAGE ) throw Cranberries::over_flow( "over_flow", __FILE__, __FUNCTION__, __LINE__, MESSAGE, Cranberries::message_tag{} );
+#define CRANBERRIES_OVER_FLOW_THROW_IF( EXPR ) if( EXPR ){ throw cranberries::over_flow( "over_flow", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_OVER_FLOW_THROW_ELSE_IF( EXPR ) else if( EXPR ){ throw cranberries::over_flow( "over_flow", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_OVER_FLOW_THROW_ELSE else{ throw cranberries::over_flow( "over_flow", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_OVER_FLOW_THROW_WITH_MSG_IF( EXPR, MESSAGE ) if( EXPR ){ throw cranberries::over_flow( "over_flow", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
+#define CRANBERRIES_OVER_FLOW_THROW_WITH_MSG_ELSE_IF( EXPR, MESSAGE ) else if( EXPR ){ throw cranberries::over_flow( "over_flow", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
+#define CRANBERRIES_OVER_FLOW_THROW_WITH_MSG_ELSE( MESSAGE ) else{ throw cranberries::over_flow( "over_flow", __FILE__, __FUNCTION__, __LINE__, MESSAGE, cranberries::message_tag{} ); }
+#define CRANBERRIES_OVER_FLOW_THROW_WITH_MSG( MESSAGE ) throw cranberries::over_flow( "over_flow", __FILE__, __FUNCTION__, __LINE__, MESSAGE, cranberries::message_tag{} );
 
-#define CRANBERRIES_DOMAIN_ERROR_THROW_IF( EXPR ) if( EXPR ){ throw Cranberries::domain_error( "domain_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_DOMAIN_ERROR_THROW_ELSE_IF( EXPR ) else if( EXPR ){ throw Cranberries::domain_error( "domain_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_DOMAIN_ERROR_THROW_ELSE else{ throw Cranberries::domain_error( "domain_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG_IF( EXPR, MESSAGE ) if( EXPR ){ throw Cranberries::domain_error( "domain_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
-#define CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG_ELSE_IF( EXPR, MESSAGE ) else if( EXPR ){ throw Cranberries::domain_error( "domain_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
-#define CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG_ELSE( MESSAGE ) else{ throw Cranberries::domain_error( "domain_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, Cranberries::message_tag{} ); }
-#define CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( MESSAGE ) throw Cranberries::domain_error( "domain_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, Cranberries::message_tag{} );
+#define CRANBERRIES_DOMAIN_ERROR_THROW_IF( EXPR ) if( EXPR ){ throw cranberries::domain_error( "domain_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_DOMAIN_ERROR_THROW_ELSE_IF( EXPR ) else if( EXPR ){ throw cranberries::domain_error( "domain_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_DOMAIN_ERROR_THROW_ELSE else{ throw cranberries::domain_error( "domain_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG_IF( EXPR, MESSAGE ) if( EXPR ){ throw cranberries::domain_error( "domain_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
+#define CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG_ELSE_IF( EXPR, MESSAGE ) else if( EXPR ){ throw cranberries::domain_error( "domain_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
+#define CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG_ELSE( MESSAGE ) else{ throw cranberries::domain_error( "domain_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, cranberries::message_tag{} ); }
+#define CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( MESSAGE ) throw cranberries::domain_error( "domain_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, cranberries::message_tag{} );
 
-#define CRANBERRIES_LOGIC_ERROR_THROW_IF( EXPR ) if( EXPR ){ throw Cranberries::logic_error( "logic_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_LOGIC_ERROR_THROW_ELSE_IF( EXPR ) else if( EXPR ){ throw Cranberries::logic_error( "logic_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_LOGIC_ERROR_THROW_ELSE else{ throw Cranberries::logic_error( "logic_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_LOGIC_ERROR_THROW_WITH_MSG_IF( EXPR, MESSAGE ) if( EXPR ){ throw Cranberries::logic_error( "logic_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
-#define CRANBERRIES_LOGIC_ERROR_THROW_WITH_MSG_ELSE_IF( EXPR, MESSAGE ) else if( EXPR ){ throw Cranberries::logic_error( "logic_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
-#define CRANBERRIES_LOGIC_ERROR_THROW_WITH_MSG_ELSE( MESSAGE ) else{ throw Cranberries::logic_error( "logic_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, Cranberries::message_tag{} ); }
-#define CRANBERRIES_LOGIC_ERROR_THROW_WITH_MSG( MESSAGE ) throw Cranberries::logic_error( "logic_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, Cranberries::message_tag{} );
+#define CRANBERRIES_LOGIC_ERROR_THROW_IF( EXPR ) if( EXPR ){ throw cranberries::logic_error( "logic_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_LOGIC_ERROR_THROW_ELSE_IF( EXPR ) else if( EXPR ){ throw cranberries::logic_error( "logic_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_LOGIC_ERROR_THROW_ELSE else{ throw cranberries::logic_error( "logic_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_LOGIC_ERROR_THROW_WITH_MSG_IF( EXPR, MESSAGE ) if( EXPR ){ throw cranberries::logic_error( "logic_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
+#define CRANBERRIES_LOGIC_ERROR_THROW_WITH_MSG_ELSE_IF( EXPR, MESSAGE ) else if( EXPR ){ throw cranberries::logic_error( "logic_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
+#define CRANBERRIES_LOGIC_ERROR_THROW_WITH_MSG_ELSE( MESSAGE ) else{ throw cranberries::logic_error( "logic_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, cranberries::message_tag{} ); }
+#define CRANBERRIES_LOGIC_ERROR_THROW_WITH_MSG( MESSAGE ) throw cranberries::logic_error( "logic_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, cranberries::message_tag{} );
 
-#define CRANBERRIES_INVALID_ARGUMENT_THROW_IF( EXPR ) if( EXPR ){ throw Cranberries::invalid_argument( "invalid_argument", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_INVALID_ARGUMENT_THROW_ELSE_IF( EXPR ) else if( EXPR ){ throw Cranberries::invalid_argument( "invalid_argument", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_INVALID_ARGUMENT_THROW_ELSE else{ throw Cranberries::invalid_argument( "invalid_argument", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_INVALID_ARGUMENT_THROW_WITH_MSG_IF( EXPR, MESSAGE ) if( EXPR ){ throw Cranberries::invalid_argument( "invalid_argument", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
-#define CRANBERRIES_INVALID_ARGUMENT_THROW_WITH_MSG_ELSE_IF( EXPR, MESSAGE ) else if( EXPR ){ throw Cranberries::invalid_argument( "invalid_argument", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
-#define CRANBERRIES_INVALID_ARGUMENT_THROW_WITH_MSG_ELSE( MESSAGE ) else{ throw Cranberries::invalid_argument( "invalid_argument", __FILE__, __FUNCTION__, __LINE__, MESSAGE, Cranberries::message_tag{} ); }
-#define CRANBERRIES_INVALID_ARGUMENT_THROW_WITH_MSG( MESSAGE ) throw Cranberries::invalid_argument( "invalid_argument", __FILE__, __FUNCTION__, __LINE__, MESSAGE, Cranberries::message_tag{} );
+#define CRANBERRIES_INVALID_ARGUMENT_THROW_IF( EXPR ) if( EXPR ){ throw cranberries::invalid_argument( "invalid_argument", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_INVALID_ARGUMENT_THROW_ELSE_IF( EXPR ) else if( EXPR ){ throw cranberries::invalid_argument( "invalid_argument", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_INVALID_ARGUMENT_THROW_ELSE else{ throw cranberries::invalid_argument( "invalid_argument", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
+#define CRANBERRIES_INVALID_ARGUMENT_THROW_WITH_MSG_IF( EXPR, MESSAGE ) if( EXPR ){ throw cranberries::invalid_argument( "invalid_argument", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
+#define CRANBERRIES_INVALID_ARGUMENT_THROW_WITH_MSG_ELSE_IF( EXPR, MESSAGE ) else if( EXPR ){ throw cranberries::invalid_argument( "invalid_argument", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
+#define CRANBERRIES_INVALID_ARGUMENT_THROW_WITH_MSG_ELSE( MESSAGE ) else{ throw cranberries::invalid_argument( "invalid_argument", __FILE__, __FUNCTION__, __LINE__, MESSAGE, cranberries::message_tag{} ); }
+#define CRANBERRIES_INVALID_ARGUMENT_THROW_WITH_MSG( MESSAGE ) throw cranberries::invalid_argument( "invalid_argument", __FILE__, __FUNCTION__, __LINE__, MESSAGE, cranberries::message_tag{} );
 
-namespace Cranberries
+namespace cranberries
 {
   class message_tag {};
 
