@@ -4,7 +4,7 @@
 #include <type_traits>
 #include "set_round.hpp"
 
-namespace Cranberries
+namespace cranberries
 {
   namespace math_impl
   {
