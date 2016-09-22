@@ -20,11 +20,12 @@ namespace streams {
     template <
       typename Stream
     >
-      inline
-      decltype(auto)
-      operator()(
-        Stream&& stream
-        ) {
+    inline
+    decltype(auto)
+    operator()
+    (
+      Stream&& stream
+    ) {
       return op2(op1(std::forward<Stream>(stream)));
     }
 

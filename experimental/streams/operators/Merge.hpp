@@ -33,7 +33,7 @@ namespace operators {
     ) {
       static_assert(
         std::is_constructible<
-          E, typename std::decay_t<Range>::value_type
+          E, element_type_of_t<Range>
         >::value,
         "" // TODO
       );
@@ -76,7 +76,7 @@ namespace operators {
     ) {
       static_assert(
         std::is_constructible<
-          E, typename std::decay_t<Range>::value_type
+          E, typename element_type_of_t<Range>
         >::value,
         "" // TODO
       );
@@ -90,7 +90,7 @@ namespace operators {
       return std::forward<Stream>( stream_ );
     }
 
-    decltype( auto ) release() { return stream<typename std::decay_t<Range>::value_type>{std::move( range_ )}; }
+    decltype( auto ) release() { return stream<element_type_of_t<Range>>{std::move( range_ )}; }
 
     Range range_;
   };

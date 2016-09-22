@@ -22,7 +22,7 @@ namespace operators {
   template < typename Pred >
   class AnyOf;
 
-  template < typename Branch >
+  template < typename Branch, bool B >
   class Concatenate;
 
   struct DistinctProxy;

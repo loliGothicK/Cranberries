@@ -97,7 +97,7 @@ namespace streams {
 
     template <
       typename Iterator,
-      typename T = typename std::decay_t<Iterator>::value_type
+      typename T = element_type_of_t<Iterator>
     >
     static
     stream<T>
@@ -128,7 +128,7 @@ namespace streams {
 
     template <
       typename Range,
-      typename T = typename std::decay_t<Range>::value_type,
+      typename T = element_type_of_t<Range>,
       std::enable_if_t<is_range_v<std::decay_t<Range>>,std::nullptr_t> = nullptr
     >
     static
@@ -217,7 +217,7 @@ namespace streams {
 
     template <
       typename Range,
-      typename T = typename std::decay_t<Range>::value_type,
+      typename T = element_type_of_t<Range>,
       std::enable_if_t<
         is_range_v<std::decay_t<Range>>,
         std::nullptr_t

@@ -46,8 +46,8 @@ namespace operators {
 
       auto middle = std::partition( stream_.begin(), stream_.end(), pred_ );
 
-      result.emplace( true, Val{ stream_.begin(), middle } );
-      result.emplace( false, Val{ middle, stream_.end() } );
+      result.emplace( std::piecewise_construct, std::forward_as_tuple( true ), std::forward_as_tuple( stream_.begin(), middle ) );
+      result.emplace( std::piecewise_construct, std::forward_as_tuple( false ), std::forward_as_tuple( middle, stream_.end() ) );
       return result;
     }
 

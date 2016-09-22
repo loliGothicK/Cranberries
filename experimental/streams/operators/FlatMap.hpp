@@ -29,7 +29,8 @@ namespace workaround {
       Stream&& stream_,
       Range&& range_
     ) {
-      stream_.insert( stream_.end(), range_.begin(), range_.end() );
+      using std::begin; using std::end;
+      stream_.insert( stream_.end(), begin( range_ ), end( range_ ) );
     }
   };
 

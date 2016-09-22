@@ -162,7 +162,7 @@ namespace streams {
     typename Stream,
     std::enable_if_t<
       detail::is_infinite_stream_v<std::decay_t<Stream>>
-      || detail::is_finite_stream_v<Stream>,
+      || is_range_v<Stream>,
       std::nullptr_t
     > = nullptr
   >
@@ -178,17 +178,20 @@ namespace streams {
   }
 
   template <
-    typename Stream,
-    std::enable_if_t<detail::is_stream_v<std::decay_t<Stream>>, std::nullptr_t> = nullptr
+    typename Range,
+    std::enable_if_t<
+      detail::is_stream_v<std::decay_t<Range>> || is_range_v<Range>,
+      std::nullptr_t
+    > = nullptr
   >
   inline
-  operators::Concatenate<Stream&&>
+  operators::Concatenate<Range>
   concat(
-    Stream&& stream_
+    Range&& range_
   )
     noexcept
   {
-    return{ std::forward<Stream>(stream_) };
+    return{ std::forward<Range>( range_ ) };
   }
 
 

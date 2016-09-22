@@ -2,41 +2,282 @@
 #define CRANBERRIES_STREAMS_OPERATORS_UTILITY_HPP
 #include <utility>
 #include <iterator>
+#include <tuple>
+#include <type_traits>
 
 namespace cranberries {
+
+  template <class C>
+  constexpr auto size( const C& c ) -> decltype(c.size())
+  {
+    return c.size();
+  }
+
+  template <class T, std::size_t N>
+  constexpr std::size_t size( const T( &array )[N] ) noexcept
+  {
+    return N;
+  }
+
+
+  template < typename T >
+  struct remove_cv_ref {
+    using type = std::remove_cv_t<std::remove_reference_t<T>>;
+  };
+
+  template < typename T >
+  using remove_cv_ref_t = typename remove_cv_ref<T>::type;
 
   template < typename ...Dummy >
   using void_t = void;
 
+namespace detail
+{
+    template < class T, class... >
+    struct is_tuple_impl : std::false_type
+    {};
+
+    template < class...Args >
+    struct is_tuple_impl<std::tuple<Args...>, void> : std::true_type
+    {};
+
+} // ! namespace detail
+
+  template < typename T >
+  struct is_tuple : detail::is_tuple_impl<T, void>
+  {};
+
+  template < typename T >
+  constexpr bool is_tuple_v = is_tuple<T>::value;
+
+
+
+
+  template < typename Head, typename ...Tail >
+  struct conj_impl : std::bool_constant<Head::value && conj_impl<Tail...>::value> {};
+
+  template < typename B >
+  struct conj_impl<B> : std::bool_constant<B::value> {};
+
+  template < typename ...B >
+  struct conjunction : conj_impl<B...> {};
+
+  template < typename Head, typename ...Tail >
+  struct disj_impl : std::bool_constant<Head::value || conj_impl<Tail...>::value> {};
+
+  template < typename B >
+  struct disj_impl<B> : std::bool_constant<B::value> {};
+
+  template < typename ...B >
+  struct disjunction : disj_impl<B...> {};
+
+
+  template < typename B >
+  struct negate : std::bool_constant<!B::value> {};
+
+
+  template < typename ...B >
+  constexpr bool conjunction_v = conjunction<B...>::value;
+
+  template < typename ...B >
+  constexpr bool disjunction_v = disjunction<B...>::value;
+
+  template < typename B >
+  constexpr bool negate_v = negate<B>::value;
+
   template < class, class = void >
   struct has_value_type : std::false_type
   {};
-
+  
   template < class T >
   struct has_value_type<T,
     void_t<decltype(std::declval<typename std::decay_t<T>::value_type>())>
   > : std::true_type
   {};
 
-  template <
-    typename T,
-	bool B = std::is_array<T>::value
-  >
-  struct value_type_of
-  {
-    using type = std::remove_extent_t<T>;
-  };
+  template < typename T >
+  constexpr bool has_value_type_v = has_value_type<T>::value;
 
-  template <
-	  typename T
-  >
-  struct value_type_of<T,false>
-  {
-	  using type = typename std::decay_t<T>::value_type;
-  };
+  template < class, class = void >
+  struct has_value_field : std::false_type
+  {};
+
+  template < class T >
+  struct has_value_field<T,
+    void_t<decltype(std::declval<std::decay_t<T>::value>())>
+  > : std::true_type
+  {};
 
   template < typename T >
-  using value_type_of_t = typename value_type_of<T>::type;
+  constexpr bool has_value_field_v = has_value_field<T>::value;
+
+  template < typename T, template<class> class Head, template<class> class ...Tail >
+  struct conjunctional_impl : std::bool_constant< Head<T>::value && conjunctional_impl<T, Tail...>::value > {};
+
+  template < typename T, template<class> class Pred >
+  struct conjunctional_impl<T,Pred> : std::bool_constant< Pred<T>::value > {};
+
+  template < template<class>class ...Pred >
+  struct conjunctional {
+    template < typename T >
+    using type = typename conjunctional_impl<T, Pred...>;
+  };
+
+  template < typename T, template<class> class Head, template<class> class ...Tail >
+  struct disjunctional_impl : std::bool_constant< Head<T>::value && conjunctional_impl<T, Tail...>::value > {};
+
+  template < typename T, template<class> class Pred >
+  struct disjunctional_impl<T, Pred> : std::bool_constant< Pred<T>::value > {};
+
+  template < template<class>class ...Pred >
+  struct disjunctional {
+    template < typename T >
+    using type = typename conjunctional_impl<T, Pred...>;
+  };
+
+  template < typename T, template<class> class Pred >
+  struct negational_impl : std::bool_constant<!Pred<T>::value> {};
+
+  template < template<class> class Pred >
+  struct negational {
+    template < typename T >
+    using type = negational_impl<T, Pred>;
+  };
+
+
+  template < typename T, typename Tuple >
+  struct tuple_all_match;
+
+  template < typename T >
+  struct tuple_all_match<T, std::tuple<>> : std::false_type {};
+
+  template < typename T, typename U, typename ...Rest >
+  struct tuple_all_match<T, std::tuple<U, Rest...>> : std::false_type {};
+
+  template < typename T, typename ...Rest >
+  struct tuple_all_match<T, std::tuple<T, Rest...>> : tuple_all_match<T, std::tuple<Rest...>> {};
+
+  template < typename T >
+  struct tuple_all_match<T, std::tuple<T>> : std::true_type {};
+
+  template < typename T, typename Tuple >
+  struct tuple_any_match;
+
+  template < typename T >
+  struct tuple_any_match<T, std::tuple<>> : std::false_type {};
+
+  template < typename T, typename U, typename ...Rest >
+  struct tuple_any_match<T, std::tuple<U, Rest...>> : tuple_any_match<T, std::tuple<Rest...>> {};
+
+  template < typename T, typename ...Rest >
+  struct tuple_any_match<T, std::tuple<T, Rest...>> : std::true_type {};
+
+  template < typename T, typename Tuple >
+  struct tuple_none_match;
+
+  template < typename T >
+  struct tuple_none_match<T, std::tuple<>> : std::false_type {};
+
+  template < typename T, typename U, typename ...Rest >
+  struct tuple_none_match<T, std::tuple<U, Rest...>> : tuple_none_match<T, std::tuple<Rest...>> {};
+
+  template < typename T, typename ...Rest >
+  struct tuple_none_match < T, std::tuple<T, Rest...>> : std::false_type {};
+
+  template < typename T, typename U >
+  struct tuple_none_match<T, std::tuple<U>> : std::true_type {};
+
+  template < template <class> class Pred, typename Tuple >
+  struct tuple_all_match_if;
+
+  template < template <class> class Pred >
+  struct tuple_all_match_if<Pred, std::tuple<>> : std::false_type {};
+
+  template < template <class> class Pred, typename T, typename ...Rest >
+  struct tuple_all_match_if<Pred, std::tuple<T, Rest...>> : std::conditional_t<Pred<T>::value, tuple_all_match_if<Pred,std::tuple<Rest...>>,std::false_type> {};
+
+  template < template <class> class Pred, typename T >
+  struct tuple_all_match_if<Pred, std::tuple<T>> : std::conditional_t<Pred<T>::value, std::true_type, std::false_type> {};
+
+  template < template <class> class Pred, typename Tuple >
+  struct tuple_any_match_if;
+
+  template < template <class> class Pred >
+  struct tuple_any_match_if<Pred, std::tuple<>> : std::false_type {};
+
+  template < template <class> class Pred, typename T, typename ...Rest >
+  struct tuple_any_match_if<Pred, std::tuple<T, Rest...>> : std::conditional_t<Pred<T>::value, std::true_type, tuple_any_match_if<Pred, std::tuple<Rest...>>> {};
+
+  template < template <class> class Pred, typename T >
+  struct tuple_any_match_if<Pred, std::tuple<T>> : std::conditional_t<Pred<T>::value, std::true_type, std::false_type> {};
+
+  template < template <class> class Pred, typename Tuple >
+  struct tuple_none_match_if;
+
+  template < template <class> class Pred >
+  struct tuple_none_match_if<Pred, std::tuple<>> : std::false_type {};
+
+  template < template <class> class Pred, typename T, typename ...Rest >
+  struct tuple_none_match_if<Pred, std::tuple<T, Rest...>> : std::conditional_t<!Pred<T>::value, tuple_all_match_if<Pred, std::tuple<Rest...>>, std::false_type> {};
+
+  template < template <class> class Pred, typename T >
+  struct tuple_none_match_if<Pred, std::tuple<T>> : std::conditional_t<!Pred<T>::value, std::true_type, std::false_type> {};
+
+
+  template < typename T, class Tuple >
+  constexpr bool tuple_all_match_v = tuple_all_match<T, Tuple>::value;
+
+  template < typename T, class Tuple >
+  constexpr bool tuple_any_match_v = tuple_any_match<T, Tuple>::value;
+  
+  template < typename T, class Tuple >
+  constexpr bool tuple_none_match_v = tuple_none_match<T, Tuple>::value;
+
+  template < template<class> class Pred, class Tuple >
+  constexpr bool tuple_all_match_if_v = tuple_all_match_if<Pred, Tuple>::value;
+
+  template < template<class> class Pred, class Tuple >
+  constexpr bool tuple_any_match_if_v = tuple_any_match_if<Pred, Tuple>::value;
+
+  template < template<class> class Pred, class Tuple >
+  constexpr bool tuple_none_match_if_v = tuple_none_match_if<Pred, Tuple>::value;
+
+
+  template <
+    typename T,
+    bool A = std::is_array<remove_cv_ref_t<T>>::value,
+    bool B = is_tuple_v<remove_cv_ref_t<T>>
+  >
+  struct element_type_of
+  {
+    using type = typename remove_cv_ref_t<T>::value_type;
+  };
+
+  template <
+    typename T
+  >
+  struct element_type_of<T, true, false>
+  {
+    using type = std::remove_extent_t<remove_cv_ref_t<T>>;
+  };
+
+  template <
+    typename T
+  >
+  struct element_type_of<T, false, true>
+  {
+    static_assert(
+      tuple_all_match<
+      std::tuple_element_t<0, remove_cv_ref_t<T>>, remove_cv_ref_t<T>
+      >::value,
+      "tuple"
+    );
+    using type = typename std::tuple_element_t<0, remove_cv_ref_t<T>>;
+  };
+
+
+  template < typename T >
+  using element_type_of_t = typename element_type_of<T>::type;
 
   template < class, class = void >
   struct is_iterator : std::false_type {};
@@ -243,7 +484,7 @@ namespace detail{
   {};
 
   template < typename T >
-  constexpr bool is_range_v = is_range<std::decay_t<T>>::value;
+  constexpr bool is_range_v = is_range<T>::value;
 
   template< class, class = void >
   struct is_equality_comparable : std::false_type
@@ -273,23 +514,6 @@ namespace detail{
   template < typename T >
   constexpr bool is_equality_comparable_v = is_equality_comparable<T>::value;
 
-namespace detail
-{
-  template < class T, class... >
-  struct is_tuple_impl : std::false_type
-  {};
-
-  template < class...Args >
-  struct is_tuple_impl<std::tuple<Args...>, void> : std::true_type
-  {};
-
-} // ! namespace detail
-  template < typename T >
-  struct is_tuple : detail::is_tuple_impl<T, void>
-  {};
-
-  template < typename T >
-  constexpr bool is_tuple_v = is_tuple<T>::value;
 
 
 namespace streams {
@@ -352,16 +576,13 @@ namespace detail {
     return a.end();
   }
 
-
-
-
 } // ! namespace detail
 } // ! namespace stream
 
   template <
     typename Range,
     typename BinaryOp,
-    typename T = typename std::decay_t<Range>::value_type,
+    typename T = element_type_of_t<Range>,
     std::enable_if_t<
       is_range_v<Range>
       && is_callable_v<BinaryOp,T,T>,

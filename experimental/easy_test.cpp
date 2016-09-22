@@ -9,18 +9,29 @@ using cranberries::make_finally;
 int main()
 {
   using namespace cranberries::streams;
+  using namespace cranberries;
+
   std::cout << std::boolalpha;
 
   auto grouped = make_stream::range( 1, 9 )
     >> partitioning_by_hash<std::deque>( []( auto&& a ) { return a % 2 == 0; } )
     ;
 
-  cout << "even : ";
+  make_stream::range( 1, 3 ) >> merged( std::vector<int>{1, 2, 3} ) >> print_to();
+
+  int arr[] = { 1,2,3 };
+
+  make_stream::range( 1, 3 ) >> concat( arr ) >> print_to();
+
+  cout << typeid(element_type_of_t<int[]>).name() << endl;
+  cout << typeid(element_type_of_t<std::vector<int>>).name() << endl;
+  cout << typeid(element_type_of_t<std::tuple<int,int,int>>).name() << endl;
+
+  cout << "even" << endl;
   for (auto&& e : grouped[true])
     cout << e << ", ";
   cout << endl;
-  
-  cout << "odd : ";
+  cout << "odd" << endl;
   for (auto&& e : grouped[false])
     cout << e << ", ";
   cout << endl;
@@ -207,8 +218,6 @@ int main()
   make_stream::student_t_dist( 1.0 ) >> taken( 3 ) >> print_to();
   
   make_stream::generate_canonical() >> taken( 3 ) >> print_to();
-
-
 
 
 #ifdef _MSC_VER
