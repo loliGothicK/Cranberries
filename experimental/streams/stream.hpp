@@ -103,15 +103,16 @@ namespace streams {
     typedef typename std::vector<T>::const_reverse_iterator const_reverse_iterator;
 
     template <
-      typename Iterator
+      typename Iterator,
+      std::enable_if_t<is_iterator_v<std::decay_t<Iterator>>,std::nullptr_t> = nullptr
     >
     stream
     (
-      Iterator first,
-      Iterator last,
+      Iterator&& first,
+      Iterator&& last,
       Operation&& q
     )
-      : source{ first,last }
+      : source{ std::forward<Iterator>(first), std::forward<Iterator>(last) }
       , operation{ std::move(q) }
     {}
 
@@ -125,7 +126,8 @@ namespace streams {
     {}
 
     template <
-      typename Range
+      typename Range,
+      std::enable_if_t<is_range_v<std::decay_t<Range>>, std::nullptr_t> = nullptr
     >
     stream
     (
@@ -137,14 +139,15 @@ namespace streams {
     {}
 
     template <
-      typename Iterator
+      typename Iterator,
+      std::enable_if_t<is_iterator_v<std::decay_t<Iterator>>, std::nullptr_t> = nullptr
     >
     stream
     (
-      Iterator first,
-      Iterator last
+      Iterator&& first,
+      Iterator&& last
     )
-      : source{ first,last }
+      : source{ std::forward<Iterator>(first), std::forward<Iterator>(last) }
       , operation{ }
     {}
 
@@ -172,6 +175,11 @@ namespace streams {
       : source{}
       , operation{}
     {}
+
+    template < typename ...Args >
+    static stream build( std::tuple<Args...>&& tup ) {
+      return stream{ std::get<0>(tup), std::get<1>(tup) };
+    }
 
     stream(stream const&) = default;
     stream(stream&&) = default;

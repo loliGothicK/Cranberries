@@ -9,19 +9,32 @@ namespace operators {
 
 
   template < typename F >
-  struct MapProxy {
+  class TransformProxy
+    : private detail::IntermidiateStreamOperatorBase
+    , private detail::StreamOperatorBase
+  {
+  public:
+    TransformProxy( F f ) : f{ std::forward<F>( f ) } {}
+
+    template <
+      typename T
+    >
+      auto operator[]( T&& a ) const noexcept {
+      return f( a );
+    }
+
     F f;
   };
 
   template <
     typename UnaryFunc
   >
-  class Transform
+  class Endomorphism
     : private detail::IntermidiateStreamOperatorBase
     , private detail::StreamOperatorBase
   {
   public:
-    Transform( UnaryFunc f ) : f_{ std::forward<UnaryFunc>( f ) } {}
+    Endomorphism( UnaryFunc f ) : f_{ std::forward<UnaryFunc>( f ) } {}
 
     template < typename F, typename T >
     void apply( F&& f, T&& a ) {
@@ -73,11 +86,11 @@ namespace operators {
     typename OldStream,
     typename UnaryFunc
   >
-  class Map
+  class Transform
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    Map( OldStream old, UnaryFunc f ) : old{ std::forward<OldStream>( old ) }, f_{ std::forward<UnaryFunc >> ( f ) } {}
+    Transform( OldStream old, UnaryFunc f ) : old{ std::forward<OldStream>( old ) }, f_{ std::forward<UnaryFunc >> ( f ) } {}
 
     template <
       typename Stream

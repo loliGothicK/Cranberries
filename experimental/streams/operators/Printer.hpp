@@ -10,6 +10,7 @@ namespace cranberries {
 namespace streams {
 namespace operators {
 
+  template < bool B >
   class Printer
     : detail::TerminateStreamOperatorBase
   {
@@ -32,7 +33,7 @@ namespace operators {
       ++iter;
       for (; iter != stream_.end(); ++iter)
         os_ << delim_ << *iter;
-      os_ << std::endl;
+      if (B) os_ << std::endl;
     }
 
   private:

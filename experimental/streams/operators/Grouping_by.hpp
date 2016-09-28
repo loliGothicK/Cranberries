@@ -64,7 +64,7 @@ namespace {
       auto result = MapTraits<Option>:: template type<std::result_of_t<Keygen( E )>, Seeq<E>>{};
 
       for (auto&& e : stream_)
-        result.emplace( keygen_( e ), e );
+        result[ keygen_( e ) ].push_back( e );
 
       return result;
     }

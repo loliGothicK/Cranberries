@@ -50,6 +50,68 @@ namespace detail
   template < typename T >
   constexpr bool is_tuple_v = is_tuple<T>::value;
 
+  namespace detail {
+
+    template < class, class = void >
+    struct enable_std_begin_end : std::false_type
+    {};
+
+    template < class T >
+    struct enable_std_begin_end<T,
+      void_t<decltype(std::begin( std::declval<T&>() ), std::end( std::declval<T&>() ))>
+    > : std::true_type
+    {};
+
+    template < class, class = void >
+    struct enable_adl_begin_end : std::false_type
+    {};
+
+    template < class T >
+    struct enable_adl_begin_end<T,
+      void_t<decltype(begin( std::declval<T&>() ), end( std::declval<T&>() ))>
+    > : std::true_type
+    {};
+
+  } // ! namespace detail
+
+  template < typename T >
+  struct is_range
+    : std::bool_constant<
+    detail::enable_std_begin_end<T>::value
+    || detail::enable_adl_begin_end<T>::value
+    >
+  {};
+
+  template < typename T >
+  constexpr bool is_range_v = is_range<T>::value;
+
+  template< class, class = void >
+  struct is_equality_comparable : std::false_type
+  {};
+
+  template< class T >
+  struct is_equality_comparable<T,
+    void_t<decltype(std::declval<T&>() == std::declval<T&>())>
+  > : std::true_type
+  {};
+
+  template< class, class, class = void >
+  struct is_equality_comparable_to : std::false_type
+  {};
+
+
+  template< typename T, typename U >
+  struct is_equality_comparable_to<T, U,
+    void_t<decltype(std::declval<T&>() == std::declval<U&>())>
+  > : std::true_type
+  {};
+
+
+  template < typename T, typename U >
+  constexpr bool is_equality_comparable_to_v = is_equality_comparable_to<T, U>::value;
+
+  template < typename T >
+  constexpr bool is_equality_comparable_v = is_equality_comparable<T>::value;
 
 
 
@@ -117,10 +179,13 @@ namespace detail
   template < typename T, template<class> class Pred >
   struct conjunctional_impl<T,Pred> : std::bool_constant< Pred<T>::value > {};
 
-  template < template<class>class ...Pred >
-  struct conjunctional {
+  template <
+    template<class>class ...Preds
+  >
+  struct conjunctional
+  {
     template < typename T >
-    using type = typename conjunctional_impl<T, Pred...>;
+    using type = typename conjunctional_impl<T, Preds...>;
   };
 
   template < typename T, template<class> class Head, template<class> class ...Tail >
@@ -129,21 +194,23 @@ namespace detail
   template < typename T, template<class> class Pred >
   struct disjunctional_impl<T, Pred> : std::bool_constant< Pred<T>::value > {};
 
-  template < template<class>class ...Pred >
-  struct disjunctional {
+  template < template<class>class ...Preds >
+  struct disjunctional
+  {
     template < typename T >
-    using type = typename conjunctional_impl<T, Pred...>;
+    using type = typename conjunctional_impl<T, Preds...>;
+
   };
 
   template < typename T, template<class> class Pred >
   struct negational_impl : std::bool_constant<!Pred<T>::value> {};
 
   template < template<class> class Pred >
-  struct negational {
+  struct negational
+  {
     template < typename T >
     using type = negational_impl<T, Pred>;
   };
-
 
   template < typename T, typename Tuple >
   struct tuple_all_match;
@@ -242,6 +309,42 @@ namespace detail
   template < template<class> class Pred, class Tuple >
   constexpr bool tuple_none_match_if_v = tuple_none_match_if<Pred, Tuple>::value;
 
+  template < typename T, typename ...Args >
+  struct all_match : tuple_all_match<T, std::tuple<Args...>> {};
+
+  template < typename T, typename ...Args >
+  struct any_match : tuple_any_match<T, std::tuple<Args...>> {};
+
+  template < typename T, typename ...Args >
+  struct none_match : tuple_none_match<T, std::tuple<Args...>> {};
+
+  template < template<class> class Pred, typename ...Args >
+  struct all_match_if : tuple_all_match_if<Pred, std::tuple<Args...>> {};
+
+  template < template<class> class Pred, typename ...Args >
+  struct any_match_if : tuple_any_match_if<Pred, std::tuple<Args...>> {};
+
+  template < template<class> class Pred, typename ...Args >
+  struct none_match_if : tuple_none_match_if<Pred, std::tuple<Args...>> {};
+
+
+  template < typename T, typename ...Args >
+  constexpr bool all_match_v = all_match<T, Args...>::value;
+
+  template < typename T, typename ...Args >
+  constexpr bool any_match_v = any_match<T, Args...>::value;
+
+  template < typename T, typename ...Args >
+  constexpr bool none_match_v = none_match<T, Args...>::value;
+
+  template < template<class> class Pred, typename ...Args >
+  constexpr bool all_match_if_v = all_match_if<Pred, Args...>::value;
+
+  template < template<class> class Pred, typename ...Args >
+  constexpr bool any_match_if_v = any_match_if<Pred, Args...>::value;
+
+  template < template<class> class Pred, typename ...Args >
+  constexpr bool none_match_if_v = none_match_if<Pred, Args...>::value;
 
   template <
     typename T,
@@ -268,7 +371,7 @@ namespace detail
   {
     static_assert(
       tuple_all_match<
-      std::tuple_element_t<0, remove_cv_ref_t<T>>, remove_cv_ref_t<T>
+        std::tuple_element_t<0, remove_cv_ref_t<T>>, remove_cv_ref_t<T>
       >::value,
       "tuple"
     );
@@ -278,6 +381,22 @@ namespace detail
 
   template < typename T >
   using element_type_of_t = typename element_type_of<T>::type;
+
+  template <
+    typename T,
+    bool B = is_range_v<T>
+  >
+  struct root_element_type_of {
+    using type = typename root_element_type_of<element_type_of_t<T>>::type;
+  };
+
+  template < typename T >
+  struct root_element_type_of<T, false> {
+    using type = T;
+  };
+
+  template < typename T >
+  using root_element_type_of_t = typename root_element_type_of<T>::type;
 
   template < class, class = void >
   struct is_iterator : std::false_type {};
@@ -450,69 +569,6 @@ namespace detail{
   template < typename F, typename ...Args >
   constexpr bool is_callable_v = is_callable<F, Args...>::value;
 
-namespace detail{
-
-  template < class, class = void >
-  struct enable_std_begin_end : std::false_type
-  {};
-
-  template < class T >
-  struct enable_std_begin_end<T,
-    void_t<decltype( std::begin(std::declval<T>()), std::end(std::declval<T>()) )>
-  > : std::true_type
-  {};
-
-  template < class, class = void >
-  struct enable_adl_begin_end : std::false_type
-  {};
-
-  template < class T >
-  struct enable_adl_begin_end<T,
-    void_t<decltype( begin(std::declval<T>()), end(std::declval<T>()) )>
-  > : std::true_type
-  {};
-
-} // ! namespace detail
-
-  template < typename T >
-  struct is_range
-    : std::conditional_t<
-       detail::enable_std_begin_end<T>::value
-    || detail::enable_adl_begin_end<T>::value,
-    std::true_type,std::false_type
-    > 
-  {};
-
-  template < typename T >
-  constexpr bool is_range_v = is_range<T>::value;
-
-  template< class, class = void >
-  struct is_equality_comparable : std::false_type
-  {};
-
-  template< class T >
-  struct is_equality_comparable<T,
-    void_t<decltype(std::declval<T&>() == std::declval<T&>() )>
-    > : std::true_type
-  {};
-
-  template< class, class, class = void >
-  struct is_equality_comparable_to : std::false_type
-  {};
-
-
-  template< typename T, typename U >
-  struct is_equality_comparable_to<T,U,
-    void_t<decltype( std::declval<T&>() == std::declval<U&>() )>
-    > : std::true_type
-  {};
-
-
-  template < typename T, typename U >
-  constexpr bool is_equality_comparable_to_v = is_equality_comparable_to<T,U>::value;
-
-  template < typename T >
-  constexpr bool is_equality_comparable_v = is_equality_comparable<T>::value;
 
 
 

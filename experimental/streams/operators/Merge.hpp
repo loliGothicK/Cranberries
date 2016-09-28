@@ -20,6 +20,7 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
+    Merge() = default;
     Merge( Range range ) : range_{ std::forward<Range>( range ) } {}
 
     template <
@@ -63,6 +64,7 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
+    Merge() = default;
     Merge( Range range ) : range_{ std::forward<Range>( range ) } {}
 
     template <
@@ -81,17 +83,18 @@ namespace operators {
         "" // TODO
       );
       typename std::decay_t<Stream>::range_type result{};
+      using std::begin; using std::end; using cranberries::size;
       auto&& lv = stream_.get();
-      lv.reserve( lv.size() + range_.size() );
+      lv.reserve( lv.size() + size( range_ ) );
       auto&& first = lv.begin();
       auto&& middle = lv.end();
-      lv.insert(middle, range_.begin(), range_.end());
+      lv.insert(middle, begin( range_ ), end( range_ ));
       std::inplace_merge( first, middle, lv.end() );
       return std::forward<Stream>( stream_ );
     }
 
     decltype( auto ) release() { return stream<element_type_of_t<Range>>{std::move( range_ )}; }
-
+  private:
     Range range_;
   };
 
@@ -104,6 +107,7 @@ namespace operators {
     : private detail::StreamOperatorBase
   {
   public:
+    Merge() = default;
     Merge( Range range ) : range_{ std::forward<Range>( range ) } {}
 
     decltype( auto ) release() { return std::move( range_ ); }

@@ -1,10 +1,11 @@
-#ifndef CRANBERRIES_STREAMS_OPERATORS_SORT_HPP
-#define CRANBERRIES_STREAMS_OPERATORS_SORT_HPP
+#ifndef CRANBERRIES_STREAMS_OPERATORS_STABLE_SORT_HPP
+#define CRANBERRIES_STREAMS_OPERATORS_STABLE_SORT_HPP
+#include <string>
+#include <regex>
 #include <utility>
-#include <type_traits>
 #include <algorithm>
 #include "..\stream_error.hpp"
-#include "..\utility.hpp"
+#include "../utility.hpp"
 
 namespace cranberries {
 namespace streams {
@@ -14,11 +15,11 @@ namespace operators {
   template <
     typename Pred
   >
-  class Sort
+    class StableSort
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    Sort( Pred pred ) : pred_{ std::forward<Pred>( pred ) } {}
+    StableSort( Pred pred ) : pred_{ std::forward<Pred>( pred ) } {}
 
     template <
       typename Stream
@@ -30,8 +31,8 @@ namespace operators {
       Stream&& stream_
     ) {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
-      std::sort(stream_.begin(), stream_.end(), pred_);
-      return std::forward<Stream>(stream_);
+      std::stable_sort( stream_.begin(), stream_.end(), pred_ );
+      return std::forward<Stream>( stream_ );
     }
 
   private:
@@ -40,28 +41,27 @@ namespace operators {
 
   // Intermidiate Operation
   template < >
-  class Sort <
+  class StableSort <
     detail::defaulted // lookup operator < using ADL.
   >
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    Sort() = default;
+    StableSort() = default;
 
     template <
       typename Stream
     >
-    inline
-    decltype(auto)
-    operator()(
-      Stream&& stream_
-    ) {
+      inline
+      decltype(auto)
+      operator()(
+        Stream&& stream_
+        ) {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
-      std::sort(stream_.begin(), stream_.end());
-      return std::forward<Stream>(stream_);
+      std::stable_sort( stream_.begin(), stream_.end() );
+      return std::forward<Stream>( stream_ );
     }
   };
-
 
 } // ! namespace operators
 } // ! namespace stream

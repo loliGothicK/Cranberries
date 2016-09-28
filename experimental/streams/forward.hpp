@@ -44,7 +44,7 @@ namespace operators {
   class Taker;
 
   template < typename OldStream, typename UnaryFunc  >
-  class Map;
+  class Transform;
 
   template < typename FromStream,  typename To  >
   class MapTo;
@@ -53,10 +53,10 @@ namespace operators {
   class NoneOf;
 
   template < typename F >
-  struct MapProxy;
+  class TransformProxy;
 
   template < typename UnaryFunc  >
-  class Transform;
+  class Endomorphism;
 
   struct Repetition;
 
@@ -79,6 +79,7 @@ namespace operators {
 
   struct Run;
 
+  template < bool B >
   class Printer;
 
   template < typename Pred >
@@ -169,6 +170,25 @@ namespace operators {
   >
   class PartitioningBy;
 
+  template < typename Stream >
+  class Flat;
+
+  class FlatProxy;
+
+  template < typename Stream >
+  class FlatAll;
+
+  class FlatAllProxy;
+
+  template < typename Pred = detail::defaulted >
+  class StableSort;
+
+
+  template < typename Pred = detail::defaulted >
+  class PartialSort;
+
+  template < typename Pred = detail::defaulted >
+  class NthElement;
 
 } // ! namesapce operators
 } // ! namespace stream

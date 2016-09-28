@@ -21,16 +21,13 @@ namespace streams {
   // stream Generator //
   //------------------//
 
+
+
   template < typename T >
-  struct Generate{
+  struct Generator
+  {
     T operator()() { return value_; }
     T value_;
-  };
-
-  struct PlusOne
-  {
-    template < typename T >
-    std::decay_t<T> operator()( T&& a ) { return a + 1; }
   };
 
   template <
@@ -39,15 +36,17 @@ namespace streams {
     typename Engine,
     typename Seed = unsigned
   >
-  struct UniformGen{
-
+  class UniformGen
+  {
+  public:
     UniformGen( ResultType low, ResultType up, Seed seed )
       : dist_( low, up )
       , engine_{ seed }
     {}
 
     ResultType operator()() noexcept { return dist_( engine_ ); }
-
+  
+  private:
     Distribution dist_;
     Engine engine_;
   };
@@ -59,14 +58,15 @@ namespace streams {
     typename Engine,
     typename Seed = unsigned
   >
-  struct GeneralGen{
-
-    GeneralGen( Init init, Seed seed )
+  class GeneralizedDistributionGenerator
+  {
+  public:
+    GeneralizedDistributionGenerator( Init init, Seed seed )
       : dist_{ init }
       , engine_{ seed }
     {}
 
-    GeneralGen( Init init1, Init init2, Seed seed )
+    GeneralizedDistributionGenerator( Init init1, Init init2, Seed seed )
       : dist_{ init1, init2 }
       , engine_{ seed }
     {}
@@ -74,6 +74,7 @@ namespace streams {
 
     ResultType operator()() noexcept { return dist_( engine_ ); }
 
+  private:
     Distribution dist_;
     Engine engine_;
   };
@@ -83,18 +84,19 @@ namespace streams {
     size_t Bits,
     typename Engine
   >
-  struct CanonicalGen
+  class CanonicalGen
   {
+  public:
     CanonicalGen( unsigned seed ) : engine_{ seed } {}
 
     RealType operator()() noexcept { return std::generate_canonical<RealType, Bits>( engine_ ); }
 
+  private:
     Engine engine_;
   };
 
   struct make_stream
   {
-
     template <
       typename Iterator,
       typename T = element_type_of_t<Iterator>
@@ -102,13 +104,13 @@ namespace streams {
     static
     stream<T>
     of
-      (
-        Iterator first,
-        Iterator last
-      )
+    (
+      Iterator&& first,
+      Iterator&& last
+    )
       noexcept
     {
-      return stream<T>{ first, last };
+      return stream<T>{ std::forward<Iterator>(first), std::forward<Iterator>(last) };
     }
 
     template <
@@ -128,7 +130,6 @@ namespace streams {
 
     template <
       typename Range,
-      typename T = element_type_of_t<Range>,
       std::enable_if_t<is_range_v<std::decay_t<Range>>,std::nullptr_t> = nullptr
     >
     static
@@ -139,7 +140,22 @@ namespace streams {
     )
       noexcept
     {
-      return stream<T>{ range };
+      return stream<element_type_of_t<std::decay_t<Range>>>{ range };
+    }
+
+    static
+    auto
+    from
+    (
+      operators::Splitter&& sp
+    ) {
+      auto&& str = std::move(sp.target_);
+      auto&& r_ = std::move(sp.r_);
+      auto tmp = stream<std::string>{
+        std::sregex_token_iterator{ str.begin(), str.end(), r_, -1 },
+        std::sregex_token_iterator{}
+      };
+      return tmp;
     }
 
     template <
@@ -158,19 +174,34 @@ namespace streams {
 
     template <
       typename T,
-      typename F
+      typename UnaryOperator
     >
     static
     auto
     iterate
     (
-      T&& init,
-      F&& f
+      T&& seed_,
+      UnaryOperator&& operator_
     )
       noexcept
     {
-      return IterateStream<T, F>{ std::forward<T>(init), std::forward<F>(f) };
+      return IterateStream<T, UnaryOperator>{ std::forward<T>(seed_), std::forward<UnaryOperator>(operator_) };
     }
+
+    template <
+      typename Supplier
+    >
+    static
+    auto
+    generate
+    (
+      Supplier&& supplier_
+    )
+      noexcept
+    {
+      return GenerateStream<std::result_of_t<Supplier(void)>, Supplier>{ std::forward<Supplier>( supplier_ ) };
+    }
+
 
     template <
       typename Iterable
@@ -179,11 +210,11 @@ namespace streams {
     auto
     counter
     (
-      Iterable init
+      Iterable first_
     )
       noexcept
     {
-      return IterateStream<Iterable, PlusOne>{ init };
+      return CountingStream<Iterable>{ first_ };
     }
 
     template <
@@ -197,7 +228,7 @@ namespace streams {
     )
       noexcept
     {
-      return GenerateStream<T, Generate<T>>{ Generate<T>{val} };
+      return GenerateStream<T, Generator<T>>{ Generator<T>{val} };
     }
 
     template <
@@ -260,12 +291,12 @@ namespace streams {
     auto
     cyclic
     (
-      Iterator first,
-      Iterator last
+      Iterator&& first,
+      Iterator&& last
     )
       noexcept
     {
-      return CyclicStream<T>{ first, last };
+      return CyclicStream<T>{ std::forward<Iterator>( first ), std::forward<Iterator>( last ) };
     }
 
     //------------------------------------------------------//
@@ -287,14 +318,14 @@ namespace streams {
       typename Seed = unsigned
     >
     static
-    auto
+    GenerateStream<Seed, Engine>
     random
     (
       Seed&& seed = std::random_device{}()
     )
       noexcept
     {
-      return GenerateStream<Seed, Engine>{ Engine{seed} };
+      return{ Engine{seed} };
     }
 
     //-----------------------------------------------//
@@ -302,8 +333,8 @@ namespace streams {
     //-----------------------------------------------//
 
     template <
-      typename Engine = std::mt19937,
       typename ResultType,
+      typename Engine = std::mt19937,
       typename Seed = unsigned
     >
     static
@@ -319,13 +350,13 @@ namespace streams {
     >
     uniform_dist
     (
-      ResultType low,
-      ResultType up,
+      ResultType min,
+      ResultType max,
       Seed seed = std::random_device{}()
     )
       noexcept
     {
-      return{ { low, up, seed } };
+      return{ { min, max, seed } };
     }
 
     //-------------------------------------------------//
@@ -340,7 +371,7 @@ namespace streams {
     static
     GenerateStream<
       bool,
-      GeneralGen<
+      GeneralizedDistributionGenerator<
         bool,
         Init,
         std::bernoulli_distribution,
@@ -359,15 +390,15 @@ namespace streams {
     }
 
     template <
-      typename Engine = std::mt19937,
       typename IntType = int,
+      typename Engine = std::mt19937,
       typename Init,
       typename Seed = unsigned
     >
     static
     GenerateStream<
       IntType,
-      GeneralGen<
+      GeneralizedDistributionGenerator<
         IntType,
         Init,
         std::poisson_distribution<IntType>,
@@ -387,15 +418,15 @@ namespace streams {
 
 
     template <
-      typename Engine = std::mt19937,
       typename RealType = double,
+      typename Engine = std::mt19937,
       typename Init,
       typename Seed = unsigned
     >
     static
     GenerateStream<
       RealType,
-      GeneralGen<
+      GeneralizedDistributionGenerator<
         RealType,
         Init,
         std::exponential_distribution<RealType>,
@@ -403,7 +434,7 @@ namespace streams {
         Seed
       >
     >
-    exponental_dist
+    exponential_dist
     (
       Init exponent,
       Seed seed = std::random_device{}()
@@ -414,15 +445,15 @@ namespace streams {
     }
 
     template <
-      typename Engine = std::mt19937,
       typename RealType = double,
+      typename Engine = std::mt19937,
       typename Init,
       typename Seed = unsigned
     >
     static
     GenerateStream<
       RealType,
-      GeneralGen<
+      GeneralizedDistributionGenerator<
         RealType,
         Init,
         std::gamma_distribution<RealType>,
@@ -442,15 +473,15 @@ namespace streams {
     }
 
     template <
-      typename Engine = std::mt19937,
       typename RealType = double,
+      typename Engine = std::mt19937,
       typename Init,
       typename Seed = unsigned
     >
     static
     GenerateStream<
       RealType,
-      GeneralGen<
+      GeneralizedDistributionGenerator<
         RealType,
         Init,
         std::weibull_distribution<RealType>,
@@ -470,15 +501,15 @@ namespace streams {
     }
 
     template <
-      typename Engine = std::mt19937,
       typename RealType = double,
+      typename Engine = std::mt19937,
       typename Init,
       typename Seed = unsigned
     >
     static
     GenerateStream<
       RealType,
-      GeneralGen<
+      GeneralizedDistributionGenerator<
         RealType,
         Init,
         std::extreme_value_distribution<RealType>,
@@ -502,15 +533,15 @@ namespace streams {
     //----------------------------------------------//
 
     template <
-      typename Engine = std::mt19937,
       typename RealType = double,
+      typename Engine = std::mt19937,
       typename Init,
       typename Seed = unsigned
     >
     static
     GenerateStream<
       RealType,
-      GeneralGen<
+      GeneralizedDistributionGenerator<
         RealType,
         Init,
         std::normal_distribution<RealType>,
@@ -530,15 +561,15 @@ namespace streams {
     }
 
     template <
-      typename Engine = std::mt19937,
       typename RealType = double,
+      typename Engine = std::mt19937,
       typename Init,
       typename Seed = unsigned
     >
     static
     GenerateStream<
       RealType,
-      GeneralGen<
+      GeneralizedDistributionGenerator<
         RealType,
         Init,
         std::lognormal_distribution<RealType>,
@@ -558,15 +589,15 @@ namespace streams {
     }
 
     template <
-      typename Engine = std::mt19937,
       typename RealType = double,
+      typename Engine = std::mt19937,
       typename Init,
       typename Seed = unsigned
     >
     static
     GenerateStream<
       RealType,
-      GeneralGen<
+      GeneralizedDistributionGenerator<
         RealType,
         Init,
         std::chi_squared_distribution<RealType>,
@@ -585,15 +616,15 @@ namespace streams {
     }
 
     template <
-      typename Engine = std::mt19937,
       typename RealType = double,
+      typename Engine = std::mt19937,
       typename Init,
       typename Seed = unsigned
     >
     static
     GenerateStream<
       RealType,
-      GeneralGen<
+      GeneralizedDistributionGenerator<
         RealType,
         Init,
         std::cauchy_distribution<RealType>,
@@ -613,15 +644,15 @@ namespace streams {
     }
 
     template <
-      typename Engine = std::mt19937,
       typename RealType = double,
+      typename Engine = std::mt19937,
       typename Init,
       typename Seed = unsigned
     >
     static
     GenerateStream<
       RealType,
-      GeneralGen<
+      GeneralizedDistributionGenerator<
         RealType,
         Init,
         std::fisher_f_distribution<RealType>,
@@ -641,15 +672,15 @@ namespace streams {
     }
  
     template <
-      typename Engine = std::mt19937,
       typename RealType = double,
+      typename Engine = std::mt19937,
       typename Init,
       typename Seed = unsigned
     >
     static
     GenerateStream<
       RealType,
-      GeneralGen<
+      GeneralizedDistributionGenerator<
         RealType,
         Init,
         std::student_t_distribution<RealType>,
@@ -699,28 +730,65 @@ namespace streams {
     }
 };
 
-  template <
-    typename STR
-  >
-  inline
-  decltype(auto)
-  operator |
-  (
-    STR&& s,
-    operators::Splitter&& sp
-  )
-    noexcept
-  {
-    static_assert(
-      std::is_constructible<std::string, STR>::value,
-      "Can not construct std::string from STR."
-    );
-    auto&& str = std::string{ s };
-    return std::vector<std::string>{
-      std::sregex_token_iterator{ str.begin(), str.end(), sp.r_, -1 },
-      std::sregex_token_iterator{}
-    };
+
+template < typename T >
+class stream_builder {
+public:
+  stream_builder() = default;
+
+  stream_builder& add(T const& a) & {
+    data_.emplace_back( a );
+    return *this;
+  };
+
+  stream_builder&& add( T const& a ) && {
+    data_.emplace_back( a );
+    return std::move( *this );
+  };
+
+  stream_builder& operator +=( T const& a ) & {
+    data_.push_back( a );
+    return *this;
   }
+
+  stream_builder&& operator +=( T const& a ) && {
+    data_.push_back( a );
+    return std::move( *this );
+  }
+
+
+  stream<T> build() {
+    return{ std::move(data_) };
+  }
+private:
+  std::vector<T> data_;
+};
+
+class stream_builder_t {};
+
+constexpr auto build = stream_builder_t{};
+
+template < typename T >
+stream_builder<T>& operator << ( stream_builder<T>& sb, T const& a ) {
+  return sb += a;
+}
+
+template < typename T >
+stream_builder<T>&& operator << ( stream_builder<T>&& sb, T const& a ) {
+  return std::move( sb += a );
+}
+
+template < typename T >
+auto operator << ( stream_builder<T>& sb, stream_builder_t) {
+  return sb.build();
+}
+
+template < typename T >
+auto operator << ( stream_builder<T>&& sb, stream_builder_t ) {
+  return sb.build();
+}
+
+
 
 } // ! namespace stream
 } // ! namespace cranberries

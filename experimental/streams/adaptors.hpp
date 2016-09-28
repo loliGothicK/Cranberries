@@ -98,7 +98,36 @@ namespace streams{
     return{ std::forward<Stream>(stream_), std::forward<Operator>( op_ ) };
   }
 
+  template <
+    typename Stream,
+    typename E = typename std::decay_t<Stream>::element_type
+  >
+  inline
+  decltype(auto)
+  operator >>
+  (
+    Stream&& stream_,
+    operators::FlatProxy&&
+  )
+    noexcept
+  {
+    return stream<element_type_of_t<E>>{}.lazy(operators::Flat<Stream>{ std::forward<Stream>( stream_ ) });
+  }
 
+  template <
+    typename Stream
+  >
+  inline
+  decltype(auto)
+  operator >>
+  (
+    Stream&& stream_,
+    operators::FlatAllProxy&&
+  )
+    noexcept
+  {
+    return stream<root_element_type_of_t<typename std::decay_t<Stream>::element_type>>{}.lazy( operators::FlatAll<Stream>{ std::forward<Stream>( stream_ ) } ); // TODO
+  }
 
 
   template <
@@ -117,11 +146,11 @@ namespace streams{
   operator >>
   (
     Stream&& stream_,
-    operators::MapProxy<UnaryOp>&& proxy
+    operators::TransformProxy<UnaryOp>&& proxy
   )
     noexcept
   {
-    return stream_.lazy(operators::Transform<UnaryOp>{std::move(proxy.f)});
+    return stream_.lazy(operators::Endomorphism<UnaryOp>{std::move(proxy.f)});
   }
 
   template <
@@ -140,11 +169,11 @@ namespace streams{
   operator >>
   (
     Stream&& stream_,
-    operators::MapProxy<UnaryOp>&& proxy
+    operators::TransformProxy<UnaryOp>&& proxy
   )
     noexcept
   {
-    return stream<R, operators::Map<Stream, UnaryOp>>{ std::vector<R>{}, operators::Map<Stream, UnaryOp>{ std::move(stream_), std::move(proxy.f) } };
+    return stream<R, operators::Transform<Stream, UnaryOp>>{ std::vector<R>{}, operators::Transform<Stream, UnaryOp>{ std::move(stream_), std::move(proxy.f) } };
   }
 
   template <
@@ -183,6 +212,7 @@ namespace streams{
 
     return left.lazy(concat(std::forward<Stream2>(right)));
   }
+
 
   template <
     typename Stream
@@ -282,7 +312,10 @@ namespace streams{
     > = nullptr
   >
   inline
-  StreamMerger<Stream1, Stream2>
+  StreamMerger<
+    Stream1,
+    decltype(std::declval<operators::Merge<Stream2>>().release())
+  >
   operator >>
   (
     Stream1&& stream_,
@@ -290,7 +323,7 @@ namespace streams{
   )
     noexcept
   {
-    return{ std::forward<Stream1>(stream_), std::forward<Stream2>(merge.release()) };
+    return{ std::forward<Stream1>(stream_), merge.release() };
   }
 
   template <
@@ -453,8 +486,29 @@ namespace streams{
     >::convert(std::forward<Stream>(stream.eval()));
   }
 
+  template <
+    typename Stream,
+    typename T = typename std::decay_t<Stream>::element_type
+  >
+  inline
+  operators::SummaryStat<T>
+  operator >>
+  (
+    Stream&& stream_,
+    operators::SummaryStatProxy&&
+  )
+    noexcept
+  {
+    static_assert(
+      std::is_arithmetic<T>::value,
+      "error : element_type must be arithmetic_type!"
+    );
+    return{ std::move(stream_.eval().get()) };
+  }
 
-}
-}
+
+
+} // ! namespace streams
+} // ! namespace cranberries
 
 #endif

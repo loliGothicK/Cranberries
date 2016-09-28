@@ -33,6 +33,12 @@ namespace streams {
 
   inline operators::Sort<> sorted() noexcept { return{}; }
 
+  inline operators::StableSort<> stable_sorted() noexcept { return{}; }
+
+  inline operators::PartialSort<> partial_sorted(size_t n) noexcept { return{n}; }
+
+  inline operators::NthElement<> nth_element( size_t n ) noexcept { return{ n }; }
+
   template <
     typename Pred
   >
@@ -47,6 +53,50 @@ namespace streams {
     return{ std::forward<Pred>(pred) };
   }
 
+  template <
+    typename Pred
+  >
+  inline
+  operators::StableSort<Pred>
+  stable_sorted
+  (
+    Pred&& pred
+  )
+    noexcept
+  {
+    return{ std::forward<Pred>( pred ) };
+  }
+
+  template <
+    typename Pred
+  >
+  inline
+  operators::StableSort<Pred>
+  partial_sorted
+  (
+    size_t n,
+    Pred&& pred
+  )
+    noexcept
+  {
+    return{ n, std::forward<Pred>( pred ) };
+  }
+
+  template <
+    typename Pred
+  >
+  inline
+  operators::NthElement<Pred>
+  nth_element
+  (
+    size_t n,
+    Pred&& pred
+  )
+    noexcept
+  {
+    return{ n, std::forward<Pred>( pred ) };
+  }
+
   inline operators::DistinctProxy distinctly() noexcept { return{}; }
 
   inline operators::Drop dropped(std::size_t n)  noexcept { return{ n }; }
@@ -54,7 +104,7 @@ namespace streams {
   inline operators::Take taken(std::size_t n) noexcept { return{ n }; }
 
   template < typename To >
-  inline operators::MapToProxy<To> map_to() noexcept { return{}; }
+  inline operators::MapToProxy<To> transformed_to() noexcept { return{}; }
 
   inline operators::MapToProxy<std::string> to_string() noexcept { return{}; }
 
@@ -109,21 +159,7 @@ namespace streams {
     typename UnaryFunc
   >
   inline
-  operators::MapProxy<UnaryFunc>
-  mapped
-  (
-    UnaryFunc&& func
-  )
-    noexcept
-  {
-    return{ std::forward<UnaryFunc>(func) };
-  }
-
-  template <
-    typename UnaryFunc
-  >
-  inline
-  operators::Transform<UnaryFunc>
+  operators::TransformProxy<UnaryFunc>
   transformed
   (
     UnaryFunc&& func
@@ -157,6 +193,8 @@ namespace streams {
 
   template < typename Range >
   inline operators::SetSymmetricDiff<Range&&> set_symmetric_difference( Range&& range ) { return{ std::forward<Range>( range ) }; }
+
+  inline operators::SummaryStatProxy summary_stat() noexcept { return{}; }
 
   template <
     typename Stream,
@@ -195,9 +233,23 @@ namespace streams {
   }
 
 
+  inline operators::FlatProxy flatten() noexcept { return{}; }
+
+  inline operators::FlatAllProxy all_faltten() noexcept { return{}; }
+
   inline
-  operators::Printer
+  operators::Printer<false>
   print_to
+  (
+    std::ostream& os = std::cout, // default output std::cout
+    std::string delim = ", " // default delimiter ", "
+  ) {
+    return{ os, delim };
+  }
+
+  inline
+  operators::Printer<true>
+  println_to
   (
     std::ostream& os = std::cout, // default output std::cout
     std::string delim = ", " // default delimiter ", "
@@ -216,7 +268,7 @@ namespace streams {
   )
     noexcept
   {
-    return{ std::forward<Pred>(pred) };
+    return{ std::forward<Pred>( pred ) };
   }
 
   template <
@@ -230,7 +282,7 @@ namespace streams {
   )
     noexcept
   {
-    return{ std::forward<Pred>(pred) };
+    return{ std::forward<Pred>( pred ) };
   }
 
   template <
@@ -244,7 +296,7 @@ namespace streams {
   )
     noexcept
   {
-    return{ std::forward<Pred>(pred) };
+    return{ std::forward<Pred>( pred ) };
   }
 
   template <
@@ -255,14 +307,15 @@ namespace streams {
   operators::Accumulate<
     InitialType,
     BinaryOp
-  > accumulate
+  >
+  accumulate
   (
     InitialType init,
     BinaryOp&& op
   )
     noexcept
   {
-    return{ init, std::forward<BinaryOp>(op) };
+    return{ init, std::forward<BinaryOp>( op ) };
   }
 
   template <
@@ -272,13 +325,14 @@ namespace streams {
   operators::Accumulate<
     InitialType,
     detail::defaulted
-  > accumulate
+  >
+  accumulate
   (
     InitialType init
   )
     noexcept
   {
-    return{init};
+    return{ init };
   }
 
   template < typename Target >
@@ -331,7 +385,7 @@ namespace streams {
   inline operators::Slice sliced( size_t low, size_t up ) noexcept { return{ low,up }; }
 
   template < typename UnaryOp >
-  inline operators::FlatMap<UnaryOp> flat_map( UnaryOp&& op ) noexcept { return{ std::forward<UnaryOp>( op ) }; }
+  inline operators::FlatMap<UnaryOp> flat_transformed( UnaryOp&& op ) noexcept { return{ std::forward<UnaryOp>( op ) }; }
 
   template <
     typename Pred

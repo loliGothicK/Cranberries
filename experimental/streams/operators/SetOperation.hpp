@@ -29,11 +29,12 @@ namespace operators {
       Stream&& stream_
     ) {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
+      using std::begin; using std::end; using cranberries::size;
       Result result{};
       auto&& src = stream_.get();
       std::set_union(
         src.begin(), src.end(),
-        set_.begin(), set_.end(),
+        begin( set_ ), .end( set_ ),
         std::back_inserter(result)
       );
       result.swap( src );
@@ -63,11 +64,12 @@ namespace operators {
       Stream&& stream_
     ) {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
+      using std::begin; using std::end; using cranberries::size;
       Result result{};
       auto&& src = stream_.get();
       std::set_intersection(
         src.begin(), src.end(),
-        set_.begin(), set_.end(),
+        begin( set_ ), end( set_ ),
         std::back_inserter(result)
       );
       result.swap( src );
@@ -97,11 +99,12 @@ namespace operators {
       Stream&& stream_
     ) {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
+      using std::begin; using std::end; using cranberries::size;
       Result result{};
       auto&& src = stream_.get();
       std::set_difference(
         src.begin(), src.end(),
-        set_.begin(), set_.end(),
+        begin( set_ ), end( set_ ),
         std::back_inserter(result)
       );
       result.swap( src );
@@ -131,11 +134,12 @@ namespace operators {
       Stream&& stream_
     ) {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
+      using std::begin; using std::end; using cranberries::size;
       Result result{};
       auto&& src = stream_.get();
       std::set_symmetric_difference(
         src.begin(), src.end(),
-        set_.begin(), set_.end(),
+        begin( set_ ), end( set_ ),
         std::back_inserter(result)
       );
       result.swap( src );

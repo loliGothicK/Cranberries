@@ -34,5 +34,10 @@
 #include "operators\FlatMap.hpp"
 #include "operators\Grouping_by.hpp"
 #include "operators\PartitioningBy.hpp"
+#include "operators\Flat.hpp"
+#include "operators\StableSort.hpp"
+#include "operators\PartialSort.hpp"
+#include "operators\NthElement.hpp"
+#include "operators\SummaryStat.hpp"
 
 #endif

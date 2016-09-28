@@ -3,7 +3,8 @@
 #include <string>
 #include <regex>
 #include <utility>
-#include "../detail/tag.hpp"
+#include "..\stream_error.hpp"
+#include "..\utility.hpp"
 
 namespace cranberries {
 namespace streams {

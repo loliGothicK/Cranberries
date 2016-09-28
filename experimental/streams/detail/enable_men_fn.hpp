@@ -92,7 +92,7 @@ namespace detail{
     decltype(auto)
     map_to() noexcept {
       return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::map_to<To>();
+        >> cranberries::streams::transformed_to<To>();
     }
 
     decltype(auto)
@@ -165,6 +165,12 @@ namespace detail{
       return std::move(*static_cast<Derived*>(this))
         >> cranberries::streams::print_to( os, delim );
     }
+
+    decltype(auto) println_to( std::ostream& os = std::cout, std::string delim = ", " ) {
+      return std::move( *static_cast<Derived*>(this) )
+        >> cranberries::streams::println_to( os, delim );
+    }
+
 
     decltype(auto) shuffle() noexcept {
       return std::move( *static_cast<Derived*>( this ) )
@@ -256,7 +262,7 @@ namespace detail{
     template < typename F >
     decltype(auto) flat_map(F&& f) noexcept {
       return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::flat_map( std::forward<F>( f ) );
+        >> cranberries::streams::flat_transformed( std::forward<F>( f ) );
     }
     
 
@@ -303,18 +309,11 @@ namespace detail{
         >> cranberries::streams::taken(lim);
     }
 
-    template < typename F >
-    decltype(auto)
-    map(F&& f) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::mapped(std::forward<F>(f));
-    }
-
     template < typename To >
     decltype(auto)
-    map_to() noexcept {
+    transform_to() noexcept {
       return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::map_to<To>();
+        >> cranberries::streams::transformed_to<To>();
     }
 
 
@@ -391,7 +390,7 @@ namespace detail{
     template < typename F >
     decltype(auto) flat_map(F&& f) noexcept {
       return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::flat_map( std::forward<F>( f ) );
+        >> cranberries::streams::flat_transformed( std::forward<F>( f ) );
     }
 };
 

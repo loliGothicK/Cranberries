@@ -37,16 +37,16 @@ namespace streams {
 
   template <
     typename T,
-    typename Gen
+    typename Supplier
   >
   class GenerateStream
     : private detail::InfiniteStreamBase
-    , public detail::enable_men_fn_inf<GenerateStream<T,Gen>>
+    , public detail::enable_men_fn_inf<GenerateStream<T, Supplier>>
   {
   public:
     using element_type = T;
 
-    GenerateStream( Gen gen ) : current_{ gen() }, gen_{ std::forward<Gen>( gen ) } {}
+    GenerateStream( Supplier gen ) : current_{ gen() }, gen_{ std::forward<Supplier>( gen ) } {}
 
     element_type get() noexcept { return current_; }
 
@@ -56,7 +56,7 @@ namespace streams {
 
   private:
     T current_;
-    Gen gen_;
+    Supplier gen_;
   };
 
   template < typename InitType, typename Func >
@@ -82,6 +82,28 @@ namespace streams {
   private:
     std::decay_t<InitType> current_;
     Func next_;
+  };
+
+  template < typename Iterable >
+  class CountingStream
+    : private detail::InfiniteStreamBase
+    , public detail::enable_men_fn_inf<CountingStream<Iterable>>
+  {
+  public:
+    using element_type = Iterable;
+
+    CountingStream() = default;
+
+    CountingStream( Iterable const& seed ) : current_{ seed } {}
+    
+    element_type get() noexcept { return current_; }
+
+    element_type advance() noexcept { return ++current_; }
+
+    element_type current() { return current_; }
+
+  private:
+    Iterable current_;
   };
 
   template < typename T >

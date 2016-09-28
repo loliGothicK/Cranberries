@@ -1,5 +1,5 @@
-#ifndef CRANBERRIES_STREAMS_OPERATORS_SORT_HPP
-#define CRANBERRIES_STREAMS_OPERATORS_SORT_HPP
+#ifndef CRANBERRIES_STREAMS_OPERATORS_NTH_ELEMENT_HPP
+#define CRANBERRIES_STREAMS_OPERATORS_NTH_ELEMENT_HPP
 #include <utility>
 #include <type_traits>
 #include <algorithm>
@@ -14,39 +14,40 @@ namespace operators {
   template <
     typename Pred
   >
-  class Sort
+    class NthElement
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    Sort( Pred pred ) : pred_{ std::forward<Pred>( pred ) } {}
+    NthElement( size_t n, Pred pred ) : n_{ n }, pred_{ std::forward<Pred>( pred ) } {}
 
     template <
       typename Stream
     >
-    inline
-    decltype(auto)
-    operator()
-    (
-      Stream&& stream_
-    ) {
+      inline
+      decltype(auto)
+      operator()
+      (
+        Stream&& stream_
+        ) {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
-      std::sort(stream_.begin(), stream_.end(), pred_);
-      return std::forward<Stream>(stream_);
+      std::nth_element( stream_.begin(), stream_.begin() + n_, stream_.end(), pred_ );
+      return std::forward<Stream>( stream_ );
     }
 
   private:
+    size_t n_;
     Pred pred_;
   };
 
   // Intermidiate Operation
   template < >
-  class Sort <
+  class NthElement <
     detail::defaulted // lookup operator < using ADL.
   >
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    Sort() = default;
+    NthElement( size_t n ) : n_{ n } {};
 
     template <
       typename Stream
@@ -57,9 +58,12 @@ namespace operators {
       Stream&& stream_
     ) {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
-      std::sort(stream_.begin(), stream_.end());
-      return std::forward<Stream>(stream_);
+      std::nth_element( stream_.begin(), stream_.begin() + n_, stream_.end() );
+      return std::forward<Stream>( stream_ );
     }
+
+  private:
+    size_t n_;
   };
 
 
