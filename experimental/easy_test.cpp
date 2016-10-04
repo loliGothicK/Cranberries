@@ -1,6 +1,7 @@
-﻿#include <iostream>
+﻿#include "stdafx.h"
+#include <iostream>
 #include "stream.hpp"
-
+#include "streams\algorithm\radix_sort.hpp"
 using std::cout;
 using std::endl;
 using cranberries::make_finally;
@@ -11,11 +12,16 @@ int main()
   using namespace cranberries::streams;
   using namespace cranberries;
 
-  auto stat = make_stream::generate_canonical()
-    >> taken( 100 )
-    >> summary_stat();
+  make_stream::of<double>({1,2,-3,3,6,5,4,-1})
+    >> radix_sorted()
+    >> println_to()
+    ;
 
-  stat.print(std::cout);
+  make_stream::generate_canonical()
+    >> taken( 100 )
+    >> summary_stat()
+    >> print_to()
+    ;
 
   std::vector<std::vector<int>> aa = {
     {1,2,3},
@@ -23,7 +29,7 @@ int main()
     {1,2,3}
   };
 
-  int a[] = {1,2,3};
+  //int a[] = {1,2,3};
 
   std::cout << std::boolalpha;
 
@@ -40,9 +46,16 @@ int main()
     >> println_to()
     ;
   
-  make_stream::of( { aa, aa, aa } ) >> all_faltten() >> println_to() ;
+  make_stream::of( { aa, aa, aa } ) >> all_flatten() >> println_to() ;
 
-  stream_builder<int>{}.add(1).add(2).build() >> merged( std::vector<int>{1, 2, 3} ) >> println_to();
+  stream_builder<int>{}
+    .add( 1 )
+    .add( 2 )
+    .build()
+    >> merged( std::vector<int>{1, 2, 3} )
+    >> println_to()
+    ;
+
   
   stream_builder<int>{}
     << 1 << 2 << 3 << 4 << build
@@ -250,4 +263,8 @@ int main()
   
   make_stream::generate_canonical() >> taken( 3 ) >> println_to();
 
+
+#ifdef _MSC_VER
+  getchar();
+#endif
 }

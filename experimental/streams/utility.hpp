@@ -135,7 +135,7 @@ namespace detail
 
 
   template < typename B >
-  struct negate : std::bool_constant<!B::value> {};
+  struct negation : std::bool_constant<!B::value> {};
 
 
   template < typename ...B >
@@ -145,7 +145,7 @@ namespace detail
   constexpr bool disjunction_v = disjunction<B...>::value;
 
   template < typename B >
-  constexpr bool negate_v = negate<B>::value;
+  constexpr bool negation_v = negation<B>::value;
 
   template < class, class = void >
   struct has_value_type : std::false_type
@@ -185,7 +185,7 @@ namespace detail
   struct conjunctional
   {
     template < typename T >
-    using type = typename conjunctional_impl<T, Preds...>;
+    using type = conjunctional_impl<T, Preds...>;
   };
 
   template < typename T, template<class> class Head, template<class> class ...Tail >
@@ -198,7 +198,7 @@ namespace detail
   struct disjunctional
   {
     template < typename T >
-    using type = typename conjunctional_impl<T, Preds...>;
+    using type = conjunctional_impl<T, Preds...>;
 
   };
 
@@ -345,6 +345,32 @@ namespace detail
 
   template < template<class> class Pred, typename ...Args >
   constexpr bool none_match_if_v = none_match_if<Pred, Args...>::value;
+  
+namespace details
+{
+    template<class> struct is_ref_wrapper : std::false_type {};
+    template<class T> struct is_ref_wrapper<std::reference_wrapper<T>> : std::true_type {};
+
+    template<class T>
+    using not_ref_wrapper = negation<is_ref_wrapper<std::decay_t<T>>>;
+
+    template <class D, class...> struct return_type_helper { using type = D; };
+    template <class... Types>
+    struct return_type_helper<void, Types...> : std::common_type<Types...> {
+      static_assert(conjunction_v<not_ref_wrapper<Types>...>,
+        "Types cannot contain reference_wrappers when D is void");
+    };
+
+    template <class D, class... Types>
+    using return_type = std::array<typename return_type_helper<D, Types...>::type,
+      sizeof...(Types)>;
+
+} // ! namespace detail
+
+  template < class D = void, class... Types>
+  constexpr details::return_type<D, Types...> make_array( Types&&... t ) {
+    return{ std::forward<Types>( t )... };
+  }
 
   template <
     typename T,

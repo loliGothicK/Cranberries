@@ -78,14 +78,14 @@ namespace operators {
     ) {
       static_assert(
         std::is_constructible<
-          E, typename element_type_of_t<Range>
+          E, element_type_of_t<Range>
         >::value,
         "" // TODO
       );
       typename std::decay_t<Stream>::range_type result{};
-      using std::begin; using std::end; using cranberries::size;
+      using std::begin; using std::end;
       auto&& lv = stream_.get();
-      lv.reserve( lv.size() + size( range_ ) );
+      lv.reserve( lv.size() + cranberries::size( range_ ) );
       auto&& first = lv.begin();
       auto&& middle = lv.end();
       lv.insert(middle, begin( range_ ), end( range_ ));

@@ -36,7 +36,7 @@ namespace operators {
 
     template <
       typename Stream,
-      typename E = std::decay_t<Stream>::element_type
+      typename E = typename std::decay_t<Stream>::element_type
     >
     inline
     decltype(auto)
@@ -82,7 +82,7 @@ namespace operators {
 
     template <
       typename Stream,
-      typename E = std::decay_t<Stream>::element_type
+      typename E = typename std::decay_t<Stream>::element_type
     >
     inline
     decltype(auto)

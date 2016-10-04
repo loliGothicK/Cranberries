@@ -282,28 +282,6 @@ namespace streams{
     return stream<T, Limited<Stream>>{ std::vector<T>{}, Limited<Stream>{ take.lim, std::move( stream_ ) } };
   }
 
-
-
-  template <
-    typename Stream,
-    typename T = typename std::decay_t<Stream>::element_type,
-    std::enable_if_t<
-      detail::is_infinite_stream_v<std::decay_t<Stream>>,
-      std::nullptr_t
-    > = nullptr
-  >
-  inline
-  StreamFilter<Stream, operators::Distinct<T>>
-  operator>>
-  (
-    Stream&& stream_,
-    operators::DistinctProxy&&
-  )
-    noexcept
-  {
-    return{ std::forward<Stream>( stream_ ), operators::Distinct<T>{} };
-  }
-
   template <
     typename Stream1, typename Stream2,
     std::enable_if_t<

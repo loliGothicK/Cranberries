@@ -42,7 +42,7 @@ namespace operators {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       using Val = Seeq<E>;
 
-      auto result = MapTraits<Option>:: template type<std::result_of_t<Pred( E )>, Val>{};
+      auto result = typename MapTraits<Option>:: template type<std::result_of_t<Pred( E )>, Val>{};
 
       auto middle = std::partition( stream_.begin(), stream_.end(), pred_ );
 

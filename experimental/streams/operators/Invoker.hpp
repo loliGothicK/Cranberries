@@ -57,15 +57,15 @@ namespace operators {
     decltype(auto)
     operator()
     (
-      Stream&& stream
+      Stream&& stream_
     ) {
       static_assert(
         is_callable_v<Operator,Stream&&>,
         "Invalid operator designated."
       );
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
-      op_(stream);
-      return std::forward<Stream>(stream);
+      op_(stream_);
+      return std::forward<Stream>(stream_);
     }
 
   private:

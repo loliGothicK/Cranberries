@@ -1,4 +1,4 @@
-#ifndef CRANBERRIES_STREAMS_OPERATORS_SILCE_HPP
+#ifndef CRANBERRIES_STREAMS_OPERATORS_SLICE_HPP
 #define CRANBERRIES_STREAMS_OPERATORS_SLICE_HPP
 #include <utility>
 #include "..\detail\tag.hpp"
@@ -13,7 +13,7 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    Slice( size_t l, size_t u ) : low_{ l }, up_{ u }, i{ 1 } {}
+    Slice( size_t l, size_t u ) : i{ 1 }, low_{ l }, up_{ u } {}
 
     Slice() = default;
     Slice( Slice const& ) = default;

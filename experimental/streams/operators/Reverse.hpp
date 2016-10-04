@@ -20,11 +20,11 @@ namespace operators {
     decltype(auto)
     operator()
     (
-      Stream&& stream
+      Stream&& stream_
     ) {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
-      std::reverse(stream.begin(), stream.end());
-      return std::forward<Stream>(stream);
+      std::reverse(stream_.begin(), stream_.end());
+      return std::forward<Stream>(stream_);
     }
   };
 

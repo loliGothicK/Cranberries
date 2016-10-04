@@ -39,5 +39,6 @@
 #include "operators\PartialSort.hpp"
 #include "operators\NthElement.hpp"
 #include "operators\SummaryStat.hpp"
+#include "operators\RadixSort.hpp"
 
 #endif

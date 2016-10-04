@@ -28,7 +28,7 @@ namespace operators {
     decltype(auto)
     operator()
     (
-      Stream&& stream
+      Stream&& stream_
     ) {
       static_assert(
         is_callable_v<Pred,E>,
@@ -42,13 +42,13 @@ namespace operators {
         "Predicate must be return bool."
       );
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
-      auto&& source = stream.get();
+      auto&& source = stream_.get();
       for (auto&& iter = source.begin(); iter != source.end(); ) {
         if (pred_(*iter)) iter = source.erase(iter);
         else ++iter;
       }
-      stream.shrink_to_fit();
-      return std::forward<Stream>(stream);
+      stream_.shrink_to_fit();
+      return std::forward<Stream>(stream_);
     }
 
     template <

@@ -97,6 +97,12 @@ namespace streams {
     return{ n, std::forward<Pred>( pred ) };
   }
 
+  template < bool B = true, typename G >
+  inline operators::RadixSort<G, B> radix_sorted( G&& get_key ) noexcept { return{ std::forward<G>( get_key ) }; }
+
+  template < bool B = true >
+  inline operators::RadixSort<detail::defaulted, B> radix_sorted() noexcept { return{}; }
+
   inline operators::DistinctProxy distinctly() noexcept { return{}; }
 
   inline operators::Drop dropped(std::size_t n)  noexcept { return{ n }; }
@@ -235,7 +241,7 @@ namespace streams {
 
   inline operators::FlatProxy flatten() noexcept { return{}; }
 
-  inline operators::FlatAllProxy all_faltten() noexcept { return{}; }
+  inline operators::FlatAllProxy all_flatten() noexcept { return{}; }
 
   inline
   operators::Printer<false>
@@ -346,7 +352,7 @@ namespace streams {
   inline operators::Accumulate<detail::defaulted,detail::defaulted> sum() noexcept { return{}; }
 
   template < typename Pred >
-  inline operators::SumIf<Pred> sum_if( Pred&& pred_ ) noexcept { return{ Pred_ }; }
+  inline operators::SumIf<Pred> sum_if( Pred&& pred_ ) noexcept { return{ std::forward<Pred>( pred_ ) }; }
 
   inline operators::Product product() noexcept { return{}; }
 

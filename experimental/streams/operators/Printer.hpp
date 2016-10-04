@@ -36,8 +36,9 @@ namespace operators {
       if (B) os_ << std::endl;
     }
 
-  private:
+  
     std::ostream& os_; // defalut is std::cout
+  private:
     std::string delim_; // defalut is ", "
   };
 

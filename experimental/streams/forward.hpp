@@ -1,6 +1,7 @@
 #ifndef CRANBERRIES_STREAMS_FORWARD_HPP
 #define CRANBERRIES_STREAMS_FORWARD_HPP
 
+#include <random>
 #include "detail\tag.hpp"
 #include "operators\Identity.hpp"
 
@@ -189,6 +190,9 @@ namespace operators {
 
   template < typename Pred = detail::defaulted >
   class NthElement;
+
+  template < typename G = detail::defaulted, bool B = true >
+  class RadixSort;
 
 } // ! namesapce operators
 } // ! namespace stream

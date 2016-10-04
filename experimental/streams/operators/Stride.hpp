@@ -14,7 +14,7 @@ namespace operators {
     , private detail::StreamFilterBase
   {
   public:
-    Stride(size_t s) : step{s}, i{} {}
+    Stride( size_t s ) : i{}, step{s} {}
 
     template <
       typename Stream

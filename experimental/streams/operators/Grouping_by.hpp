@@ -61,7 +61,7 @@ namespace {
       );
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       
-      auto result = MapTraits<Option>:: template type<std::result_of_t<Keygen( E )>, Seeq<E>>{};
+      auto result = typename MapTraits<Option>:: template type<std::result_of_t<Keygen( E )>, Seeq<E>>{};
 
       for (auto&& e : stream_)
         result[ keygen_( e ) ].push_back( e );

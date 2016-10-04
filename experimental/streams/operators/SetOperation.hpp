@@ -34,11 +34,11 @@ namespace operators {
       auto&& src = stream_.get();
       std::set_union(
         src.begin(), src.end(),
-        begin( set_ ), .end( set_ ),
+        begin( set_ ), end( set_ ),
         std::back_inserter(result)
       );
       result.swap( src );
-      return std::forward<Stream>(stream_)
+      return std::forward<Stream>( stream_ );
     }
 
   private:
@@ -73,7 +73,7 @@ namespace operators {
         std::back_inserter(result)
       );
       result.swap( src );
-      return std::forward<Stream>(stream_)
+      return std::forward<Stream>( stream_ );
     }
 
   private:
@@ -108,7 +108,7 @@ namespace operators {
         std::back_inserter(result)
       );
       result.swap( src );
-      return std::forward<Stream>(stream_)
+      return std::forward<Stream>( stream_ );
     }
 
   private:
@@ -143,7 +143,7 @@ namespace operators {
         std::back_inserter(result)
       );
       result.swap( src );
-      return std::forward<Stream>(stream_)
+      return std::forward<Stream>( stream_ );
     }
 
   private:

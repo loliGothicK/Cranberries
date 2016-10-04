@@ -72,7 +72,7 @@ namespace operators {
       kurtosis /= size;
     }
   public:
-    void print(std::ostream& os) {
+    std::ostream& print(std::ostream& os) const {
       PUTS( size );
       PUTS( min );
       PUTS( max );
@@ -88,6 +88,8 @@ namespace operators {
       PUTS( deviation );
       PUTS( skewness );
       PUTS( kurtosis );
+
+      return os;
     }
 
 
@@ -111,6 +113,16 @@ namespace operators {
   private:
     std::vector<T> data_;
   };
+
+  template < typename T >
+  std::ostream& operator<< ( std::ostream& os, SummaryStat<T> const& ss ) {
+    return ss.print( os );
+  }
+
+  template < typename T, bool B >
+  std::ostream& operator >> ( SummaryStat<T> const& ss, Printer<B>&& p) {
+    return ss.print( p.os_ );
+  }
 
 } // ! namespace operators
 } // ! namespace stream
