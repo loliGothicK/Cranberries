@@ -2,7 +2,6 @@
 #define CRANBERRIES_INTEGERS_HPP
 #include <cstdint>
 
-
 namespace cranberries {
 
 

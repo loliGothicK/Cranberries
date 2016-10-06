@@ -33,10 +33,6 @@ namespace operators {
     )
       noexcept
     {
-      static_assert(
-        std::is_arithmetic<std::result_of_t<std::decay_t<G>(E)>>::value,
-        "error : element_type must be arithmetic_type!"
-      );
       if (B)
         cranberries::ascending_radix_sort( stream_, std::forward<G>(get_key) );
       else
@@ -69,10 +65,6 @@ namespace operators {
     )
       noexcept
     {
-      static_assert(
-        std::is_arithmetic<E>::value,
-        "error : element_type must be arithmetic_type!"
-        );
       if (B) {
         cranberries::ascending_radix_sort( stream_ );
       }
