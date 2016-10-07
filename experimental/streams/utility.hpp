@@ -4,6 +4,7 @@
 #include <iterator>
 #include <tuple>
 #include <type_traits>
+#include <bitset>
 
 namespace cranberries {
 
@@ -49,6 +50,22 @@ namespace detail
 
   template < typename T >
   constexpr bool is_tuple_v = is_tuple<T>::value;
+
+
+namespace detail {
+  template < typename T, size_t N >
+  struct is_bitset_impl : std::false_type {};
+
+  template < size_t N >
+  struct is_bitset_impl<std::bitset<N>, N> : std::true_type {};
+
+}
+
+  template < typename T >
+  struct is_bitset : detail::is_bitset_impl<T, sizeof( T )> {};
+
+  template < typename T >
+  constexpr bool is_bitset_v = is_bitset<T>::value;
 
   namespace detail {
 
