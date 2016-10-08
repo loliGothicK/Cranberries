@@ -50,9 +50,7 @@ namespace streams{
   (
     Stream&& stream_,
     Operator&& op_
-  )
-    noexcept
-  {
+  ) {
     return op_(stream_.eval());
   }
 

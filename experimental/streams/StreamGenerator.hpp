@@ -97,6 +97,11 @@ namespace streams {
 
   struct make_stream
   {
+    template < typename T >
+    static stream<T> empty() {
+      return{};
+    }
+
     template <
       typename Iterator,
       typename T = element_type_of_t<Iterator>

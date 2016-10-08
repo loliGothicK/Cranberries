@@ -34,18 +34,18 @@ namespace cranberries {
 
 namespace detail
 {
-    template < class T, class... >
+    template < class T >
     struct is_tuple_impl : std::false_type
     {};
 
     template < class...Args >
-    struct is_tuple_impl<std::tuple<Args...>, void> : std::true_type
+    struct is_tuple_impl<std::tuple<Args...>> : std::true_type
     {};
 
 } // ! namespace detail
 
   template < typename T >
-  struct is_tuple : detail::is_tuple_impl<T, void>
+  struct is_tuple : detail::is_tuple_impl<T>
   {};
 
   template < typename T >
@@ -53,16 +53,16 @@ namespace detail
 
 
 namespace detail {
-  template < typename T, size_t N >
+  template < class T >
   struct is_bitset_impl : std::false_type {};
 
   template < size_t N >
-  struct is_bitset_impl<std::bitset<N>, N> : std::true_type {};
+  struct is_bitset_impl<std::bitset<N>> : std::true_type {};
 
 }
 
   template < typename T >
-  struct is_bitset : detail::is_bitset_impl<T, sizeof( T )> {};
+  struct is_bitset : detail::is_bitset_impl<T> {};
 
   template < typename T >
   constexpr bool is_bitset_v = is_bitset<T>::value;

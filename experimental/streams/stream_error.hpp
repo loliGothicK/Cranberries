@@ -4,15 +4,15 @@
 #include <stdexcept>
 #include "exception.hpp"
 
-#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( EXPR ) if( EXPR ){ throw cranberries::streams::except::stream_empty_error("stream_empty_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_ELSE_IF( EXPR ) else if( EXPR ){ throw cranberries::streams::except::stream_empty_error("stream_empty_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_ELSE else{ throw cranberries::streams::except::stream_empty_error("stream_empty_error", __FILE__, __FUNCTION__, __LINE__, #EXPR ); }
-#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_WITH_MSG_IF( EXPR, MESSAGE ) if( EXPR ){ throw cranberries::streams::except::stream_empty_error("stream_empty_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
-#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_WITH_MSG_ELSE_IF( EXPR, MESSAGE ) else if( EXPR ){ throw cranberries::streams::except::stream_empty_error("stream_empty_error", __FILE__, __FUNCTION__, __LINE__, #EXPR, MESSAGE ); }
-#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_WITH_MSG_ELSE( MESSAGE ) else{ throw cranberries::streams::except::stream_empty_error("stream_empty_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, cranberries::message_tag{} ); }
-#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_WITH_MSG( MESSAGE ) throw cranberries::streams::except::stream_empty_error("stream_empty_error", __FILE__, __FUNCTION__, __LINE__, MESSAGE, cranberries::message_tag{} );
-#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_CONDITIONAL( COND ) ( COND ) ? throw cranberries::streams::except::stream_empty_error( "stream_empty_error", __FILE__, __FUNCTION__, __LINE__, #COND )
-#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_CONDITIONAL_WITH_MSG( COND, MESSAGE ) ( COND ) ? throw cranberries::streams::except::stream_empty_error( "stream_empty_error", __FILE__, __FUNCTION__, __LINE__, #COND, MESSAGE )
+#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( EXPR ) if( EXPR ){ throw cranberries::streams::except::stream_empty_error("stream_empty_error", __FILE__, CRANBERRIES_FUNCTION, __LINE__, #EXPR ); }
+#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_ELSE_IF( EXPR ) else if( EXPR ){ throw cranberries::streams::except::stream_empty_error("stream_empty_error", __FILE__, CRANBERRIES_FUNCTION, __LINE__, #EXPR ); }
+#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_ELSE else{ throw cranberries::streams::except::stream_empty_error("stream_empty_error", __FILE__, CRANBERRIES_FUNCTION, __LINE__, #EXPR ); }
+#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_WITH_MSG_IF( EXPR, MESSAGE ) if( EXPR ){ throw cranberries::streams::except::stream_empty_error("stream_empty_error", __FILE__, CRANBERRIES_FUNCTION, __LINE__, #EXPR, MESSAGE ); }
+#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_WITH_MSG_ELSE_IF( EXPR, MESSAGE ) else if( EXPR ){ throw cranberries::streams::except::stream_empty_error("stream_empty_error", __FILE__, CRANBERRIES_FUNCTION, __LINE__, #EXPR, MESSAGE ); }
+#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_WITH_MSG_ELSE( MESSAGE ) else{ throw cranberries::streams::except::stream_empty_error("stream_empty_error", __FILE__, CRANBERRIES_FUNCTION, __LINE__, MESSAGE, cranberries::message_tag{} ); }
+#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_WITH_MSG( MESSAGE ) throw cranberries::streams::except::stream_empty_error("stream_empty_error", __FILE__, CRANBERRIES_FUNCTION, __LINE__, MESSAGE, cranberries::message_tag{} );
+#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_CONDITIONAL( COND ) ( COND ) ? throw cranberries::streams::except::stream_empty_error( "stream_empty_error", __FILE__, CRANBERRIES_FUNCTION, __LINE__, #COND )
+#define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_CONDITIONAL_WITH_MSG( COND, MESSAGE ) ( COND ) ? throw cranberries::streams::except::stream_empty_error( "stream_empty_error", __FILE__, CRANBERRIES_FUNCTION, __LINE__, #COND, MESSAGE )
 
 
 namespace cranberries {
