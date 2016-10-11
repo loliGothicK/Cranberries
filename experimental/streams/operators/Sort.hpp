@@ -18,7 +18,18 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    Sort( Pred pred ) : pred_{ std::forward<Pred>( pred ) } {}
+    Sort( Pred pred ) noexcept
+      : first{}
+      , last{}
+      , pred_{ std::forward<Pred>( pred ) }
+    {}
+
+    Sort( Pred pred, size_t first, size_t last ) noexcept
+      : first{first}
+      , last{last}
+      , pred_{ std::forward<Pred>( pred ) }
+    {}
+
 
     template <
       typename Stream
@@ -35,6 +46,8 @@ namespace operators {
     }
 
   private:
+    size_t first;
+    size_t last;
     Pred pred_;
   };
 

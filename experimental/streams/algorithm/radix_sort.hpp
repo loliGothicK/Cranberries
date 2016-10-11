@@ -580,10 +580,7 @@ namespace cranberries
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
-      conjunctional<
-        typename negational<is_bitset>::type,
-        std::is_signed
-      >::type<K>::value,
+      !is_bitset_v<K> && std::is_signed<K>::value,
     std::nullptr_t
     > = nullptr
   >
@@ -632,10 +629,7 @@ namespace cranberries
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
-      conjunctional<
-        typename negational<is_bitset>::type,
-        std::is_signed
-      >::type<K>::value,
+      is_bitset_v<K> && std::is_signed<K>::value,
     std::nullptr_t
     > = nullptr
   >
@@ -697,10 +691,7 @@ namespace cranberries
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
-      conjunctional<
-        typename negational<is_bitset>::type,
-        std::is_unsigned
-      >::type<K>::value,
+      !is_bitset_v<K> && std::is_unsigned<K>::value,
       std::nullptr_t
     > = nullptr
   >
@@ -725,10 +716,7 @@ namespace cranberries
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
-      conjunctional<
-        typename negational<is_bitset>::type,
-        std::is_unsigned
-      >::type<K>::value,
+      !is_bitset_v<K> && std::is_unsigned<K>::value,
       std::nullptr_t
     > = nullptr
   >
@@ -742,7 +730,7 @@ namespace cranberries
     noexcept
   {
     descending_radix_sort_impl(
-      range.begin(), middle,
+      range.begin(), range.end(),
       make_get_key_wrapper( std::forward<G>( key_getter ) )
     );
   }

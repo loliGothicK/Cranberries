@@ -248,6 +248,88 @@ namespace streams {
 } // ! namespace workaround
 } // ! anonymous-namespace
 
+  template <
+    typename Stream
+  >
+  class StreamFlatter
+    : private detail::InfiniteStreamBase
+    , public detail::enable_men_fn_inf<StreamFlatter<Stream>>
+  {
+  public:
+    using element_type =  element_type_of_t<typename std::decay_t<Stream>::element_type>;
+
+    StreamFlatter( Stream x ) noexcept
+      : stream_{ std::forward<Stream>( x ) }
+      , elem_{}
+    {
+      using std::begin; using std::end;
+      auto tmp = stream_.get();
+      elem_.insert( elem_.end(), begin( tmp ), end( tmp ) );
+    }
+
+    element_type get() noexcept { return elem_.back(); }
+
+    element_type current() noexcept { return elem_.back(); }
+
+    element_type advance() noexcept
+    {
+      using std::begin; using std::end;
+      elem_.pop_back();
+      if (elem_.empty()) {
+        stream_.advance();
+        auto tmp = stream_.get();
+        elem_.insert( elem_.end(), begin( tmp ), std::end( tmp ) );
+      }
+      return elem_.back();
+    }
+
+  private:
+    Stream stream_;
+    std::vector<element_type> elem_;
+  };
+
+  template <
+    typename Stream
+  >
+  class StreamAllFlatter
+    : private detail::InfiniteStreamBase
+    , public detail::enable_men_fn_inf<StreamAllFlatter<Stream>>
+  {
+  public:
+    using element_type = root_element_type_of_t<typename std::decay_t<Stream>::element_type>;
+
+    StreamAllFlatter( Stream x ) noexcept
+      : stream_{ std::forward<Stream>( x ) }
+      , elem_{}
+    {
+      streams::workaround::expand_right<
+        is_range_v<typename std::decay_t<Stream>::element_type>
+      >::loop(
+        elem_, stream_.get()
+      );
+    }
+
+    element_type get() noexcept { return elem_.back(); }
+
+    element_type current() noexcept { return elem_.back(); }
+
+    element_type advance() noexcept
+    {
+      elem_.pop_back();
+      if (elem_.empty()) {
+        streams::workaround::expand_right<
+          is_range_v<typename std::decay_t<Stream>::element_type>
+        >::loop(
+          elem_, stream_.get()
+        );
+      }
+      return elem_.back();
+    }
+
+  private:
+    Stream stream_;
+    std::vector<element_type> elem_;
+  };
 
   template <
     typename Stream,

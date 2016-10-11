@@ -11,6 +11,8 @@
 #include "..\operatoins.hpp"
 #include "..\InfiniteStream.hpp"
 
+
+
 namespace cranberries{
 namespace streams{
 namespace detail{
@@ -469,6 +471,20 @@ namespace detail{
       return std::move( *static_cast<Derived*>( this ) )
         >> cranberries::streams::flat_transformed( std::forward<F>( f ) );
     }
+
+    decltype(auto)
+    flat() noexcept {
+      return std::move( *static_cast<Derived*>(this) )
+        >> cranberries::streams::flatten();
+    }
+
+    decltype(auto)
+    all_flat() noexcept {
+      return std::move( *static_cast<Derived*>(this) )
+        >> cranberries::streams::all_flatten();
+    }
+
+
 };
 
 

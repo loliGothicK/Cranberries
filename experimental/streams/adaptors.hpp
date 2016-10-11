@@ -98,7 +98,10 @@ namespace streams{
 
   template <
     typename Stream,
-    typename E = typename std::decay_t<Stream>::element_type
+    typename E = typename std::decay_t<Stream>::element_type,
+    std::enable_if_t<detail::is_finite_stream_v<std::decay_t<Stream>>,
+      std::nullptr_t
+    > = nullptr
   >
   inline
   decltype(auto)
@@ -113,7 +116,11 @@ namespace streams{
   }
 
   template <
-    typename Stream
+    typename Stream,
+    std::enable_if_t<
+      detail::is_finite_stream_v<std::decay_t<Stream>>,
+      std::nullptr_t
+    > = nullptr
   >
   inline
   decltype(auto)
@@ -424,6 +431,46 @@ namespace streams{
     return{ std::forward<Stream>(stream_), std::move(fm_) };
   }
 
+  template <
+    typename Stream,
+    typename T = typename std::decay_t<Stream>::element_type,
+    std::enable_if_t<
+      detail::is_infinite_stream_v<std::decay_t<Stream>>,
+    std::nullptr_t
+    > = nullptr
+  >
+  inline
+  StreamFlatter<Stream>
+  operator >>
+  (
+    Stream&& stream_,
+    operators::FlatProxy&&
+  )
+    noexcept
+  {
+    return{ std::forward<Stream>( stream_ ) };
+  }
+
+
+  template <
+    typename Stream,
+    typename T = typename std::decay_t<Stream>::element_type,
+    std::enable_if_t<
+      detail::is_infinite_stream_v<std::decay_t<Stream>>,
+      std::nullptr_t
+    > = nullptr
+  >
+    inline
+    StreamAllFlatter<Stream>
+    operator >>
+    (
+      Stream&& stream_,
+      operators::FlatAllProxy&&
+      )
+    noexcept
+  {
+    return{ std::forward<Stream>( stream_ ) };
+  }
 
   template <
     typename Stream
