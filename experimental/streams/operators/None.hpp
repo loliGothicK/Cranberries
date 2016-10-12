@@ -14,7 +14,9 @@ namespace operators {
     : private detail::TerminateStreamOperatorBase
   {
   public:
-    NoneOf( Pred p ) : pred_{ std::forward<Pred>( p ) } {};
+    NoneOf( Pred p ) noexcept
+      : pred_{ std::forward<Pred>( p ) }
+    {};
 
     template <
       typename Stream,
@@ -25,7 +27,9 @@ namespace operators {
     operator ()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       static_assert(
         is_callable_v<Pred,E>,
         "Invalid predicate designated."
@@ -36,6 +40,7 @@ namespace operators {
         >::value,
         "Predicate must be return bool."
       );
+      CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       for (auto&& e : stream_)
         if (pred_(e)) return false;
       return true;

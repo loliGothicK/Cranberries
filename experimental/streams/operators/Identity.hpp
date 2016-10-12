@@ -30,7 +30,7 @@ namespace operators {
       std::enable_if_t<!is_range_v<std::decay_t<T>>,std::nullptr_t> = nullptr
     >
     decltype(auto)
-    operator()( T&& a ) {
+    operator()( T&& a ) noexcept {
       return std::forward<T>( a );
     }
 

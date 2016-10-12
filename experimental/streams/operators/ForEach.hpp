@@ -15,7 +15,9 @@ namespace operators {
     : private detail::TerminateStreamOperatorBase
   {
   public:
-    ForEach( UnaryFunc f ) : f_{ std::forward<UnaryFunc>( f ) } {}
+    ForEach( UnaryFunc f ) noexcept
+      : f_{ std::forward<UnaryFunc>( f ) }
+    {}
 
     template <
       typename Stream,
@@ -26,7 +28,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       static_assert(
         is_callable_v<UnaryFunc,E&>,
         "Invalid unary function designated."

@@ -12,21 +12,23 @@ namespace operators {
     typename Branch,
     bool B = detail::is_finite_stream_v<Branch>
   >
-  class Concatenate
+  class Join
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    Concatenate( Branch stream_ ) : branch{ std::forward<Branch>(stream_) } {}
+    Join( Branch stream_ ) noexcept
+      : branch{ std::forward<Branch>(stream_) }
+    {}
     
-    Concatenate( Concatenate&& ) = default;
+    Join( Join&& ) = default;
 
-    Concatenate& operator=( Concatenate&& ) = default;
+    Join& operator=( Join&& ) = default;
 
 
 
     // for evaluate Branch Stream only once
     void
-    once()
+    once() noexcept(false)
     {
       if (flag) {
         branch.eval();
@@ -43,12 +45,14 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       static_assert(
         std::is_constructible<
           E,element_type_of_t<Branch>
         >::value,
-        "[to stream] >> concat([from range]) requires element type of [to stream] is constructible from value tpe of [from range]."
+        "[to stream] >> joined([from range]) requires element type of [to stream] is constructible from value tpe of [from range]."
       );
 
       once(); // perfectly call once
@@ -59,7 +63,7 @@ namespace operators {
       return std::forward<Stream>(stream_);
     }
 
-    decltype( auto ) release() {return std::move(branch); }
+    decltype( auto ) release() noexcept {return std::move(branch); }
 
   private:
     Branch branch; // Branch Stream
@@ -70,15 +74,17 @@ namespace operators {
   template <
     typename Branch
   >
-  class Concatenate<Branch,false>
+  class Join<Branch,false>
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    Concatenate( Branch stream_ ) : branch{ std::forward<Branch>( stream_ ) } {}
+    Join( Branch stream_ ) noexcept
+      : branch{ std::forward<Branch>( stream_ ) }
+    {}
 
-    Concatenate( Concatenate&& ) = default;
+    Join( Join&& ) = default;
 
-    Concatenate& operator=( Concatenate&& ) = default;
+    Join& operator=( Join&& ) = default;
 
     template <
       typename Stream,
@@ -89,12 +95,14 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       static_assert(
         std::is_constructible<
           E, element_type_of_t<Branch>
         >::value,
-        "[to stream] >> concat([from range]) requires element type of [to stream] is constructible from value tpe of [from range]."
+        "[to stream] >> joined([from range]) requires element type of [to stream] is constructible from value tpe of [from range]."
       );
       using std::begin; using std::end; using cranberries::size;
       auto&& lv = stream_.get();

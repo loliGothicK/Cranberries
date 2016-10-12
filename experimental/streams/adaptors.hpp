@@ -212,10 +212,10 @@ namespace streams{
   {
     static_assert(
       std::is_same<typename std::decay_t<Stream1>::element_type, typename std::decay_t<Stream2>::element_type>::value,
-      "Call 'concat' with different element_type."
+      "Call 'joined' with different element_type."
     );
 
-    return left.lazy(concat(std::forward<Stream2>(right)));
+    return left.lazy(joined(std::forward<Stream2>(right)));
   }
 
 
@@ -321,7 +321,7 @@ namespace streams{
   operator >>
   (
     Stream1&& stream_,
-    operators::Concatenate<Stream2>&& concat_
+    operators::Join<Stream2>&& concat_
   )
     noexcept
   {
@@ -460,13 +460,13 @@ namespace streams{
       std::nullptr_t
     > = nullptr
   >
-    inline
-    StreamAllFlatter<Stream>
-    operator >>
-    (
+  inline
+  StreamAllFlatter<Stream>
+  operator >>
+  (
       Stream&& stream_,
       operators::FlatAllProxy&&
-      )
+  )
     noexcept
   {
     return{ std::forward<Stream>( stream_ ) };
@@ -481,9 +481,7 @@ namespace streams{
   (
     Stream&& stream_,
     detail::ConvertAny
-  ) 
-    noexcept
-  {
+  ) {
     return detail::ImplicitStreamConvertInvoker::invoke(std::forward<Stream>(stream_.eval()));
   }
 
@@ -499,9 +497,7 @@ namespace streams{
   (
     Stream&& stream,
     detail::ConvertTo<Target>
-  )
-    noexcept
-  {
+  ) {
     return detail::ExplicitStreamConverter<
       typename detail::ConvertTo<Target>::template type<
       typename std::decay_t<Stream>::element_type
@@ -519,9 +515,7 @@ namespace streams{
   (
     Stream&& stream_,
     operators::SummaryStatProxy&&
-  )
-    noexcept
-  {
+  ) {
     static_assert(
       std::is_arithmetic<T>::value,
       "error : element_type must be arithmetic_type!"

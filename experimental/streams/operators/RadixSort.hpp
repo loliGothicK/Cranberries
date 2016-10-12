@@ -34,9 +34,9 @@ namespace operators {
       noexcept
     {
       if (B)
-        cranberries::ascending_radix_sort( stream_, std::forward<G>(get_key) );
+        cranberries::ascending_radix_sort( stream_.begin(), stream_.end(), std::forward<G>(get_key) );
       else
-        cranberries::descending_radix_sort( stream_, std::forward<G>( get_key ) );
+        cranberries::descending_radix_sort( stream_.begin(), stream_.end(), std::forward<G>( get_key ) );
 
       return std::forward<Stream>( stream_ );
     }
@@ -47,7 +47,7 @@ namespace operators {
   template <
     bool B
   >
-  class RadixSort<detail::defaulted,B>
+  class RadixSort<detail::defaulted_t,B>
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
@@ -66,10 +66,10 @@ namespace operators {
       noexcept
     {
       if (B) {
-        cranberries::ascending_radix_sort( stream_ );
+        cranberries::ascending_radix_sort( stream_.begin(), stream_.end() );
       }
       else {
-        cranberries::descending_radix_sort( stream_ );
+        cranberries::descending_radix_sort( stream_.begin(), stream_.end() );
       }
       return std::forward<Stream>( stream_ );
     }

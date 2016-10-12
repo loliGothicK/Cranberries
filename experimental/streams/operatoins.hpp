@@ -37,7 +37,7 @@ namespace streams {
 
   inline operators::PartialSort<> partial_sorted(size_t n) noexcept { return{n}; }
 
-  inline operators::NthElement<> nth_element( size_t n ) noexcept { return{ n }; }
+  inline operators::NthElement<> nth_elemented( size_t n ) noexcept { return{ n }; }
 
   template <
     typename Pred
@@ -87,7 +87,7 @@ namespace streams {
   >
   inline
   operators::NthElement<Pred>
-  nth_element
+  nth_elemented
   (
     size_t n,
     Pred&& pred
@@ -101,7 +101,7 @@ namespace streams {
   inline operators::RadixSort<G, B> radix_sorted( G&& get_key ) noexcept { return{ std::forward<G>( get_key ) }; }
 
   template < bool B = true >
-  inline operators::RadixSort<detail::defaulted, B> radix_sorted() noexcept { return{}; }
+  inline operators::RadixSort<detail::defaulted_t, B> radix_sorted() noexcept { return{}; }
 
   inline operators::DistinctProxy distinctly() noexcept { return{}; }
 
@@ -229,8 +229,8 @@ namespace streams {
     > = nullptr
   >
   inline
-  operators::Concatenate<Range>
-  concat(
+  operators::Join<Range>
+  joined(
     Range&& range_
   )
     noexcept
@@ -330,7 +330,7 @@ namespace streams {
   inline
   operators::Accumulate<
     InitialType,
-    detail::defaulted
+    detail::defaulted_t
   >
   accumulate
   (
@@ -347,9 +347,9 @@ namespace streams {
   template < typename Pred >
   inline operators::CountIf<Pred> count_if( Pred&& pred_ ) noexcept { return{ pred_ }; }
 
-  inline operators::Accumulate<detail::defaulted,detail::defaulted> accumulate() noexcept { return{}; }
+  inline operators::Accumulate<detail::defaulted_t,detail::defaulted_t> accumulate() noexcept { return{}; }
 
-  inline operators::Accumulate<detail::defaulted,detail::defaulted> sum() noexcept { return{}; }
+  inline operators::Accumulate<detail::defaulted_t,detail::defaulted_t> sum() noexcept { return{}; }
 
   template < typename Pred >
   inline operators::SumIf<Pred> sum_if( Pred&& pred_ ) noexcept { return{ std::forward<Pred>( pred_ ) }; }

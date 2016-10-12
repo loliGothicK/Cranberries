@@ -39,7 +39,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       std::sort(stream_.begin(), stream_.end(), pred_);
       return std::forward<Stream>(stream_);
@@ -54,7 +56,7 @@ namespace operators {
   // Intermidiate Operation
   template < >
   class Sort <
-    detail::defaulted // lookup operator < using ADL.
+    detail::defaulted_t // lookup operator < using ADL.
   >
     : private detail::IntermidiateStreamOperatorBase
   {
@@ -68,7 +70,9 @@ namespace operators {
     decltype(auto)
     operator()(
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       std::sort(stream_.begin(), stream_.end());
       return std::forward<Stream>(stream_);

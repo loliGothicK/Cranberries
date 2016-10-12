@@ -5,8 +5,8 @@
 #include <algorithm>
 #include <numeric>
 
-namespace cranberries{
-namespace stat{
+namespace cranberries {
+namespace stat {
 
   template < typename ForwardIterator >
   inline
@@ -14,23 +14,16 @@ namespace stat{
   median(
     ForwardIterator first,
     ForwardIterator last
-  ) {
+  )
+    noexcept(false)
+  {
     auto len = std::distance( first, last );
+    CRANBERRIES_RANGE_ERROR_THROW_IF( len < 1 );
     std::advance(first,len/2);
     return len%2==1?static_cast<double>(*first):(*first+*(++first))/2.0;
   }
 
 } // ! namespace stat
-
-namespace streams{
-
-  template < typename T >
-  class statistics
-  {
-
-  };
-
-} // ! namespace streams
 } // ! namespace cranberries
 
 #endif

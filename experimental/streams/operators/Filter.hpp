@@ -17,7 +17,9 @@ namespace operators {
     , private detail::StreamFilterBase
   {
   public:
-    Filter( Pred p ) : pred_{ std::forward<Pred>( p ) } {}
+    Filter( Pred p ) noexcept
+      : pred_{ std::forward<Pred>( p ) }
+    {}
 
     template <
       typename Stream,
@@ -29,7 +31,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       static_assert(
         is_callable_v<Pred,E>,
         "Invalid predicate designated."

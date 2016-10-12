@@ -7,12 +7,15 @@ namespace streams {
   enum class opt {
     ordered,
     unordered,
+    left,
+    right,
+
   };
 
 namespace detail {
 
   // Defaluted Tag
-  struct defaulted {};
+  struct defaulted_t {};
 
 } // ! namespace detail
 } // ! namespace stream

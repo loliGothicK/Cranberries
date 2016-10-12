@@ -12,7 +12,9 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    Take( size_t n ) : lim{ n } {}
+    Take( size_t n ) noexcept
+      : lim{ n }
+    {}
     
     template <
       typename Stream,
@@ -23,7 +25,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       auto&& src = stream_.get();
       auto&& iter = src.begin() + lim;

@@ -21,7 +21,7 @@ namespace streams {
     operator()
     (
       Range&& range
-    ){
+    ) noexcept {
       range.reserve( static_cast<size_t>((last-first)/step) );
       for ( ;first < last; first+=step )
       {
@@ -52,7 +52,7 @@ namespace streams {
 
     element_type advance() noexcept { return current_ = gen_(); }
 
-    element_type current() { return current_; }
+    element_type current() noexcept { return current_; }
 
   private:
     T current_;
@@ -77,7 +77,7 @@ namespace streams {
 
     element_type advance() noexcept { return current_ = next_( current_ ); }
 
-    element_type current() { return current_; }
+    element_type current() noexcept { return current_; }
 
   private:
     std::decay_t<InitType> current_;
@@ -94,13 +94,13 @@ namespace streams {
 
     CountingStream() = default;
 
-    CountingStream( Iterable const& seed ) : current_{ seed } {}
+    CountingStream( Iterable const& seed ) noexcept : current_{ seed } {}
     
     element_type get() noexcept { return current_; }
 
     element_type advance() noexcept { return ++current_; }
 
-    element_type current() { return current_; }
+    element_type current() noexcept { return current_; }
 
   private:
     Iterable current_;
@@ -119,7 +119,7 @@ namespace streams {
       typename Range,
       std::enable_if_t<is_range_v<std::decay_t<Range>>,std::nullptr_t> = nullptr
     >
-    CyclicStream( Range&& range ) : cycle_{ range.begin(), range.end() }, current_{cycle_.begin()} {}
+    CyclicStream( Range&& range ) noexcept : cycle_{ range.begin(), range.end() }, current_{cycle_.begin()} {}
 
    template <
       typename Iterator,
@@ -129,16 +129,16 @@ namespace streams {
         std::nullptr_t
       > = nullptr
     >
-    CyclicStream( Iterator first, Iterator last ) : cycle_{ first, last }, current_{cycle_.begin()} {}
+    CyclicStream( Iterator first, Iterator last ) noexcept : cycle_{ first, last }, current_{cycle_.begin()} {}
 
 
-    CyclicStream( std::initializer_list<T> il ) : cycle_{ il }, current_{cycle_.begin()} {}
+    CyclicStream( std::initializer_list<T> il ) noexcept : cycle_{ il }, current_{cycle_.begin()} {}
 
-    element_type get() { return *current_; }
+    element_type get() noexcept { return *current_; }
 
-    element_type advance() { return *( ++current_ == cycle_.end() ? (current_ = cycle_.begin()) : current_ ); }
+    element_type advance() noexcept { return *( ++current_ == cycle_.end() ? (current_ = cycle_.begin()) : current_ ); }
 
-    element_type current() { return *current_; }
+    element_type current() noexcept { return *current_; }
 
   private:
     std::vector<T> cycle_;
@@ -166,7 +166,7 @@ namespace streams {
 
     element_type advance() noexcept { return current_ = op_[stream_.advance(),stream_.get()]; }
 
-    element_type current() { return current_; }
+    element_type current() noexcept { return current_; }
 
   private:
     element_type current_;
@@ -196,57 +196,12 @@ namespace streams {
       return stream_.advance();
     }
 
-    element_type current() { return stream_.current(); }
+    element_type current() noexcept { return stream_.current(); }
 
   private:
     Stream stream_;
     Filter pred_;
   };
-
-  namespace {
-  namespace workaround {
-  
-  template <
-    bool IsStream
-  >
-    struct for_msvc
-  {
-    template <
-      typename Stream,
-      typename Range
-    >
-    static
-    void
-    invoke
-    (
-      Stream&& stream_,
-      Range&& proj_
-    ) {
-      stream_.insert(stream_.end(), proj_.rbegin(), proj_.rend());
-    }
-  };
-
-  template < >
-  struct for_msvc<true>
-  {
-    template <
-      typename Stream,
-      typename Range
-    >
-    static
-    void
-    invoke
-    (
-      Stream&& stream_,
-      Range&& proj_
-    ) {
-      proj_.eval();
-      stream_.insert(stream_.end(), proj_.rbegin(), proj_.rend());
-    }
-  };
-
-} // ! namespace workaround
-} // ! anonymous-namespace
 
   template <
     typename Stream
@@ -342,7 +297,7 @@ namespace streams {
   public:
     using element_type = typename std::decay_t<Stream>::element_type;
 
-    StreamFlatTransformer(Stream x, Operator op)
+    StreamFlatTransformer(Stream x, Operator op) noexcept
       : stream_{ std::forward<Stream>(x) }
       , op_{ std::forward<Operator>(op) }
       , proj_{}
@@ -357,7 +312,7 @@ namespace streams {
     push_tuple
     (
       T&& arg
-    ) {
+    ) noexcept {
       proj_.emplace_back(std::move(arg));
     }
 
@@ -369,7 +324,7 @@ namespace streams {
     push_tuple(
       Head&& head,
       Tail&& ...tail
-    ) {
+    ) noexcept {
       return push_tuple(std::forward<Tail>(tail)...), proj_.emplace_back(std::move(head));
     }
 
@@ -459,7 +414,7 @@ namespace streams {
         : ( flag = false, stream_2.get() );
     }
 
-    element_type current() { return current_; }
+    element_type current() noexcept { return current_; }
 
   private:
     element_type current_;
@@ -506,7 +461,7 @@ namespace streams {
       }
     }
 
-    element_type current() { return current_; }
+    element_type current() noexcept { return current_; }
 
   private:
     element_type current_;
@@ -554,7 +509,7 @@ namespace streams {
       }
     }
 
-    element_type current() { return current_; }
+    element_type current() noexcept { return current_; }
 
   private:
     element_type current_;
@@ -588,9 +543,9 @@ namespace streams {
       , current_{ stream_1.current() }
     {}
 
-    element_type get() { return current_; }
+    element_type get() noexcept { return current_; }
 
-    element_type advance() {
+    element_type advance() noexcept {
       if ( flag )
       {
         return current_ =
@@ -604,7 +559,7 @@ namespace streams {
       }
     }
 
-    element_type current() { return current_; }
+    element_type current() noexcept { return current_; }
 
   private:
     Stream1 stream_1;
@@ -618,7 +573,7 @@ namespace streams {
   struct Limited
   {
     template < typename Range >
-    decltype( auto ) operator()( Range&& range ) {
+    decltype( auto ) operator()( Range&& range ) noexcept {
       range.reserve( lim_ );
       for ( size_t i{}; i < lim_; ++i,stream_.advance() ) {
         range.emplace_back( stream_.get() );
@@ -636,7 +591,7 @@ namespace streams {
   struct LimitedWhile
   {
     template < typename Range >
-    decltype( auto ) operator()( Range&& range ) {
+    decltype( auto ) operator() ( Range&& range ) noexcept {
 
       while ( pred_[ stream_.get() ] ) {
         range.emplace_back( stream_.current() );

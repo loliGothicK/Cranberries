@@ -35,7 +35,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       auto&& source = stream_.get();
       for ( auto iter = source.begin(); iter != source.end();)
@@ -53,7 +55,12 @@ namespace operators {
       return std::forward<Stream>(stream_);
     }
 
-    bool operator[](EqualityComparable const& arg) noexcept
+    bool
+    operator[]
+    (
+      EqualityComparable const& arg
+    )
+      noexcept
     {
       if ( !is_exist[arg] ) {
         is_exist[arg] = true;

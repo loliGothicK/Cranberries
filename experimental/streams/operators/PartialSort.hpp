@@ -42,7 +42,7 @@ namespace operators {
   // Intermidiate Operation
   template < >
   class PartialSort <
-    detail::defaulted // lookup operator < using ADL.
+    detail::defaulted_t // lookup operator < using ADL.
   >
     : private detail::IntermidiateStreamOperatorBase
   {

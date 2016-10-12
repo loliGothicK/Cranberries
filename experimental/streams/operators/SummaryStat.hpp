@@ -10,7 +10,7 @@
 #include "..\stat\stat.hpp"
 #include "..\utility.hpp"
 
-#define PUTS(ARG) os << #ARG" : " << ARG << std::endl
+#define CRANBERRIES_PUTS(MSG, ARG) os << MSG" : " << ARG << std::endl
 
 namespace cranberries {
 namespace streams {
@@ -29,7 +29,7 @@ namespace operators {
 
 
   private:
-    void calc() {
+    void calc() noexcept {
       std::sort( data_.begin(), data_.end() );
       size = data_.size();
       min = *data_.begin();
@@ -41,7 +41,7 @@ namespace operators {
         : static_cast<std::common_type_t<double, T>>(*(data_.begin() + size / 2 + 1));
       lower_quantile = (*(data_.begin() + size / 4) + *(data_.begin() + size / 4 + 1)) / 2.0;
       upper_quantile = (*(data_.begin() + static_cast<size_t>(std::ceil( size*0.75 ))) + *(data_.begin() + static_cast<size_t>(std::ceil( size*0.75 )) + 1)) / 2.0;
-      IQR = upper_quantile - lower_quantile;
+      interquartile_range = upper_quantile - lower_quantile;
       // mode
       auto mid = data_.begin(), prev = data_.begin();
       auto end = data_.end();
@@ -61,7 +61,7 @@ namespace operators {
       }
       average /= size;
       variance = squared_sum / size - average*average;
-      ue_variance = size / (size - 1.0)*variance;
+      unbiased_variance = size / (size - 1.0)*variance;
       deviation = std::sqrt( variance );
 
       for (auto&& e : data_) {
@@ -72,60 +72,61 @@ namespace operators {
       kurtosis /= size;
     }
   public:
-    std::ostream& print(std::ostream& os) const {
-      PUTS( size );
-      PUTS( min );
-      PUTS( max );
-      PUTS( value_range );
-      PUTS( mode );
-      PUTS( median );
-      PUTS( lower_quantile );
-      PUTS( upper_quantile );
-      PUTS( IQR );
-      PUTS( average );
-      PUTS( variance );
-      PUTS( ue_variance );
-      PUTS( deviation );
-      PUTS( skewness );
-      PUTS( kurtosis );
+    std::ostream& print(std::ostream& os) const noexcept
+    {
+      CRANBERRIES_PUTS( "size", size );
+      CRANBERRIES_PUTS( "min", min );
+      CRANBERRIES_PUTS( "max", max );
+      CRANBERRIES_PUTS( "value range", value_range );
+      CRANBERRIES_PUTS( "mode", mode );
+      CRANBERRIES_PUTS( "median", median );
+      CRANBERRIES_PUTS( "lower quantile", lower_quantile );
+      CRANBERRIES_PUTS( "upper_quantile", upper_quantile );
+      CRANBERRIES_PUTS( "interquartile range", interquartile_range );
+      CRANBERRIES_PUTS( "average", average );
+      CRANBERRIES_PUTS( "variance", variance );
+      CRANBERRIES_PUTS( "unbiased variance", unbiased_variance );
+      CRANBERRIES_PUTS( "deviation", deviation );
+      CRANBERRIES_PUTS( "skewness", skewness );
+      CRANBERRIES_PUTS( "kurtosis", kurtosis );
 
       return os;
     }
 
 
   public:
-    size_t size;
-    T min;
-    T max;
-    T value_range;
-    std::common_type_t<double, T> lower_quantile;
-    std::common_type_t<double, T> upper_quantile;
-    std::common_type_t<double, T> IQR;
-    std::common_type_t<double, T> median;
-    std::common_type_t<double, T> mode;
-    std::common_type_t<double, T> average;
-    std::common_type_t<double, T> variance;
-    std::common_type_t<double, T> ue_variance;
-    std::common_type_t<double, T> deviation;
-    std::common_type_t<double, T> skewness;
-    std::common_type_t<double, T> kurtosis;
+    size_t size{};
+    T min{};
+    T max{};
+    T value_range{};
+    std::common_type_t<double, T> lower_quantile{};
+    std::common_type_t<double, T> upper_quantile{};
+    std::common_type_t<double, T> interquartile_range{};
+    std::common_type_t<double, T> median{};
+    std::common_type_t<double, T> mode{};
+    std::common_type_t<double, T> average{};
+    std::common_type_t<double, T> variance{};
+    std::common_type_t<double, T> unbiased_variance{};
+    std::common_type_t<double, T> deviation{};
+    std::common_type_t<double, T> skewness{};
+    std::common_type_t<double, T> kurtosis{};
 
   private:
     std::vector<T> data_;
   };
 
   template < typename T >
-  std::ostream& operator<< ( std::ostream& os, SummaryStat<T> const& ss ) {
+  inline std::ostream& operator<< ( std::ostream& os, SummaryStat<T> const& ss ) {
     return ss.print( os );
   }
 
   template < typename T, bool B >
-  std::ostream& operator >> ( SummaryStat<T> const& ss, Printer<B>&& p) {
+  inline std::ostream& operator >> ( SummaryStat<T> const& ss, Printer<B>&& p) {
     return ss.print( p.os_ );
   }
 
 } // ! namespace operators
 } // ! namespace stream
 } // ! namespace cranberries
-#undef PUTS
+#undef CRANBERRIES_PUTS
 #endif

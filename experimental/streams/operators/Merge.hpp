@@ -21,7 +21,9 @@ namespace operators {
   {
   public:
     Merge() = default;
-    Merge( Range range ) : range_{ std::forward<Range>( range ) } {}
+    Merge( Range range ) noexcept
+      : range_{ std::forward<Range>( range ) }
+    {}
 
     template <
       typename Stream,
@@ -31,7 +33,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept
+    {
       static_assert(
         std::is_constructible<
           E, element_type_of_t<Range>
@@ -49,7 +53,7 @@ namespace operators {
       return std::forward<Stream>( stream_ );
     }
 
-    decltype( auto ) release() { return std::move( range_ ); }
+    decltype( auto ) release() noexcept { return std::move( range_ ); }
 
   private:
     Range range_;
@@ -65,7 +69,9 @@ namespace operators {
   {
   public:
     Merge() = default;
-    Merge( Range range ) : range_{ std::forward<Range>( range ) } {}
+    Merge( Range range ) noexcept
+      : range_{ std::forward<Range>( range ) }
+    {}
 
     template <
       typename Stream,
@@ -75,7 +81,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept
+    {
       static_assert(
         std::is_constructible<
           E, element_type_of_t<Range>
@@ -93,7 +101,7 @@ namespace operators {
       return std::forward<Stream>( stream_ );
     }
 
-    decltype( auto ) release() { return stream<element_type_of_t<Range>>{std::move( range_ )}; }
+    decltype( auto ) release() noexcept { return stream<element_type_of_t<Range>>{std::move( range_ )}; }
   private:
     Range range_;
   };
@@ -108,9 +116,11 @@ namespace operators {
   {
   public:
     Merge() = default;
-    Merge( Range range ) : range_{ std::forward<Range>( range ) } {}
+    Merge( Range range ) noexcept
+      : range_{ std::forward<Range>( range ) }
+    {}
 
-    decltype( auto ) release() { return std::move( range_ ); }
+    decltype( auto ) release() noexcept { return std::move( range_ ); }
 
   private:
     Range range_;

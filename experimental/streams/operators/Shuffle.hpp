@@ -18,7 +18,9 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    Shuffle( Engine e ) : engine_{ std::forward<Engine>( e ) } {}
+    Shuffle( Engine e ) noexcept
+      : engine_{ std::forward<Engine>( e ) }
+    {}
 
     Shuffle() = default;
 
@@ -29,7 +31,9 @@ namespace operators {
     decltype(auto)
     operator()(
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       std::shuffle( stream_.begin(), stream_.end(), engine_ );
       return std::forward<Stream>(stream_);

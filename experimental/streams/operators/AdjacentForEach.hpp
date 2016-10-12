@@ -16,7 +16,9 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    AdjacentForEach( BinaryFunc f ) : f_{ std::forward<BinaryFunc>( f ) } {}
+    AdjacentForEach( BinaryFunc f ) noexcept
+      : f_{ std::forward<BinaryFunc>( f ) }
+    {}
 
     template <
       typename Stream,

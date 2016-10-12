@@ -26,7 +26,7 @@ namespace streams {
   template < typename T >
   struct Generator
   {
-    T operator()() { return value_; }
+    T operator()() noexcept { return value_; }
     T value_;
   };
 
@@ -61,12 +61,12 @@ namespace streams {
   class GeneralizedDistributionGenerator
   {
   public:
-    GeneralizedDistributionGenerator( Init init, Seed seed )
+    GeneralizedDistributionGenerator( Init init, Seed seed ) noexcept
       : dist_{ init }
       , engine_{ seed }
     {}
 
-    GeneralizedDistributionGenerator( Init init1, Init init2, Seed seed )
+    GeneralizedDistributionGenerator( Init init1, Init init2, Seed seed ) noexcept
       : dist_{ init1, init2 }
       , engine_{ seed }
     {}
@@ -87,7 +87,9 @@ namespace streams {
   class CanonicalGen
   {
   public:
-    CanonicalGen( unsigned seed ) : engine_{ seed } {}
+    CanonicalGen( unsigned seed ) noexcept
+      : engine_{ seed }
+    {}
 
     RealType operator()() noexcept { return std::generate_canonical<RealType, Bits>( engine_ ); }
 
@@ -98,7 +100,7 @@ namespace streams {
   struct make_stream
   {
     template < typename T >
-    static stream<T> empty() {
+    static stream<T> empty() noexcept {
       return{};
     }
 
@@ -733,65 +735,65 @@ namespace streams {
     {
       return{ { seed } };
     }
-};
-
-
-template < typename T >
-class stream_builder {
-public:
-  stream_builder() = default;
-
-  stream_builder& add(T const& a) & {
-    data_.emplace_back( a );
-    return *this;
   };
 
-  stream_builder&& add( T const& a ) && {
-    data_.emplace_back( a );
-    return std::move( *this );
+
+  template < typename T >
+  class stream_builder {
+  public:
+    stream_builder() = default;
+
+    stream_builder& add(T const& a) & noexcept {
+      data_.emplace_back( a );
+      return *this;
+    };
+
+    stream_builder&& add( T const& a ) && noexcept {
+      data_.emplace_back( a );
+      return std::move( *this );
+    };
+
+    stream_builder& operator +=( T const& a ) & noexcept {
+      data_.push_back( a );
+      return *this;
+    }
+
+    stream_builder&& operator +=( T const& a ) && noexcept {
+      data_.push_back( a );
+      return std::move( *this );
+    }
+
+
+    stream<T> build() noexcept {
+      return{ std::move(data_) };
+    }
+  private:
+    std::vector<T> data_;
   };
 
-  stream_builder& operator +=( T const& a ) & {
-    data_.push_back( a );
-    return *this;
+  class stream_builder_t {};
+
+  constexpr auto build = stream_builder_t{};
+
+  template < typename T >
+  inline stream_builder<T>& operator << ( stream_builder<T>& sb, T const& a ) noexcept {
+    return sb += a;
   }
 
-  stream_builder&& operator +=( T const& a ) && {
-    data_.push_back( a );
-    return std::move( *this );
+  template < typename T >
+  inline stream_builder<T>&& operator << ( stream_builder<T>&& sb, T const& a ) noexcept {
+    return std::move( sb += a );
   }
 
-
-  stream<T> build() {
-    return{ std::move(data_) };
+  template < typename T >
+  inline auto operator << ( stream_builder<T>& sb, stream_builder_t) noexcept {
+    return sb.build();
   }
-private:
-  std::vector<T> data_;
-};
 
-class stream_builder_t {};
-
-constexpr auto build = stream_builder_t{};
-
-template < typename T >
-stream_builder<T>& operator << ( stream_builder<T>& sb, T const& a ) {
-  return sb += a;
-}
-
-template < typename T >
-stream_builder<T>&& operator << ( stream_builder<T>&& sb, T const& a ) {
-  return std::move( sb += a );
-}
-
-template < typename T >
-auto operator << ( stream_builder<T>& sb, stream_builder_t) {
-  return sb.build();
-}
-
-template < typename T >
-auto operator << ( stream_builder<T>&& sb, stream_builder_t ) {
-  return sb.build();
-}
+  template < typename T >
+  inline auto operator << ( stream_builder<T>&& sb, stream_builder_t ) noexcept {
+    return sb.build();
+  }
 
 
 

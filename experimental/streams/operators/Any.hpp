@@ -14,7 +14,9 @@ namespace operators {
     : private detail::TerminateStreamOperatorBase
   {
   public:
-    AnyOf( Pred p ) : pred_{ std::forward<Pred>( p ) } {}
+    AnyOf( Pred p ) noexcept
+      : pred_{ std::forward<Pred>( p ) }
+    {}
 
     template <
       typename Stream,

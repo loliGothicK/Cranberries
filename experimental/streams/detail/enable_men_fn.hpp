@@ -11,7 +11,14 @@
 #include "..\operatoins.hpp"
 #include "..\InfiniteStream.hpp"
 
-
+#define men_fn_def(men_fn, adaptor_fn)\
+template < typename ...Args >\
+decltype(auto) men_fn(Args&& ...args)\
+noexcept( noexcept( adaptor_fn(std::forward<Args>(args)...) ) )\
+{\
+  return std::move(*static_cast<Derived*>(this))\
+    >> cranberries::streams::adaptor_fn( std::forward<Args>(args)... );\
+}
 
 namespace cranberries{
 namespace streams{
@@ -22,145 +29,42 @@ namespace detail{
   >
   struct enable_men_fn
   {
-    template < typename F >
-    decltype(auto)
-    adjacent_for_each(F&& f) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::adjacent_for_each(std::forward<F>(f));
-    }
+    men_fn_def( adjacent_for_each, adjacent_for_each );
 
-    template < typename F >
-    decltype(auto)
-    all_of(F&& f) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::all_of(std::forward<F>(f));
-    }
+    men_fn_def( all_of, all_of );
 
-    template < typename F >
-    decltype(auto)
-    any_of(F&& f) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::any_of(std::forward<F>(f));
-    }
+    men_fn_def( any_of, any_of );
 
-    template < typename Stream >
-    decltype(auto)
-    concat(Stream&& stream_) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::concat(std::forward<Stream>(stream_));
-    }
+    men_fn_def( none_of, none_of );
 
-    decltype(auto)
-    distinct() noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::distinctly();
-    }
+    men_fn_def( join, joined );
 
-    template < typename F >
-    decltype(auto)
-    filter(F&& f) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::filtered(std::forward<F>(f));
-    }
+    men_fn_def( distinct, distinctly );
 
-    template < typename F >
-    decltype(auto)
-    for_each(F&& f) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::for_each(std::forward<F>(f));
-    }
+    men_fn_def( filter, filtered );
 
-    template < typename F >
-    decltype(auto)
-    invoke(F&& f) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::invoked(std::forward<F>(f));
-    }
+    men_fn_def( for_each, for_each );
 
-    decltype(auto)
-    take(size_t lim)noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::taken(lim);
-    }
+    men_fn_def( invoke, invoked );
 
-    template < typename F >
-    decltype(auto)
-    transform(F&& f) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::transformed(std::forward<F>(f));
-    }
+    men_fn_def( take, taken );
 
-    template < typename To >
-    decltype(auto)
-    transform_to() noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::transformed_to<To>();
-    }
+    men_fn_def( transform, transformed );
 
-    decltype(auto)
-    reverse() noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::reversed();
-    }
+    men_fn_def( transform_to, transformed_to );
 
-    decltype(auto)
-    drop(size_t lim) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::dropped(lim);
-    }
+    men_fn_def( reverse, reversed );
 
-    decltype(auto)
-    sort() noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::sorted();
-    }
+    men_fn_def( drop, dropped );
 
-    template < typename Pred >
-    decltype(auto)
-    sort(Pred&& pred) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::sorted(std::forward<Pred>(pred));
-    }
+    men_fn_def( sort, sorted );
 
-    decltype(auto)
-    stable_sort() noexcept {
-      return std::move( *static_cast<Derived*>(this) )
-        >> cranberries::streams::stable_sorted();
-    }
+    men_fn_def( stable_sort, stable_sorted );
 
-    template < typename Pred >
-    decltype(auto)
-    stable_sort( Pred&& pred ) noexcept {
-      return std::move( *static_cast<Derived*>(this) )
-        >> cranberries::streams::stable_sorted( std::forward<Pred>( pred ) );
-    }
+    men_fn_def( partial_sort, partial_sorted );
 
-    decltype(auto)
-    partial_sort(size_t n) noexcept {
-      return std::move( *static_cast<Derived*>(this) )
-        >> cranberries::streams::partial_sorted(n);
-    }
-
-    template < typename Pred >
-    decltype(auto)
-    partial_sort( size_t n, Pred&& pred ) noexcept {
-      return std::move( *static_cast<Derived*>(this) )
-        >> cranberries::streams::partial_sorted( n, std::forward<Pred>( pred ) );
-    }
-
-    decltype(auto)
-    nth_element(size_t n) noexcept {
-      return std::move( *static_cast<Derived*>(this) )
-        >> cranberries::streams::nth_element(n);
-    }
-
-    template < typename Pred >
-    decltype(auto)
-    nth_element( size_t n, Pred&& pred ) noexcept {
-      return std::move( *static_cast<Derived*>(this) )
-        >> cranberries::streams::nth_element( n, std::forward<Pred>( pred ) );
-    }
-
+    men_fn_def( nth_element, nth_elemented );
+    
     template < bool B = true >
     decltype(auto)
     radix_sort() noexcept {
@@ -168,41 +72,15 @@ namespace detail{
         >> cranberries::streams::radix_sorted<B>();
     }
 
+    men_fn_def( drop_while, dropped_while );
 
-    template < typename Pred >
-    decltype(auto)
-    drop_while(Pred&& pred) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::dropped_while(std::forward<Pred>(pred));
-    }
+    men_fn_def( take_while, taken_while );
 
-    template < typename Pred >
-    decltype(auto)
-    take_while(Pred&& pred) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::taken_while(std::forward<Pred>(pred));
-    }
+    men_fn_def( unique, uniquely );
 
-    decltype(auto)
-    unique() noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::uniquely();
-    }
+    men_fn_def( merge, merged );
 
-    template < typename Stream >
-    decltype(auto)
-    merge(Stream&& stream_) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::merged(std::forward<Stream>(stream_));
-    }
-
-    template < typename F >
-    decltype(auto)
-    peek(F&& f) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::peeked(std::forward<F>(f));
-    }
-
+    men_fn_def( peek, peeked );
     
     decltype(auto)
     print_to(std::ostream& os = std::cout, std::string delim = ", "){
@@ -216,129 +94,41 @@ namespace detail{
         >> cranberries::streams::println_to( os, delim );
     }
 
+    men_fn_def( shuffle, shuffled );
 
-    decltype(auto)
-    shuffle() noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::shuffled();
-    }
+    men_fn_def( replace, replaced );
 
-    template < typename T >
-    decltype(auto)
-    replace(T&& v1, T&& v2) noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::replaced( std::forward<T>( v1 ), std::forward<T>( v2 ) );
-    }
+    men_fn_def( replace_if, replaced_if );
 
-    template < typename T1, typename T2>
-    decltype(auto)
-    replace_if(T1&& v1, T2&& v2) noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::replaced_if( std::forward<T1>( v1 ), std::forward<T2>( v2 ) );
-    }
+    men_fn_def( count, count );
 
-    template < typename T >
-    decltype(auto)
-    count(T&& v1) noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::count( std::forward<T>( v1 ) );
-    }
+    men_fn_def( count_if, count_if );
 
-    template < typename T >
-    decltype(auto)
-    count_if(T&& v1) noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::count_if( std::forward<T>( v1 ) );
-    }
+    men_fn_def( accumulate, accumulate );
 
-    decltype(auto)
-    accumulate() noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::accumulate();
-    }
+    men_fn_def( product, product );
 
-    template < typename T >
-    decltype(auto)
-    accumulate(T&& v1) noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::accumulate( std::forward<T>( v1 ) );
-    }
- 
-    template < typename T1, typename T2>
-    decltype(auto)
-    accumulate(T1&& v1, T2&& v2) noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::accumulate( std::forward<T1>( v1 ), std::forward<T2>( v2 ) );
-    }
+    men_fn_def( average, average );
 
-    decltype(auto)
-    product() noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::product();
-    }
+    men_fn_def( sum, sum );
 
-    decltype(auto)
-    average() noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::average();
-    }
+    men_fn_def( sum_if, sum_if );
 
-    decltype(auto)
-    sum() noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::sum();
-    }
+    men_fn_def( median, median );
 
-    template < typename T >
-    decltype(auto)
-    sum_if(T&& v) noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::sum_if(std::forward<T>(v));
-    }
+    men_fn_def( mode, mode );
 
-    decltype(auto)
-    median() noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::median();
-    }
+    men_fn_def( stride, strided );
 
-    decltype(auto)
-    mode() noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::mode();
-    }
-
-    decltype(auto)
-    stride(size_t n) noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::strided(n);
-    }
-
-    decltype(auto)
-    slice(size_t l, size_t u) noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::sliced(l,u);
-    }
-
-    template < typename F >
-    decltype(auto)
-    flat_map(F&& f) noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::flat_transformed( std::forward<F>( f ) );
-    }
+    men_fn_def( slice, sliced );
     
-    decltype(auto)
-    flat() noexcept {
-      return std::move( *static_cast<Derived*>(this) )
-        >> cranberries::streams::flatten();
-    }
+    men_fn_def( flat_transform, flat_transformed );
 
-    decltype(auto)
-    all_flat() noexcept {
-      return std::move( *static_cast<Derived*>(this) )
-        >> cranberries::streams::all_flatten();
-    }
+    men_fn_def( flat, flatten );
 
+    men_fn_def( all_flat, all_flatten );
+
+    men_fn_def( summary_stat, summary_stat );
   };
 
   template <
@@ -346,144 +136,45 @@ namespace detail{
   >
   struct enable_men_fn_inf
   {
+    men_fn_def( join, joined );
 
+    men_fn_def( distinct, distinctly );
 
-    template < typename Stream >
-    decltype(auto)
-    concat(Stream&& stream_) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::concat(std::forward<Stream>(stream_));
-    }
+    men_fn_def( filter, filtered );
 
-    decltype(auto)
-    distinct() noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::distinctly();
-    }
+    men_fn_def( invoke, invoked );
 
-    template < typename F >
-    decltype(auto)
-    filter(F&& f) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::filtered(std::forward<F>(f));
-    }
+    men_fn_def( take, taken );
 
+    men_fn_def( transform_to, transformed_to );
 
-    template < typename F >
-    decltype(auto)
-    invoke(F&& f) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::invoked(std::forward<F>(f));
-    }
+    men_fn_def( drop, dropped );
 
-    decltype(auto)
-    take(size_t lim) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::taken(lim);
-    }
+    men_fn_def( drop_while, dropped_while );
 
-    template < typename To >
-    decltype(auto)
-    transform_to() noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::transformed_to<To>();
-    }
+    men_fn_def( take_while, taken_while );
 
+    men_fn_def( unique, uniquely );
 
-    decltype(auto)
-    drop(size_t lim) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::dropped(lim);
-    }
+    men_fn_def( merge, merged );
 
-
-    template < typename Pred >
-    decltype(auto)
-    drop_while(Pred&& pred) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::dropped_while(std::forward<Pred>(pred));
-    }
-
-    template < typename Pred >
-    decltype(auto)
-    take_while(Pred&& pred) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::taken_while(std::forward<Pred>(pred));
-    }
-
-    decltype(auto)
-    unique() noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::uniquely();
-    }
-
-    template < typename Stream >
-    decltype(auto)
-    merge(Stream&& stream_) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::merged(std::forward<Stream>(stream_));
-    }
-
-    template < typename F >
-    decltype(auto)
-    peek(F&& f) noexcept {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::peeked(std::forward<F>(f));
-    }
-
+    men_fn_def( peek, peeked );
     
-    template < typename F >
-    decltype( auto )
-    transform( F&& f ) {
-      return std::move(*static_cast<Derived*>(this))
-        >> cranberries::streams::transformed( std::forward<F>(f) );
-    }
+    men_fn_def( transform, transformed );
 
-    template < typename T >
-    decltype(auto)
-    replace(T&& v1, T&& v2) noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::replaced( std::forward<T>( v1 ), std::forward<T>( v2 ) );
-    }
+    men_fn_def( replace, replaced );
 
-    template < typename T1, typename T2>
-    decltype(auto)
-    replace_if(T1&& v1, T2&& v2) noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::replaced_if( std::forward<T1>( v1 ), std::forward<T2>( v2 ) );
-    }
+    men_fn_def( replace_if, replaced_if );
 
-    decltype(auto)
-    stride(size_t n) noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::strided(n);
-    }
+    men_fn_def( stride, strided );
 
-    decltype(auto)
-    slice(size_t l, size_t u) noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::sliced(l,u);
-    }
+    men_fn_def( slice, sliced );
 
-    template < typename F >
-    decltype(auto)
-    flat_map(F&& f) noexcept {
-      return std::move( *static_cast<Derived*>( this ) )
-        >> cranberries::streams::flat_transformed( std::forward<F>( f ) );
-    }
+    men_fn_def( flat_transform, flat_transformed );
 
-    decltype(auto)
-    flat() noexcept {
-      return std::move( *static_cast<Derived*>(this) )
-        >> cranberries::streams::flatten();
-    }
+    men_fn_def( flat, flatten );
 
-    decltype(auto)
-    all_flat() noexcept {
-      return std::move( *static_cast<Derived*>(this) )
-        >> cranberries::streams::all_flatten();
-    }
-
+    men_fn_def( all_flat, all_flatten );
 
 };
 
@@ -491,5 +182,5 @@ namespace detail{
 } // ! namespace detail
 } // ! namespace streams
 } // ! namespace cranberries
-
+#undef men_fn_def
 #endif

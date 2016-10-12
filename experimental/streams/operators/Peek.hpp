@@ -16,7 +16,9 @@ namespace operators {
     , private detail::StreamOperatorBase
   {
   public:
-    Peek( UnaryFunc f ) : f_{ std::forward<UnaryFunc>( f ) } {}
+    Peek( UnaryFunc f ) noexcept
+      : f_{ std::forward<UnaryFunc>( f ) }
+    {}
 
     template <
       typename Stream,
@@ -27,7 +29,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       static_assert(
         is_callable_v<UnaryFunc,Stream&&>,
         "Invalid unary function designated."
@@ -44,7 +48,9 @@ namespace operators {
     operator[]
     (
       T&& a 
-    ) {
+    )
+      noexcept
+    {
       return f_( a ), a;
     }
 

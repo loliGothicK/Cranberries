@@ -18,17 +18,22 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    NthElement( size_t n, Pred pred ) : n_{ n }, pred_{ std::forward<Pred>( pred ) } {}
+    NthElement( size_t n, Pred pred ) noexcept
+      : n_{ n }
+      , pred_{ std::forward<Pred>( pred ) }
+    {}
 
     template <
       typename Stream
     >
-      inline
-      decltype(auto)
-      operator()
-      (
-        Stream&& stream_
-        ) {
+    inline
+    decltype(auto)
+    operator()
+    (
+      Stream&& stream_
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       std::nth_element( stream_.begin(), stream_.begin() + n_, stream_.end(), pred_ );
       return std::forward<Stream>( stream_ );
@@ -42,12 +47,14 @@ namespace operators {
   // Intermidiate Operation
   template < >
   class NthElement <
-    detail::defaulted // lookup operator < using ADL.
+    detail::defaulted_t // lookup operator < using ADL.
   >
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    NthElement( size_t n ) : n_{ n } {};
+    NthElement( size_t n ) noexcept
+      : n_{ n }
+    {}
 
     template <
       typename Stream
@@ -56,7 +63,9 @@ namespace operators {
     decltype(auto)
     operator()(
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       std::nth_element( stream_.begin(), stream_.begin() + n_, stream_.end() );
       return std::forward<Stream>( stream_ );

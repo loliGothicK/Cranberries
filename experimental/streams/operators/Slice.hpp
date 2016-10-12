@@ -13,7 +13,9 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    Slice( size_t l, size_t u ) : i{ 1 }, low_{ l }, up_{ u } {}
+    Slice( size_t l, size_t u ) noexcept
+      : i{ 1 }, low_{ l }, up_{ u }
+    {}
 
     Slice() = default;
     Slice( Slice const& ) = default;
@@ -28,7 +30,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       auto&& src = stream_.get();
       for ( auto&& iter = src.begin(); iter != src.end(); ++i ) {

@@ -24,7 +24,7 @@ namespace operators {
   class AnyOf;
 
   template < typename Branch, bool B >
-  class Concatenate;
+  class Join;
 
   struct DistinctProxy;
 
@@ -67,7 +67,7 @@ namespace operators {
 
   class Drop;
 
-  template < typename Pred = detail::defaulted >
+  template < typename Pred = detail::defaulted_t >
   class Sort;
 
   struct Splitter;
@@ -110,8 +110,8 @@ namespace operators {
   class Unique;
   
   template <
-    typename InitialType = detail::defaulted,
-    typename BinaryOp = detail::defaulted
+    typename InitialType = detail::defaulted_t,
+    typename BinaryOp = detail::defaulted_t
   >
   class Accumulate;
 
@@ -181,17 +181,17 @@ namespace operators {
 
   class FlatAllProxy;
 
-  template < typename Pred = detail::defaulted >
+  template < typename Pred = detail::defaulted_t >
   class StableSort;
 
 
-  template < typename Pred = detail::defaulted >
+  template < typename Pred = detail::defaulted_t >
   class PartialSort;
 
-  template < typename Pred = detail::defaulted >
+  template < typename Pred = detail::defaulted_t >
   class NthElement;
 
-  template < typename G = detail::defaulted, bool B = true >
+  template < typename G = detail::defaulted_t, bool B = true >
   class RadixSort;
 
 } // ! namesapce operators

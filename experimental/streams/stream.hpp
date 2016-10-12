@@ -25,7 +25,9 @@ namespace streams {
     operator()
     (
       Stream&& stream
-    ) {
+    )
+      noexcept(false)
+    {
       return op2(op1(std::forward<Stream>(stream)));
     }
 
@@ -111,7 +113,7 @@ namespace streams {
       Iterator&& first,
       Iterator&& last,
       Operation&& q
-    )
+    ) noexcept
       : source{ std::forward<Iterator>(first), std::forward<Iterator>(last) }
       , operation{ std::move(q) }
     {}
@@ -120,7 +122,7 @@ namespace streams {
     (
       std::initializer_list<T> init_list,
       Operation&& q
-    )
+    ) noexcept
       : source{ init_list }
       , operation{ std::move(q) }
     {}
@@ -133,7 +135,7 @@ namespace streams {
     (
       Range&& range,
       Operation&& q
-    )
+    ) noexcept
       : source{ range.begin(), range.end() }
       , operation{ std::move(q) }
     {}
@@ -146,7 +148,7 @@ namespace streams {
     (
       Iterator&& first,
       Iterator&& last
-    )
+    ) noexcept
       : source{ std::forward<Iterator>(first), std::forward<Iterator>(last) }
       , operation{ }
     {}
@@ -154,7 +156,7 @@ namespace streams {
     stream
     (
       std::initializer_list<T> init_list
-    )
+    ) noexcept
       : source{ init_list }
      , operation{}
     {}
@@ -166,20 +168,15 @@ namespace streams {
     stream
     (
       Range&& range
-    )
+    ) noexcept
       : source{ range.begin(), range.end() }
       , operation{}
     {}
 
-    stream()
+    stream() noexcept
       : source{}
       , operation{}
     {}
-
-    template < typename ...Args >
-    static stream build( std::tuple<Args...>&& tup ) {
-      return stream{ std::get<0>(tup), std::get<1>(tup) };
-    }
 
     stream(stream const&) = default;
     stream(stream&&) = default;
@@ -195,7 +192,7 @@ namespace streams {
     TargetRange
     convert
     ()
-      const
+      const noexcept(false)
     {
       return TargetRange{ source.begin(), source.end() };
     }
@@ -310,11 +307,12 @@ namespace streams {
     decltype(auto)
     eval
     ()
+      noexcept(false)
     {
       return operation(*this); // evaluate operation tree
     }
 
-    void once(){
+    void once() noexcept(false) {
       if ( once_flag ) {
         eval();
         current_ = source.begin();
@@ -322,17 +320,17 @@ namespace streams {
       }
     }
 
-    T current() {
+    T current() noexcept(false) {
       once( );
       return *current_;
     }
 
-    bool is_end(){
+    bool is_end() noexcept(false) {
       once( );
       return current_ == source.end();
     }
 
-    bool is_next(){
+    bool is_next() noexcept(false) {
       once( );
       return current_ == source.end() ? false : ++current_ != source.end();
     }

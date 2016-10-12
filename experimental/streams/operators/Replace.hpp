@@ -18,7 +18,10 @@ namespace operators {
     , private detail::StreamOperatorBase
   {
   public:
-    Replace( ElemType new_, ElemType old_ ) : new_value{ new_ }, old_value{ old_ } {}
+    Replace( ElemType new_, ElemType old_ ) noexcept
+      : new_value{ new_ }
+      , old_value{ old_ }
+    {}
 
     template <
       typename Stream
@@ -27,7 +30,9 @@ namespace operators {
     decltype(auto)
     operator()(
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       std::replace( stream_.begin(), stream_.end(), old_value, new_value );
       return std::forward<Stream>(stream_);
@@ -57,7 +62,10 @@ namespace operators {
     , private detail::StreamOperatorBase
   {
   public:
-    ReplaceIf( UnaryOp op, New new_ ) : op_{ std::forward<UnaryOp>( op ) }, new_value{ std::forward<New>(new_) } {}
+    ReplaceIf( UnaryOp op, New new_ ) noexcept
+      : op_{ std::forward<UnaryOp>( op ) }
+      , new_value{ std::forward<New>(new_) }
+    {}
 
     template <
       typename Stream
@@ -66,7 +74,9 @@ namespace operators {
     decltype(auto)
     operator()(
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       std::replace_if( stream_.begin(), stream_.end(), op_, new_value );
       return std::forward<Stream>(stream_);
@@ -77,15 +87,15 @@ namespace operators {
     (
       New const& a
     )
-      noexcept(&UnaryOp::operator())
+      noexcept(noexcept(op_(a)))
     {
       return op_(a) ? new_value : a;
     }
 
     // member
+  private:
     UnaryOp op_;
     New new_value;
-
   };
 
 

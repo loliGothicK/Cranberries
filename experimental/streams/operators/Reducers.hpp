@@ -20,7 +20,9 @@ namespace operators{
     : private detail::TerminateStreamOperatorBase
   {
   public:
-    Accumulate( InitialType ini, BinaryOp op ) : init_{ ini }, op_{ op } {}
+    Accumulate( InitialType ini, BinaryOp op ) noexcept
+      : init_{ ini }, op_{ op }
+    {}
 
     template <
       typename Stream,
@@ -30,7 +32,9 @@ namespace operators{
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       static_assert(
         is_callable_v<BinaryOp,InitialType&,E&>,
         "Invalid binary operator (or invalid initial type) designated."
@@ -48,7 +52,7 @@ namespace operators{
   >
   class Accumulate<
     InitialType,
-    detail::defaulted
+    detail::defaulted_t
   >
     : private detail::TerminateStreamOperatorBase
   {
@@ -63,7 +67,9 @@ namespace operators{
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       return std::accumulate( stream_.begin(), stream_.end(), init_);
     }
@@ -73,12 +79,13 @@ namespace operators{
 
   template < >
   class Accumulate<
-    detail::defaulted,
-    detail::defaulted
+    detail::defaulted_t,
+    detail::defaulted_t
   >
     : private detail::TerminateStreamOperatorBase
   {
   public:
+    Accumulate() = default;
 
     template <
       typename Stream,
@@ -88,7 +95,9 @@ namespace operators{
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       return std::accumulate( stream_.begin(), stream_.end(), E{} );
     }
@@ -100,6 +109,7 @@ namespace operators{
     : private detail::TerminateStreamOperatorBase
   {
   public:
+    Product() = default;
 
     template <
       typename Stream,
@@ -109,7 +119,9 @@ namespace operators{
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       return std::accumulate( stream_.begin(), stream_.end(), E{ 1 }, []( auto&& l, auto&& r ) { return l*r; } );
     }
@@ -122,7 +134,9 @@ namespace operators{
     : private detail::TerminateStreamOperatorBase
   {
   public:
-    SumIf( Pred pred ) : pred_{ std::forward<Pred>( pred ) } {}
+    SumIf( Pred pred ) noexcept
+      : pred_{ std::forward<Pred>( pred ) }
+    {}
 
     template <
       typename Stream,
@@ -132,7 +146,9 @@ namespace operators{
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       E result{};
       for(auto&& e : stream_){
@@ -151,7 +167,9 @@ namespace operators{
     : private detail::TerminateStreamOperatorBase
   {
   public:
-    Count( Target val ) : value_{ val } {}
+    Count( Target val ) noexcept
+      : value_{ val }
+    {}
 
     template <
       typename Stream,
@@ -161,7 +179,9 @@ namespace operators{
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       static_assert(
         is_equality_comparable_to_v<E,Target>,
         "" // TODO
@@ -180,7 +200,9 @@ namespace operators{
     : private detail::TerminateStreamOperatorBase
   {
   public:
-    CountIf( Pred pred ) : pred_{ std::forward<Pred>( pred ) } {}
+    CountIf( Pred pred ) noexcept
+      : pred_{ std::forward<Pred>( pred ) }
+    {}
 
     template <
       typename Stream,
@@ -190,7 +212,9 @@ namespace operators{
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       static_assert(
         is_callable_v<Pred,E>,
         "Invalid predicate dsignated."
@@ -212,7 +236,7 @@ namespace operators{
     : private detail::TerminateStreamOperatorBase
   {
   public:
-
+    Average() = default;
 
     template <
       typename Stream,
@@ -222,7 +246,9 @@ namespace operators{
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       return std::accumulate(stream_.begin(), stream_.end(), 0.0) / stream_.size();
     }
@@ -233,6 +259,7 @@ namespace operators{
     : private detail::TerminateStreamOperatorBase
   {
   public:
+    Median() = default;
 
     template <
       typename Stream,
@@ -242,7 +269,9 @@ namespace operators{
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       std::sort( stream_.begin(), stream_.end() );
       auto len = stream_.size();
@@ -257,6 +286,7 @@ namespace operators{
     : private detail::TerminateStreamOperatorBase
   {
   public:
+    Mode() = default;
 
     template <
       typename Stream
@@ -265,7 +295,9 @@ namespace operators{
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       std::sort( stream_.begin(), stream_.end() );
       auto mid = stream_.begin(), prev = stream_.begin();

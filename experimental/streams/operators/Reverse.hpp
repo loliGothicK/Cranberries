@@ -21,7 +21,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       std::reverse(stream_.begin(), stream_.end());
       return std::forward<Stream>(stream_);

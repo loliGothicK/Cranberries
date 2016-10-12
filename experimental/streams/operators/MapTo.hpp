@@ -23,7 +23,9 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    MapTo( FromStream s ) : from_{ std::forward<FromStream>( s ) } {}
+    MapTo( FromStream s ) noexcept
+      : from_{ std::forward<FromStream>( s ) }
+    {}
 
     template <
       typename Stream
@@ -33,7 +35,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       from_.eval();
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( from_.empty() );
       stream_.get() = std::vector<To>{ from_.begin(), from_.end() };
@@ -55,7 +59,9 @@ namespace operators {
     : detail::IntermidiateStreamOperatorBase
   {
   public:
-    MapTo( FromStream s ) : from_{ std::forward<FromStream>( s ) } {}
+    MapTo( FromStream s ) noexcept
+      : from_{ std::forward<FromStream>( s ) }
+    {}
 
     template <
       typename Stream
@@ -65,7 +71,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {   
+    )
+      noexcept(false)
+    {   
       using std::to_string; // For ADL
       from_.eval();
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( from_.empty() );

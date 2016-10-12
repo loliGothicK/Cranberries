@@ -15,7 +15,9 @@ namespace operators {
     : detail::TerminateStreamOperatorBase
   {
   public:
-    Printer( std::ostream& os, std::string delim ) : os_{ os }, delim_{ delim } {}
+    Printer( std::ostream& os, std::string delim ) noexcept
+      : os_{ os }, delim_{ delim }
+    {}
 
     template <
       typename Stream
@@ -26,8 +28,9 @@ namespace operators {
     (
       Stream&& stream_
     )
-      const noexcept
+      noexcept(false)
     {
+      CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       auto&& iter = stream_.begin();
       os_ << *iter;
       ++iter;

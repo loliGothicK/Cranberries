@@ -17,7 +17,9 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    SetUnion( Range range ) : set_{ std::forward<Range>( range ) } {}
+    SetUnion( Range range ) noexcept
+      : set_{ std::forward<Range>( range ) }
+    {}
 
     template <
       typename Stream,
@@ -27,7 +29,9 @@ namespace operators {
     decltype(auto)
     operator()(
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       using std::begin; using std::end; using cranberries::size;
       Result result{};
@@ -52,7 +56,9 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    SetIntersection( Range range ) : set_{ std::forward<Range>( range ) } {}
+    SetIntersection( Range range ) noexcept
+      : set_{ std::forward<Range>( range ) }
+    {}
 
     template <
       typename Stream,
@@ -62,7 +68,9 @@ namespace operators {
     decltype(auto)
     operator()(
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       using std::begin; using std::end; using cranberries::size;
       Result result{};
@@ -87,7 +95,9 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    SetDiff( Range range ) : set_{ std::forward<Range>( range ) } {}
+    SetDiff( Range range ) noexcept
+      : set_{ std::forward<Range>( range ) }
+    {}
 
     template <
       typename Stream,
@@ -97,7 +107,9 @@ namespace operators {
     decltype(auto)
     operator()(
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       using std::begin; using std::end; using cranberries::size;
       Result result{};
@@ -122,7 +134,9 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    SetSymmetricDiff( Range range ) : set_{ std::forward<Range>( range ) } {}
+    SetSymmetricDiff( Range range ) noexcept
+      : set_{ std::forward<Range>( range ) }
+    {}
 
     template <
       typename Stream,
@@ -132,7 +146,9 @@ namespace operators {
     decltype(auto)
     operator()(
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       using std::begin; using std::end; using cranberries::size;
       Result result{};

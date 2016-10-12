@@ -17,7 +17,9 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    TakeWhile( Pred pred ) : pred_{ std::forward<Pred>( pred ) } {}
+    TakeWhile( Pred pred ) noexcept
+      : pred_{ std::forward<Pred>( pred ) }
+    {}
 
     template <
       typename Stream
@@ -27,7 +29,7 @@ namespace operators {
     (
       Stream&& stream_
     )
-      noexcept
+      noexcept(false)
     {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       auto&& src = stream_.get();

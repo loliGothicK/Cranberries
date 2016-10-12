@@ -19,10 +19,12 @@ namespace detail {
     {
       Stream stream_;
     public:
-      ImplicitStreamConverter(Stream stream) : stream_{ std::forward<Stream>(stream) } {}
+      ImplicitStreamConverter(Stream stream) noexcept
+        : stream_{ std::forward<Stream>(stream) }
+      {}
 
       template < typename Target >
-      inline operator Target() const {
+      inline operator Target() const noexcept(false) {
         return stream_. template convert<Target>();
       }
     };
@@ -30,7 +32,7 @@ namespace detail {
     // Implicit convert traits
     struct ImplicitStreamConvertInvoker {
       template < typename Stream >
-      static constexpr auto invoke(Stream&& stream) {
+      static constexpr auto invoke(Stream&& stream) noexcept {
         return ImplicitStreamConverter<Stream>(std::forward<Stream>(stream));
       }
     };
@@ -47,8 +49,15 @@ namespace detail {
 
     struct ConvertAny {};
 
-    template < template<class T, class Allocator = std::allocator<T>> class Cont >
-    struct ConvertTo {
+    template <
+      template<
+        class T,
+        class Allocator = std::allocator<T>
+      >
+      class Cont
+    >
+    struct ConvertTo
+    {
       template < typename T >
       using type = Cont<T>;
     };
@@ -57,11 +66,6 @@ namespace detail {
 
 
 } // ! namespace detail
-
-  //constexpr detail::ConvertAny convert{};
-
-  //template < template<class, class> class Target >
-  //constexpr auto convert_to = detail::ConvertTo<Target>{};
 
   inline constexpr detail::ConvertAny convert() noexcept { return{}; }
 

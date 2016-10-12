@@ -9,7 +9,7 @@ namespace streams {
 namespace operators {
 
   // Adaptor for user defined operation and Stream operation interface.
-  // Concept : Operator must call with arg of any Stream and return it.
+  // Concept : Operator must take Stream in argument and return reference of it.
   template <
     typename Operator // user defined operation
   >
@@ -17,7 +17,9 @@ namespace operators {
     : detail::TerminateStreamOperatorBase
   {
   public:
-    Tinvoker( Operator op ) :op_{ std::forward<Operator>( op ) } {}
+    Tinvoker( Operator op ) noexcept
+      :op_{ std::forward<Operator>( op ) }
+    {}
 
     template <
       typename Stream
@@ -27,7 +29,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       static_assert(
         is_callable_v<Operator,Stream&&>,
         "Invalid operator designated."
@@ -48,7 +52,9 @@ namespace operators {
     : detail::IntermidiateStreamOperatorBase
   {
   public:
-    Iinvoker( Operator op ) : op_{ std::forward<Operator>( op ) } {}
+    Iinvoker( Operator op ) noexcept
+      : op_{ std::forward<Operator>( op ) }
+    {}
 
     template <
       typename Stream
@@ -58,7 +64,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       static_assert(
         is_callable_v<Operator,Stream&&>,
         "Invalid operator designated."

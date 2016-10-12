@@ -14,7 +14,10 @@ namespace operators {
     , private detail::StreamFilterBase
   {
   public:
-    Stride( size_t s ) : i{}, step{s} {}
+    Stride( size_t s ) noexcept
+      : i{}
+      , step{s}
+    {}
 
     template <
       typename Stream
@@ -24,7 +27,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       auto&& src = stream_.get();
       for ( auto&& iter = src.begin(); iter != src.end(); ++i ) {

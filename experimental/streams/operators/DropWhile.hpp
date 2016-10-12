@@ -16,7 +16,9 @@ namespace operators {
     , private detail::StreamFilterBase
   {
   public:
-    DropWhile( Pred p ) : pred_{ std::forward<Pred>( p ) } {}
+    DropWhile( Pred p ) noexcept
+      : pred_{ std::forward<Pred>( p ) }
+    {}
 
     template <
       typename Stream,
@@ -28,7 +30,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       static_assert(
         is_callable_v<Pred,E&>,
         "Invalid predicate designated."
@@ -51,7 +55,12 @@ namespace operators {
       typename T,
       std::enable_if_t<!is_range_v<std::decay_t<T>>,std::nullptr_t> = nullptr
     >
-    bool operator[](T&& a) const noexcept
+    bool
+    operator[]
+    (
+      T&& a
+    )
+      const noexcept
     {
       static_assert(
         is_callable_v<Pred,T&&>,

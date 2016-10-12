@@ -22,7 +22,9 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    Flat( Stream x ) : old_{ std::forward<Stream>( x ) } {}
+    Flat( Stream x ) noexcept
+      : old_{ std::forward<Stream>( x ) }
+    {}
 
     template <
       typename STREAM
@@ -31,7 +33,9 @@ namespace operators {
     operator()
     (
       STREAM&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
      old_.eval();
      CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( old_.empty() );
       using std::begin; using std::end;
@@ -55,7 +59,9 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    FlatAll( Stream x ) : old_{ std::forward<Stream>( x ) } {}
+    FlatAll( Stream x ) noexcept
+      : old_{ std::forward<Stream>( x ) }
+    {}
 
     template <
       typename STREAM
@@ -64,7 +70,9 @@ namespace operators {
     operator()
     (
       STREAM&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       old_.eval();
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( old_.empty() );
       using std::begin; using std::end;

@@ -4,58 +4,11 @@
 #include <type_traits>
 #include <algorithm>
 #include "..\utility.hpp"
-
+#include "..\workaround.hpp"
 
 namespace cranberries {
 namespace streams {
 namespace operators {
-
-namespace {
-namespace workaround {
-
-  template <
-      bool IsStream
-  >
-  struct for_msvc
-  {
-    template <
-      typename Stream,
-      typename Range
-    >
-    static
-    void
-    invoke
-    (
-      Stream&& stream_,
-      Range&& range_
-    ) {
-      using std::begin; using std::end;
-      stream_.insert( stream_.end(), begin( range_ ), end( range_ ) );
-    }
-  };
-
-  template < >
-  struct for_msvc<true>
-  {
-    template <
-      typename Stream,
-      typename Range
-    >
-    static
-    void
-    invoke
-    (
-      Stream&& stream_,
-      Range&& range_
-    ) {
-      range_.eval();
-      stream_.insert( stream_.end(), range_.begin(), range_.end() );
-    }
-  };
-
-} // ! namespace workaround
-} // ! anonymous-namespace
-
 
   template <
     typename UnaryOp
@@ -64,7 +17,9 @@ namespace workaround {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    FlatMap( UnaryOp op ) : op_{ std::forward<UnaryOp>( op ) } {}
+    FlatMap( UnaryOp op ) noexcept
+      : op_{ std::forward<UnaryOp>( op ) }
+    {}
 
     template <
       typename Stream,
@@ -75,7 +30,9 @@ namespace workaround {
     (
       Stream&& stream_,
       T&& arg
-    ) {
+    )
+      noexcept
+    {
       stream_.emplace_back(std::move(arg));
       return;
     }
@@ -90,7 +47,9 @@ namespace workaround {
       Stream&& stream_,
       Head&& head,
       Tail&& ...tail
-    ) {
+    )
+      noexcept
+    {
       return stream_.emplace_back( std::move( head ) ), push_tuple( std::forward<Stream>( stream_ ), std::forward<Tail>( tail )... );
     }
 
@@ -105,7 +64,9 @@ namespace workaround {
     (
       Stream&& stream_,
       T&& proj
-    ) {
+    )
+      noexcept
+    {
       cranberries::apply(
         [&]( auto&& ...args ) {
         push_tuple( std::forward<Stream>( stream_ ), std::forward<decltype( args )>( args )... ); 
@@ -125,7 +86,9 @@ namespace workaround {
     (
       Stream&& stream_,
       Range&& range_
-    ) {
+    )
+      noexcept
+    {
       workaround::for_msvc<
         detail::is_finite_stream_v<std::decay_t<Range>>
       >::invoke(std::forward<Stream>(stream_), std::forward<Range>(range_));
@@ -138,7 +101,10 @@ namespace workaround {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
+      CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       size_t ini = stream_.size();
       for ( auto&& e : stream_ ) {
         push( stream_, op_( e ) );
@@ -155,7 +121,9 @@ namespace workaround {
     operator[]
     (
       T&& a
-    ) {
+    )
+      noexcept
+    {
       return op_(a);
     }
 

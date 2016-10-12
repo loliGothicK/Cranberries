@@ -31,7 +31,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       auto&& source = stream_.get();
       source.erase( std::unique( source.begin(), source.end() ), source.end() );

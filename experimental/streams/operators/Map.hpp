@@ -14,12 +14,20 @@ namespace operators {
     , private detail::StreamOperatorBase
   {
   public:
-    TransformProxy( F f ) : f{ std::forward<F>( f ) } {}
+    TransformProxy( F f ) noexcept
+      : f{ std::forward<F>( f ) }
+    {}
 
     template <
       typename T
     >
-      auto operator[]( T&& a ) const noexcept {
+    auto
+    operator[]
+    (
+      T&& a
+    )
+      const noexcept
+    {
       return f( a );
     }
 
@@ -34,10 +42,12 @@ namespace operators {
     , private detail::StreamOperatorBase
   {
   public:
-    Endomorphism( UnaryFunc f ) : f_{ std::forward<UnaryFunc>( f ) } {}
+    Endomorphism( UnaryFunc f ) noexcept
+      : f_{ std::forward<UnaryFunc>( f ) }
+    {}
 
     template < typename F, typename T >
-    void apply( F&& f, T&& a ) {
+    void apply( F&& f, T&& a ) noexcept {
       a =  f(std::forward<T>(a));
     }
 
@@ -50,7 +60,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept
+    {
       auto&& v = stream_.get();
       size_t i{};
       for(;i<v.size() % 8;++i)
@@ -75,10 +87,8 @@ namespace operators {
       return f_(a);
     }
 
-
-
     // mapper
-
+  private:
     UnaryFunc f_;
   };
 
@@ -90,7 +100,10 @@ namespace operators {
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
-    Transform( OldStream old, UnaryFunc f ) : old{ std::forward<OldStream>( old ) }, f_{ std::forward<UnaryFunc >> ( f ) } {}
+    Transform( OldStream old, UnaryFunc f ) noexcept
+      : old{ std::forward<OldStream>( old ) }
+      , f_{ std::forward<UnaryFunc>( f ) }
+    {}
 
     template <
       typename Stream
@@ -100,7 +113,9 @@ namespace operators {
     operator()
     (
       Stream&& stream_
-    ) {
+    )
+      noexcept(false)
+    {
       old.eval();
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( old.empty() );
       stream_.reserve(old.size());
@@ -122,6 +137,7 @@ namespace operators {
     }
 
     // member
+  private:
     OldStream old;
     UnaryFunc f_;
   };

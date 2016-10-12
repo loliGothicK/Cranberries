@@ -289,8 +289,8 @@ namespace cranberries
 
 
   template <
-    typename Range,
-    typename T = typename std::decay_t<Range>::value_type,
+    typename RAI,
+    typename T = typename std::iterator_traits<RAI>::value_type,
     std::enable_if_t<
       std::is_signed<T>::value,
     std::nullptr_t
@@ -300,42 +300,43 @@ namespace cranberries
   void
   ascending_radix_sort
   (
-    Range&& range
+    RAI first,
+    RAI last
   )
     noexcept
   {
     auto middle = std::stable_partition(
-      range.begin(), range.end(),
+      first, last,
       []( const T& a ) { return a < 0; }
     );
   #ifdef _MSC_VER
     if (std::is_integral<T>::value)
     {
       ascending_radix_sort_impl(
-        range.begin(), middle,
+        first, middle,
         default_get_key{}
       );
     } else {
       descending_radix_sort_impl(
-        range.begin(), middle,
+        first, middle,
         default_get_key{}
       );
     }
-  #elif
+  #elif // for GCC/Clang
     descending_radix_sort_impl(
-      range.begin(), middle,
+      first, middle,
       default_get_key{}
     );
   #endif
     ascending_radix_sort_impl(
-      middle, range.end(),
+      middle, last,
       default_get_key{}
     );
   }
 
   template <
-    typename Range,
-    typename T = typename std::decay_t<Range>::value_type,
+    typename RAI,
+    typename T = typename std::iterator_traits<RAI>::value_type,
     std::enable_if_t<
       std::is_signed<T>::value,
     std::nullptr_t
@@ -345,34 +346,35 @@ namespace cranberries
   void
   descending_radix_sort
   (
-    Range&& range
+    RAI first,
+    RAI last
   )
     noexcept
   {
     auto middle = std::stable_partition(
-      range.begin(), range.end(),
+      first, last,
       []( const T& a ) { return a > -1; }
     );
     descending_radix_sort_impl(
-      range.begin(), middle,
+      first, middle,
       default_get_key{}
     );
   #ifdef _MSC_VER
     if (std::is_integral<T>::value)
     {
       descending_radix_sort_impl(
-        middle, range.end(),
+        middle, last,
         default_get_key{}
       );
     } else {
       ascending_radix_sort_impl(
-        middle, range.end(),
+        middle, last,
         default_get_key{}
       );
     }
-  #elif
+  #elif // for GCC/Clang
     aescending_radix_sort_impl(
-      middle, range.end(),
+      middle, last,
       default_get_key{}
     );
   #endif
@@ -392,8 +394,8 @@ namespace cranberries
 
 
   template <
-    typename Range,
-    typename T = typename std::decay_t<Range>::value_type,
+    typename RAI,
+    typename T = typename std::iterator_traits<RAI>::value_type,
     std::enable_if_t<
       std::is_unsigned<T>::value,
     std::nullptr_t
@@ -403,19 +405,20 @@ namespace cranberries
   void
   ascending_radix_sort
   (
-    Range&& range
+    RAI first,
+    RAI last
   )
     noexcept
   {
     ascending_radix_sort_impl(
-        range.begin(), range.end(),
+        first, last,
         default_get_key{}
     );
   }
 
   template <
-    typename Range,
-    typename T = typename std::decay_t<Range>::value_type,
+    typename RAI,
+    typename T = typename std::iterator_traits<RAI>::value_type,
     std::enable_if_t<
       std::is_unsigned<T>::value,
     std::nullptr_t
@@ -425,12 +428,13 @@ namespace cranberries
   void
   descending_radix_sort
   (
-    Range&& range
+    RAI first,
+    RAI last
   )
     noexcept
   {
     descending_radix_sort_impl(
-      range.begin(), range.end(),
+      first, last,
       default_get_key{}
     );
   }
@@ -447,8 +451,8 @@ namespace cranberries
 
 
   template <
-    typename Range,
-    typename T = typename std::decay_t<Range>::value_type,
+    typename RAI,
+    typename T = typename std::iterator_traits<RAI>::value_type,
     std::enable_if_t<
       is_bitset_v<T>,
       std::nullptr_t
@@ -458,19 +462,20 @@ namespace cranberries
   void
   ascending_radix_sort
   (
-    Range&& range
+    RAI first,
+    RAI last
   )
     noexcept
   {
     ascending_radix_sort_impl(
-      range.begin(), range.end(),
+      first, last,
       []( auto&& a ) { return a; }
     );
   }
 
   template <
-    typename Range,
-    typename T = typename std::decay_t<Range>::value_type,
+    typename RAI,
+    typename T = typename std::iterator_traits<RAI>::value_type,
     std::enable_if_t<
       is_bitset_v<T>,
       std::nullptr_t
@@ -480,12 +485,13 @@ namespace cranberries
   void
   descending_radix_sort
   (
-    Range&& range
+    RAI first,
+    RAI last
   )
     noexcept
   {
     descending_radix_sort_impl(
-      range.begin(), range.end(),
+      first, last,
       []( auto&& a ) { return a; }
     );
   }
@@ -510,8 +516,8 @@ namespace cranberries
 
 
   template <
-    typename Range,
-    typename T = typename std::decay_t<Range>::value_type,
+    typename RAI,
+    typename T = typename std::iterator_traits<RAI>::value_type,
     std::enable_if_t<
       !is_bitset_v<T> && !std::is_arithmetic<T>::value,
     std::nullptr_t
@@ -522,19 +528,20 @@ namespace cranberries
   void
   ascending_radix_sort
   (
-    Range&& range
+    RAI first,
+    RAI last
   )
     noexcept
   {
     ascending_radix_sort_impl(
-      range.begin(), range.end(),
+      first, last,
       default_get_key{}
     );
   }
 
   template <
-    typename Range,
-    typename T = typename std::decay_t<Range>::value_type,
+    typename RAI,
+    typename T = typename std::iterator_traits<RAI>::value_type,
     std::enable_if_t<
       !is_bitset_v<T> && !std::is_arithmetic<T>::value,
     std::nullptr_t
@@ -545,12 +552,13 @@ namespace cranberries
   void
   descending_radix_sort
   (
-    Range&& range
+    RAI first,
+    RAI last
   )
     noexcept
   {
     descending_radix_sort_impl(
-      range.begin(), range.end(),
+      first, last,
       default_get_key{}
     );
   }
@@ -575,8 +583,8 @@ namespace cranberries
 
 
   template <
-    typename Range,
-    typename T = typename std::decay_t<Range>::value_type,
+    typename RAI,
+    typename T = typename std::iterator_traits<RAI>::value_type,
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
@@ -588,44 +596,45 @@ namespace cranberries
   void
   ascending_radix_sort
   (
-    Range&& range,
+    RAI first,
+    RAI last,
     G&& key_getter
   )
     noexcept
   {
     auto middle = std::stable_partition(
-      range.begin(), range.end(),
+      first, last,
       []( const T& a ) { return a < 0; }
     );
   #ifdef _MSC_VER
     if (std::is_integral<T>::value)
     {
       ascending_radix_sort_impl(
-        range.begin(), middle,
+        first, middle,
         make_get_key_wrapper( std::forward<G>( key_getter ) )
       );
     }
     else {
       descending_radix_sort_impl(
-        range.begin(), middle,
+        first, middle,
         make_get_key_wrapper( std::forward<G>( key_getter ) )
       );
     }
-  #elif
+  #elif // for GCC/Clang
     descending_radix_sort_impl(
-      range.begin(), middle,
+      first, middle,
       make_get_key_wrapper( std::forward<G>( key_getter ) )
     );
   #endif
     ascending_radix_sort_impl(
-      middle, range.end(),
+      middle, last,
       make_get_key_wrapper( std::forward<G>( key_getter ) )
     );
   }
 
   template <
-    typename Range,
-    typename T = typename std::decay_t<Range>::value_type,
+    typename RAI,
+    typename T = typename std::iterator_traits<RAI>::value_type,
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
@@ -637,36 +646,37 @@ namespace cranberries
   void
   descending_radix_sort
   (
-    Range&& range,
+    RAI first,
+    RAI last,
     G&& key_getter
   )
     noexcept
   {
     auto middle = std::stable_partition(
-      range.begin(), range.end(),
+      first, last,
       []( const T& a ) { return a > -1; }
     );
     descending_radix_sort_impl(
-      range.begin(), middle,
+      first, middle,
       make_get_key_wrapper( std::forward<G>( key_getter ) )
     );
   #ifdef _MSC_VER
     if (std::is_integral<T>::value)
     {
       descending_radix_sort_impl(
-        middle, range.end(),
+        middle, last,
         make_get_key_wrapper( std::forward<G>( key_getter ) )
       );
     }
     else {
       ascending_radix_sort_impl(
-        middle, range.end(),
+        middle, last,
         make_get_key_wrapper( std::forward<G>( key_getter ) )
       );
     }
-  #elif
+  #elif // for GCC/Clang
     aescending_radix_sort_impl(
-      middle, range.end(),
+      middle, last,
       make_get_key_wrapper( std::forward<G>( key_getter ) )
     );
   #endif
@@ -686,8 +696,8 @@ namespace cranberries
 
 
   template <
-    typename Range,
-    typename T = typename std::decay_t<Range>::value_type,
+    typename RAI,
+    typename T = typename std::iterator_traits<RAI>::value_type,
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
@@ -699,20 +709,21 @@ namespace cranberries
   void
   ascending_radix_sort
   (
-    Range&& range,
+    RAI first,
+    RAI last,
     G&& key_getter
   )
     noexcept
   {
     ascending_radix_sort_impl(
-      range.begin(), range.end(),
+      std::forward<RAI>( first ), std::forward<RAI>( last ),
       make_get_key_wrapper( std::forward<G>( key_getter ) )
     );
   }
 
   template <
-    typename Range,
-    typename T = typename std::decay_t<Range>::value_type,
+    typename RAI,
+    typename T = typename std::iterator_traits<RAI>::value_type,
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
@@ -724,13 +735,14 @@ namespace cranberries
   void
   descending_radix_sort
   (
-    Range&& range,
+    RAI first,
+    RAI last,
     G&& key_getter
   )
     noexcept
   {
     descending_radix_sort_impl(
-      range.begin(), range.end(),
+      std::forward<RAI>( first ), std::forward<RAI>( last ),
       make_get_key_wrapper( std::forward<G>( key_getter ) )
     );
   }
@@ -748,8 +760,8 @@ namespace cranberries
 
 
   template <
-    typename Range,
-    typename T = typename std::decay_t<Range>::value_type,
+    typename RAI,
+    typename T = typename std::iterator_traits<RAI>::value_type,
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
@@ -761,20 +773,21 @@ namespace cranberries
   void
   ascending_radix_sort
   (
-    Range&& range,
+    RAI first,
+    RAI last,
     G&& key_getter
   )
     noexcept
   {
     ascending_radix_sort_impl(
-      range.begin(), range.end(),
+      std::forward<RAI>( first ), std::forward<RAI>( last ),
       std::forward<G>( key_getter )
     );
   }
 
   template <
-    typename Range,
-    typename T = typename std::decay_t<Range>::value_type,
+    typename RAI,
+    typename T = typename std::iterator_traits<RAI>::value_type,
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
@@ -786,13 +799,14 @@ namespace cranberries
   void
   descending_radix_sort
   (
-    Range&& range,
+    RAI first,
+    RAI last,
     G&& key_getter
   )
     noexcept
   {
     descending_radix_sort_impl(
-      range.begin(), range.end(),
+      first, last,
       std::forward<G>( key_getter )
     );
   }
@@ -815,8 +829,8 @@ namespace cranberries
   **************************/
 
   template <
-    typename Range,
-    typename T = typename std::decay_t<Range>::value_type,
+    typename RAI,
+    typename T = typename std::iterator_traits<RAI>::value_type,
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
@@ -829,20 +843,21 @@ namespace cranberries
   void
   ascending_radix_sort
   (
-    Range&& range,
+    RAI first,
+    RAI last,
     G&& key_getter
   )
     noexcept
   {
     ascending_radix_sort_impl(
-      range.begin(), range.end(),
+      first, last,
       make_get_key_wrapper( std::forward<G>( key_getter ) )
     );
   }
 
   template <
-    typename Range,
-    typename T = typename std::decay_t<Range>::value_type,
+    typename RAI,
+    typename T = typename std::iterator_traits<RAI>::value_type,
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
@@ -855,13 +870,14 @@ namespace cranberries
   void
   descending_radix_sort
   (
-    Range&& range,
+    RAI first,
+    RAI last,
     G&& key_getter
   )
     noexcept
   {
     descending_radix_sort_impl(
-      range.begin(), range.end(),
+      first, last,
       make_get_key_wrapper( std::forward<G>( key_getter ) )
     );
   }
