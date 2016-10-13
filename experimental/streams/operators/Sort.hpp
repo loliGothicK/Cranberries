@@ -43,7 +43,10 @@ namespace operators {
       noexcept(false)
     {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
-      std::sort(stream_.begin(), stream_.end(), pred_);
+      if (first == last)
+        std::sort( stream_.begin(), stream_.end(), pred_ );
+      else
+        std::sort( stream_.begin() + first - 1, stream_.begin() + last, pred_ );
       return std::forward<Stream>(stream_);
     }
 
@@ -62,6 +65,10 @@ namespace operators {
   {
   public:
     Sort() = default;
+    Sort( size_t first, size_t last ) noexcept
+      : first{ first }
+      , last{ last }
+    {}
 
     template <
       typename Stream
@@ -74,9 +81,15 @@ namespace operators {
       noexcept(false)
     {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
-      std::sort(stream_.begin(), stream_.end());
+      if (first == last)
+        std::sort( stream_.begin(), stream_.end() );
+      else
+        std::sort( stream_.begin() + first - 1, stream_.begin() + last );
       return std::forward<Stream>(stream_);
     }
+  private:
+    size_t first{};
+    size_t last{};
   };
 
 

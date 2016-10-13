@@ -32,6 +32,7 @@ namespace streams {
   }
 
   inline operators::Sort<> sorted() noexcept { return{}; }
+  inline operators::Sort<> sorted( size_t first, size_t last ) noexcept { return{ first, last }; }
 
   inline operators::StableSort<> stable_sorted() noexcept { return{}; }
 
@@ -99,9 +100,15 @@ namespace streams {
 
   template < bool B = true, typename G >
   inline operators::RadixSort<G, B> radix_sorted( G&& get_key ) noexcept { return{ std::forward<G>( get_key ) }; }
+  
+  template < bool B = true, typename G >
+  inline operators::RadixSort<G, B> radix_sorted( size_t first, size_t last, G&& get_key ) noexcept { return{ first, last, std::forward<G>( get_key ) }; }
 
   template < bool B = true >
   inline operators::RadixSort<detail::defaulted_t, B> radix_sorted() noexcept { return{}; }
+
+  template < bool B = true >
+  inline operators::RadixSort<detail::defaulted_t, B> radix_sorted( size_t first, size_t last ) noexcept { return{first, last}; }
 
   inline operators::DistinctProxy distinctly() noexcept { return{}; }
 
