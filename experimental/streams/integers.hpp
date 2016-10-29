@@ -3,7 +3,8 @@
 #include <cstdint>
 
 namespace cranberries {
-
+  template < bool B >
+  using bool_constant = std::integral_constant<bool,B>;
 
   template < std::size_t N >
   struct int_t_traits;

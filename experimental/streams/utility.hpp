@@ -5,6 +5,7 @@
 #include <tuple>
 #include <type_traits>
 #include <bitset>
+#include "./integers.hpp"
 
 namespace cranberries {
 
