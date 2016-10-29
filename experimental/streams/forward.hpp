@@ -191,7 +191,7 @@ namespace operators {
   template < typename Pred = detail::defaulted_t >
   class NthElement;
 
-  template < typename G = detail::defaulted_t, bool B = true >
+  template < typename G = detail::defaulted_t, opt option = opt::ascending >
   class RadixSort;
 
 } // ! namesapce operators

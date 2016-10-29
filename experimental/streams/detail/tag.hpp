@@ -9,7 +9,8 @@ namespace streams {
     unordered,
     left,
     right,
-
+    ascending,
+    descending,
   };
 
 namespace detail {

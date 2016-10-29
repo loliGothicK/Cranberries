@@ -13,7 +13,7 @@ namespace operators {
 
   template <
     typename G,
-    bool B
+    opt option
   >
   class RadixSort
     : private detail::IntermidiateStreamOperatorBase
@@ -42,14 +42,21 @@ namespace operators {
     )
       noexcept
     {
-      if (B && first == last)
-        cranberries::ascending_radix_sort( stream_.begin(), stream_.end(), std::forward<G>(get_key) );
-      else if ( B )
-        cranberries::ascending_radix_sort( stream_.begin() + first - 1, stream_.begin() + last, std::forward<G>( get_key ) );
-      else if ( !B && first == last )
-        cranberries::descending_radix_sort( stream_.begin(), stream_.end(), std::forward<G>( get_key ) );
-      else
-        cranberries::descending_radix_sort( stream_.begin() + first - 1, stream_.begin() + last, std::forward<G>( get_key ) );
+      switch (option)
+      {
+      case cranberries::streams::opt::ascending:
+        if (first == last)
+          cranberries::ascending_radix_sort( stream_.begin(), stream_.end(), std::forward<G>( get_key ) );
+        else
+          cranberries::ascending_radix_sort( stream_.begin() + first - 1, stream_.begin() + last, std::forward<G>( get_key ) );
+        break;
+      case cranberries::streams::opt::descending:
+        if (first == last)
+          cranberries::descending_radix_sort( stream_.begin(), stream_.end(), std::forward<G>( get_key ) );
+        else
+          cranberries::descending_radix_sort( stream_.begin() + first - 1, stream_.begin() + last, std::forward<G>( get_key ) );
+        break;
+      }
 
       return std::forward<Stream>( stream_ );
     }
@@ -60,9 +67,9 @@ namespace operators {
   };
 
   template <
-    bool B
+    opt option
   >
-  class RadixSort<detail::defaulted_t,B>
+  class RadixSort<detail::defaulted_t,option>
     : private detail::IntermidiateStreamOperatorBase
   {
   public:
@@ -85,14 +92,21 @@ namespace operators {
     )
       noexcept
     {
-      if (B && first == last)
-        cranberries::ascending_radix_sort( stream_.begin(), stream_.end() );
-      else if (B)
-        cranberries::ascending_radix_sort( stream_.begin() + first - 1, stream_.begin() + last );
-      else if (!B && first == last)
-        cranberries::descending_radix_sort( stream_.begin(), stream_.end() );
-      else
-        cranberries::descending_radix_sort( stream_.begin() + first - 1, stream_.begin() + last );
+      switch (option)
+      {
+      case cranberries::streams::opt::ascending:
+        if (first == last)
+          cranberries::ascending_radix_sort( stream_.begin(), stream_.end() );
+        else
+          cranberries::ascending_radix_sort( stream_.begin() + first - 1, stream_.begin() + last );
+        break;
+      case cranberries::streams::opt::descending:
+        if (first == last)
+          cranberries::descending_radix_sort( stream_.begin(), stream_.end() );
+        else
+          cranberries::descending_radix_sort( stream_.begin() + first - 1, stream_.begin() + last );
+        break;
+      }
 
       return std::forward<Stream>( stream_ );
     }

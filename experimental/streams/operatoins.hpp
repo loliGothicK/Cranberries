@@ -98,17 +98,25 @@ namespace streams {
     return{ n, std::forward<Pred>( pred ) };
   }
 
-  template < bool B = true, typename G >
-  inline operators::RadixSort<G, B> radix_sorted( G&& get_key ) noexcept { return{ std::forward<G>( get_key ) }; }
+  template < typename G >
+  inline operators::RadixSort<G, opt::ascending> ascending_radix_sorted( G&& get_key ) noexcept { return{ std::forward<G>( get_key ) }; }
   
-  template < bool B = true, typename G >
-  inline operators::RadixSort<G, B> radix_sorted( size_t first, size_t last, G&& get_key ) noexcept { return{ first, last, std::forward<G>( get_key ) }; }
+  template < typename G >
+  inline operators::RadixSort<G, opt::ascending> ascending_radix_sorted( size_t first, size_t last, G&& get_key ) noexcept { return{ first, last, std::forward<G>( get_key ) }; }
 
-  template < bool B = true >
-  inline operators::RadixSort<detail::defaulted_t, B> radix_sorted() noexcept { return{}; }
+  inline operators::RadixSort<detail::defaulted_t, opt::ascending> ascending_radix_sorted() noexcept { return{}; }
 
-  template < bool B = true >
-  inline operators::RadixSort<detail::defaulted_t, B> radix_sorted( size_t first, size_t last ) noexcept { return{first, last}; }
+  inline operators::RadixSort<detail::defaulted_t, opt::ascending> ascending_radix_sorted( size_t first, size_t last ) noexcept { return{first, last}; }
+
+  template < typename G >
+  inline operators::RadixSort<G, opt::descending> descending_radix_sorted( G&& get_key ) noexcept { return{ std::forward<G>( get_key ) }; }
+
+  template < typename G >
+  inline operators::RadixSort<G, opt::descending> descending_radix_sorted( size_t first, size_t last, G&& get_key ) noexcept { return{ first, last, std::forward<G>( get_key ) }; }
+
+  inline operators::RadixSort<detail::defaulted_t, opt::descending> descending_radix_sorted() noexcept { return{}; }
+
+  inline operators::RadixSort<detail::defaulted_t, opt::descending> descending_radix_sorted( size_t first, size_t last ) noexcept { return{ first, last }; }
 
   inline operators::DistinctProxy distinctly() noexcept { return{}; }
 
@@ -187,25 +195,25 @@ namespace streams {
   inline operators::Reverse reversed() noexcept { return{}; }
 
   template < typename Engine = std::mt19937 >
-  inline operators::Shuffle<Engine&&> shuffled( Engine&& engine_ = std::mt19937{} ) { return{ std::forward<Engine>( engine_ ) }; }
+  inline operators::Shuffle<Engine> shuffled( Engine&& engine_ = std::mt19937{} ) { return{ std::forward<Engine>( engine_ ) }; }
 
   template < typename ElemType >
-  inline operators::Replace<ElemType&&> replaced( ElemType&& old_value, ElemType&& new_value ) { return{ std::forward<ElemType>( old_value ), std::forward<ElemType>( new_value ) }; }
+  inline operators::Replace<ElemType> replaced( ElemType&& old_value, ElemType&& new_value ) { return{ std::forward<ElemType>( old_value ), std::forward<ElemType>( new_value ) }; }
 
   template < typename UnaryOp, typename New >
-  inline operators::ReplaceIf<UnaryOp&&, New&&> replaced_if( UnaryOp&& op, New&& new_value ) { return{ std::forward<UnaryOp>( op ), std::forward<New>( new_value ) }; }
+  inline operators::ReplaceIf<UnaryOp, New> replaced_if( UnaryOp&& op, New&& new_value ) { return{ std::forward<UnaryOp>( op ), std::forward<New>( new_value ) }; }
 
   template < typename Range >
-  inline operators::SetUnion<Range&&> set_union( Range&& range ) { return{ std::forward<Range>( range ) }; }
+  inline operators::SetUnion<Range> set_union( Range&& range ) { return{ std::forward<Range>( range ) }; }
 
   template < typename Range >
-  inline operators::SetIntersection<Range&&> set_intersection( Range&& range ) { return{ std::forward<Range>( range ) }; }
+  inline operators::SetIntersection<Range> set_intersection( Range&& range ) { return{ std::forward<Range>( range ) }; }
 
   template < typename Range >
-  inline operators::SetDiff<Range&&> set_difference( Range&& range ) { return{ std::forward<Range>( range ) }; }
+  inline operators::SetDiff<Range> set_difference( Range&& range ) { return{ std::forward<Range>( range ) }; }
 
   template < typename Range >
-  inline operators::SetSymmetricDiff<Range&&> set_symmetric_difference( Range&& range ) { return{ std::forward<Range>( range ) }; }
+  inline operators::SetSymmetricDiff<Range> set_symmetric_difference( Range&& range ) { return{ std::forward<Range>( range ) }; }
 
   inline operators::SummaryStatProxy summary_stat() noexcept { return{}; }
 

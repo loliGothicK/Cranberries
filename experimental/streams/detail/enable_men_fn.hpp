@@ -65,12 +65,9 @@ namespace detail{
 
     men_fn_def( nth_element, nth_elemented );
     
-    template < bool B = true >
-    decltype(auto)
-    radix_sort() noexcept {
-      return std::move( *static_cast<Derived*>(this) )
-        >> cranberries::streams::radix_sorted<B>();
-    }
+    men_fn_def( ascending_radix_sort, ascending_radix_sorted );
+
+    men_fn_def( descending_radix_sort, descending_radix_sorted );
 
     men_fn_def( drop_while, dropped_while );
 
