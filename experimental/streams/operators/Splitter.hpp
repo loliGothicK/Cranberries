@@ -4,7 +4,7 @@
 #include <regex>
 #include <utility>
 #include "../detail/tag.hpp"
-#include "..\StreamConverter.hpp"
+#include "../StreamConverter.hpp"
 
 namespace cranberries {
 namespace streams {

@@ -1,7 +1,7 @@
 #ifndef CRANBERRIES_STREAMS_OPERATORS_LIMIT_HPP
 #define CRANBERRIES_STREAMS_OPERATORS_LIMIT_HPP
 #include <utility>
-#include "..\utility.hpp"
+#include "../utility.hpp"
 
 namespace cranberries {
 namespace streams {

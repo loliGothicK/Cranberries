@@ -7,8 +7,8 @@
 #include <numeric>
 #include <cmath>
 #include <iostream>
-#include "..\stat\stat.hpp"
-#include "..\utility.hpp"
+#include "../stat/stat.hpp"
+#include "../utility.hpp"
 
 #define CRANBERRIES_PUTS(MSG, ARG) os << MSG" : " << ARG << std::endl
 

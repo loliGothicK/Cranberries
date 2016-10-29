@@ -3,7 +3,7 @@
 #include <utility>
 #include <type_traits>
 #include <algorithm>
-#include "..\utility.hpp"
+#include "../utility.hpp"
 
 namespace cranberries {
 namespace streams {

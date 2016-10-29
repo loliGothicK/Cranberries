@@ -2,7 +2,7 @@
 #define CRANBERRIES_STREAMS_OPERATORS_DROPWHILE_HPP
 #include <utility>
 #include <type_traits>
-#include "..\utility.hpp"
+#include "../utility.hpp"
 
 namespace cranberries {
 namespace streams {

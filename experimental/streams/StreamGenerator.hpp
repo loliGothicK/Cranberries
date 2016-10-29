@@ -9,8 +9,8 @@
 #include "forward.hpp"
 #include "detail/tag.hpp"
 #include "InfiniteStream.hpp"
-#include "operators\Splitter.hpp"
-#include "operators\Identity.hpp"
+#include "operators/Splitter.hpp"
+#include "operators/Identity.hpp"
 
 namespace cranberries {
 namespace streams {

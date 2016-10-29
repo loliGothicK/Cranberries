@@ -4,7 +4,7 @@
 #include <iostream>
 #include <type_traits>
 #include <utility>
-#include "..\utility.hpp"
+#include "../utility.hpp"
 
 namespace cranberries {
 namespace streams {

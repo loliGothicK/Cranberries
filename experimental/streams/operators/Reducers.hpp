@@ -5,8 +5,8 @@
 #include <numeric>
 #include <utility>
 #include <cstddef>
-#include "..\utility.hpp"
-#include "..\stat\stat.hpp"
+#include "../utility.hpp"
+#include "../stat/stat.hpp"
 
 namespace cranberries{
 namespace streams{

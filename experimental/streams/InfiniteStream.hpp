@@ -6,7 +6,7 @@
 #include "detail/tag.hpp"
 #include "utility.hpp"
 #include "stream_error.hpp"
-#include "detail\enable_men_fn.hpp"
+#include "detail/enable_men_fn.hpp"
 
 namespace cranberries {
 namespace streams {

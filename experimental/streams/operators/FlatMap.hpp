@@ -3,8 +3,8 @@
 #include <utility>
 #include <type_traits>
 #include <algorithm>
-#include "..\utility.hpp"
-#include "..\workaround.hpp"
+#include "../utility.hpp"
+#include "../workaround.hpp"
 
 namespace cranberries {
 namespace streams {

@@ -6,8 +6,8 @@
 #include <vector>
 #include <list>
 #include <deque>
-#include "..\utility.hpp"
-#include "..\detail\tag.hpp"
+#include "../utility.hpp"
+#include "../detail/tag.hpp"
 
 namespace cranberries {
 namespace streams {

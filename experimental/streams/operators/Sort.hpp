@@ -3,8 +3,8 @@
 #include <utility>
 #include <type_traits>
 #include <algorithm>
-#include "..\stream_error.hpp"
-#include "..\utility.hpp"
+#include "../stream_error.hpp"
+#include "../utility.hpp"
 
 namespace cranberries {
 namespace streams {

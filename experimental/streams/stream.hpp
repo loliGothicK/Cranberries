@@ -4,8 +4,8 @@
 #include <initializer_list>
 #include <type_traits>
 #include <utility>
-#include "operators\Identity.hpp"
-#include "detail\enable_men_fn.hpp"
+#include "operators/Identity.hpp"
+#include "detail/enable_men_fn.hpp"
 
 namespace cranberries {
 namespace streams {

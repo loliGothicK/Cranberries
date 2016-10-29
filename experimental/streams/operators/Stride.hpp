@@ -1,8 +1,8 @@
 #ifndef CRANBERRIES_STREAMS_OPERATORS_STRIDE_HPP
 #define CRANBERRIES_STREAMS_OPERATORS_STRIDE_HPP
 #include <utility>
-#include "..\detail\tag.hpp"
-#include "..\utility.hpp"
+#include "../detail/tag.hpp"
+#include "../utility.hpp"
 
 namespace cranberries {
 namespace streams {

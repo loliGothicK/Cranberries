@@ -2,8 +2,8 @@
 #define CRANBERRIES_STREAMS_FORWARD_HPP
 
 #include <random>
-#include "detail\tag.hpp"
-#include "operators\Identity.hpp"
+#include "detail/tag.hpp"
+#include "operators/Identity.hpp"
 
 namespace cranberries {
 namespace streams {

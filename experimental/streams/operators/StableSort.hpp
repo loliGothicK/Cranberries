@@ -4,7 +4,7 @@
 #include <regex>
 #include <utility>
 #include <algorithm>
-#include "..\stream_error.hpp"
+#include "../stream_error.hpp"
 #include "../utility.hpp"
 
 namespace cranberries {

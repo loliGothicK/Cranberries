@@ -3,7 +3,7 @@
 #include <utility>
 #include <algorithm>
 #include <iterator>
-#include "..\utility.hpp"
+#include "../utility.hpp"
 
 namespace cranberries {
 namespace streams {

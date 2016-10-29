@@ -2,10 +2,10 @@
 #define CRANBERRIES_STREAMS_OPERATORS_RADIX_SORT_HPP
 #include <utility>
 #include <type_traits>
-#include "..\stream_error.hpp"
-#include "..\utility.hpp"
-#include "..\algorithm\radix_sort.hpp"
-#include "..\detail\tag.hpp"
+#include "../stream_error.hpp"
+#include "../utility.hpp"
+#include "../algorithm/radix_sort.hpp"
+#include "../detail/tag.hpp"
 
 namespace cranberries {
 namespace streams {

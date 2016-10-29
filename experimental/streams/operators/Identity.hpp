@@ -2,7 +2,7 @@
 #define CRANBERRIES_STREAMS_OPERATORS_ROOTOPERATOIN_HPP
 #include <utility>
 #include "../detail/tag.hpp"
-#include "..\utility.hpp"
+#include "../utility.hpp"
 
 namespace cranberries {
 namespace streams {

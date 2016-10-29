@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <cstring>
 #include <bitset>
-#include "..\utility.hpp"
+#include "../utility.hpp"
 #include "../integers.hpp"
 
 namespace cranberries
