@@ -1,7 +1,5 @@
-﻿#include "stdafx.h"
-#include <iostream>
+﻿#include <iostream>
 #include "stream.hpp"
-#include "streams\algorithm\radix_sort.hpp"
 using std::cout;
 using std::endl;
 using cranberries::make_finally;
