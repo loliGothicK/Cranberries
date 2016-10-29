@@ -1,0 +1,22 @@
+compiler:
+  - clang
+  - gcc
+cache:
+  apt: true
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-precise-3.8
+      - llvm-toolchain-precise
+    packages:
+      - clang-3.8
+      - g++-5
+      - gcc-5
+install:
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-5" CC="gcc-5"; fi
+  - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.8" CC="clang-3.7"; fi
+language: cpp
+script:
+  - make Debug CXX="${CXX}"
+  - make clean
