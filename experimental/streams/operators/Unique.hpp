@@ -40,13 +40,10 @@ namespace operators {
       return std::forward<Stream>(stream_);
     }
 
-    template <
-      typename T
-    >
     bool
     operator[]
     (
-      T&& arg
+      U const& arg
     )
       noexcept
     {
