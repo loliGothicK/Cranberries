@@ -373,7 +373,7 @@ namespace cranberries
       );
     }
   #else // for GCC/Clang
-    aescending_radix_sort_impl(
+    ascending_radix_sort_impl(
       middle, last,
       default_get_key{}
     );
@@ -675,7 +675,7 @@ namespace cranberries
       );
     }
   #else // for GCC/Clang
-    aescending_radix_sort_impl(
+    ascending_radix_sort_impl(
       middle, last,
       make_get_key_wrapper( std::forward<G>( key_getter ) )
     );
