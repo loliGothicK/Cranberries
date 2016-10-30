@@ -94,7 +94,7 @@ namespace detail {
 
   template < typename T >
   struct is_range
-    : std::bool_constant<
+    : bool_constant<
     detail::enable_std_begin_end<T>::value
     || detail::enable_adl_begin_end<T>::value
     >
@@ -134,26 +134,26 @@ namespace detail {
 
 
   template < typename Head, typename ...Tail >
-  struct conj_impl : std::bool_constant<Head::value && conj_impl<Tail...>::value> {};
+  struct conj_impl : bool_constant<Head::value && conj_impl<Tail...>::value> {};
 
   template < typename B >
-  struct conj_impl<B> : std::bool_constant<B::value> {};
+  struct conj_impl<B> : bool_constant<B::value> {};
 
   template < typename ...B >
   struct conjunction : conj_impl<B...> {};
 
   template < typename Head, typename ...Tail >
-  struct disj_impl : std::bool_constant<Head::value || conj_impl<Tail...>::value> {};
+  struct disj_impl : bool_constant<Head::value || conj_impl<Tail...>::value> {};
 
   template < typename B >
-  struct disj_impl<B> : std::bool_constant<B::value> {};
+  struct disj_impl<B> : bool_constant<B::value> {};
 
   template < typename ...B >
   struct disjunction : disj_impl<B...> {};
 
 
   template < typename B >
-  struct negation : std::bool_constant<!B::value> {};
+  struct negation : bool_constant<!B::value> {};
 
 
   template < typename ...B >
@@ -192,10 +192,10 @@ namespace detail {
   constexpr bool has_value_field_v = has_value_field<T>::value;
 
   template < typename T, template<class> class Head, template<class> class ...Tail >
-  struct conjunctional_impl : std::bool_constant< Head<T>::value && conjunctional_impl<T, Tail...>::value > {};
+  struct conjunctional_impl : bool_constant< Head<T>::value && conjunctional_impl<T, Tail...>::value > {};
 
   template < typename T, template<class> class Pred >
-  struct conjunctional_impl<T,Pred> : std::bool_constant< Pred<T>::value > {};
+  struct conjunctional_impl<T,Pred> : bool_constant< Pred<T>::value > {};
 
   template <
     template<class>class ...Preds
@@ -207,10 +207,10 @@ namespace detail {
   };
 
   template < typename T, template<class> class Head, template<class> class ...Tail >
-  struct disjunctional_impl : std::bool_constant< Head<T>::value && conjunctional_impl<T, Tail...>::value > {};
+  struct disjunctional_impl : bool_constant< Head<T>::value && conjunctional_impl<T, Tail...>::value > {};
 
   template < typename T, template<class> class Pred >
-  struct disjunctional_impl<T, Pred> : std::bool_constant< Pred<T>::value > {};
+  struct disjunctional_impl<T, Pred> : bool_constant< Pred<T>::value > {};
 
   template < template<class>class ...Preds >
   struct disjunctional
@@ -221,7 +221,7 @@ namespace detail {
   };
 
   template < typename T, template<class> class Pred >
-  struct negational_impl : std::bool_constant<!Pred<T>::value> {};
+  struct negational_impl : bool_constant<!Pred<T>::value> {};
 
   template < template<class> class Pred >
   struct negational
