@@ -11,13 +11,13 @@
 #include "../operatoins.hpp"
 #include "../InfiniteStream.hpp"
 
-#define men_fn_def(men_fn, adaptor_fn)/
-template < typename ...Args >/
+#define men_fn_def(men_fn, adaptor_fn)\
+template < typename ...Args >\
 decltype(auto) men_fn(Args&& ...args)/
-noexcept( noexcept( adaptor_fn(std::forward<Args>(args)...) ) )/
-{/
-  return std::move(*static_cast<Derived*>(this))/
-    >> cranberries::streams::adaptor_fn( std::forward<Args>(args)... );/
+noexcept( noexcept( adaptor_fn(std::forward<Args>(args)...) ) )\
+{\
+  return std::move(*static_cast<Derived*>(this))\
+    >> cranberries::streams::adaptor_fn( std::forward<Args>(args)... );\
 }
 
 namespace cranberries{
