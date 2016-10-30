@@ -24,7 +24,6 @@ namespace operators {
   class SummaryStat
   {
   public:
-    template < typename T >
     SummaryStat( std::vector<T>&& v ) : data_{ std::move( v ) } { calc(); }
 
 
