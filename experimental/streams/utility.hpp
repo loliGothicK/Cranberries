@@ -581,7 +581,7 @@ namespace detail {
   template <class F, class Tuple, std::size_t... I>
   constexpr decltype(auto) apply_impl( F&& f, Tuple&& t, std::index_sequence<I...> )
   {
-    return std::invoke(std::forward<F>(f), std::get<I>(std::forward<Tuple>(t))...);
+    return invoke(std::forward<F>(f), std::get<I>(std::forward<Tuple>(t))...);
     // Note: std::invoke is a C++17 feature
   }
 
@@ -591,7 +591,7 @@ namespace detail {
   constexpr decltype(auto) apply(F&& f, Tuple&& t)
   {
       return detail::apply_impl(std::forward<F>(f), std::forward<Tuple>(t),
-          std::make_index_sequence<std::tuple_size_v<std::decay_t<Tuple>>>{});
+          std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>{});
   }
 
 namespace detail{
