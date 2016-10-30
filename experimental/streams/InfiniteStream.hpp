@@ -46,7 +46,7 @@ namespace streams {
   public:
     using element_type = T;
 
-    GenerateStream( Supplier gen ) : current_{ gen() }, gen_{ std::forward<Supplier>( gen ) } {}
+    GenerateStream( Supplier gen ) : current_( gen() ), gen_{ std::forward<Supplier>( gen ) } {}
 
     element_type get() noexcept { return current_; }
 

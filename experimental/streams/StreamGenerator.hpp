@@ -67,7 +67,7 @@ namespace streams {
     {}
 
     GeneralizedDistributionGenerator( Init init1, Init init2, Seed seed ) noexcept
-      : dist_{ init1, init2 }
+      : dist_( init1, init2 )
       , engine_{ seed }
     {}
 

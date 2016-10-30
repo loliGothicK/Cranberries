@@ -11,7 +11,7 @@ int main()
   using namespace cranberries;
 
   make_stream::of<double>({1,2,-3,3,6,5,4,-1})
-    >> radix_sorted()
+    >> ascending_radix_sorted()
     >> println_to()
     ;
 
@@ -63,7 +63,7 @@ int main()
 
   int arr[] = { 1,2,3 };
 
-  make_stream::range( 1, 3 ) >> concat( arr ) >> println_to();
+  make_stream::range( 1, 3 ) >> joined( arr ) >> println_to();
 
   cout << typeid(element_type_of_t<int[]>).name() << endl;
   cout << typeid(element_type_of_t<std::vector<int>>).name() << endl;
@@ -127,7 +127,7 @@ int main()
     ;
   
   make_stream::range( 1, 3 )
-    >> concat(
+    >> joined(
       make_stream::counter( 5 )
     )
     >> taken(5)
