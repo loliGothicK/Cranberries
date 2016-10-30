@@ -43,7 +43,7 @@ namespace operators {
     bool
     operator[]
     (
-      U const& arg
+      T const& arg
     )
       noexcept
     {

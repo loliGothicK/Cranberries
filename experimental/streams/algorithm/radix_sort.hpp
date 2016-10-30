@@ -322,7 +322,7 @@ namespace cranberries
         default_get_key{}
       );
     }
-  #elif // for GCC/Clang
+  #else // for GCC/Clang
     descending_radix_sort_impl(
       first, middle,
       default_get_key{}
@@ -372,7 +372,7 @@ namespace cranberries
         default_get_key{}
       );
     }
-  #elif // for GCC/Clang
+  #else // for GCC/Clang
     aescending_radix_sort_impl(
       middle, last,
       default_get_key{}
@@ -620,7 +620,7 @@ namespace cranberries
         make_get_key_wrapper( std::forward<G>( key_getter ) )
       );
     }
-  #elif // for GCC/Clang
+  #else // for GCC/Clang
     descending_radix_sort_impl(
       first, middle,
       make_get_key_wrapper( std::forward<G>( key_getter ) )
@@ -674,7 +674,7 @@ namespace cranberries
         make_get_key_wrapper( std::forward<G>( key_getter ) )
       );
     }
-  #elif // for GCC/Clang
+  #else // for GCC/Clang
     aescending_radix_sort_impl(
       middle, last,
       make_get_key_wrapper( std::forward<G>( key_getter ) )
