@@ -1,6 +1,5 @@
 compiler:
   - clang
-  - gcc
 cache:
   apt: true
 addons:
