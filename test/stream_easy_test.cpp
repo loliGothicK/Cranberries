@@ -65,10 +65,6 @@ int main()
 
   make_stream::range( 1, 3 ) >> joined( arr ) >> println_to();
 
-  cout << typeid(element_type_of_t<int[]>).name() << endl;
-  cout << typeid(element_type_of_t<std::vector<int>>).name() << endl;
-  cout << typeid(element_type_of_t<std::tuple<int,int,int>>).name() << endl;
-
   cout << "even" << endl;
   for (auto&& e : grouped[true])
     cout << e << ", ";
