@@ -31,17 +31,17 @@
 #include <typeinfo>
 #include <memory>
 // exception
-#include "./streams/exception.hpp"
-#include "./streams/stream_error.hpp"
-#include "./streams/detail/tag.hpp"
-#include "./streams/forward.hpp"
-#include "./streams/operators.hpp"
-#include "./streams/operatoins.hpp"
-#include "./streams/utility.hpp"
-#include "./streams/adaptors.hpp"
-#include "./streams/stream.hpp"
-#include "./streams/InfiniteStream.hpp"
-#include "./streams/StreamGenerator.hpp"
+#include "streams\exception.hpp"
+#include "streams\stream_error.hpp"
+#include "streams\cranberries_magic\tag.hpp"
+#include "streams\forward.hpp"
+#include "streams\operators.hpp"
+#include "streams\operations.hpp"
+#include "streams\utility.hpp"
+#include "streams\adaptors.hpp"
+#include "streams\stream.hpp"
+#include "streams\InfiniteStream.hpp"
+#include "streams\StreamGenerator.hpp"
 
 
 #endif
