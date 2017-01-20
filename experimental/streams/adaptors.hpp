@@ -18,8 +18,8 @@ namespace streams{
     typename Stream,
     typename Operator,
     std::enable_if_t<
-       detail::is_finite_stream_v<std::decay_t<Stream>>
-    && detail::is_intermidiate_v<std::decay_t<Operator>>,
+       cranberries_magic::is_finite_stream_v<std::decay_t<Stream>>
+    && cranberries_magic::is_lazy_v<std::decay_t<Operator>>,
       std::nullptr_t
     > = nullptr
   >
@@ -39,8 +39,8 @@ namespace streams{
     typename Stream,
     typename Operator,
     std::enable_if_t<
-       detail::is_finite_stream_v<std::decay_t<Stream>>
-    && detail::is_terminate_v<std::decay_t<Operator>>,
+       cranberries_magic::is_finite_stream_v<std::decay_t<Stream>>
+    && cranberries_magic::is_eager_v<std::decay_t<Operator>>,
       std::nullptr_t
     > = nullptr
   >
@@ -58,8 +58,8 @@ namespace streams{
     typename Stream,
     typename Operator,
     std::enable_if_t<
-       detail::is_infinite_stream_v<std::decay_t<Stream>>
-    && detail::is_stream_filter_v<std::decay_t<Operator>>,
+       cranberries_magic::is_infinite_stream_v<std::decay_t<Stream>>
+    && cranberries_magic::is_stream_filter_v<std::decay_t<Operator>>,
       std::nullptr_t
     > = nullptr
   >
@@ -79,8 +79,8 @@ namespace streams{
     typename Stream,
     typename Operator,
     std::enable_if_t<
-       detail::is_infinite_stream_v<std::decay_t<Stream>>
-    && detail::is_stream_operator_v<std::decay_t<Operator>>,
+       cranberries_magic::is_infinite_stream_v<std::decay_t<Stream>>
+    && cranberries_magic::is_stream_operator_v<std::decay_t<Operator>>,
       std::nullptr_t
     > = nullptr
   >
@@ -99,7 +99,7 @@ namespace streams{
   template <
     typename Stream,
     typename E = typename std::decay_t<Stream>::element_type,
-    std::enable_if_t<detail::is_finite_stream_v<std::decay_t<Stream>>,
+    std::enable_if_t<cranberries_magic::is_finite_stream_v<std::decay_t<Stream>>,
       std::nullptr_t
     > = nullptr
   >
@@ -118,7 +118,7 @@ namespace streams{
   template <
     typename Stream,
     std::enable_if_t<
-      detail::is_finite_stream_v<std::decay_t<Stream>>,
+      cranberries_magic::is_finite_stream_v<std::decay_t<Stream>>,
       std::nullptr_t
     > = nullptr
   >
@@ -144,7 +144,7 @@ namespace streams{
       std::is_same<E, R>::value,
       std::nullptr_t
     > = nullptr,
-    std::enable_if_t<detail::is_finite_stream_v<std::decay_t<Stream>>,std::nullptr_t> = nullptr
+    std::enable_if_t<cranberries_magic::is_finite_stream_v<std::decay_t<Stream>>,std::nullptr_t> = nullptr
   >
   inline
   decltype(auto)
@@ -167,7 +167,7 @@ namespace streams{
       !std::is_same<E, R>::value,
       std::nullptr_t
     > = nullptr,
-    std::enable_if_t<detail::is_finite_stream_v<std::decay_t<Stream>>,std::nullptr_t> = nullptr
+    std::enable_if_t<cranberries_magic::is_finite_stream_v<std::decay_t<Stream>>,std::nullptr_t> = nullptr
   >
   inline
   decltype(auto)
@@ -184,7 +184,7 @@ namespace streams{
   template <
     typename Stream,
     typename To,
-    std::enable_if_t<detail::is_finite_stream_v<std::decay_t<Stream>>,std::nullptr_t> = nullptr
+    std::enable_if_t<cranberries_magic::is_finite_stream_v<std::decay_t<Stream>>,std::nullptr_t> = nullptr
   >
   inline
   auto
@@ -253,7 +253,7 @@ namespace streams{
   template <
     typename Stream,
     typename T = typename std::decay_t<Stream>::element_type,
-    std::enable_if_t<detail::is_finite_stream_v<std::decay_t<Stream>>,std::nullptr_t> = nullptr
+    std::enable_if_t<cranberries_magic::is_finite_stream_v<std::decay_t<Stream>>,std::nullptr_t> = nullptr
   >
   inline
   decltype(auto)
@@ -271,7 +271,7 @@ namespace streams{
     typename Stream,
     typename T = typename std::decay_t<Stream>::element_type,
     std::enable_if_t<
-      detail::is_infinite_stream_v<std::decay_t<Stream>>,
+      cranberries_magic::is_infinite_stream_v<std::decay_t<Stream>>,
       std::nullptr_t
     > = nullptr
   >
@@ -290,7 +290,7 @@ namespace streams{
   template <
     typename Stream1, typename Stream2,
     std::enable_if_t<
-      detail::is_infinite_stream_v<Stream1> || detail::is_infinite_stream_v<Stream2>,
+      cranberries_magic::is_infinite_stream_v<Stream1> || cranberries_magic::is_infinite_stream_v<Stream2>,
       std::nullptr_t
     > = nullptr
   >
@@ -312,7 +312,7 @@ namespace streams{
   template <
     typename Stream1, typename Stream2,
     std::enable_if_t<
-      detail::is_finite_stream_v<Stream1> && detail::is_infinite_stream_v<Stream2>,
+      cranberries_magic::is_finite_stream_v<Stream1> && cranberries_magic::is_infinite_stream_v<Stream2>,
       std::nullptr_t
     > = nullptr
   >
@@ -333,7 +333,7 @@ namespace streams{
     typename Pred,
     typename T = typename std::decay_t<Stream>::element_type,
     std::enable_if_t<
-      detail::is_infinite_stream_v<std::decay_t<Stream>>,
+      cranberries_magic::is_infinite_stream_v<std::decay_t<Stream>>,
       std::nullptr_t
     > = nullptr
   >
@@ -352,7 +352,7 @@ namespace streams{
   template <
     typename Stream,
     std::enable_if_t<
-      detail::is_infinite_stream_v<std::decay_t<Stream>>,
+      cranberries_magic::is_infinite_stream_v<std::decay_t<Stream>>,
       std::nullptr_t
     > = nullptr
   >
@@ -374,7 +374,7 @@ namespace streams{
     typename Stream,
     typename T = typename std::decay_t<Stream>::element_type,
     std::enable_if_t<
-      detail::is_infinite_stream_v<std::decay_t<Stream>>,
+      cranberries_magic::is_infinite_stream_v<std::decay_t<Stream>>,
       std::nullptr_t
     > = nullptr
   >
@@ -394,7 +394,7 @@ namespace streams{
     typename Stream,
     typename T = typename std::decay_t<Stream>::element_type,
     std::enable_if_t<
-      detail::is_infinite_stream_v<std::decay_t<Stream>>,
+      cranberries_magic::is_infinite_stream_v<std::decay_t<Stream>>,
       std::nullptr_t
     > = nullptr
   >
@@ -415,7 +415,7 @@ namespace streams{
     typename F,
     typename T = typename std::decay_t<Stream>::element_type,
     std::enable_if_t<
-    detail::is_infinite_stream_v<std::decay_t<Stream>>,
+    cranberries_magic::is_infinite_stream_v<std::decay_t<Stream>>,
     std::nullptr_t
     > = nullptr
   >
@@ -435,7 +435,7 @@ namespace streams{
     typename Stream,
     typename T = typename std::decay_t<Stream>::element_type,
     std::enable_if_t<
-      detail::is_infinite_stream_v<std::decay_t<Stream>>,
+      cranberries_magic::is_infinite_stream_v<std::decay_t<Stream>>,
     std::nullptr_t
     > = nullptr
   >
@@ -456,7 +456,7 @@ namespace streams{
     typename Stream,
     typename T = typename std::decay_t<Stream>::element_type,
     std::enable_if_t<
-      detail::is_infinite_stream_v<std::decay_t<Stream>>,
+      cranberries_magic::is_infinite_stream_v<std::decay_t<Stream>>,
       std::nullptr_t
     > = nullptr
   >
@@ -480,9 +480,9 @@ namespace streams{
   operator >>
   (
     Stream&& stream_,
-    detail::ConvertAny
+    cranberries_magic::ConvertAny
   ) {
-    return detail::ImplicitStreamConvertInvoker::invoke(std::forward<Stream>(stream_.eval()));
+    return cranberries_magic::ImplicitStreamConvertInvoker::invoke(std::forward<Stream>(stream_.eval()));
   }
 
   // Explicit Convert
@@ -496,10 +496,10 @@ namespace streams{
   operator >>
   (
     Stream&& stream,
-    detail::ConvertTo<Target>
+    cranberries_magic::ConvertTo<Target>
   ) {
-    return detail::ExplicitStreamConverter<
-      typename detail::ConvertTo<Target>::template type<
+    return cranberries_magic::ExplicitStreamConverter<
+      typename cranberries_magic::ConvertTo<Target>::template type<
       typename std::decay_t<Stream>::element_type
       >
     >::convert(std::forward<Stream>(stream.eval()));

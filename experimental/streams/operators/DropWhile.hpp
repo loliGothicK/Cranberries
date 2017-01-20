@@ -12,8 +12,8 @@ namespace operators {
     typename Pred
   >
   class DropWhile
-    : private detail::IntermidiateStreamOperatorBase
-    , private detail::StreamFilterBase
+    : private cranberries_magic::LazyOpeartionModuleBase
+    , private cranberries_magic::StreamFilterBase
   {
   public:
     DropWhile( Pred p ) noexcept

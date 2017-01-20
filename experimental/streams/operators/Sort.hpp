@@ -15,7 +15,7 @@ namespace operators {
     typename Pred
   >
   class Sort
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     Sort( Pred pred ) noexcept
@@ -59,9 +59,9 @@ namespace operators {
   // Intermidiate Operation
   template < >
   class Sort <
-    detail::defaulted_t // lookup operator < using ADL.
+    cranberries_magic::defaulted_t // lookup operator < using ADL.
   >
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     Sort() = default;

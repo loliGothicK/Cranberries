@@ -19,7 +19,7 @@ namespace operators {
     typename Stream
   >
   class Flat
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     Flat( Stream x ) noexcept
@@ -56,7 +56,7 @@ namespace operators {
     typename Stream
   >
   class FlatAll
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     FlatAll( Stream x ) noexcept

@@ -11,7 +11,7 @@ namespace operators {
     typename Pred
   >
   class NoneOf
-    : private detail::TerminateStreamOperatorBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     NoneOf( Pred p ) noexcept

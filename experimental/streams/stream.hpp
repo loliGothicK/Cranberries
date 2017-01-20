@@ -4,8 +4,9 @@
 #include <initializer_list>
 #include <type_traits>
 #include <utility>
+#include "exception.hpp"
 #include "operators/Identity.hpp"
-#include "detail/enable_men_fn.hpp"
+#include "cranberries_magic/enable_men_fn.hpp"
 
 namespace cranberries {
 namespace streams {
@@ -65,17 +66,17 @@ namespace streams {
   Execute Terminate Operation or onvert to container, evaluating Intermidiate Operation Pipeline.
 
   Let 's' is a stream and 'A', 'B' are Intermidiate Querys, and 'C' is Terminate Operation.
-  stream Intermidiate Querys are combine with operator >> and Terminate Operation using operator || .
+  stream Intermidiate Querys are combine with operator >> and Terminate Operation using operator >> .
 
   [ Example :
-  s >> A >> B || C;
+  s >> A >> B >> C;
   - end example ]
 
   When convert stream to container, use convert kryword( constexpr variable ).
   Implicit convert to any container from iterator pair.
 
   [ Example :
-  std::vector<int> v = s >> A >> B || convert;
+  std::vector<int> v = s >> A >> B >> convert;
   - end example ]
 
 
@@ -88,21 +89,21 @@ namespace streams {
     typename Operation
   >
   class stream
-    : private detail::FiniteStreamBase
-    , public detail::enable_men_fn<stream<T,Operation>>
+    : private cranberries_magic::FiniteStreamBase
+    , public cranberries_magic::enable_men_fn<stream<T,Operation>>
   {
   public:
-    typedef T element_type;
-    typedef typename std::vector<T>::value_type value_type;;
-    typedef std::vector<T> range_type;
-    typedef typename std::vector<T>::reference reference;
-    typedef typename std::vector<T>::const_reference const_reference;
-    typedef typename std::vector<T>::iterator iterator;
-    typedef typename std::vector<T>::const_iterator const_iterator;
-    typedef typename std::vector<T>::size_type size_type;
-    typedef typename std::vector<T>::difference_type difference_type;
-    typedef typename std::vector<T>::reverse_iterator reverse_iterator;
-    typedef typename std::vector<T>::const_reverse_iterator const_reverse_iterator;
+    typedef  T                                                element_type;
+    typedef  std::vector<T>                                   range_type;
+    typedef  typename std::vector<T>::value_type              value_type;
+    typedef  typename std::vector<T>::reference               reference;
+    typedef  typename std::vector<T>::const_reference         const_reference;
+    typedef  typename std::vector<T>::iterator                iterator;
+    typedef  typename std::vector<T>::const_iterator          const_iterator;
+    typedef  typename std::vector<T>::size_type               size_type;
+    typedef  typename std::vector<T>::difference_type         difference_type;
+    typedef  typename std::vector<T>::reverse_iterator        reverse_iterator;
+    typedef  typename std::vector<T>::const_reverse_iterator  const_reverse_iterator;
 
     template <
       typename Iterator,
@@ -114,8 +115,8 @@ namespace streams {
       Iterator&& last,
       Operation&& q
     ) noexcept
-      : source{ std::forward<Iterator>(first), std::forward<Iterator>(last) }
-      , operation{ std::move(q) }
+      : source_{ std::forward<Iterator>(first), std::forward<Iterator>(last) }
+      , operation_{ std::move(q) }
     {}
 
     stream
@@ -123,8 +124,8 @@ namespace streams {
       std::initializer_list<T> init_list,
       Operation&& q
     ) noexcept
-      : source{ init_list }
-      , operation{ std::move(q) }
+      : source_{ init_list }
+      , operation_{ std::move(q) }
     {}
 
     template <
@@ -136,8 +137,8 @@ namespace streams {
       Range&& range,
       Operation&& q
     ) noexcept
-      : source{ range.begin(), range.end() }
-      , operation{ std::move(q) }
+      : source_{ range.begin(), range.end() }
+      , operation_{ std::move(q) }
     {}
 
     template <
@@ -149,16 +150,16 @@ namespace streams {
       Iterator&& first,
       Iterator&& last
     ) noexcept
-      : source{ std::forward<Iterator>(first), std::forward<Iterator>(last) }
-      , operation{ }
+      : source_{ std::forward<Iterator>(first), std::forward<Iterator>(last) }
+      , operation_{}
     {}
 
     stream
     (
       std::initializer_list<T> init_list
     ) noexcept
-      : source{ init_list }
-     , operation{}
+      : source_{ init_list }
+     , operation_{}
     {}
 
     template <
@@ -169,13 +170,13 @@ namespace streams {
     (
       Range&& range
     ) noexcept
-      : source{ range.begin(), range.end() }
-      , operation{}
+      : source_{ range.begin(), range.end() }
+      , operation_{}
     {}
 
     stream() noexcept
-      : source{}
-      , operation{}
+      : source_{}
+      , operation_{}
     {}
 
     stream(stream const&) = default;
@@ -194,48 +195,48 @@ namespace streams {
     ()
       const noexcept(false)
     {
-      return TargetRange{ source.begin(), source.end() };
+      return TargetRange{ source_.begin(), source_.end() };
     }
 
     // Range wrappers
 
-    inline decltype(auto) begin() { return source.begin(); }
+    inline decltype(auto) begin() { return source_.begin(); }
 
-    inline decltype(auto) end() { return source.end(); }
+    inline decltype(auto) end() { return source_.end(); }
 
-    inline decltype(auto) begin() const { return source.cbegin(); }
+    inline decltype(auto) begin() const { return source_.cbegin(); }
 
-    inline decltype(auto) end() const { return source.cend(); }
+    inline decltype(auto) end() const { return source_.cend(); }
 
-    inline decltype(auto) cbegin() const { return source.cbegin(); }
+    inline decltype(auto) cbegin() const { return source_.cbegin(); }
 
-    inline decltype(auto) cend() const { return source.cend(); }
+    inline decltype(auto) cend() const { return source_.cend(); }
 
-    inline decltype(auto) rbegin() { return source.rbegin(); }
+    inline decltype(auto) rbegin() { return source_.rbegin(); }
 
-    inline decltype(auto) rend() { return source.rend(); }
+    inline decltype(auto) rend() { return source_.rend(); }
 
-    inline decltype(auto) crbegin() const { return source.crbegin(); }
+    inline decltype(auto) crbegin() const { return source_.crbegin(); }
 
-    inline decltype(auto) crend() const { return source.crend(); }
+    inline decltype(auto) crend() const { return source_.crend(); }
 
-    inline decltype(auto) size() { return source.size(); }
+    inline decltype(auto) size() { return source_.size(); }
 
-    inline decltype(auto) max_size() { return source.max_size(); }
+    inline decltype(auto) max_size() { return source_.max_size(); }
 
-    inline decltype(auto) resize(size_t n) { return source.resize(n); }
+    inline decltype(auto) resize(size_t n) { return source_.resize(n); }
 
-    inline decltype(auto) capacity() { return source.capacity(); }
+    inline decltype(auto) capacity() { return source_.capacity(); }
 
-    inline bool empty() { return source.empty(); }
+    inline bool empty() { return source_.empty(); }
 
-    inline decltype(auto) reserve(size_t n) { return source.reserve(n); }
+    inline decltype(auto) reserve(size_t n) { return source_.reserve(n); }
 
-    inline decltype(auto) insert(const_iterator pos, T const& v) { return source.insert(pos, v); }
+    inline decltype(auto) insert(const_iterator pos, T const& v) { return source_.insert(pos, v); }
 
-    inline decltype(auto) insert(const_iterator pos, T&& v) { return source.insert(pos, std::move(v)); }
+    inline decltype(auto) insert(const_iterator pos, T&& v) { return source_.insert(pos, std::move(v)); }
 
-    inline decltype( auto ) insert( const_iterator pos, size_type n, T const& v ) { return source.insert( pos, n, v ); }
+    inline decltype( auto ) insert( const_iterator pos, size_type n, T const& v ) { return source_.insert( pos, n, v ); }
 
     template <class InputIterator>
     decltype(auto) insert(
@@ -243,49 +244,51 @@ namespace streams {
       InputIterator first,
       InputIterator last
     ) {
-      return source.insert(pos, first, last);
+      return source_.insert(pos, first, last);
     }
 
     inline decltype(auto) insert(
       const_iterator pos,
       std::initializer_list<T> il
     ) {
-      return source.insert(pos, il);
+      return source_.insert(pos, il);
     }
 
-    iterator erase( const_iterator pos ) { return source.erase( pos ); }
+    iterator erase( const_iterator pos ) { return source_.erase( pos ); }
 
-    iterator erase( const_iterator first, const_iterator last ) { return source.erase( first, last ); }
+    iterator erase( const_iterator first, const_iterator last ) { return source_.erase( first, last ); }
 
-    void swap( std::vector<T> v ) { source.swap( v ); }
+    void swap( std::vector<T> v ) { source_.swap( v ); }
 
-    reference at( size_type n ) { return source.at( n ); }
+    reference at( size_type n ) { return source_.at( n ); }
 
     template <class InputIterator>
-    void assign( InputIterator first, InputIterator last ) { source.assign( first, last ); }
+    void assign( InputIterator first, InputIterator last ) { source_.assign( first, last ); }
 
-    void assign( size_type n, const T& u ) { source.assign( n, u ); }
+    void assign( size_type n, const T& u ) { source_.assign( n, u ); }
 
-    void assign( std::initializer_list<T> il ) { source.assign( il ); }
+    void assign( std::initializer_list<T> il ) { source_.assign( il ); }
 
-    reference front() { return source.front(); }
+    reference front() { return source_.front(); }
 
-    reference back() { return source.back(); }
-
-    template < typename U >
-    inline void push_back(U&& v) { source.push_back(v); }
-
-    inline void pop_back() { source.pop_back(); }
+    reference back() { return source_.back(); }
 
     template < typename U >
-    inline void emplace_back(U&& v) { source.emplace_back(v); }
+    inline void push_back(U&& v) { source_.push_back(v); }
 
-    inline void shrink_to_fit() { source.shrink_to_fit(); }
+    inline void pop_back() { source_.pop_back(); }
 
-    value_type operator[]( size_t const& n ) { return source[n]; }
+    template < typename U >
+    inline void emplace_back(U&& v) { source_.emplace_back(v); }
+
+    inline void shrink_to_fit() { source_.shrink_to_fit(); }
+
+    inline void clear() { source_.clear(); }
+
+    value_type operator[]( size_t const& n ) { return source_[n]; }
 
     // resource getter
-    inline auto& get() { return source; }
+    inline auto& get() { return source_; }
 
 
     // Operator Registration
@@ -298,7 +301,7 @@ namespace streams {
       Operator&& op
     ) {
       return stream<T, OperationTree<Operation, Operator>>{
-        std::move( source ), OperationTree<Operation, Operator>{ std::move(operation), std::forward<Operator>(op) }
+        std::move( source_ ), OperationTree<Operation, Operator>{ std::move(operation_), std::forward<Operator>(op) }
       };
     }
 
@@ -309,13 +312,13 @@ namespace streams {
     ()
       noexcept(false)
     {
-      return operation(*this); // evaluate operation tree
+      return operation_(*this); // evaluate operation tree
     }
 
     void once() noexcept(false) {
       if ( once_flag ) {
         eval();
-        current_ = source.begin();
+        current_ = source_.begin();
         once_flag = false;
       }
     }
@@ -327,25 +330,26 @@ namespace streams {
 
     bool is_end() noexcept(false) {
       once( );
-      return current_ == source.end();
+      return current_ == source_.end();
     }
 
     bool is_next() noexcept(false) {
       once( );
-      return current_ == source.end() ? false : ++current_ != source.end();
+      return current_ == source_.end() ? false : ++current_ != source_.end();
     }
 
   private:
     // source source
-    std::vector<T> source{};
+    std::vector<T> source_{};
 
     // Operation Tree
-    Operation operation{};
+    Operation operation_{};
 
     typename std::vector<T>::iterator current_{};
 
     bool once_flag = true;
   };
+
 
 
 } // ! namespace stream

@@ -15,7 +15,7 @@ namespace operators {
     typename Pred
   >
     class NthElement
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     NthElement( size_t n, Pred pred ) noexcept
@@ -47,9 +47,9 @@ namespace operators {
   // Intermidiate Operation
   template < >
   class NthElement <
-    detail::defaulted_t // lookup operator < using ADL.
+    cranberries_magic::defaulted_t // lookup operator < using ADL.
   >
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     NthElement( size_t n ) noexcept

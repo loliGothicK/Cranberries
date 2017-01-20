@@ -1,11 +1,11 @@
 #ifndef CRANBERRIES_STREAMS_STREAM_CONVERTER_HPP
 #define CRANBERRIES_STREAMS_STREAM_CONVERTER_HPP
 #include <utility>
-#include "detail/tag.hpp"
+#include "cranberries_magic/tag.hpp"
 
 namespace cranberries {
 namespace streams {
-namespace detail {
+namespace cranberries_magic {
 
     //----------------------------//
     // stream to Range Converters //
@@ -65,12 +65,14 @@ namespace detail {
 
 
 
-} // ! namespace detail
+} // ! namespace cranberries_magic
 
-  inline constexpr detail::ConvertAny convert() noexcept { return{}; }
+inline namespace eager {
+  constexpr cranberries_magic::ConvertAny convert{};
 
   template < template<class, class> class Target >
-  inline constexpr detail::ConvertTo<Target> convert_to() noexcept { return{}; }
+  constexpr auto convert_to = cranberries_magic::ConvertTo<Target>{};
+}
 
 } // ! namespace stream
 } // ! namespace cranberries

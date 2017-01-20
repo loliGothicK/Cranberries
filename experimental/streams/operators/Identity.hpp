@@ -1,7 +1,7 @@
 #ifndef CRANBERRIES_STREAMS_OPERATORS_ROOTOPERATOIN_HPP
 #define CRANBERRIES_STREAMS_OPERATORS_ROOTOPERATOIN_HPP
 #include <utility>
-#include "../detail/tag.hpp"
+#include "../cranberries_magic/tag.hpp"
 #include "../utility.hpp"
 
 namespace cranberries {

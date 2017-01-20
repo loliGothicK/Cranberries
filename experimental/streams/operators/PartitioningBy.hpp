@@ -7,7 +7,7 @@
 #include <list>
 #include <deque>
 #include "../utility.hpp"
-#include "../detail/tag.hpp"
+#include "../cranberries_magic/tag.hpp"
 
 namespace cranberries {
 namespace streams {
@@ -20,7 +20,7 @@ namespace operators {
     typename Pred
   >
   class PartitioningBy
-    : private detail::TerminateStreamOperatorBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     PartitioningBy( Pred p ) : pred_{ std::forward<Pred>( p ) } {}

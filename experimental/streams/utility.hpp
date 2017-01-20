@@ -33,7 +33,7 @@ namespace cranberries {
   template < typename ...Dummy >
   using void_t = void;
 
-namespace detail
+namespace cranberries_magic
 {
     template < class T >
     struct is_tuple_impl : std::false_type
@@ -43,17 +43,17 @@ namespace detail
     struct is_tuple_impl<std::tuple<Args...>> : std::true_type
     {};
 
-} // ! namespace detail
+} // ! namespace cranberries_magic
 
   template < typename T >
-  struct is_tuple : detail::is_tuple_impl<T>
+  struct is_tuple : cranberries_magic::is_tuple_impl<T>
   {};
 
   template < typename T >
   constexpr bool is_tuple_v = is_tuple<T>::value;
 
 
-namespace detail {
+namespace cranberries_magic {
   template < class T >
   struct is_bitset_impl : std::false_type {};
 
@@ -63,12 +63,12 @@ namespace detail {
 }
 
   template < typename T >
-  struct is_bitset : detail::is_bitset_impl<T> {};
+  struct is_bitset : cranberries_magic::is_bitset_impl<T> {};
 
   template < typename T >
   constexpr bool is_bitset_v = is_bitset<T>::value;
 
-  namespace detail {
+  namespace cranberries_magic {
 
     template < class, class = void >
     struct enable_std_begin_end : std::false_type
@@ -90,13 +90,13 @@ namespace detail {
     > : std::true_type
     {};
 
-  } // ! namespace detail
+  } // ! namespace cranberries_magic
 
   template < typename T >
   struct is_range
     : bool_constant<
-    detail::enable_std_begin_end<T>::value
-    || detail::enable_adl_begin_end<T>::value
+    cranberries_magic::enable_std_begin_end<T>::value
+    || cranberries_magic::enable_adl_begin_end<T>::value
     >
   {};
 
@@ -364,7 +364,7 @@ namespace detail {
   template < template<class> class Pred, typename ...Args >
   constexpr bool none_match_if_v = none_match_if<Pred, Args...>::value;
   
-namespace details
+namespace cranberries_magics
 {
     template<class> struct is_ref_wrapper : std::false_type {};
     template<class T> struct is_ref_wrapper<std::reference_wrapper<T>> : std::true_type {};
@@ -383,10 +383,10 @@ namespace details
     using return_type = std::array<typename return_type_helper<D, Types...>::type,
       sizeof...(Types)>;
 
-} // ! namespace detail
+} // ! namespace cranberries_magic
 
   template < class D = void, class... Types>
-  constexpr details::return_type<D, Types...> make_array( Types&&... t ) {
+  constexpr cranberries_magics::return_type<D, Types...> make_array( Types&&... t ) {
     return{ std::forward<Types>( t )... };
   }
 
@@ -479,12 +479,12 @@ namespace details
 
   template < typename F >
   Finally<F> make_finally(F&& f){
-    return Finally<F>{std::forward<F>(f)};
+    return {std::forward<F>(f)};
   }
 
 
 
-namespace detail {
+namespace cranberries_magic {
 
   template <class T>
   struct is_reference_wrapper : std::false_type {};
@@ -565,18 +565,18 @@ namespace detail {
         return std::forward<F>(f)(std::forward<Args>(args)...);
   }
 
-} // ! namespace detail
+} // ! namespace cranberries_magic
  
   template< class F, class... ArgTypes >
   auto invoke(F&& f, ArgTypes&&... args)
       // exception specification for QoI
-      noexcept(noexcept(detail::INVOKE(std::forward<F>(f), std::forward<ArgTypes>(args)...)))
-   -> decltype(detail::INVOKE(std::forward<F>(f), std::forward<ArgTypes>(args)...))
+      noexcept(noexcept(cranberries_magic::INVOKE(std::forward<F>(f), std::forward<ArgTypes>(args)...)))
+   -> decltype(cranberries_magic::INVOKE(std::forward<F>(f), std::forward<ArgTypes>(args)...))
   {
-      return detail::INVOKE(std::forward<F>(f), std::forward<ArgTypes>(args)...);
+      return cranberries_magic::INVOKE(std::forward<F>(f), std::forward<ArgTypes>(args)...);
   }
 
-namespace detail {
+namespace cranberries_magic {
 
   template <class F, class Tuple, std::size_t... I>
   constexpr decltype(auto) apply_impl( F&& f, Tuple&& t, std::index_sequence<I...> )
@@ -585,16 +585,16 @@ namespace detail {
     // Note: std::invoke is a C++17 feature
   }
 
-} // ! namespace detail
+} // ! namespace cranberries_magic
  
   template <class F, class Tuple>
   constexpr decltype(auto) apply(F&& f, Tuple&& t)
   {
-      return detail::apply_impl(std::forward<F>(f), std::forward<Tuple>(t),
+      return cranberries_magic::apply_impl(std::forward<F>(f), std::forward<Tuple>(t),
           std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>{});
   }
 
-namespace detail{
+namespace cranberries_magic{
 
   struct is_callable_impl
   {
@@ -605,10 +605,10 @@ namespace detail{
     static std::false_type check(...);
   };
 
-} // ! namespace detail
+} // ! namespace cranberries_magic
 
   template < typename F, typename ...Args >
-  class is_callable : public decltype( detail::is_callable_impl::check<F, Args...>( std::declval<F>(), std::declval<std::tuple<Args...>>() ) ) {};
+  class is_callable : public decltype( cranberries_magic::is_callable_impl::check<F, Args...>( std::declval<F>(), std::declval<std::tuple<Args...>>() ) ) {};
 
   template < typename F, typename ...Args >
   constexpr bool is_callable_v = is_callable<F, Args...>::value;
@@ -617,7 +617,7 @@ namespace detail{
 
 
 namespace streams {
-namespace detail {
+namespace cranberries_magic {
 
   class InfiniteStreamBase {};
 
@@ -632,19 +632,19 @@ namespace detail {
   template < typename T >
   constexpr bool is_stream_v = is_finite_stream_v<T> || is_infinite_stream_v<T>;
 
-  class IntermidiateStreamOperatorBase{};
+  class LazyOpeartionModuleBase{};
 
-  class TerminateStreamOperatorBase{};
+  class EagerOperationModuleBase{};
 
   class StreamOperatorBase{};
 
   class StreamFilterBase{};
 
   template < typename T >
-  constexpr bool is_intermidiate_v = std::is_base_of<IntermidiateStreamOperatorBase, T>::value;
+  constexpr bool is_lazy_v = std::is_base_of<LazyOpeartionModuleBase, T>::value;
 
   template < typename T >
-  constexpr bool is_terminate_v = std::is_base_of<TerminateStreamOperatorBase, T>::value;
+  constexpr bool is_eager_v = std::is_base_of<EagerOperationModuleBase, T>::value;
 
   template < typename T >
   constexpr bool is_stream_operator_v = std::is_base_of<StreamOperatorBase, T>::value;
@@ -676,7 +676,7 @@ namespace detail {
     return a.end();
   }
 
-} // ! namespace detail
+} // ! namespace cranberries_magic
 } // ! namespace stream
 
   template <

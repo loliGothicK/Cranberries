@@ -10,10 +10,10 @@ namespace operators {
   
   template <
     typename Branch,
-    bool B = detail::is_finite_stream_v<Branch>
+    bool B = cranberries_magic::is_finite_stream_v<Branch>
   >
   class Join
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     Join( Branch stream_ ) noexcept
@@ -75,7 +75,7 @@ namespace operators {
     typename Branch
   >
   class Join<Branch,false>
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     Join( Branch stream_ ) noexcept

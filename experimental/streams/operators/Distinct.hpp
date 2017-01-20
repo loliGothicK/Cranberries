@@ -16,8 +16,8 @@ namespace operators {
     typename EqualityComparable
   >
   class Distinct
-    : private detail::IntermidiateStreamOperatorBase
-    , private detail::StreamFilterBase
+    : private cranberries_magic::LazyOpeartionModuleBase
+    , private cranberries_magic::StreamFilterBase
   {
     static_assert(
       is_equality_comparable_v<EqualityComparable>,
@@ -39,19 +39,19 @@ namespace operators {
       noexcept(false)
     {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
-      auto&& source = stream_.get();
-      for ( auto iter = source.begin(); iter != source.end();)
+      auto&& source_ = stream_.get();
+      for ( auto iter = source_.begin(); iter != source_.end();)
       {
         if ( !is_exist[*iter] )
         {
           is_exist[*iter] = true;
-          iter = source.erase(iter);
+          iter = source_.erase(iter);
         }
         else{
           ++iter;
         }
       }
-      source.shrink_to_fit();
+      source_.shrink_to_fit();
       return std::forward<Stream>(stream_);
     }
 

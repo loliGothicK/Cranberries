@@ -17,7 +17,7 @@ namespace operators{
     typename BinaryOp
   >
   class Accumulate
-    : private detail::TerminateStreamOperatorBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     Accumulate( InitialType ini, BinaryOp op ) noexcept
@@ -52,9 +52,9 @@ namespace operators{
   >
   class Accumulate<
     InitialType,
-    detail::defaulted_t
+    cranberries_magic::defaulted_t
   >
-    : private detail::TerminateStreamOperatorBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     Accumulate( InitialType ini ) : init_{ ini } {}
@@ -79,10 +79,10 @@ namespace operators{
 
   template < >
   class Accumulate<
-    detail::defaulted_t,
-    detail::defaulted_t
+    cranberries_magic::defaulted_t,
+    cranberries_magic::defaulted_t
   >
-    : private detail::TerminateStreamOperatorBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     Accumulate() = default;
@@ -106,7 +106,7 @@ namespace operators{
 
 
   class Product
-    : private detail::TerminateStreamOperatorBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     Product() = default;
@@ -131,7 +131,7 @@ namespace operators{
     typename Pred
   >
   class SumIf
-    : private detail::TerminateStreamOperatorBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     SumIf( Pred pred ) noexcept
@@ -164,7 +164,7 @@ namespace operators{
     typename Target
   >
   class Count
-    : private detail::TerminateStreamOperatorBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     Count( Target val ) noexcept
@@ -197,7 +197,7 @@ namespace operators{
     typename Pred
   >
   class CountIf
-    : private detail::TerminateStreamOperatorBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     CountIf( Pred pred ) noexcept
@@ -233,7 +233,7 @@ namespace operators{
   };
 
   class Average
-    : private detail::TerminateStreamOperatorBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     Average() = default;
@@ -256,7 +256,7 @@ namespace operators{
   };
 
   class Median
-    : private detail::TerminateStreamOperatorBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     Median() = default;
@@ -283,7 +283,7 @@ namespace operators{
   };
 
   class Mode
-    : private detail::TerminateStreamOperatorBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     Mode() = default;
@@ -302,7 +302,7 @@ namespace operators{
       std::sort( stream_.begin(), stream_.end() );
       auto mid = stream_.begin(), prev = stream_.begin();
       auto end = stream_.end();
-      auto w = ( *prev - *end ) / 5.0;
+      auto w = ( *prev - *(end-1) ) / 5.0;
       int n{};
       double result;
       for ( size_t i{ 1 }; i < 5; ++i ) {

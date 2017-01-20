@@ -13,11 +13,11 @@ namespace operators {
 
   template <
     typename Range,
-    bool IsFiniteStream = detail::is_finite_stream_v<std::decay_t<Range>>,
-    bool IsInfiniteStream = detail::is_infinite_stream_v<std::decay_t<Range>>
+    bool IsFiniteStream = cranberries_magic::is_finite_stream_v<std::decay_t<Range>>,
+    bool IsInfiniteStream = cranberries_magic::is_infinite_stream_v<std::decay_t<Range>>
   >
   class Merge
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     Merge() = default;
@@ -65,7 +65,7 @@ namespace operators {
   class Merge<
     Range,false,false
   >
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     Merge() = default;
@@ -93,11 +93,10 @@ namespace operators {
       typename std::decay_t<Stream>::range_type result{};
       using std::begin; using std::end;
       auto&& lv = stream_.get();
+      auto mid = lv.size();
       lv.reserve( lv.size() + cranberries::size( range_ ) );
-      auto&& first = lv.begin();
-      auto&& middle = lv.end();
-      lv.insert(middle, begin( range_ ), end( range_ ));
-      std::inplace_merge( first, middle, lv.end() );
+      lv.insert(lv.end(), begin( range_ ), end( range_ ));
+      std::inplace_merge( lv.begin(), lv.begin()+mid, lv.end() );
       return std::forward<Stream>( stream_ );
     }
 
@@ -112,7 +111,7 @@ namespace operators {
   class Merge<
     Range,false,true
   >
-    : private detail::StreamOperatorBase
+    : private cranberries_magic::StreamOperatorBase
   {
   public:
     Merge() = default;

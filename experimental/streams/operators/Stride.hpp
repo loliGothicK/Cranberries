@@ -1,7 +1,7 @@
 #ifndef CRANBERRIES_STREAMS_OPERATORS_STRIDE_HPP
 #define CRANBERRIES_STREAMS_OPERATORS_STRIDE_HPP
 #include <utility>
-#include "../detail/tag.hpp"
+#include "../cranberries_magic/tag.hpp"
 #include "../utility.hpp"
 
 namespace cranberries {
@@ -10,8 +10,8 @@ namespace operators {
 
   // Intermidiate Operation
   class Stride
-    : private detail::IntermidiateStreamOperatorBase
-    , private detail::StreamFilterBase
+    : private cranberries_magic::LazyOpeartionModuleBase
+    , private cranberries_magic::StreamFilterBase
   {
   public:
     Stride( size_t s ) noexcept

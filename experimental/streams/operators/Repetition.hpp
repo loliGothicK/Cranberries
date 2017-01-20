@@ -1,7 +1,7 @@
 #ifndef CRANBERRIES_STREAMS_OPERATORS_REPETITION_HPP
 #define CRANBERRIES_STREAMS_OPERATORS_REPETITION_HPP
 #include <utility>
-#include "../detail/tag.hpp"
+#include "../cranberries_magic/tag.hpp"
 
 namespace cranberries {
 namespace streams {

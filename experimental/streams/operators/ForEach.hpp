@@ -12,7 +12,7 @@ namespace operators {
     typename UnaryFunc
   >
   class ForEach
-    : private detail::TerminateStreamOperatorBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     ForEach( UnaryFunc f ) noexcept

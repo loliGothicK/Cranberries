@@ -44,7 +44,7 @@ namespace operators {
       // mode
       auto mid = data_.begin(), prev = data_.begin();
       auto end = data_.end();
-      auto w = (*prev - *end) / 5.0;
+      auto w = (*prev - *(end-1)) / 5.0;
       int n{};
       for (size_t i{ 1 }; i < 5; ++i) {
         mid = std::upper_bound( data_.begin(), data_.end(), w*i );
@@ -58,6 +58,7 @@ namespace operators {
         average += e;
         squared_sum += e*e;
       }
+      sum = average;
       average /= size;
       variance = squared_sum / size - average*average;
       unbiased_variance = size / (size - 1.0)*variance;
@@ -74,6 +75,7 @@ namespace operators {
     std::ostream& print(std::ostream& os) const noexcept
     {
       CRANBERRIES_PUTS( "size", size );
+      CRANBERRIES_PUTS("sum", sum);
       CRANBERRIES_PUTS( "min", min );
       CRANBERRIES_PUTS( "max", max );
       CRANBERRIES_PUTS( "value range", value_range );
@@ -98,6 +100,7 @@ namespace operators {
     T min{};
     T max{};
     T value_range{};
+    T sum{};
     std::common_type_t<double, T> lower_quantile{};
     std::common_type_t<double, T> upper_quantile{};
     std::common_type_t<double, T> interquartile_range{};

@@ -11,7 +11,7 @@ namespace operators {
     typename Pred
   >
   class AnyOf
-    : private detail::TerminateStreamOperatorBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     AnyOf( Pred p ) noexcept

@@ -47,7 +47,7 @@ namespace workaround {
   template <
     bool IsStream
   >
-    struct for_msvc
+    struct back_emplacer
   {
     template <
       typename Stream,
@@ -67,7 +67,7 @@ namespace workaround {
   };
 
   template < >
-  struct for_msvc<true>
+  struct back_emplacer<true>
   {
     template <
       typename Stream,
@@ -87,6 +87,48 @@ namespace workaround {
     }
   };
 
+  template <
+	  bool IsStream
+  >
+	struct front_emplacer
+  {
+	  template <
+		  typename Stream,
+		  typename Range
+	  >
+		static
+		void
+		invoke
+		(
+		  Stream&& stream_,
+		  Range&& proj_
+		)
+		  noexcept
+	  {
+		  stream_.insert(stream_.end(), proj_.begin(), proj_.end());
+	  }
+  };
+
+  template < >
+  struct front_emplacer<true>
+  {
+	  template <
+		  typename Stream,
+		  typename Range
+	  >
+		static
+		void
+		invoke
+		(
+		 Stream&& stream_,
+		 Range&& proj_
+		)
+		  noexcept
+	  {
+		  proj_.eval();
+		  stream_.insert(stream_.end(), proj_.begin(), proj_.end());
+	  }
+  };
 
 
 }

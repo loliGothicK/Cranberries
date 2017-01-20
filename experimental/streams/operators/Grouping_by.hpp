@@ -7,7 +7,7 @@
 #include <list>
 #include <deque>
 #include "../utility.hpp"
-#include "../detail/tag.hpp"
+#include "../cranberries_magic/tag.hpp"
 
 namespace cranberries {
 namespace streams {
@@ -40,7 +40,7 @@ namespace {
     typename Keygen
   >
   class GrouingBy
-    : private detail::TerminateStreamOperatorBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     GrouingBy( Keygen gen ) : keygen_{ std::forward<Keygen>( gen ) } {}

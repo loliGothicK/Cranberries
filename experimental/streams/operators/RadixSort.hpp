@@ -5,7 +5,7 @@
 #include "../stream_error.hpp"
 #include "../utility.hpp"
 #include "../algorithm/radix_sort.hpp"
-#include "../detail/tag.hpp"
+#include "../cranberries_magic/tag.hpp"
 
 namespace cranberries {
 namespace streams {
@@ -16,7 +16,7 @@ namespace operators {
     opt option
   >
   class RadixSort
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     RadixSort( G get_key ) noexcept
@@ -69,8 +69,8 @@ namespace operators {
   template <
     opt option
   >
-  class RadixSort<detail::defaulted_t,option>
-    : private detail::IntermidiateStreamOperatorBase
+  class RadixSort<cranberries_magic::defaulted_t,option>
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     RadixSort( size_t first, size_t last ) noexcept

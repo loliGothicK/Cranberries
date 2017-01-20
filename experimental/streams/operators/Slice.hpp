@@ -1,7 +1,7 @@
 #ifndef CRANBERRIES_STREAMS_OPERATORS_SLICE_HPP
 #define CRANBERRIES_STREAMS_OPERATORS_SLICE_HPP
 #include <utility>
-#include "../detail/tag.hpp"
+#include "../cranberries_magic/tag.hpp"
 #include "../utility.hpp"
 
 namespace cranberries {
@@ -10,7 +10,7 @@ namespace operators {
 
   // Intermidiate Operation
   class Slice
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     Slice( size_t l, size_t u ) noexcept

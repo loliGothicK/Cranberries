@@ -14,7 +14,7 @@ namespace operators {
     typename Range
   >
   class SetUnion
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     SetUnion( Range range ) noexcept
@@ -53,7 +53,7 @@ namespace operators {
     typename Range
   >
   class SetIntersection
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     SetIntersection( Range range ) noexcept
@@ -92,7 +92,7 @@ namespace operators {
     typename Range
   >
   class SetDiff
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     SetDiff( Range range ) noexcept
@@ -131,7 +131,7 @@ namespace operators {
     typename Range
   >
   class SetSymmetricDiff
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     SetSymmetricDiff( Range range ) noexcept

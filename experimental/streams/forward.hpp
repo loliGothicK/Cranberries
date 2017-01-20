@@ -2,7 +2,7 @@
 #define CRANBERRIES_STREAMS_FORWARD_HPP
 
 #include <random>
-#include "detail/tag.hpp"
+#include "cranberries_magic/tag.hpp"
 #include "operators/Identity.hpp"
 
 namespace cranberries {
@@ -10,6 +10,9 @@ namespace streams {
 
   template < typename T, typename Operation = operators::Identity >
   class stream;
+
+  template < typename T, typename Operation = operators::Identity >
+  class file_stream;
 
 namespace operators {
 
@@ -67,7 +70,7 @@ namespace operators {
 
   class Drop;
 
-  template < typename Pred = detail::defaulted_t >
+  template < typename Pred = cranberries_magic::defaulted_t >
   class Sort;
 
   struct Splitter;
@@ -110,8 +113,8 @@ namespace operators {
   class Unique;
   
   template <
-    typename InitialType = detail::defaulted_t,
-    typename BinaryOp = detail::defaulted_t
+    typename InitialType = cranberries_magic::defaulted_t,
+    typename BinaryOp = cranberries_magic::defaulted_t
   >
   class Accumulate;
 
@@ -181,17 +184,17 @@ namespace operators {
 
   class FlatAllProxy;
 
-  template < typename Pred = detail::defaulted_t >
+  template < typename Pred = cranberries_magic::defaulted_t >
   class StableSort;
 
 
-  template < typename Pred = detail::defaulted_t >
+  template < typename Pred = cranberries_magic::defaulted_t >
   class PartialSort;
 
-  template < typename Pred = detail::defaulted_t >
+  template < typename Pred = cranberries_magic::defaulted_t >
   class NthElement;
 
-  template < typename G = detail::defaulted_t, opt option = opt::ascending >
+  template < typename G = cranberries_magic::defaulted_t, opt option = opt::ascending >
   class RadixSort;
 
 } // ! namesapce operators

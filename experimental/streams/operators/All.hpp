@@ -12,7 +12,7 @@ namespace operators {
     typename Pred
   >
   class AllOf
-    : private detail::TerminateStreamOperatorBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     AllOf( Pred p ) noexcept

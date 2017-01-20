@@ -10,8 +10,8 @@ namespace operators {
 
   // Intermidiate Operation
   class Drop
-    : private detail::IntermidiateStreamOperatorBase
-    , private detail::StreamFilterBase
+    : private cranberries_magic::LazyOpeartionModuleBase
+    , private cranberries_magic::StreamFilterBase
   {
   public:
     Drop( size_t n ) : count{}, n_{ n } {}

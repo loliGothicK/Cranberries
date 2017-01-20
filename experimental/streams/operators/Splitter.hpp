@@ -3,7 +3,7 @@
 #include <string>
 #include <regex>
 #include <utility>
-#include "../detail/tag.hpp"
+#include "../cranberries_magic/tag.hpp"
 #include "../StreamConverter.hpp"
 
 namespace cranberries {
@@ -34,14 +34,19 @@ namespace operators {
       };
     }
 
-    template < template < class T, class Allocator = std::allocator<T> > class Cont >
+    template <
+      template <
+        class T,
+        class Allocator = std::allocator<T>
+      >
+      class Cont
+    >
     Cont<std::string> convert_to() noexcept(false) {
       return Cont<std::string>{
         std::sregex_token_iterator{ target_.begin(), target_.end(), r_, -1 },
         std::sregex_token_iterator{}
       };
     }
-
 
     std::string target_;
     std::regex r_{};
@@ -71,7 +76,7 @@ namespace operators {
   Cont<std::string> operator |
   (
     Splitter&& sp,
-    detail::ConvertTo<Cont>
+    cranberries_magic::ConvertTo<Cont>
   )
     noexcept(false)
   {

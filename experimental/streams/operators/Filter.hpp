@@ -13,8 +13,8 @@ namespace operators {
     typename Pred
   >
   class Filter
-    : private detail::IntermidiateStreamOperatorBase
-    , private detail::StreamFilterBase
+    : private cranberries_magic::LazyOpeartionModuleBase
+    , private cranberries_magic::StreamFilterBase
   {
   public:
     Filter( Pred p ) noexcept
@@ -46,9 +46,9 @@ namespace operators {
         "Predicate must be return bool."
       );
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
-      auto&& source = stream_.get();
-      for (auto&& iter = source.begin(); iter != source.end(); ) {
-        if (pred_(*iter)) iter = source.erase(iter);
+      auto&& source_ = stream_.get();
+      for (auto&& iter = source_.begin(); iter != source_.end(); ) {
+        if (pred_(*iter)) iter = source_.erase(iter);
         else ++iter;
       }
       stream_.shrink_to_fit();

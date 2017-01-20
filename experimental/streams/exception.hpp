@@ -4,13 +4,13 @@
 #include <stdexcept>
 #include <string>
 
-
+#define CRANBERRIES_FULL_FUNCSIG
 #ifndef CRANBERRIES_FULL_FUNCSIG
 #define CRANBERRIES_FUNCTION __FUNCTION__
 #elif _MSC_VER
-#define CRANBERRIES_PRETTY_FUNCTION __FUNCSIG__
+#define CRANBERRIES_FUNCTION __FUNCSIG__
 #else
-#define CRANBERRIES_PRETTY_FUNCTION __PRETTY_FUNCTION__
+#define CRANBERRIES_FUNCTION __PRETTY_FUNCTION__
 #endif
 
 #define CRANBERRIES_RUNTIME_ERROR_THROW_IF( EXPR ) if( EXPR ){ throw cranberries::runtime_error("runtime_error", __FILE__, CRANBERRIES_FUNCTION, __LINE__, #EXPR ); }

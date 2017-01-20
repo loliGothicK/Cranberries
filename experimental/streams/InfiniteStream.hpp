@@ -3,10 +3,10 @@
 #include <utility>
 #include <type_traits>
 #include <tuple>
-#include "detail/tag.hpp"
+#include "cranberries_magic/tag.hpp"
 #include "utility.hpp"
 #include "stream_error.hpp"
-#include "detail/enable_men_fn.hpp"
+#include "cranberries_magic/enable_men_fn.hpp"
 
 namespace cranberries {
 namespace streams {
@@ -40,8 +40,8 @@ namespace streams {
     typename Supplier
   >
   class GenerateStream
-    : private detail::InfiniteStreamBase
-    , public detail::enable_men_fn_inf<GenerateStream<T, Supplier>>
+    : private cranberries_magic::InfiniteStreamBase
+    , public cranberries_magic::enable_men_fn_inf<GenerateStream<T, Supplier>>
   {
   public:
     using element_type = T;
@@ -61,8 +61,8 @@ namespace streams {
 
   template < typename InitType, typename Func >
   class IterateStream
-    : private detail::InfiniteStreamBase
-    , public detail::enable_men_fn_inf<IterateStream<InitType,Func>>
+    : private cranberries_magic::InfiniteStreamBase
+    , public cranberries_magic::enable_men_fn_inf<IterateStream<InitType,Func>>
   {
   public:
     using element_type = InitType;
@@ -86,8 +86,8 @@ namespace streams {
 
   template < typename Iterable >
   class CountingStream
-    : private detail::InfiniteStreamBase
-    , public detail::enable_men_fn_inf<CountingStream<Iterable>>
+    : private cranberries_magic::InfiniteStreamBase
+    , public cranberries_magic::enable_men_fn_inf<CountingStream<Iterable>>
   {
   public:
     using element_type = Iterable;
@@ -108,8 +108,8 @@ namespace streams {
 
   template < typename T >
   class CyclicStream
-    : private detail::InfiniteStreamBase
-    , public detail::enable_men_fn_inf<CyclicStream<T>>
+    : private cranberries_magic::InfiniteStreamBase
+    , public cranberries_magic::enable_men_fn_inf<CyclicStream<T>>
   {
   public:
 
@@ -150,8 +150,8 @@ namespace streams {
     typename Operator
   >
   class StreamOperator
-    : private detail::InfiniteStreamBase
-    , public detail::enable_men_fn_inf<StreamOperator<Stream,Operator>>
+    : private cranberries_magic::InfiniteStreamBase
+    , public cranberries_magic::enable_men_fn_inf<StreamOperator<Stream,Operator>>
   {
   public:
     using element_type = typename std::decay_t<Stream>::element_type;
@@ -179,8 +179,8 @@ namespace streams {
     typename Filter
   >
   class StreamFilter
-    : private detail::InfiniteStreamBase
-    , public detail::enable_men_fn_inf<StreamFilter<Stream,Filter>>
+    : private cranberries_magic::InfiniteStreamBase
+    , public cranberries_magic::enable_men_fn_inf<StreamFilter<Stream,Filter>>
   {
   public:
     using element_type = typename std::decay_t<Stream>::element_type;
@@ -207,8 +207,8 @@ namespace streams {
     typename Stream
   >
   class StreamFlatter
-    : private detail::InfiniteStreamBase
-    , public detail::enable_men_fn_inf<StreamFlatter<Stream>>
+    : private cranberries_magic::InfiniteStreamBase
+    , public cranberries_magic::enable_men_fn_inf<StreamFlatter<Stream>>
   {
   public:
     using element_type =  element_type_of_t<typename std::decay_t<Stream>::element_type>;
@@ -247,8 +247,8 @@ namespace streams {
     typename Stream
   >
   class StreamAllFlatter
-    : private detail::InfiniteStreamBase
-    , public detail::enable_men_fn_inf<StreamAllFlatter<Stream>>
+    : private cranberries_magic::InfiniteStreamBase
+    , public cranberries_magic::enable_men_fn_inf<StreamAllFlatter<Stream>>
   {
   public:
     using element_type = root_element_type_of_t<typename std::decay_t<Stream>::element_type>;
@@ -291,8 +291,8 @@ namespace streams {
     typename Operator
   >
   class StreamFlatTransformer
-    : private detail::InfiniteStreamBase
-    , public detail::enable_men_fn_inf<StreamFlatTransformer<Stream,Operator>>
+    : private cranberries_magic::InfiniteStreamBase
+    , public cranberries_magic::enable_men_fn_inf<StreamFlatTransformer<Stream,Operator>>
   {
   public:
     using element_type = typename std::decay_t<Stream>::element_type;
@@ -339,8 +339,8 @@ namespace streams {
     )
       noexcept
     {
-      workaround::for_msvc<
-        detail::is_finite_stream_v<std::decay_t<Range>>
+      workaround::back_emplacer<
+        cranberries_magic::is_finite_stream_v<std::decay_t<Range>>
       >::invoke(proj_, std::forward<Range>(range));
     }
 
@@ -382,12 +382,12 @@ namespace streams {
   template <
     typename Stream1,
     typename Stream2,
-    bool IsFinite1 = detail::is_finite_stream_v<Stream1>,
-    bool IsFinite2 = detail::is_finite_stream_v<Stream2>
+    bool IsFinite1 = cranberries_magic::is_finite_stream_v<Stream1>,
+    bool IsFinite2 = cranberries_magic::is_finite_stream_v<Stream2>
   >
   struct StreamMerger
-    : private detail::InfiniteStreamBase
-    , public detail::enable_men_fn_inf<StreamMerger<Stream1,Stream2,IsFinite1,IsFinite2>>
+    : private cranberries_magic::InfiniteStreamBase
+    , public cranberries_magic::enable_men_fn_inf<StreamMerger<Stream1,Stream2,IsFinite1,IsFinite2>>
   {
     static_assert(!(IsFinite1&&IsFinite2),"internal critical error!");
     using element_type = typename std::decay_t<Stream1>::element_type;
@@ -431,8 +431,8 @@ namespace streams {
     Stream1,Stream2,
     true,false
   >
-    : private detail::InfiniteStreamBase
-    , public detail::enable_men_fn_inf<StreamMerger<Stream1,Stream2,true,false>>
+    : private cranberries_magic::InfiniteStreamBase
+    , public cranberries_magic::enable_men_fn_inf<StreamMerger<Stream1,Stream2,true,false>>
   {
     using element_type = typename std::decay_t<Stream1>::element_type;
 
@@ -479,8 +479,8 @@ namespace streams {
     Stream1,Stream2,
     false,true
   >
-    : private detail::InfiniteStreamBase
-    , public detail::enable_men_fn_inf<StreamMerger<Stream1,Stream2,false,true>>
+    : private cranberries_magic::InfiniteStreamBase
+    , public cranberries_magic::enable_men_fn_inf<StreamMerger<Stream1,Stream2,false,true>>
   {
     using element_type = decltype(std::declval<Stream1>().get());
 
@@ -523,12 +523,12 @@ namespace streams {
     typename Stream2
   >
   class StreamConcatenator
-    : private detail::InfiniteStreamBase
-    , public detail::enable_men_fn_inf<StreamConcatenator<Stream1,Stream2>>
+    : private cranberries_magic::InfiniteStreamBase
+    , public cranberries_magic::enable_men_fn_inf<StreamConcatenator<Stream1,Stream2>>
   {
     static_assert(
-      detail::is_finite_stream_v<Stream1>
-      && detail::is_infinite_stream_v<Stream2>,
+      cranberries_magic::is_finite_stream_v<Stream1>
+      && cranberries_magic::is_infinite_stream_v<Stream2>,
       "" // TODO
     );
   public:

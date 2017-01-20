@@ -14,7 +14,7 @@ namespace operators {
     typename Operator // user defined operation
   >
   class Tinvoker
-    : detail::TerminateStreamOperatorBase
+    : cranberries_magic::EagerOperationModuleBase
   {
   public:
     Tinvoker( Operator op ) noexcept
@@ -49,7 +49,7 @@ namespace operators {
     typename Operator // user defined operation
   >
   class Iinvoker
-    : detail::IntermidiateStreamOperatorBase
+    : cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     Iinvoker( Operator op ) noexcept

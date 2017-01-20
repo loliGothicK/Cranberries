@@ -15,7 +15,7 @@ namespace operators {
     typename Engine
   >
   class Shuffle
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     Shuffle( Engine e ) noexcept

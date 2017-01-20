@@ -14,8 +14,8 @@ namespace operators {
     typename ElemType
   >
   class Replace
-    : private detail::IntermidiateStreamOperatorBase
-    , private detail::StreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
+    , private cranberries_magic::StreamOperatorBase
   {
   public:
     Replace( ElemType new_, ElemType old_ ) noexcept
@@ -58,8 +58,8 @@ namespace operators {
     typename New
   >
   class ReplaceIf
-    : private  detail::IntermidiateStreamOperatorBase
-    , private detail::StreamOperatorBase
+    : private  cranberries_magic::LazyOpeartionModuleBase
+    , private cranberries_magic::StreamOperatorBase
   {
   public:
     ReplaceIf( UnaryOp op, New new_ ) noexcept

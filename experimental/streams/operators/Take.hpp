@@ -9,7 +9,7 @@ namespace operators {
 
   // Intermidiate Operation
   class Take
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     Take( size_t n ) noexcept

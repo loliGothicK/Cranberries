@@ -7,7 +7,7 @@
 #include <random>
 #include <limits>
 #include "forward.hpp"
-#include "detail/tag.hpp"
+#include "cranberries_magic/tag.hpp"
 #include "InfiniteStream.hpp"
 #include "operators/Splitter.hpp"
 #include "operators/Identity.hpp"
@@ -305,6 +305,13 @@ namespace streams {
     {
       return CyclicStream<T>{ std::forward<Iterator>( first ), std::forward<Iterator>( last ) };
     }
+
+    //------------------------------------------------------//
+
+    //                     Flie Streams                     //
+
+    //------------------------------------------------------//
+
 
     //------------------------------------------------------//
 
@@ -754,12 +761,12 @@ namespace streams {
     };
 
     stream_builder& operator +=( T const& a ) & noexcept {
-      data_.push_back( a );
+      data_.emplace_back( a );
       return *this;
     }
 
     stream_builder&& operator +=( T const& a ) && noexcept {
-      data_.push_back( a );
+      data_.emplace_back( a );
       return std::move( *this );
     }
 

@@ -8,7 +8,7 @@
 #include "../forward.hpp"
 #include "../utility.hpp"
 #include "../operators.hpp"
-#include "../operatoins.hpp"
+#include "../operations.hpp"
 #include "../InfiniteStream.hpp"
 
 #define men_fn_def(men_fn, adaptor_fn)\
@@ -22,7 +22,7 @@ noexcept( noexcept( adaptor_fn(std::forward<Args>(args)...) ) )\
 
 namespace cranberries{
 namespace streams{
-namespace detail{
+namespace cranberries_magic{
 
   template <
     typename Derived
@@ -176,7 +176,7 @@ namespace detail{
 };
 
 
-} // ! namespace detail
+} // ! namespace cranberries_magic
 } // ! namespace streams
 } // ! namespace cranberries
 #undef men_fn_def

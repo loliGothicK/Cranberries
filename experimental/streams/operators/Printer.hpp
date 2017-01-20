@@ -12,7 +12,7 @@ namespace operators {
 
   template < bool B >
   class Printer
-    : detail::TerminateStreamOperatorBase
+    : cranberries_magic::EagerOperationModuleBase
   {
   public:
     Printer( std::ostream& os, std::string delim ) noexcept
@@ -44,6 +44,45 @@ namespace operators {
   private:
     std::string delim_; // defalut is ", "
   };
+
+
+  template < bool B >
+  class FormatPrinter
+    : cranberries_magic::EagerOperationModuleBase
+  {
+  public:
+    FormatPrinter( const char* fmt, const char* delim ) noexcept
+      : fmt_{ fmt }
+      , delim_{ delim }
+    {}
+
+    template <
+      typename Stream
+    >
+    inline
+    void
+    operator()
+    (
+      Stream&& stream_
+    )
+      noexcept(false)
+    {
+      CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
+      auto&& iter = stream_.begin();
+      printf(fmt_, *iter);
+      ++iter;
+      for (; iter != stream_.end(); ++iter){
+        printf( "%s", delim_ );
+        printf( fmt_, *iter );
+      }
+      if (B) printf("\n");
+    }
+
+  private:
+    const char* fmt_;
+    const char* delim_;
+  };
+
 
 } // ! namespace operators
 } // ! namespace stream

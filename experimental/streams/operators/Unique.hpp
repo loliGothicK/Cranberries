@@ -16,8 +16,8 @@ namespace operators {
     typename T
   >
   class Unique
-    : private detail::IntermidiateStreamOperatorBase
-    , private detail::StreamFilterBase
+    : private cranberries_magic::LazyOpeartionModuleBase
+    , private cranberries_magic::StreamFilterBase
   {
   public:
 
@@ -35,8 +35,8 @@ namespace operators {
       noexcept(false)
     {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
-      auto&& source = stream_.get();
-      source.erase( std::unique( source.begin(), source.end() ), source.end() );
+      auto&& source_ = stream_.get();
+      source_.erase( std::unique( source_.begin(), source_.end() ), source_.end() );
       return std::forward<Stream>(stream_);
     }
 

@@ -12,8 +12,8 @@ namespace operators {
     typename UnaryFunc
   >
   class Peek
-    : private detail::IntermidiateStreamOperatorBase
-    , private detail::StreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
+    , private cranberries_magic::StreamOperatorBase
   {
   public:
     Peek( UnaryFunc f ) noexcept

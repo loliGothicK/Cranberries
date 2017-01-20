@@ -14,7 +14,7 @@ namespace operators {
     typename UnaryOp
   >
   class FlatMap
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     FlatMap( UnaryOp op ) noexcept
@@ -89,8 +89,8 @@ namespace operators {
     )
       noexcept
     {
-      workaround::for_msvc<
-        detail::is_finite_stream_v<std::decay_t<Range>>
+      workaround::front_emplacer<
+        cranberries_magic::is_finite_stream_v<std::decay_t<Range>>
       >::invoke(std::forward<Stream>(stream_), std::forward<Range>(range_));
     }
 
@@ -105,11 +105,11 @@ namespace operators {
       noexcept(false)
     {
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
-      size_t ini = stream_.size();
-      for ( auto&& e : stream_ ) {
+      auto old = stream_.get();
+      stream_.clear();
+      for (auto&& e : old ) {
         push( stream_, op_( e ) );
       }
-      stream_.erase( stream_.begin(), stream_.begin() + ini );
       return std::forward<Stream>( stream_ );
     }
 

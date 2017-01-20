@@ -8,11 +8,11 @@
 
 namespace cranberries {
 namespace streams {
-namespace detail {
+namespace cranberries_magic {
 
 	
 
-} // ! namespace detail
+} // ! namespace cranberries_magic
 } // ! namespace stream
 } // ! namespace cranberries
 #endif

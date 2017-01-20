@@ -1,7 +1,7 @@
 #ifndef CRANBERRIES_STREAMS_OPERATORS_MAP_HPP
 #define CRANBERRIES_STREAMS_OPERATORS_MAP_HPP
 #include <utility>
-#include "../detail/tag.hpp"
+#include "../cranberries_magic/tag.hpp"
 
 namespace cranberries {
 namespace streams {
@@ -10,8 +10,8 @@ namespace operators {
 
   template < typename F >
   class TransformProxy
-    : private detail::IntermidiateStreamOperatorBase
-    , private detail::StreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
+    , private cranberries_magic::StreamOperatorBase
   {
   public:
     TransformProxy( F f ) noexcept
@@ -38,8 +38,8 @@ namespace operators {
     typename UnaryFunc
   >
   class Endomorphism
-    : private detail::IntermidiateStreamOperatorBase
-    , private detail::StreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
+    , private cranberries_magic::StreamOperatorBase
   {
   public:
     Endomorphism( UnaryFunc f ) noexcept
@@ -97,7 +97,7 @@ namespace operators {
     typename UnaryFunc
   >
   class Transform
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     Transform( OldStream old, UnaryFunc f ) noexcept
@@ -141,6 +141,7 @@ namespace operators {
     OldStream old;
     UnaryFunc f_;
   };
+
 
 } // ! namespace operators
 } // ! namespace stream

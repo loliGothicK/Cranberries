@@ -16,7 +16,7 @@ namespace operators {
     typename Pred
   >
     class StableSort
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     StableSort( Pred pred ) : pred_{ std::forward<Pred>( pred ) } {}
@@ -42,9 +42,9 @@ namespace operators {
   // Intermidiate Operation
   template < >
   class StableSort <
-    detail::defaulted_t // lookup operator < using ADL.
+    cranberries_magic::defaulted_t // lookup operator < using ADL.
   >
-    : private detail::IntermidiateStreamOperatorBase
+    : private cranberries_magic::LazyOpeartionModuleBase
   {
   public:
     StableSort() = default;
