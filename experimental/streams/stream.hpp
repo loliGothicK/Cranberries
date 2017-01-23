@@ -8,7 +8,6 @@
 #include "operators/Identity.hpp"
 #include "cranberries_magic/enable_men_fn.hpp"
 #include "io.hpp"
-#include <filesystem>
 
 namespace cranberries {
 namespace streams {

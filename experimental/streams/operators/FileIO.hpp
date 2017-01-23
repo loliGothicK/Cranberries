@@ -28,7 +28,7 @@ namespace operators {
     decltype(auto)
     operator()(FileStream&& filestream_) {
       filestream_.fopen(path_);
-      return std::forward<Filestream>(filestream_);
+      return std::forward<FileStream>(filestream_);
     }
 
   private:
@@ -75,7 +75,7 @@ namespace operators {
     >
     decltype(auto)
     operator()(FileStream&& filestream_) {
-      CRANBERRIES_ASSERT(std::is_same_v<T,std::string>);
+      CRANBERRIES_ASSERT(std::is_same<T,std::string>::value);
       auto ifs = std::ifstream{ filestream_.path(), filestream_.openmode() };
       std::string buf;
       CRANBERRIES_STREAM_FOPEN_ERROR_THROW_IF(!ifs.is_open());
