@@ -197,6 +197,19 @@ namespace operators {
   template < typename G = cranberries_magic::defaulted_t, opt option = opt::ascending >
   class RadixSort;
 
+  class Fopen;
+
+  class Read;
+ 
+  class ReadLine;
+
+  template < typename Ate = cranberries_magic::defaulted_t, typename MaxSize = cranberries_magic::defaulted_t >
+  class ReadByte;
+
+  class Write;
+
+  class WriteLine;
+
 } // ! namesapce operators
 } // ! namespace stream
 } // ! namespace cranberries

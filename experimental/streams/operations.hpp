@@ -5,6 +5,7 @@
 #include <type_traits>
 #include "forward.hpp"
 #include "cranberries_magic/tag.hpp"
+#include "io.hpp"
 
 
 namespace cranberries {
@@ -19,15 +20,46 @@ namespace streams {
 
   inline namespace lazy {
 
+    inline operators::Fopen fopen(std::string path) { return { path }; }
+
+    inline operators::ReadLine read_line() { return{}; }
+
+    inline
+    operators::ReadByte<cranberries_magic::defaulted_t, cranberries_magic::defaulted_t>
+    read_byte() { return {}; }
+
+    template <
+      typename MaxSize
+    >
+    inline
+    operators::ReadByte<cranberries_magic::defaulted_t, MaxSize>
+    read_byte(MaxSize max_size) { return {max_size}; }
+
+    template <
+      typename Ate
+    >
+    inline
+    operators::ReadByte<Ate,cranberries_magic::defaulted_t>
+    read_n_byte(Ate ate) { return { ate }; }
+
+    template <
+      typename Ate,
+      typename MaxSize
+    >
+    inline
+    operators::ReadByte<Ate, MaxSize>
+    read_n_byte(Ate ate, MaxSize max_size) { return { ate, max_size }; }
+
+
     template <
       typename Pred
     >
-      inline
-      operators::Filter<Pred>
-      filtered
-      (
-        Pred&& pred
-      )
+    inline
+    operators::Filter<Pred>
+    filtered
+    (
+      Pred&& pred
+    )
       noexcept
     {
       return{ std::forward<Pred>(pred) };
@@ -45,12 +77,12 @@ namespace streams {
     template <
       typename Pred
     >
-      inline
-      operators::Sort<Pred>
-      sorted
-      (
-        Pred&& pred
-      )
+    inline
+    operators::Sort<Pred>
+    sorted
+    (
+      Pred&& pred
+    )
       noexcept
     {
       return{ std::forward<Pred>(pred) };
@@ -59,12 +91,12 @@ namespace streams {
     template <
       typename Pred
     >
-      inline
-      operators::StableSort<Pred>
-      stable_sorted
-      (
-        Pred&& pred
-      )
+    inline
+    operators::StableSort<Pred>
+    stable_sorted
+    (
+      Pred&& pred
+    )
       noexcept
     {
       return{ std::forward<Pred>(pred) };
@@ -73,13 +105,13 @@ namespace streams {
     template <
       typename Pred
     >
-      inline
-      operators::StableSort<Pred>
-      partial_sorted
-      (
-        size_t n,
-        Pred&& pred
-      )
+    inline
+    operators::StableSort<Pred>
+    partial_sorted
+    (
+      size_t n,
+      Pred&& pred
+    )
       noexcept
     {
       return{ n, std::forward<Pred>(pred) };
@@ -88,13 +120,13 @@ namespace streams {
     template <
       typename Pred
     >
-      inline
-      operators::NthElement<Pred>
-      nth_elemented
-      (
-        size_t n,
-        Pred&& pred
-      )
+    inline
+    operators::NthElement<Pred>
+    nth_elemented
+    (
+      size_t n,
+      Pred&& pred
+    )
       noexcept
     {
       return{ n, std::forward<Pred>(pred) };
@@ -133,12 +165,12 @@ namespace streams {
     template <
       typename UnaryFunc
     >
-      inline
-      operators::Peek<UnaryFunc>
-      peeked
-      (
-        UnaryFunc&& func
-      )
+    inline
+    operators::Peek<UnaryFunc>
+    peeked
+    (
+      UnaryFunc&& func
+    )
       noexcept
     {
       return{ std::forward<UnaryFunc>(func) };
@@ -148,12 +180,12 @@ namespace streams {
     template <
       typename UnaryFunc
     >
-      inline
-      operators::TransformProxy<UnaryFunc>
-      transformed
-      (
-        UnaryFunc&& func
-      )
+    inline
+    operators::TransformProxy<UnaryFunc>
+    transformed
+    (
+      UnaryFunc&& func
+    )
       noexcept
     {
       return{ std::forward<UnaryFunc>(func) };
@@ -194,12 +226,12 @@ namespace streams {
       std::nullptr_t
       > = nullptr
     >
-      inline
-      operators::Merge<Stream>
-      merged
-      (
-        Stream&& stream_
-      )
+    inline
+    operators::Merge<Stream>
+    merged
+    (
+      Stream&& stream_
+    )
       noexcept
     {
       return{ std::forward<Stream>(stream_) };
@@ -212,11 +244,11 @@ namespace streams {
       std::nullptr_t
       > = nullptr
     >
-      inline
-      operators::Join<Range>
-      joined(
-        Range&& range_
-      )
+    inline
+    operators::Join<Range>
+    joined(
+      Range&& range_
+    )
       noexcept
     {
       return{ std::forward<Range>(range_) };
@@ -268,6 +300,12 @@ namespace streams {
     inline operators::Repetition repeat(size_t times = 1) noexcept { return{ times }; }
 
     inline operators::Run run() noexcept { return{}; }
+
+    inline operators::Write write() noexcept { return {}; }
+
+    inline operators::WriteLine write_line() noexcept { return{}; }
+
+    inline operators::WriteLine write_line(std::string delim) noexcept { return { delim }; }
     
     inline
     operators::Printer<false>

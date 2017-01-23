@@ -11,6 +11,7 @@
 #include "InfiniteStream.hpp"
 #include "operators/Splitter.hpp"
 #include "operators/Identity.hpp"
+#include "io.hpp"
 
 namespace cranberries {
 namespace streams {
@@ -311,6 +312,18 @@ namespace streams {
     //                     Flie Streams                     //
 
     //------------------------------------------------------//
+    template <
+      typename T = std::string
+    >
+    static
+    stream<T, operators::Identity>
+    fopen
+    (
+      std::string path,
+      std::ios_base::openmode openmode = std::ios_base::in | std::ios_base::out
+    ) {
+      return { path, openmode };
+    }
 
 
     //------------------------------------------------------//

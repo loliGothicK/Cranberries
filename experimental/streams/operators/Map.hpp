@@ -42,6 +42,10 @@ namespace operators {
     , private cranberries_magic::StreamOperatorBase
   {
   public:
+    Endomorphism() = default;
+    Endomorphism(Endomorphism const&) = default;
+    Endomorphism(Endomorphism&&) = default;
+    ~Endomorphism() = default;
     Endomorphism( UnaryFunc f ) noexcept
       : f_{ std::forward<UnaryFunc>( f ) }
     {}

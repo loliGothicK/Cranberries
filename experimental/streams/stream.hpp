@@ -7,6 +7,8 @@
 #include "exception.hpp"
 #include "operators/Identity.hpp"
 #include "cranberries_magic/enable_men_fn.hpp"
+#include "io.hpp"
+#include <filesystem>
 
 namespace cranberries {
 namespace streams {
@@ -104,6 +106,31 @@ namespace streams {
     typedef  typename std::vector<T>::difference_type         difference_type;
     typedef  typename std::vector<T>::reverse_iterator        reverse_iterator;
     typedef  typename std::vector<T>::const_reverse_iterator  const_reverse_iterator;
+
+    stream
+    (
+      std::vector<T>&& src,
+      Operation&& q,
+      std::string path,
+      std::ios::openmode openmode
+    )
+      : source_{std::move(src)}
+      , operation_{std::forward<Operation>(q)}
+      , path_{path}
+      , openmode_{openmode}
+    { }
+
+    stream
+    (
+      std::string path,
+      std::ios::openmode openmode = std::ios::in | std::ios::out
+    )
+      : source_{}
+      , operation_{ operators::Identity{} }
+      , path_{ path }
+      , openmode_{ openmode }
+    { }
+
 
     template <
       typename Iterator,
@@ -290,6 +317,11 @@ namespace streams {
     // resource getter
     inline auto& get() { return source_; }
 
+    auto path() { return path_; }
+
+    auto openmode() { return openmode_; }
+
+    void fopen(std::string path) { path_ = path; }
 
     // Operator Registration
     template <
@@ -301,7 +333,8 @@ namespace streams {
       Operator&& op
     ) {
       return stream<T, OperationTree<Operation, Operator>>{
-        std::move( source_ ), OperationTree<Operation, Operator>{ std::move(operation_), std::forward<Operator>(op) }
+        std::move( source_ ), OperationTree<Operation, Operator>{ std::move(operation_), std::forward<Operator>(op) },
+        path_, openmode_
       };
     }
 
@@ -339,20 +372,24 @@ namespace streams {
     }
 
   private:
-    // source source
+    // source
     std::vector<T> source_{};
 
-    // Operation Tree
+    // Operation Expression Template Tree
     Operation operation_{};
 
+    std::string path_{};
+
+    std::ios::openmode openmode_{std::ios::in|std::ios::out};
+
+    // For merge/concat to infinite stream
     typename std::vector<T>::iterator current_{};
 
     bool once_flag = true;
   };
 
 
-
-} // ! namespace stream
+} // ! namespace streams
 } // ! namespace cranberries
 
 #endif
