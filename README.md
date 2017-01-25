@@ -5,3 +5,6 @@ Cranberries Library [![Build Status](https://travis-ci.org/LoliGothick/Cranberri
 
 - math(数学系)
     - interpolation(補間法：最小２乗法, チェビシェフ多項式近似)
+
+- experimental(実験的実装)
+    - Stream(ストリームAPI)
