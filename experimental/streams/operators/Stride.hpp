@@ -10,7 +10,7 @@ namespace operators {
 
   // Intermidiate Operation
   class Stride
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
     , private cranberries_magic::StreamFilterBase
   {
   public:

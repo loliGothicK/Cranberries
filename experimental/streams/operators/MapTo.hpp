@@ -20,7 +20,7 @@ namespace operators {
     typename To
   >
   class MapTo
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     MapTo( FromStream s ) noexcept
@@ -56,7 +56,7 @@ namespace operators {
     FromStream,
     std::string
   >
-    : cranberries_magic::LazyOpeartionModuleBase
+    : cranberries_magic::LazyOperationModuleBase
   {
   public:
     MapTo( FromStream s ) noexcept

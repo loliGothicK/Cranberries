@@ -49,7 +49,7 @@ namespace operators {
     typename Operator // user defined operation
   >
   class Iinvoker
-    : cranberries_magic::LazyOpeartionModuleBase
+    : cranberries_magic::LazyOperationModuleBase
   {
   public:
     Iinvoker( Operator op ) noexcept

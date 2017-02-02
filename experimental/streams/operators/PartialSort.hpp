@@ -15,7 +15,7 @@ namespace operators {
     typename Pred
   >
   class PartialSort
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     PartialSort( size_t n, Pred pred ) : n_{ n }, pred_{ std::forward<Pred>( pred ) } {}
@@ -44,7 +44,7 @@ namespace operators {
   class PartialSort <
     cranberries_magic::defaulted_t // lookup operator < using ADL.
   >
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     PartialSort( size_t n ) : n_{ n } {};

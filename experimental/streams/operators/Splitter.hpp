@@ -76,7 +76,7 @@ namespace operators {
   Cont<std::string> operator |
   (
     Splitter&& sp,
-    cranberries_magic::ConvertTo<Cont>
+    ConvertTo<Cont>
   )
     noexcept(false)
   {

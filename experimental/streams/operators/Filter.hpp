@@ -13,7 +13,7 @@ namespace operators {
     typename Pred
   >
   class Filter
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
     , private cranberries_magic::StreamFilterBase
   {
   public:

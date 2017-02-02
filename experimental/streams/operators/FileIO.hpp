@@ -4,7 +4,6 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
-#include "../io.hpp"
 #include "../utility.hpp"
 #include "../concept.hpp"
 
@@ -13,7 +12,7 @@ namespace streams {
 namespace operators {
 
   class Fopen 
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     Fopen() = default;
@@ -36,7 +35,7 @@ namespace operators {
   };
   
   class Read
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     Read() = default;
@@ -61,7 +60,7 @@ namespace operators {
   };
 
   class ReadLine
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     ReadLine() = default;
@@ -88,7 +87,7 @@ namespace operators {
 
   template < >
   class ReadByte<cranberries_magic::defaulted_t, cranberries_magic::defaulted_t>
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     ReadByte() = default;
@@ -116,7 +115,7 @@ namespace operators {
     typename Ate
   >
   class ReadByte<Ate,cranberries_magic::defaulted_t>
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     ReadByte(Ate ate ) : ate_{ ate } {}
@@ -149,7 +148,7 @@ namespace operators {
     typename MaxSize
   >
   class ReadByte<cranberries_magic::defaulted_t, MaxSize>
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     ReadByte(MaxSize max_size) : max_size{ max_size } {}
@@ -183,7 +182,7 @@ namespace operators {
     typename MaxSize
   >
   class ReadByte
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::EagerOperationModuleBase
   {
   public:
     ReadByte(Ate ate, MaxSize max_size) : ate_{ ate }, max_size{max_size} {}
@@ -258,7 +257,6 @@ namespace operators {
       for (;iter!=filestream_.end();++iter) {
         ofs << delim_ << *iter;
       }
-      std::cout << std::endl;
       ofs << std::endl;
       return std::forward<FileStream>(filestream_);
     }

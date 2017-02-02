@@ -19,7 +19,7 @@ namespace operators {
     typename Stream
   >
   class Flat
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     Flat( Stream x ) noexcept
@@ -56,7 +56,7 @@ namespace operators {
     typename Stream
   >
   class FlatAll
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     FlatAll( Stream x ) noexcept

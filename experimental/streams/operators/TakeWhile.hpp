@@ -14,7 +14,7 @@ namespace operators {
     typename Pred
   >
   class TakeWhile
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     TakeWhile( Pred pred ) noexcept

@@ -12,7 +12,7 @@ namespace operators {
     typename Pred
   >
   class DropWhile
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
     , private cranberries_magic::StreamFilterBase
   {
   public:

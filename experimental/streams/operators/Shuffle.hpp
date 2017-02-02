@@ -15,7 +15,7 @@ namespace operators {
     typename Engine
   >
   class Shuffle
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     Shuffle( Engine e ) noexcept

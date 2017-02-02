@@ -12,8 +12,9 @@ namespace operators {
     typename UnaryFunc
   >
   class Peek
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
     , private cranberries_magic::StreamOperatorBase
+    , private cranberries_magic::SequencialOperatorBase
   {
   public:
     Peek( UnaryFunc f ) noexcept

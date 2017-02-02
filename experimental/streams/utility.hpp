@@ -6,8 +6,26 @@
 #include <type_traits>
 #include <bitset>
 #include "./integers.hpp"
+#include "./OperationTree.hpp"
 
 namespace cranberries {
+
+  template < bool B, typename IfType = std::nullptr_t >
+  using enabler_t = std::enable_if_t<B, IfType>;
+
+  template < typename T, typename U, typename IfType = std::nullptr_t >
+  using is_same_if_t = std::enable_if_t<std::is_same_v<std::decay_t<T>,std::decay_t<U>>,IfType>;
+
+  template < typename T >
+  struct remove_cvr {
+    using type = std::remove_cv_t<std::remove_reference_t<T>>;
+  };
+
+  template < typename T >
+  using remove_cvr_t = typename remove_cvr<T>::type;
+
+  template < typename ...Dummy >
+  using void_t = void;
 
   template <class C>
   constexpr auto size( const C& c ) -> decltype(c.size())
@@ -21,17 +39,37 @@ namespace cranberries {
     return N;
   }
 
+  template < typename Head, typename ...Tail >
+  struct conj_impl : bool_constant<Head::value && conj_impl<Tail...>::value> {};
 
-  template < typename T >
-  struct remove_cv_ref {
-    using type = std::remove_cv_t<std::remove_reference_t<T>>;
-  };
+  template < typename B >
+  struct conj_impl<B> : bool_constant<B::value> {};
 
-  template < typename T >
-  using remove_cv_ref_t = typename remove_cv_ref<T>::type;
+  template < typename ...B >
+  struct conjunction : conj_impl<B...> {};
 
-  template < typename ...Dummy >
-  using void_t = void;
+  template < typename Head, typename ...Tail >
+  struct disj_impl : bool_constant<Head::value || conj_impl<Tail...>::value> {};
+
+  template < typename B >
+  struct disj_impl<B> : bool_constant<B::value> {};
+
+  template < typename ...B >
+  struct disjunction : disj_impl<B...> {};
+
+  template < typename B >
+  struct negation : bool_constant<!B::value> {};
+
+
+  template < typename ...B >
+  constexpr bool conjunction_v = conjunction<B...>::value;
+
+  template < typename ...B >
+  constexpr bool disjunction_v = disjunction<B...>::value;
+
+  template < typename B >
+  constexpr bool negation_v = negation<B>::value;
+
 
 namespace cranberries_magic
 {
@@ -68,7 +106,7 @@ namespace cranberries_magic {
   template < typename T >
   constexpr bool is_bitset_v = is_bitset<T>::value;
 
-  namespace cranberries_magic {
+namespace cranberries_magic {
 
     template < class, class = void >
     struct enable_std_begin_end : std::false_type
@@ -90,13 +128,12 @@ namespace cranberries_magic {
     > : std::true_type
     {};
 
-  } // ! namespace cranberries_magic
+} // ! namespace cranberries_magic
 
   template < typename T >
   struct is_range
     : bool_constant<
-    cranberries_magic::enable_std_begin_end<T>::value
-    || cranberries_magic::enable_adl_begin_end<T>::value
+      disjunction_v<cranberries_magic::enable_std_begin_end<T>, cranberries_magic::enable_adl_begin_end<T>>
     >
   {};
 
@@ -131,39 +168,6 @@ namespace cranberries_magic {
   template < typename T >
   constexpr bool is_equality_comparable_v = is_equality_comparable<T>::value;
 
-
-
-  template < typename Head, typename ...Tail >
-  struct conj_impl : bool_constant<Head::value && conj_impl<Tail...>::value> {};
-
-  template < typename B >
-  struct conj_impl<B> : bool_constant<B::value> {};
-
-  template < typename ...B >
-  struct conjunction : conj_impl<B...> {};
-
-  template < typename Head, typename ...Tail >
-  struct disj_impl : bool_constant<Head::value || conj_impl<Tail...>::value> {};
-
-  template < typename B >
-  struct disj_impl<B> : bool_constant<B::value> {};
-
-  template < typename ...B >
-  struct disjunction : disj_impl<B...> {};
-
-
-  template < typename B >
-  struct negation : bool_constant<!B::value> {};
-
-
-  template < typename ...B >
-  constexpr bool conjunction_v = conjunction<B...>::value;
-
-  template < typename ...B >
-  constexpr bool disjunction_v = disjunction<B...>::value;
-
-  template < typename B >
-  constexpr bool negation_v = negation<B>::value;
 
   template < class, class = void >
   struct has_value_type : std::false_type
@@ -364,7 +368,7 @@ namespace cranberries_magic {
   template < template<class> class Pred, typename ...Args >
   constexpr bool none_match_if_v = none_match_if<Pred, Args...>::value;
   
-namespace cranberries_magics
+namespace cranberries_magic
 {
     template<class> struct is_ref_wrapper : std::false_type {};
     template<class T> struct is_ref_wrapper<std::reference_wrapper<T>> : std::true_type {};
@@ -386,18 +390,18 @@ namespace cranberries_magics
 } // ! namespace cranberries_magic
 
   template < class D = void, class... Types>
-  constexpr cranberries_magics::return_type<D, Types...> make_array( Types&&... t ) {
+  constexpr cranberries_magic::return_type<D, Types...> make_array( Types&&... t ) {
     return{ std::forward<Types>( t )... };
   }
 
   template <
     typename T,
-    bool A = std::is_array<remove_cv_ref_t<T>>::value,
-    bool B = is_tuple_v<remove_cv_ref_t<T>>
+    bool A = std::is_array<remove_cvr_t<T>>::value,
+    bool B = is_tuple_v<remove_cvr_t<T>>
   >
   struct element_type_of
   {
-    using type = typename remove_cv_ref_t<T>::value_type;
+    using type = typename remove_cvr_t<T>::value_type;
   };
 
   template <
@@ -405,7 +409,7 @@ namespace cranberries_magics
   >
   struct element_type_of<T, true, false>
   {
-    using type = std::remove_extent_t<remove_cv_ref_t<T>>;
+    using type = std::remove_extent_t<remove_cvr_t<T>>;
   };
 
   template <
@@ -415,11 +419,11 @@ namespace cranberries_magics
   {
     static_assert(
       tuple_all_match<
-        std::tuple_element_t<0, remove_cv_ref_t<T>>, remove_cv_ref_t<T>
+        std::tuple_element_t<0, remove_cvr_t<T>>, remove_cvr_t<T>
       >::value,
       "tuple"
     );
-    using type = typename std::tuple_element_t<0, remove_cv_ref_t<T>>;
+    using type = typename std::tuple_element_t<0, remove_cvr_t<T>>;
   };
 
 
@@ -442,21 +446,15 @@ namespace cranberries_magics
   template < typename T >
   using root_element_type_of_t = typename root_element_type_of<T>::type;
 
-  template < class, class = void >
+  template < class, class = std::nullptr_t >
   struct is_iterator : std::false_type {};
 
   template < typename T >
   struct is_iterator<T,
-    std::enable_if_t<
-      std::is_base_of<
-        std::input_iterator_tag,
-        typename std::iterator_traits<T>::iterator_category
-      >::value || 
-      std::is_base_of<
-        std::output_iterator_tag,
-        typename std::iterator_traits<T>::iterator_category
-      >::value
-    >
+    enabler_t<disjunction_v<
+      std::is_base_of<std::input_iterator_tag, typename std::iterator_traits<T>::iterator_category>,
+      std::is_base_of<std::output_iterator_tag, typename std::iterator_traits<T>::iterator_category>
+    >>
   > : std::true_type
   {};
 
@@ -616,7 +614,6 @@ namespace cranberries_magic{
 
 
 
-namespace streams {
 namespace cranberries_magic {
 
   class InfiniteStreamBase {};
@@ -624,15 +621,30 @@ namespace cranberries_magic {
   template < typename T >
   constexpr bool is_infinite_stream_v = std::is_base_of<InfiniteStreamBase, std::decay_t<T>>::value;
 
+  template < typename T >
+  struct is_infinite_stream {
+    static constexpr bool value = is_infinite_stream_v<T>;
+  };
+
   class FiniteStreamBase {};
 
   template < typename T >
   constexpr bool is_finite_stream_v = std::is_base_of<FiniteStreamBase, std::decay_t<T>>::value;
 
   template < typename T >
+  struct is_finite_stream {
+    static constexpr bool value = is_finite_stream_v<T>;
+  };
+
+  template < typename T >
   constexpr bool is_stream_v = is_finite_stream_v<T> || is_infinite_stream_v<T>;
 
-  class LazyOpeartionModuleBase{};
+  template < typename T >
+  struct is_stream {
+    static constexpr bool value = is_stream_v<T>;
+  };
+
+  class LazyOperationModuleBase{};
 
   class EagerOperationModuleBase{};
 
@@ -641,53 +653,123 @@ namespace cranberries_magic {
   class StreamFilterBase{};
 
   template < typename T >
-  constexpr bool is_lazy_v = std::is_base_of<LazyOpeartionModuleBase, T>::value;
+  constexpr bool is_lazy_v = std::is_base_of<LazyOperationModuleBase, T>::value;
+
+  template < typename T >
+  struct is_lazy {
+    static constexpr bool value = is_lazy_v<T>;
+  };
 
   template < typename T >
   constexpr bool is_eager_v = std::is_base_of<EagerOperationModuleBase, T>::value;
 
   template < typename T >
+  struct is_eager {
+    static constexpr bool value = is_eager_v<T>;
+  };
+
+  template < typename T >
   constexpr bool is_stream_operator_v = std::is_base_of<StreamOperatorBase, T>::value;
+
+  template < typename T >
+  struct is_stream_operator {
+    static constexpr bool value = is_stream_operator_v<T>;
+  };
 
   template < typename T >
   constexpr bool is_stream_filter_v = std::is_base_of<StreamFilterBase, T>::value;
 
+  template < typename T >
+  struct is_stream_filter {
+    static constexpr bool value = is_stream_filter_v<T>;
+  };
+
+  class SequencialOperatorBase{};
+
+  class RangeOperatorBase{};
+
+  class FilteringOperatorBase{};
+
+  template < typename T >
+  constexpr bool is_sequencial_operator_v = std::is_base_of<SequencialOperatorBase, std::decay_t<T>>::value;
+
+  template < typename T >
+  struct is_sequencial_operator {
+    static constexpr bool value = is_sequencial_operator_v<T>;
+  };
+
+  template < typename T >
+  constexpr bool is_range_operator_v = std::is_base_of<RangeOperatorBase, std::decay_t<T>>::value;
+
+  template < typename T >
+  struct is_range_operator {
+    static constexpr bool value = is_range_operator_v<T>;
+  };
+
+  template < typename T >
+  constexpr bool is_filtering_operator_v = std::is_base_of<FilteringOperatorBase, std::decay_t<T>>::value;
+
+  template < typename T >
+  struct is_filtering_operator {
+    static constexpr bool value = is_filtering_operator_v<T>;
+  };
+
+  template < class T >
+  struct is_operation_tree_impl : std::false_type
+  {};
+
+  template < class O, class P >
+  struct is_operation_tree_impl<streams::OperationTree<O,P>> : std::true_type
+  {};
+
+  template <
+    typename T
+  >
+  struct is_operation_tree : cranberries_magic::is_operation_tree_impl<std::decay_t<T>> {};
+
+  template < typename T >
+  constexpr bool is_operation_tree_v = is_operation_tree<T>::value;
+
+  class full_connectable {};
+
+  class half_connectable {};
+
+  class not_connectable {};
+
+
+} // ! namespace cranberries_magic
+
   template <
     typename Stream,
-    std::enable_if_t<
-      is_finite_stream_v<std::decay_t<Stream>>,
-      std::nullptr_t
+    enabler_t<
+    cranberries_magic::is_finite_stream_v<Stream>
     > = nullptr
   >
   inline
-  decltype( auto ) begin( Stream&& a ) {
+  decltype(auto) begin(Stream&& a) {
     return a.begin();
   }
 
   template <
     typename Stream,
-    std::enable_if_t<
-      is_finite_stream_v<std::decay_t<Stream>>,
-      std::nullptr_t
+    enabler_t<
+    cranberries_magic::is_finite_stream_v<Stream>
     > = nullptr
   >
   inline
-  decltype( auto ) end( Stream&& a ) {
+  decltype(auto) end(Stream&& a) {
     return a.end();
   }
 
-} // ! namespace cranberries_magic
-} // ! namespace stream
 
   template <
     typename Range,
     typename BinaryOp,
     typename T = element_type_of_t<Range>,
-    std::enable_if_t<
-      is_range_v<Range>
-      && is_callable_v<BinaryOp,T,T>,
-    std::nullptr_t
-    > = nullptr
+    enabler_t<
+      conjunction_v<
+        is_range<Range>, is_callable<BinaryOp,T,T>
+    >> = nullptr
   >
   void adjacent_for_each
   (

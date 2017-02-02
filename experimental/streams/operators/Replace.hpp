@@ -14,7 +14,7 @@ namespace operators {
     typename ElemType
   >
   class Replace
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
     , private cranberries_magic::StreamOperatorBase
   {
   public:
@@ -58,7 +58,7 @@ namespace operators {
     typename New
   >
   class ReplaceIf
-    : private  cranberries_magic::LazyOpeartionModuleBase
+    : private  cranberries_magic::LazyOperationModuleBase
     , private cranberries_magic::StreamOperatorBase
   {
   public:

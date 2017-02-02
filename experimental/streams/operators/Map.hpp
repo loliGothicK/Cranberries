@@ -10,7 +10,8 @@ namespace operators {
 
   template < typename F >
   class TransformProxy
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
+    , private cranberries_magic::SequencialOperatorBase
     , private cranberries_magic::StreamOperatorBase
   {
   public:
@@ -38,7 +39,8 @@ namespace operators {
     typename UnaryFunc
   >
   class Endomorphism
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
+    , private cranberries_magic::SequencialOperatorBase
     , private cranberries_magic::StreamOperatorBase
   {
   public:
@@ -101,7 +103,8 @@ namespace operators {
     typename UnaryFunc
   >
   class Transform
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
+    , private cranberries_magic::SequencialOperatorBase
   {
   public:
     Transform( OldStream old, UnaryFunc f ) noexcept

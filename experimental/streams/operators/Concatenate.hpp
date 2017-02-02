@@ -13,7 +13,7 @@ namespace operators {
     bool B = cranberries_magic::is_finite_stream_v<Branch>
   >
   class Join
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     Join( Branch stream_ ) noexcept
@@ -75,7 +75,7 @@ namespace operators {
     typename Branch
   >
   class Join<Branch,false>
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     Join( Branch stream_ ) noexcept

@@ -21,7 +21,6 @@ noexcept( noexcept( adaptor_fn(std::forward<Args>(args)...) ) )\
 }
 
 namespace cranberries{
-namespace streams{
 namespace cranberries_magic{
 
   template <
@@ -177,7 +176,6 @@ namespace cranberries_magic{
 
 
 } // ! namespace cranberries_magic
-} // ! namespace streams
 } // ! namespace cranberries
 #undef men_fn_def
 #endif

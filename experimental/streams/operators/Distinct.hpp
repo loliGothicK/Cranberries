@@ -16,7 +16,7 @@ namespace operators {
     typename EqualityComparable
   >
   class Distinct
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
     , private cranberries_magic::StreamFilterBase
   {
     static_assert(

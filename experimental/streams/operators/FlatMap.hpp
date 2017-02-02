@@ -14,7 +14,7 @@ namespace operators {
     typename UnaryOp
   >
   class FlatMap
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     FlatMap( UnaryOp op ) noexcept

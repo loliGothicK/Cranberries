@@ -15,7 +15,7 @@ namespace operators {
     typename Pred
   >
   class Sort
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     Sort( Pred pred ) noexcept
@@ -61,7 +61,7 @@ namespace operators {
   class Sort <
     cranberries_magic::defaulted_t // lookup operator < using ADL.
   >
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     Sort() = default;

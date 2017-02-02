@@ -16,7 +16,7 @@ namespace operators {
     typename T
   >
   class Unique
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
     , private cranberries_magic::StreamFilterBase
   {
   public:

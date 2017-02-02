@@ -16,7 +16,7 @@ namespace operators {
     opt option
   >
   class RadixSort
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     RadixSort( G get_key ) noexcept
@@ -70,7 +70,7 @@ namespace operators {
     opt option
   >
   class RadixSort<cranberries_magic::defaulted_t,option>
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     RadixSort( size_t first, size_t last ) noexcept

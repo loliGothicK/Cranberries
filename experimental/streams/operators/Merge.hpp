@@ -17,7 +17,7 @@ namespace operators {
     bool IsInfiniteStream = cranberries_magic::is_infinite_stream_v<std::decay_t<Range>>
   >
   class Merge
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     Merge() = default;
@@ -65,7 +65,7 @@ namespace operators {
   class Merge<
     Range,false,false
   >
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     Merge() = default;

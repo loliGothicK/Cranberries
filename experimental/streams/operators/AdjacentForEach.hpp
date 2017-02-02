@@ -13,7 +13,7 @@ namespace operators {
     typename BinaryFunc
   >
   class AdjacentForEach
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     AdjacentForEach( BinaryFunc f ) noexcept

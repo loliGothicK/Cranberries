@@ -10,7 +10,7 @@ namespace operators {
 
   // Intermidiate Operation
   class Slice
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     Slice( size_t l, size_t u ) noexcept

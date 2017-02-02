@@ -9,7 +9,7 @@ namespace operators {
 
   // Intermidiate Operation
   class Reverse
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     

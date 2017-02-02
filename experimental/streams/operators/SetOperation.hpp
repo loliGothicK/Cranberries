@@ -14,7 +14,7 @@ namespace operators {
     typename Range
   >
   class SetUnion
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     SetUnion( Range range ) noexcept
@@ -53,7 +53,7 @@ namespace operators {
     typename Range
   >
   class SetIntersection
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     SetIntersection( Range range ) noexcept
@@ -92,7 +92,7 @@ namespace operators {
     typename Range
   >
   class SetDiff
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     SetDiff( Range range ) noexcept
@@ -131,7 +131,7 @@ namespace operators {
     typename Range
   >
   class SetSymmetricDiff
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     SetSymmetricDiff( Range range ) noexcept

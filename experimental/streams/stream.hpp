@@ -7,37 +7,11 @@
 #include "exception.hpp"
 #include "operators/Identity.hpp"
 #include "cranberries_magic/enable_men_fn.hpp"
-#include "io.hpp"
+#include "OperationTree.hpp"
+#include "cranberries_magic/connector.hpp"
 
 namespace cranberries {
 namespace streams {
-
-
-  template <
-    typename Op1, // evaluate first
-    typename Op2  // evaluate next
-  >
-  struct OperationTree
-  {
-    template <
-      typename Stream
-    >
-    inline
-    decltype(auto)
-    operator()
-    (
-      Stream&& stream
-    )
-      noexcept(false)
-    {
-      return op2(op1(std::forward<Stream>(stream)));
-    }
-
-    // members
-    Op1 op1;
-    Op2 op2;
-  };
-
 
   //-------------//
   // stream Body //
@@ -133,7 +107,7 @@ namespace streams {
 
     template <
       typename Iterator,
-      std::enable_if_t<is_iterator_v<std::decay_t<Iterator>>,std::nullptr_t> = nullptr
+      enabler_t<is_iterator_v<Iterator>> = nullptr
     >
     stream
     (
@@ -156,7 +130,7 @@ namespace streams {
 
     template <
       typename Range,
-      std::enable_if_t<is_range_v<std::decay_t<Range>>, std::nullptr_t> = nullptr
+      enabler_t<is_range_v<Range>> = nullptr
     >
     stream
     (
@@ -169,7 +143,7 @@ namespace streams {
 
     template <
       typename Iterator,
-      std::enable_if_t<is_iterator_v<std::decay_t<Iterator>>, std::nullptr_t> = nullptr
+      enabler_t<is_iterator_v<Iterator>> = nullptr
     >
     stream
     (
@@ -190,7 +164,7 @@ namespace streams {
 
     template <
       typename Range,
-      std::enable_if_t<is_range_v<std::decay_t<Range>>,std::nullptr_t> = nullptr
+      enabler_t<is_range_v<Range>> = nullptr
     >
     stream
     (
@@ -322,36 +296,34 @@ namespace streams {
 
     void fopen(std::string path) { path_ = path; }
 
+
+
+    template < typename Operator >
+    auto make_pipeline(Operator&& op) { return make_op_tree(std::move(operation_), std::move(op)); }
+
     // Operator Registration
-    template <
-      typename Operator
-    >
-    inline
-    auto
-    lazy(
-      Operator&& op
-    ) {
-      return stream<T, OperationTree<Operation, Operator>>{
-        std::move( source_ ), OperationTree<Operation, Operator>{ std::move(operation_), std::forward<Operator>(op) },
-        path_, openmode_
-      };
+    template < typename Operator >
+    auto lazy(Operator&& op) {
+      return [&](auto&& op_) { return stream<T, decltype(op_)>{
+        std::move(source_), std::move(op_), path_, openmode_
+      }; }(make_pipeline(std::move(op)));
+    }
+
+    template < typename Operator >
+    decltype(auto) eager(Operator&& op) {
+      return op(*this);
     }
 
     // execute lazy evaluation
-    inline
-    decltype(auto)
-    eval
-    ()
-      noexcept(false)
-    {
-      return operation_(*this); // evaluate operation tree
+    decltype(auto) eval() noexcept(false) {
+      return operation_(*this); // evaluate pipeline.
     }
 
     void once() noexcept(false) {
       if ( once_flag ) {
+        once_flag = false;
         eval();
         current_ = source_.begin();
-        once_flag = false;
       }
     }
 

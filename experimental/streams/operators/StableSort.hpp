@@ -16,7 +16,7 @@ namespace operators {
     typename Pred
   >
     class StableSort
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     StableSort( Pred pred ) : pred_{ std::forward<Pred>( pred ) } {}
@@ -44,7 +44,7 @@ namespace operators {
   class StableSort <
     cranberries_magic::defaulted_t // lookup operator < using ADL.
   >
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     StableSort() = default;

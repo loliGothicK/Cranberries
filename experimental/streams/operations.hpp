@@ -5,7 +5,6 @@
 #include <type_traits>
 #include "forward.hpp"
 #include "cranberries_magic/tag.hpp"
-#include "io.hpp"
 
 
 namespace cranberries {
@@ -220,10 +219,8 @@ namespace streams {
 
     template <
       typename Stream,
-      std::enable_if_t<
-      cranberries_magic::is_infinite_stream_v<std::decay_t<Stream>>
-      || is_range_v<Stream>,
-      std::nullptr_t
+      enabler_t<
+        disjunction_v<cranberries_magic::is_infinite_stream<Stream>, is_range<Stream>>
       > = nullptr
     >
     inline
@@ -239,9 +236,8 @@ namespace streams {
 
     template <
       typename Range,
-      std::enable_if_t<
-      cranberries_magic::is_stream_v<std::decay_t<Range>> || is_range_v<Range>,
-      std::nullptr_t
+      enabler_t<
+        disjunction_v<cranberries_magic::is_stream<Range>, is_range<Range>>
       > = nullptr
     >
     inline
@@ -523,13 +519,13 @@ namespace streams {
       typename Func
     >
     inline
-    decltype(auto)
+    operators::Iinvoker<Func>
     invoked(
       Func&& f
     )
       noexcept
     {
-      return operators::Iinvoker<Func>{ std::forward<Func>(f) };
+      return { std::forward<Func>(f) };
     }
   }
 

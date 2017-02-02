@@ -15,7 +15,7 @@ namespace operators {
     typename Pred
   >
     class NthElement
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     NthElement( size_t n, Pred pred ) noexcept
@@ -49,7 +49,7 @@ namespace operators {
   class NthElement <
     cranberries_magic::defaulted_t // lookup operator < using ADL.
   >
-    : private cranberries_magic::LazyOpeartionModuleBase
+    : private cranberries_magic::LazyOperationModuleBase
   {
   public:
     NthElement( size_t n ) noexcept

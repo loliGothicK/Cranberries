@@ -5,7 +5,6 @@
 
 namespace cranberries {
 namespace streams {
-namespace cranberries_magic {
 
     //----------------------------//
     // stream to Range Converters //
@@ -65,13 +64,11 @@ namespace cranberries_magic {
 
 
 
-} // ! namespace cranberries_magic
-
 inline namespace eager {
-  constexpr cranberries_magic::ConvertAny convert{};
+  constexpr ConvertAny convert{};
 
   template < template<class, class> class Target >
-  constexpr auto convert_to = cranberries_magic::ConvertTo<Target>{};
+  constexpr auto convert_to = ConvertTo<Target>{};
 }
 
 } // ! namespace stream

@@ -3,7 +3,6 @@
 #include <utility>
 #include "../cranberries_magic/tag.hpp"
 #include "../utility.hpp"
-#include "../io.hpp"
 
 namespace cranberries {
 namespace streams {
