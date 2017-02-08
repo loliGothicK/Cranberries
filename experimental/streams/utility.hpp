@@ -14,7 +14,7 @@ namespace cranberries {
   using enabler_t = std::enable_if_t<Pred, IfType>;
 
   template < typename T, typename U, typename IfType = std::nullptr_t >
-  using is_same_if_t = std::enable_if_t<std::is_same_v<std::decay_t<T>,std::decay_t<U>>,IfType>;
+  using is_same_if_t = std::enable_if_t<std::is_same<std::decay_t<T>,std::decay_t<U>>::value,IfType>;
 
   template < typename T >
   struct remove_cvr {

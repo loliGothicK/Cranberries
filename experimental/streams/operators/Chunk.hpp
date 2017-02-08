@@ -14,7 +14,7 @@ namespace operators {
 
   template <
     std::size_t N,
-    typename Stream
+    typename Old
   >
   class Chunk
     : private cranberries_magic::LazyOperationModuleBase
@@ -23,7 +23,7 @@ namespace operators {
     Chunk() = default;
     Chunk(Chunk const&) = default;
     Chunk(Chunk&&) = default;
-    Chunk(Stream stream) : old_{std::forward<Stream>(stream)} {}
+    Chunk(Old stream) : old_{std::forward<Old>(stream)} {}
     ~Chunk() = default;
 
     template <
@@ -47,7 +47,7 @@ namespace operators {
     }
 
   private:
-    Stream old_;
+    Old old_;
   };
 
 } // ! namespace operators

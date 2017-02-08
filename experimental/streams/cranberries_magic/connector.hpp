@@ -77,7 +77,7 @@ namespace streams {
   constexpr
   OperationTree<OP1, OP2>
   make_op_tree(OP1&& op1, OP2&& op2) {
-    return { std::move(op2), std::move(op2) };
+    return { std::move(op1), std::move(op2) };
   }
 
   template <
