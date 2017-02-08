@@ -45,7 +45,7 @@ namespace streams {
   >
   constexpr
   auto
-  make_op_tree(operators::Identity, OP2&& op2){
+  make_op_tree(operators::Identity&&, OP2&& op2){
     return std::move(op2);
   }
 
@@ -59,7 +59,7 @@ namespace streams {
     >> = nullptr
   >
   constexpr
-  Connect<remove_cvr_t<OP1>,remove_cvr_t<OP2>>
+  Connect<OP1,OP2>
   make_op_tree(OP1&& op1, OP2&& op2) {
     return { std::move(op1), std::move(op2) };
   }
@@ -75,12 +75,10 @@ namespace streams {
     >> = nullptr
   >
   constexpr
-  OperationTree<remove_cvr_t<OP1>, remove_cvr_t<OP2>>
+  OperationTree<OP1, OP2>
   make_op_tree(OP1&& op1, OP2&& op2) {
     return { std::move(op2), std::move(op2) };
   }
-
-
 
   template <
 	  typename OP1, typename OP2,
@@ -90,7 +88,7 @@ namespace streams {
     >> = nullptr
   >
   constexpr
-  OperationTree<typename OP1::first_t, Connect<typename OP1::second_t, remove_cvr_t<OP2>>>
+  OperationTree<typename OP1::first_t, Connect<typename OP1::second_t, OP2>>
   make_op_tree(OP1&& op1, OP2&& op2) {
     return { op1.first(), { op1.second(), std::move(op2) } };
   }
@@ -102,12 +100,10 @@ namespace streams {
       negation<cranberries_magic::is_sequencial_operator<typename OP1::seoncd_t>>
     >> = nullptr
   >
-  OperationTree<remove_cvr_t<OP1>,remove_cvr_t<OP2>>
+  OperationTree<OP1,OP2>
   make_op_tree(OP1&& op1, OP2&& op2) {
     return { std::move(op1), std::move(op2) };
   }
-
-
 
 } // ! namespace stream
 } // ! namespace cranberries

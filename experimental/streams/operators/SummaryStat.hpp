@@ -24,6 +24,8 @@ namespace operators {
   class SummaryStat
   {
   public:
+    using value_type = T;
+
     SummaryStat( std::vector<T>&& v ) : data_{ std::move( v ) } { calc(); }
 
 

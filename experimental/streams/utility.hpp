@@ -10,8 +10,8 @@
 
 namespace cranberries {
 
-  template < bool B, typename IfType = std::nullptr_t >
-  using enabler_t = std::enable_if_t<B, IfType>;
+  template < bool Pred, typename IfType = std::nullptr_t >
+  using enabler_t = std::enable_if_t<Pred, IfType>;
 
   template < typename T, typename U, typename IfType = std::nullptr_t >
   using is_same_if_t = std::enable_if_t<std::is_same_v<std::decay_t<T>,std::decay_t<U>>,IfType>;
@@ -579,7 +579,7 @@ namespace cranberries_magic {
   template <class F, class Tuple, std::size_t... I>
   constexpr decltype(auto) apply_impl( F&& f, Tuple&& t, std::index_sequence<I...> )
   {
-    return invoke(std::forward<F>(f), std::get<I>(std::forward<Tuple>(t))...);
+    return cranberries::invoke(std::forward<F>(f), std::get<I>(std::forward<Tuple>(t))...);
     // Note: std::invoke is a C++17 feature
   }
 
@@ -729,13 +729,6 @@ namespace cranberries_magic {
 
   template < typename T >
   constexpr bool is_operation_tree_v = is_operation_tree<T>::value;
-
-  class full_connectable {};
-
-  class half_connectable {};
-
-  class not_connectable {};
-
 
 } // ! namespace cranberries_magic
 

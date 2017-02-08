@@ -220,7 +220,7 @@ namespace streams {
 
     inline decltype(auto) crend() const { return source_.crend(); }
 
-    inline decltype(auto) size() { return source_.size(); }
+    size_t size() { return source_.size(); }
 
     inline decltype(auto) max_size() { return source_.max_size(); }
 
@@ -276,6 +276,9 @@ namespace streams {
     template < typename U >
     inline void push_back(U&& v) { source_.push_back(v); }
 
+    template < typename ...U >
+    decltype(auto) emplace_back(U&& ...v) { return source_.emplace_back(std::forward<U>(v)...); }
+
     inline void pop_back() { source_.pop_back(); }
 
     template < typename U >
@@ -296,18 +299,28 @@ namespace streams {
 
     void fopen(std::string path) { path_ = path; }
 
-
-
     template < typename Operator >
     auto make_pipeline(Operator&& op) { return make_op_tree(std::move(operation_), std::move(op)); }
 
+
     // Operator Registration
-    template < typename Operator >
-    auto lazy(Operator&& op) {
-      return [&](auto&& op_) { return stream<T, decltype(op_)>{
-        std::move(source_), std::move(op_), path_, openmode_
-      }; }(make_pipeline(std::move(op)));
+    template <
+      typename Operator
+    >
+    auto lazy( Operator&& op ) {
+      return stream<T, OperationTree<Operation, Operator>>{
+        std::move(source_), OperationTree<Operation, Operator>{ std::move(operation_), std::forward<Operator>(op) },
+          path_, openmode_
+      };
     }
+
+    // Operator Registration
+    //template < typename Operator >
+    //auto lazy(Operator&& op) {
+    //  return [&](auto&& op_) { return stream<T, decltype(op_)>{
+    //    std::move(source_), std::move(op_), path_, openmode_
+    //  }; }(make_pipeline(std::move(op)));
+    //}
 
     template < typename Operator >
     decltype(auto) eager(Operator&& op) {

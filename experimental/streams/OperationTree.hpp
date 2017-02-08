@@ -15,6 +15,11 @@ namespace streams {
     using first_t = Op1;
     using second_t = Op2;
 
+    OperationTree() = default;
+    OperationTree(OperationTree const&) = default;
+    OperationTree(OperationTree&&) = default;
+    OperationTree(Op1 op1, Op2 op2) : op1{ std::forward<Op1>(op1) }, op2{std::forward<Op2>(op2)} {}
+
     auto first() { return op1; }
     auto second() { return op2; }
 

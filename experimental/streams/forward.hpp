@@ -11,9 +11,6 @@ namespace streams {
   template < typename T, typename Operation = operators::Identity >
   class stream;
 
-  template < typename T, typename Operation = operators::Identity >
-  class file_stream;
-
 namespace operators {
 
 
@@ -209,6 +206,15 @@ namespace operators {
   class Write;
 
   class WriteLine;
+
+  template < size_t N > struct ChunkProxy;
+
+  template < std::size_t N, typename Stream >
+  class Chunk;
+
+  template < size_t N, typename Func >
+  class ChunkForEach;
+
 
 } // ! namesapce operators
 } // ! namespace stream

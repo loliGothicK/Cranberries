@@ -148,6 +148,27 @@ namespace streams{
     return stream_.lazy(operators::Endomorphism<UnaryOp>{std::move(proxy.f)});
   }
 
+
+  template <
+    typename Stream,
+    std::size_t N,
+    typename E = element_type_of_t<Stream>,
+    enabler_t<
+      cranberries_magic::is_finite_stream_v<Stream>
+    > = nullptr
+  >
+  inline
+  stream<std::array<E, N>, operators::Chunk<N, Stream>>
+  operator >>
+  (
+    Stream&& stream_,
+    operators::ChunkProxy<N>&&
+  )
+    noexcept
+  {
+    return { {}, { std::move(stream_) } };
+  }
+
   template <
     typename Stream,
     typename UnaryOp,

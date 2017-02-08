@@ -14,6 +14,13 @@ namespace streams {
   template < typename T >
   struct Ranged
   {
+    Ranged() = default;
+    Ranged(Ranged const&) = default;
+    Ranged(Ranged&&) = default;
+    Ranged(T a, T b, T c)
+      : first{a}, last{b}, step{c}
+    {}
+
     template <
       typename Range
     >
@@ -45,6 +52,7 @@ namespace streams {
   {
   public:
     using element_type = T;
+    using value_type = T;
 
     GenerateStream( Supplier gen ) : current_( gen() ), gen_{ std::forward<Supplier>( gen ) } {}
 
@@ -66,6 +74,7 @@ namespace streams {
   {
   public:
     using element_type = InitType;
+    using value_type = InitType;
 
     IterateStream( InitType init, Func func ) noexcept : current_{ init }, next_{ std::forward<Func>(func) } {}
     IterateStream( InitType init ) noexcept : current_{ init }, next_{} {}
@@ -91,6 +100,7 @@ namespace streams {
   {
   public:
     using element_type = Iterable;
+    using value_type = Iterable;
 
     CountingStream() = default;
 
@@ -112,8 +122,8 @@ namespace streams {
     , public cranberries_magic::enable_men_fn_inf<CyclicStream<T>>
   {
   public:
-
     using element_type = T;
+    using value_type = T;
 
     template <
       typename Range,
@@ -155,6 +165,7 @@ namespace streams {
   {
   public:
     using element_type = typename std::decay_t<Stream>::element_type;
+    using value_type = typename std::decay_t<Stream>::element_type;
 
     StreamOperator( Stream x, Operator op ) noexcept
       : current_{ op[ x.get() ] }
@@ -184,6 +195,7 @@ namespace streams {
   {
   public:
     using element_type = typename std::decay_t<Stream>::element_type;
+    using value_type = typename std::decay_t<Stream>::element_type;
 
     StreamFilter( Stream x, Filter pred ) noexcept : stream_{ std::forward<Stream>(x) }, pred_{ std::forward<Filter>(pred) } {}
 
@@ -212,6 +224,7 @@ namespace streams {
   {
   public:
     using element_type =  element_type_of_t<typename std::decay_t<Stream>::element_type>;
+    using value_type = element_type_of_t<typename std::decay_t<Stream>::element_type>;
 
     StreamFlatter( Stream x ) noexcept
       : stream_{ std::forward<Stream>( x ) }
@@ -252,6 +265,7 @@ namespace streams {
   {
   public:
     using element_type = root_element_type_of_t<typename std::decay_t<Stream>::element_type>;
+    using value_type = root_element_type_of_t<typename std::decay_t<Stream>::element_type>;
 
     StreamAllFlatter( Stream x ) noexcept
       : stream_{ std::forward<Stream>( x ) }
@@ -296,6 +310,7 @@ namespace streams {
   {
   public:
     using element_type = typename std::decay_t<Stream>::element_type;
+    using value_type = typename std::decay_t<Stream>::element_type;
 
     StreamFlatTransformer(Stream x, Operator op) noexcept
       : stream_{ std::forward<Stream>(x) }
@@ -391,6 +406,7 @@ namespace streams {
   {
     static_assert(!(IsFinite1&&IsFinite2),"internal critical error!");
     using element_type = typename std::decay_t<Stream1>::element_type;
+    using value_type = typename std::decay_t<Stream1>::element_type;
 
     StreamMerger( Stream1 x, Stream2 y ) noexcept
       : current_{ x.get() <= y.get() ? x.get() : y.get() }
@@ -435,6 +451,7 @@ namespace streams {
     , public cranberries_magic::enable_men_fn_inf<StreamMerger<Stream1,Stream2,true,false>>
   {
     using element_type = typename std::decay_t<Stream1>::element_type;
+    using value_type = typename std::decay_t<Stream1>::element_type;
 
     StreamMerger( Stream1 x, Stream2 y ) noexcept
       : current_{ x.current() <= y.get() ? x.current() : y.get() }
@@ -483,6 +500,7 @@ namespace streams {
     , public cranberries_magic::enable_men_fn_inf<StreamMerger<Stream1,Stream2,false,true>>
   {
     using element_type = decltype(std::declval<Stream1>().get());
+    using value_type = decltype(std::declval<Stream1>().get());
 
     StreamMerger( Stream1 x, Stream2 y ) noexcept
       : current_{ x.get() <= y.current() ? x.get() : y.current() }
@@ -533,6 +551,7 @@ namespace streams {
     );
   public:
     using element_type = typename std::decay_t<Stream1>::element_type;
+    using value_type = typename std::decay_t<Stream1>::element_type;
 
     StreamConcatenator
     (

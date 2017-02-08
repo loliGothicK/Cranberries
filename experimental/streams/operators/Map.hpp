@@ -104,7 +104,6 @@ namespace operators {
   >
   class Transform
     : private cranberries_magic::LazyOperationModuleBase
-    , private cranberries_magic::SequencialOperatorBase
   {
   public:
     Transform( OldStream old, UnaryFunc f ) noexcept

@@ -41,5 +41,7 @@
 #include "./operators/SummaryStat.hpp"
 #include "./operators/RadixSort.hpp"
 #include "./operators/FileIO.hpp"
+#include "./operators/Chunk.hpp"
+#include "./operators/ChunkForEach.hpp"
 
 #endif

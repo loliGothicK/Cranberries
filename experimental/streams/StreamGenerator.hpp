@@ -11,7 +11,6 @@
 #include "cranberries_magic/tag.hpp"
 #include "InfiniteStream.hpp"
 #include "operators/Splitter.hpp"
-#include "operators/Identity.hpp"
 #include "io.hpp"
 
 namespace cranberries {

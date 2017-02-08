@@ -16,6 +16,7 @@ namespace operators {
   class Replace
     : private cranberries_magic::LazyOperationModuleBase
     , private cranberries_magic::StreamOperatorBase
+    , private cranberries_magic::SequencialOperatorBase
   {
   public:
     Replace( ElemType new_, ElemType old_ ) noexcept
@@ -60,6 +61,7 @@ namespace operators {
   class ReplaceIf
     : private  cranberries_magic::LazyOperationModuleBase
     , private cranberries_magic::StreamOperatorBase
+    , private cranberries_magic::SequencialOperatorBase
   {
   public:
     ReplaceIf( UnaryOp op, New new_ ) noexcept

@@ -19,36 +19,8 @@ namespace streams {
 
   inline namespace lazy {
 
-    inline operators::Fopen fopen(std::string path) { return { path }; }
 
-    inline operators::ReadLine read_line() { return{}; }
-
-    inline
-    operators::ReadByte<cranberries_magic::defaulted_t, cranberries_magic::defaulted_t>
-    read_byte() { return {}; }
-
-    template <
-      typename MaxSize
-    >
-    inline
-    operators::ReadByte<cranberries_magic::defaulted_t, MaxSize>
-    read_byte(MaxSize max_size) { return {max_size}; }
-
-    template <
-      typename Ate
-    >
-    inline
-    operators::ReadByte<Ate,cranberries_magic::defaulted_t>
-    read_n_byte(Ate ate) { return { ate }; }
-
-    template <
-      typename Ate,
-      typename MaxSize
-    >
-    inline
-    operators::ReadByte<Ate, MaxSize>
-    read_n_byte(Ate ate, MaxSize max_size) { return { ate, max_size }; }
-
+    template < std::size_t N > operators::ChunkProxy<N> chunk() { return {}; }
 
     template <
       typename Pred
@@ -297,6 +269,36 @@ namespace streams {
 
     inline operators::Run run() noexcept { return{}; }
 
+    inline operators::Fopen fopen(std::string path) { return { path }; }
+
+    inline operators::ReadLine read_line() { return{}; }
+
+    inline
+    operators::ReadByte<cranberries_magic::defaulted_t, cranberries_magic::defaulted_t>
+    read_byte() { return {}; }
+
+    template <
+      typename MaxSize
+    >
+    inline
+    operators::ReadByte<cranberries_magic::defaulted_t, MaxSize>
+    read_byte(MaxSize max_size) { return { max_size }; }
+
+    template <
+      typename Ate
+    >
+    inline
+    operators::ReadByte<Ate, cranberries_magic::defaulted_t>
+    read_n_byte(Ate ate) { return { ate }; }
+
+    template <
+      typename Ate,
+      typename MaxSize
+    >
+    inline
+    operators::ReadByte<Ate, MaxSize>
+    read_n_byte(Ate ate, MaxSize max_size) { return { ate, max_size }; }
+
     inline operators::Write write() noexcept { return {}; }
 
     inline operators::WriteLine write_line() noexcept { return{}; }
@@ -508,6 +510,22 @@ namespace streams {
       return{ std::forward<UnaryFunc>(func) };
     }
 
+    template <
+      size_t N,
+      typename Func
+    >
+    inline
+    operators::ChunkForEach<N,Func>
+    chunk_for_each
+    (
+      Func&& func
+    )
+      noexcept
+    {
+      return{ std::forward<Func>(func) };
+    }
+
+
   }
 
   //----------------------//
@@ -515,6 +533,7 @@ namespace streams {
   //----------------------//
 
   inline namespace lazy {
+
     template <
       typename Func
     >
