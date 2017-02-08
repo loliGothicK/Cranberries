@@ -42,13 +42,6 @@ try{
 
   auto v2 = make_stream::range(1, 4) >> eager::convert_to<std::list>;
 
-  make_stream::of({ 1, 1, 1, 1, 1 })
-    >> transformed_with_index(
-      i, [&](auto&& arg) {return i + arg; }
-    )
-    >> eager::printfln_to("%d")
-    ;
-
   make_stream::of({ 9,8,7,6,5,4,3,2,1,-1,-1,-2,-1 })
     >> lazy::sorted(1, 3)
     >> eager::println_to()
