@@ -162,8 +162,13 @@ namespace cranberries
     typename difference_type = typename std::iterator_traits<std::decay_t<RAI>>::difference_type,
     class G,
     typename key_type = std::result_of_t<G( value_type )>,
-    int BITS = sizeof( key_type ) * 8,
-    int UNIT = (BITS > 32 ? 8 : BITS >> 2),
+    int BITS = sizeof( key_type ) * 
+#ifdef _MSC_VER
+    8,
+#else // for GCC/Clang
+    4,
+#endif
+  int UNIT = (BITS > 32 ? 8 : BITS >> 2),
     std::enable_if_t<
       is_bitset_v<key_type>, std::nullptr_t // key_type must be bitset
     > = nullptr
@@ -219,7 +224,12 @@ namespace cranberries
     typename difference_type = typename std::iterator_traits<std::decay_t<RAI>>::difference_type,
     class G,
     typename key_type = std::result_of_t<G( value_type )>,
-    int BITS = sizeof( key_type ) * 8,
+    int BITS = sizeof( key_type ) *
+#ifdef _MSC_VER
+    8,
+#else // for GCC/Clang
+    4,
+#endif
     int UNIT = ( BITS > 32 ? 8 : BITS >> 2 ),
     std::enable_if_t<
       is_bitset_v<key_type>, std::nullptr_t
