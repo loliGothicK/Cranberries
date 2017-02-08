@@ -324,12 +324,8 @@ try{
     >> eager::println_to()
     ;
 
-#ifdef _MSC_VER
-  getchar();
-#endif
 }
 catch (cranberries::runtime_error const& e) {
   cout << e.what() << endl;
-  getchar();
   return 0;
 }
