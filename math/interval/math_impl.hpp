@@ -2,7 +2,8 @@
 #define MATH_IMPL_HPP
 #include <cfenv>
 #include <type_traits>
-#include "set_round.hpp"
+#include "rounding_control.hpp"
+
 
 namespace cranberries
 {
@@ -27,21 +28,49 @@ namespace cranberries
     }
 
     template < typename T >
-    inline T pow_up( T x, size_t n ) noexcept
+    inline T pow_up_large( T x, size_t n ) noexcept
     {
       if ( n == 0 ) { return 1; }
       else if ( n == 1 ) { return x; }
       UPWARD_POLICY;
-      return n % 2 ? x*sq_up( pow_up( x, ( n - 1 ) / 2 ) ) : sq_up( pow_up( x, n / 2 ) );
+      return n % 2 ? x*sq_up( pow_up_large( x, ( n - 1 ) / 2 ) ) : sq_up( pow_up_large( x, n / 2 ) );
     }
 
     template < typename T >
-    inline T pow_down( T x, size_t n ) noexcept
+    inline T pow_down_laege( T x, size_t n ) noexcept
     {
       if ( n == 0 ) { return 1; }
       else if ( n == 1 ) { return x; }
       DOWNWARD_POLICY;
-      return n % 2 ? x*sq_down( pow_down( x, ( n - 1 ) / 2 ) ) : sq_down( pow_down( x, n / 2 ) );
+      return n % 2 ? x*sq_down( pow_down_laege( x, ( n - 1 ) / 2 ) ) : sq_down( pow_down_laege( x, n / 2 ) );
+    }
+    template < typename T >
+    inline T pow_up_small( T x, size_t n ) noexcept
+    {
+      auto res = T( 1 );
+      UPWARD_POLICY;
+      for ( ; n>0; --n )
+        res *= x;
+      return res;
+    }
+    template < typename T >
+    inline T pow_down_small( T x, size_t n ) noexcept
+    {
+      auto res = T( 1 );
+      DOWNWARD_POLICY;
+      for ( ; n>0; --n )
+        res *= x;
+      return res;
+    }
+
+    template < typename T >
+    inline std::remove_reference_t<T> pow_up( T&& x, std::size_t n ) noexcept {
+      return  n > 25 ? pow_up_large( std::forward<T>( x ), n ) : pow_up_large( std::forward<T>( x ), n );
+    }
+
+    template < typename T >
+    inline std::remove_reference_t<T> pow_down( T&& x, std::size_t n ) noexcept {
+      return  n > 25 ? pow_down_small( std::forward<T>( x ), n ) : pow_down_small( std::forward<T>( x ), n );
     }
 
     template <typename T>
