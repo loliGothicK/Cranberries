@@ -4,9 +4,9 @@ TARGET 	= \
 stream_easy_test.out\
 dual_number_easy_test.out
 
-SRCS 	= .\
-/stream_easy_test.cpp\
-/dual_number_easy_test.cpp
+SRCS 	= \
+./stream_easy_test.cpp\
+./dual_number_easy_test.cpp
 
 # 基本コマンド
 RM 		:= rm
