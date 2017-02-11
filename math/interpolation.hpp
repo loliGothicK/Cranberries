@@ -1,5 +1,5 @@
-#ifndef INTERPOLATION_HPP
-#define INTERPOLATION_HPP
+#ifndef CRANBERRIES_MATH_INTERPOLATION_HPP
+#define CRANBERRIES_MATH_INTERPOLATION_HPP
 #include <iostream>
 #include <cmath>
 #include <array>

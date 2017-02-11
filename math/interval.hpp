@@ -44,4 +44,7 @@
 #include "./interval/expression.hpp"
 #include "./interval/version.hpp"
 
+
+#undef ACCURACY_ASSURANCE
+#undef ACCURACY_ASSURANCE_WITH_OVERFLOW_CHECK
 #endif

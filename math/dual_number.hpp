@@ -1,5 +1,5 @@
-﻿#ifndef DUAL_NUMBER_HPP
-#define DUAL_NUMBER_HPP
+﻿#ifndef CRANBERRIES_MATH_DUAL_NUMBER_HPP
+#define CRANBERRIES_MATH_DUAL_NUMBER_HPP
 
 #include <iostream>
 #include <cmath>
