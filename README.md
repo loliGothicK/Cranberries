@@ -6,9 +6,9 @@ Cranberries Library [![Build Status](https://travis-ci.org/LoliGothick/Cranberri
 
 - time_elapsed.hpp(実行時間計測用)
 
-- interpolation(補間法：最小２乗法, チェビシェフ多項式近似)
+- interpolation.hpp(補間法：最小２乗法, チェビシェフ多項式近似)
 
-- dual_number(二重数)
+- dual_number.hpp(二重数)
 
 - experimental(実験的実装)
- - Stream(ストリームAPI)
+ - stream.hpp(ストリームAPI)
