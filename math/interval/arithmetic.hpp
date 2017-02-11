@@ -60,8 +60,8 @@ namespace interval_lib
   template < typename T >
   inline interval<T> interval<T>::inverse() const
   {
-    CRANBERRIES_OVERFLOW_ERROR_THROW_IF( pImpl->lower() <= 0.0 && 0.0 <= pImpl->upper() );
-    return ACCURACY_ASSURANCE( 1.0 / pImpl->upper(), 1.0 / pImpl->lower() );
+    return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( pImpl->lower() <= 0.0 && 0.0 <= pImpl->upper() )
+      : ACCURACY_ASSURANCE( 1.0 / pImpl->upper(), 1.0 / pImpl->lower() );
   }
 
 
