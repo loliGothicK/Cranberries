@@ -4,7 +4,7 @@
 #include <utility>
 #include <tuple>
 #include <iterator>
-#include "exception.hpp"
+#include "../../exception.hpp"
 #include "interval.hpp"
 
 namespace cranberries {

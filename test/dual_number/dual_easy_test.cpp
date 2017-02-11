@@ -1,6 +1,6 @@
 #include <iostream>
-#include "../math/dual_number.hpp"
-#include "../math/interval.hpp"
+#include "../cranberries/dual_number.hpp"
+#include "../cranberries/interval.hpp"
 
 int main()
 try

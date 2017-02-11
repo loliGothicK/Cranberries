@@ -27,7 +27,7 @@
 
 #include "./interval/detail/detail.hpp"
 #include "./interval/rounding_control.hpp"
-#include "./interval/exception.hpp"
+#include "../exception.hpp"
 #include "./interval/math_impl.hpp"
 #include "./interval/interval.hpp"
 #include "./interval/relational.hpp"
