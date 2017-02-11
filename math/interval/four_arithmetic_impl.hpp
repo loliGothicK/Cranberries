@@ -66,8 +66,8 @@ namespace interval_lib
     template < typename L, typename R, typename T = std::common_type_t<L, R> >
     inline interval<T> divide( interval<L> const& x, interval<R> const& y )
     {
-      return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( y.lower() <= constants::zero<R> && y.upper() >= constants::zero<R> )
-        : normal_accuracy::multiply( x, ACCURACY_ASSURANCE_WITH_OVERFLOW_CHECK( constants::one<R> / y.upper(), constants::one<R> / y.lower() ) );
+      CRANBERRIES_OVERFLOW_ERROR_THROW_IF( y.lower() <= constants::zero<R> && y.upper() >= constants::zero<R> );
+      return normal_accuracy::multiply( x, ACCURACY_ASSURANCE_WITH_OVERFLOW_CHECK( constants::one<R> / y.upper(), constants::one<R> / y.lower() ) );
     }
     template < typename T, typename R >
     inline interval<T>& add_assign( interval<T>& x, interval<R> const& y )
@@ -157,16 +157,16 @@ namespace interval_lib
     template < typename T >
     inline interval<T> divide( interval<T> const& x, interval<T> const& y )
     {
-      return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( y.lower() <= constants::zero<T> && constants::zero<T> <= y.upper() )
-        : ( &x == &y )
+      CRANBERRIES_OVERFLOW_ERROR_THROW_IF( y.lower() <= constants::zero<T> && constants::zero<T> <= y.upper() );
+      return ( &x == &y )
         ? interval<T>{ constants::one<T>, constants::one<T> }
-      : normal_accuracy::divide( x, y );
+        : normal_accuracy::divide( x, y );
     }
     template < typename L, typename R, typename T = std::common_type_t<L, R> >
     inline interval<T> divide( interval<L> const& x, interval<R> const& y )
     {
-      return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( y.lower() <= constants::zero<R> && constants::zero<R> <= y.upper() )
-        : normal_accuracy::multiply( x, ACCURACY_ASSURANCE_WITH_OVERFLOW_CHECK( constants::one<R> / y.upper(), constants::one<R> / y.lower() ) );
+      CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( y.lower() <= constants::zero<R> && constants::zero<R> <= y.upper() );
+      return normal_accuracy::multiply( x, ACCURACY_ASSURANCE_WITH_OVERFLOW_CHECK( constants::one<R> / y.upper(), constants::one<R> / y.lower() ) );
     }
 
     template < typename L, typename R >
@@ -266,8 +266,8 @@ namespace interval_lib
     template < typename T >
     inline interval<T> divide( interval<T> const& x, typename interval<T>::value_type const& y )
     {
-      return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( y == constants::zero<T> )
-        : ( y < constants::zero<T> )
+      CRANBERRIES_OVERFLOW_ERROR_THROW_IF( y == constants::zero<T> );
+      return ( y < constants::zero<T> )
         ? ACCURACY_ASSURANCE( x.upper() / y, x.lower() / y )
         : ACCURACY_ASSURANCE( x.lower() / y, x.upper() / y );
     }
@@ -275,8 +275,8 @@ namespace interval_lib
     template < typename T >
     inline interval<T> divide( typename interval<T>::value_type const& x, interval<T> const& y )
     {
-      return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( y.lower() < constants::zero<T> && constants::zero<T> <= y.upper() )
-        : ( y.lower() > constants::zero<T> )
+      CRANBERRIES_OVERFLOW_ERROR_THROW_IF( y.lower() < constants::zero<T> && constants::zero<T> <= y.upper() );
+      return ( y.lower() > constants::zero<T> )
         ? ACCURACY_ASSURANCE( x / y.upper(), x / y.lower() )
         : ACCURACY_ASSURANCE( x / y.lower(), x / y.upper() );
     }
@@ -303,8 +303,8 @@ namespace interval_lib
     template < typename T >
     inline interval<T>& divide_assign( interval<T>& x, typename interval<T>::value_type const& y )
     {
-      return x = CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( y == constants::zero<T> )
-        : ( y < constants::zero<T> )
+      CRANBERRIES_OVERFLOW_ERROR_THROW_IF( y == constants::zero<T> )
+      return x = ( y < constants::zero<T> )
         ? ACCURACY_ASSURANCE( x.upper() / y, x.lower() / y )
         : ACCURACY_ASSURANCE( x.lower() / y, x.upper() / y );
     }

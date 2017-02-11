@@ -106,10 +106,10 @@ namespace interval_lib
     auto&& a = x.lower();
     auto&& b = x.upper();
 
-    return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( b - a >= constants::pi<T> )
-      : CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( static_cast<int>( b * 2 / constants::pi<T> ) - static_cast<int>( a * 2 / constants::pi<T> ) != 0 )
-      : CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( detail::is_overflow( sin_down( a ) / cos_up( a ), sin_up( b ) / cos_down( b ) ) )
-      : ACCURACY_ASSURANCE( sin_down( a ) / cos_up( a ), sin_up( b ) / cos_down( b ) );
+    CRANBERRIES_OVERFLOW_ERROR_THROW_IF( b - a >= constants::pi<T> );
+    CRANBERRIES_OVERFLOW_ERROR_THROW_IF( static_cast<int>( b * 2 / constants::pi<T> ) - static_cast<int>( a * 2 / constants::pi<T> ) != 0 );
+    CRANBERRIES_OVERFLOW_ERROR_THROW_IF( detail::is_overflow( sin_down( a ) / cos_up( a ), sin_up( b ) / cos_down( b ) ) );
+    return ACCURACY_ASSURANCE( sin_down( a ) / cos_up( a ), sin_up( b ) / cos_down( b ) );
   }
 
   template < typename T >
@@ -137,8 +137,8 @@ namespace interval_lib
   inline interval<T> acos( interval<T> const& x )
   {
     using std::acos;
-    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < -constants::one<T> || constants::one<T> < x.upper() )
-      : ACCURACY_ASSURANCE( acos( x.lower() ), acos( x.upper() ) );
+    CRANBERRIES_DOMAIN_ERROR_THROW_IF( x.lower() < -constants::one<T> || constants::one<T> < x.upper() );
+    return ACCURACY_ASSURANCE( acos( x.lower() ), acos( x.upper() ) );
   }
 
   /*  interval arc sine  */
@@ -147,8 +147,8 @@ namespace interval_lib
   inline interval<T> asin( interval<T> const& x )
   {
     using std::asin;
-    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < -constants::one<T> || constants::one<T> < x.upper() )
-      : ACCURACY_ASSURANCE( asin( x.lower() ), asin( x.upper() ) );
+    CRANBERRIES_DOMAIN_ERROR_THROW_IF( x.lower() < -constants::one<T> || constants::one<T> < x.upper() );
+    return ACCURACY_ASSURANCE( asin( x.lower() ), asin( x.upper() ) );
   }
 
   /*  interval arc tangent  */
@@ -164,16 +164,16 @@ namespace interval_lib
   interval<T> asec( interval<T> const& x )
   {
     using std::acos;
-    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( !( x.upper() < -1.0 || 1.0 < x.lower() ) )
-      : ACCURACY_ASSURANCE( acos( 1.0 / x.lower() ), acos( 1.0 / x.upper() ) );
+    CRANBERRIES_DOMAIN_ERROR_THROW_IF( !( x.upper() < -1.0 || 1.0 < x.lower() ) );
+    return ACCURACY_ASSURANCE( acos( 1.0 / x.lower() ), acos( 1.0 / x.upper() ) );
   }
 
   template < typename T >
   interval<T> acsc( interval<T> const& x )
   {
     using std::asin;
-    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( !( x.upper() < -1.0 || 1.0 < x.lower() ) )
-      : ACCURACY_ASSURANCE( asin( 1.0 / x.upper() ), asin( 1.0 / x.lower() ) );
+    CRANBERRIES_DOMAIN_ERROR_THROW_IF( !( x.upper() < -1.0 || 1.0 < x.lower() ) );
+    return ACCURACY_ASSURANCE( asin( 1.0 / x.upper() ), asin( 1.0 / x.lower() ) );
   }
 
   template < typename T >
@@ -181,8 +181,8 @@ namespace interval_lib
   {
     using std::atan;
     using std::abs;
-    return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( x.lower() == constants::zero<T> || x.upper() == constants::zero<T> )
-      : ( abs( x.lower() ) < abs( x.upper() ) )
+    CRANBERRIES_OVERFLOW_ERROR_THROW_IF( x.lower() == constants::zero<T> || x.upper() == constants::zero<T> );
+    return ( abs( x.lower() ) < abs( x.upper() ) )
       ? ACCURACY_ASSURANCE( atan( 1.0 / x.upper() ), atan( 1.0 / x.lower() ) )
       : ACCURACY_ASSURANCE( atan( 1.0 / x.lower() ), atan( 1.0 / x.upper() ) );
   }
@@ -195,9 +195,11 @@ namespace interval_lib
     using std::cosh;
     auto&& a = x.lower();
     auto&& b = x.upper();
-    return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( detail::is_overflow( cosh( a ), cosh( b ) ) )
-      : ( b < constants::zero<T> ) ? ACCURACY_ASSURANCE( cosh( b ), cosh( a ) )
-      : ( constants::zero<T> < a ) ? ACCURACY_ASSURANCE( cosh( a ), cosh( b ) )
+    CRANBERRIES_OVERFLOW_ERROR_THROW_IF( detail::is_overflow( cosh( a ), cosh( b ) ) );
+    return ( b < constants::zero<T> )
+      ? ACCURACY_ASSURANCE( cosh( b ), cosh( a ) )
+        : ( constants::zero<T> < a )
+        ? ACCURACY_ASSURANCE( cosh( a ), cosh( b ) )
       : [&] {
       UPWARD_POLICY;
       auto&& l = cosh( a );
@@ -212,8 +214,8 @@ namespace interval_lib
   inline interval<T> sinh( interval<T> const& x )
   {
     using std::sinh;
-    return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( detail::is_overflow( sinh( x.lower() ), sinh( x.upper() ) ) )
-      : ACCURACY_ASSURANCE( sinh( x.lower() ), sinh( x.upper() ) );
+    CRANBERRIES_OVERFLOW_ERROR_THROW_IF( detail::is_overflow( sinh( x.lower() ), sinh( x.upper() ) ) );
+    return ACCURACY_ASSURANCE( sinh( x.lower() ), sinh( x.upper() ) );
   }
 
   /*  interval hyperbolic tangent  */
@@ -249,8 +251,8 @@ namespace interval_lib
   inline interval<T> acosh( interval<T> const& x )
   {
     using std::acosh;
-    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < constants::one<T> )
-      : ACCURACY_ASSURANCE( acosh( x.lower() ), acosh( x.upper() ) );
+    CRANBERRIES_DOMAIN_ERROR_THROW_IF( x.lower() < constants::one<T> );
+    return ACCURACY_ASSURANCE( acosh( x.lower() ), acosh( x.upper() ) );
   }
 
   /*  interval arc hyperbolic sine  */
@@ -268,29 +270,29 @@ namespace interval_lib
   inline interval<T> atanh( interval<T> const& x )
   {
     using std::atanh;
-    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < -constants::one<T> || constants::one<T> < x.upper() )
-      : ACCURACY_ASSURANCE( atanh( x.lower() ), atanh( x.upper() ) );
+    CRANBERRIES_DOMAIN_ERROR_THROW_IF( x.lower() < -constants::one<T> || constants::one<T> < x.upper() );
+    return ACCURACY_ASSURANCE( atanh( x.lower() ), atanh( x.upper() ) );
   }
 
   template < typename T >
   inline interval<T> asech( interval<T> const& x )
   {
-    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( !( 0.0 < x.lower() && x.upper() <= 1.0 ) )
-      : acosh( x.inverse() );
+    CRANBERRIES_DOMAIN_ERROR_THROW_IF( !( 0.0 < x.lower() && x.upper() <= 1.0 ) );
+    return acosh( x.inverse() );
   }
 
   template < typename T >
   inline interval<T> acsch( interval<T> const& x )
   {
-    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( !( x.upper() < -1.0 || 1.0 < x.lower() ) )
-      : asinh( x.inverse() );
+    CRANBERRIES_DOMAIN_ERROR_THROW_IF( !( x.upper() < -1.0 || 1.0 < x.lower() ) );
+    return asinh( x.inverse() );
   }
 
   template < typename T >
   inline interval<T> acoth( interval<T> const& x )
   {
-    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( !( x.upper() < -1.0 || 1.0 < x.lower() ) )
-      : atanh( x.inverse() );
+    CRANBERRIES_DOMAIN_ERROR_THROW_IF( !( x.upper() < -1.0 || 1.0 < x.lower() ) );
+    return atanh( x.inverse() );
   }
 
   /*  interval power function  */
@@ -322,7 +324,7 @@ namespace interval_lib
       return interval<T>{ std::fmin( l_min, r_min ), std::fmax( l_max, r_max ) };
     }( )
       )
-      : CRANBERRIES_RANGE_ERROR_THROW_CONDITIONAL( a < 0.0 )
+      : [&]{ CRANBERRIES_RANGE_ERROR_THROW_IF( a < 0.0 ); return true; }()
       : ( a <= 0.0 && 0.0 <= b )
       ? [&] {
       UPWARD_POLICY;
@@ -347,8 +349,8 @@ namespace interval_lib
   inline interval<T> sqrt( interval<T> const& x )
   {
     using std::sqrt;
-    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < constants::zero<T> )
-      : ACCURACY_ASSURANCE( sqrt( x.lower() ), sqrt( x.upper() ) );
+    CRANBERRIES_DOMAIN_ERROR_THROW_IF( x.lower() < constants::zero<T> );
+    return ACCURACY_ASSURANCE( sqrt( x.lower() ), sqrt( x.upper() ) );
   }
 
   template < typename T >
@@ -364,8 +366,8 @@ namespace interval_lib
   inline interval<T> exp( interval<T> const& x )
   {
     using std::exp;
-    return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( detail::is_overflow( exp( x.lower() ), exp( x.upper() ) ) )
-      : ACCURACY_ASSURANCE( exp( x.lower() ), exp( x.upper() ) );
+    CRANBERRIES_OVERFLOW_ERROR_THROW_IF( detail::is_overflow( exp( x.lower() ), exp( x.upper() ) ) );
+    return ACCURACY_ASSURANCE( exp( x.lower() ), exp( x.upper() ) );
   }
 
   /*  interval expconstants::onential function ( base = 2 )  */
@@ -374,8 +376,8 @@ namespace interval_lib
   inline interval<T> exp2( interval<T> const& x )
   {
     using std::exp2;
-    return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( detail::is_overflow( exp2( x.lower() ), exp2( x.upper() ) ) )
-      : ACCURACY_ASSURANCE( exp2( x.lower() ), exp2( x.upper() ) );
+    CRANBERRIES_OVERFLOW_ERROR_THROW_IF( detail::is_overflow( exp2( x.lower() ), exp2( x.upper() ) ) );
+    return ACCURACY_ASSURANCE( exp2( x.lower() ), exp2( x.upper() ) );
   }
 
   /*  interval exp( x ) - 1  */
