@@ -303,7 +303,7 @@ namespace interval_lib
     template < typename T >
     inline interval<T>& divide_assign( interval<T>& x, typename interval<T>::value_type const& y )
     {
-      CRANBERRIES_OVERFLOW_ERROR_THROW_IF( y == constants::zero<T> )
+      CRANBERRIES_OVERFLOW_ERROR_THROW_IF( y == constants::zero<T> );
       return x = ( y < constants::zero<T> )
         ? ACCURACY_ASSURANCE( x.upper() / y, x.lower() / y )
         : ACCURACY_ASSURANCE( x.lower() / y, x.upper() / y );

@@ -4,6 +4,7 @@
 #include <cmath>
 #include "interval.hpp"
 #include "constants.hpp"
+#include "exception.hpp"
 
 namespace cranberries {
 namespace interval_lib
