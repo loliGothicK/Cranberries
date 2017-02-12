@@ -22,11 +22,26 @@ namespace operators {
     ChunkForEach(Func func) : func_{ std::forward<Func>(func) } {}
     ~ChunkForEach() = default;
 
+    template < typename T, size_t ...I >
+    static constexpr auto check(std::index_sequence<I...>)
+      -> std::enable_if_t<is_callable_v< Func, decltype(I, std::declval<T>())... > , std::true_type>;
+
+    template < typename T > 
+    static constexpr std::false_type check(...);
+
+    template < typename T, size_t N>
+    struct check_t : decltype(check<T>(std::make_index_sequence<N>())) {};
+
     template <
-      typename Stream
+      typename Stream,
+      typename T = element_type_of_t<Stream>
     >
     decltype(auto)
     operator()(Stream&& stream_) {
+      static_assert(
+        check_t<T,N>::value,
+        "Error! invalid function desginated!"
+      );
       apply(stream_, std::make_index_sequence<N>());
       return std::forward<Stream>(stream_);
     }

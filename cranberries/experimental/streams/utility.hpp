@@ -597,7 +597,7 @@ namespace cranberries_magic{
   struct is_callable_impl
   {
     template < typename F, typename ...Args >
-    static auto check( F&& f, std::tuple<Args...>&& tup )->decltype( apply( f, tup ), std::true_type{} );
+    static auto check()->decltype( std::declval<F>()(std::declval<Args>()...), std::true_type{} );
   
     template < typename F, typename ...Args >
     static std::false_type check(...);
@@ -606,7 +606,7 @@ namespace cranberries_magic{
 } // ! namespace cranberries_magic
 
   template < typename F, typename ...Args >
-  class is_callable : public decltype( cranberries_magic::is_callable_impl::check<F, Args...>( std::declval<F>(), std::declval<std::tuple<Args...>>() ) ) {};
+  class is_callable : public decltype( cranberries_magic::is_callable_impl::check<F, Args...>() ) {};
 
   template < typename F, typename ...Args >
   constexpr bool is_callable_v = is_callable<F, Args...>::value;
