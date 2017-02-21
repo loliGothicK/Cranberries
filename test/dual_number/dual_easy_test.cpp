@@ -5,9 +5,10 @@
 int main()
 try
 {
-  using namespace cranberries::math;
+  using cranberries::dual_number;
+  using cranberries::make_dual;
   using cranberries::interval_lib::interval;
-  using namespace cranberries::math::literals;
+  using namespace cranberries::literals;
   using std::cout;
   using std::endl;
 
