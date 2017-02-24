@@ -36,7 +36,7 @@ namespace operators {
       Stream&& stream_
     ) {
       static_assert(
-        is_callable_v<Pred, E&>,
+        is_callable_v<Pred(E),bool>,
         "Invalid predicate designated."
       );
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );

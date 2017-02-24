@@ -32,8 +32,8 @@ namespace operators {
       noexcept(false)
     {
       static_assert(
-        is_callable_v<UnaryFunc,E&>,
-        "Invalid unary function designated."
+        cranberries::is_callable_v<UnaryFunc(E)>,
+        "Invalid function designated."
       );
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
       for (auto&& e : stream_) f_(e);

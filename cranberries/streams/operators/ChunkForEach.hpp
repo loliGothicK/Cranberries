@@ -24,13 +24,10 @@ namespace operators {
 
     template < typename T, size_t ...I >
     static constexpr auto check(std::index_sequence<I...>)
-      -> std::enable_if_t<is_callable_v< Func, decltype(I, std::declval<T>())... > , std::true_type>;
-
-    template < typename T > 
-    static constexpr std::false_type check(...);
+      -> is_callable< Func( decltype(I, std::declval<T&>())... ), cranberries::return_any >;
 
     template < typename T, size_t N>
-    struct check_t : decltype(check<T>(std::make_index_sequence<N>())) {};
+    using check_t = decltype(check<T>(std::make_index_sequence<N>()));
 
     template <
       typename Stream,
@@ -56,9 +53,9 @@ namespace operators {
     Func func_;
   };
 
-}
-}
-}
+} // ! namespace operators
+} // ! namespace streams
+} // ! namespace cranberries
 
 
 #endif

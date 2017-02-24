@@ -36,7 +36,7 @@ namespace operators{
       noexcept(false)
     {
       static_assert(
-        is_callable_v<BinaryOp,InitialType&,E&>,
+        is_callable_v<BinaryOp(InitialType,E),std::common_type_t<InitialType,E>>,
         "Invalid binary operator (or invalid initial type) designated."
       );
       CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );

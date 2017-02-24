@@ -167,7 +167,7 @@ namespace streams {
     inline operators::Reverse reversed() noexcept { return{}; }
 
     template < typename Engine = std::mt19937 >
-    inline operators::Shuffle<Engine> shuffled(Engine&& engine_ = Engine{}) { return{ std::forward<Engine>(engine_) }; }
+    inline operators::Shuffle<Engine> shuffled(Engine&& engine_ = std::mt19937{}) { return{ std::forward<Engine>(engine_) }; }
 
     template < typename ElemType >
     inline operators::Replace<ElemType> replaced(ElemType&& old_value, ElemType&& new_value) { return{ std::forward<ElemType>(old_value), std::forward<ElemType>(new_value) }; }

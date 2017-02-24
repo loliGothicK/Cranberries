@@ -1,5 +1,5 @@
 ﻿#include <iostream>
-#include "../cranberries/experimental/stream.hpp"
+#include "../cranberries/stream.hpp"
 using std::cout;
 using std::endl;
 using cranberries::make_finally;

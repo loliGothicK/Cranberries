@@ -30,6 +30,9 @@
 #include <future>
 #include <typeinfo>
 #include <memory>
+// common
+#include "utility.hpp"
+#include "type_traits.hpp"
 // exception
 #include "streams/exception.hpp"
 #include "streams/stream_error.hpp"
