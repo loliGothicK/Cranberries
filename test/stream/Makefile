@@ -1,7 +1,7 @@
 # Makefile for test
 
-TARGET1 	= stream_easy_test.out
-SRCS1 	= ./stream_easy_test.cpp
+TARGET1 	= test.out
+SRCS1 	= ./test.cpp
 
 # 基本コマンド
 RM 		:= rm
