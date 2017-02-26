@@ -4,30 +4,30 @@
 #include <utility>
 #include <tuple>
 #include <iterator>
-#include "../../exception.hpp"
+#include "exception.hpp"
 #include "interval.hpp"
 
 namespace cranberries {
-namespace interval_lib
-{
 
   template < typename T >
-  inline interval<T> hull( T&& low, T&& up )
+  inline constexpr interval<T> hull( T&& low, T&& up )
   {
     return CRANBERRIES_INVALID_ARGUMENT_THROW_CONDITIONAL_WITH_MSG( low > up, "upper_bound less than lower_bound!" )
       : interval<T>{ std::forward<T>( low ), std::forward<T>( up ) };
   }
 
   template < typename T >
-  inline interval<T> hull( T&& x ) noexcept
+  inline constexpr interval<T> hull( T&& x ) noexcept
   {
     return interval<T>{ std::forward<T>( x ) };
   }
+
   template < typename T >
   inline constexpr T mid( interval<T> const& x ) noexcept
   {
     return ( x.upper() + x.lower() ) / static_cast<T>( 2.0L );
   }
+
   template < typename T >
   inline constexpr T middle( interval<T> const& x ) noexcept
   {
@@ -122,28 +122,7 @@ namespace interval_lib
   {
     return std::make_pair( interval<T>{ x.lower(), x.mid() }, interval<T>{ x.mid(), x.upper() } );
   }
-  template < class InputRange, class BinaryFunction >
-  void adjacent_for_each( InputRange range, BinaryFunction f )
-  {
-    using std::begin;
-    using std::end;
 
-    auto& first = begin( range );
-    auto& last = end( range );
-
-    if ( first == last )
-      return;
-
-    while ( std::next( first ) != last )
-    {
-      auto const& a = *first;
-      ++first;
-      auto const& b = *first;
-      f( a, b );
-    }
-  }
-
-} // ! interval_lib
 } // ! cranberries
 
 #endif

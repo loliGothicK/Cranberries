@@ -6,22 +6,22 @@
 using std::cout;
 using std::endl;
 using std::vector;
-using cranberries::interval_lib::interval;
-using cranberries::interval_lib::hull;
-using cranberries::interval_lib::compare::func_obj::less;
-using cranberries::interval_lib::compare::order;
-namespace normal_accurate_policy = cranberries::interval_lib::normal_accurate_policy;
-namespace interval_ordering_policy = cranberries::interval_lib::compare::interval_ordering_policy;
-namespace partial_ordering_policy = cranberries::interval_lib::compare::partial_ordering_policy;
-namespace weak_ordering_policy = cranberries::interval_lib::compare::weak_ordering_policy;
+using cranberries::interval;
+using cranberries::hull;
+using cranberries::compare::less;
+using cranberries::compare::order;
+namespace normal_accurate_policy = cranberries::normal_accurate_policy;
+namespace interval_ordering_policy = cranberries::compare::interval_ordering_policy;
+namespace partial_ordering_policy = cranberries::compare::partial_ordering_policy;
+namespace weak_ordering_policy = cranberries::compare::weak_ordering_policy;
 
 int main()
 try
 {
   // target version
   cout << ">> Target Version" << endl;
-  cout << ">> Stable : " << cranberries::interval_lib::version_tag::stable << endl;
-  cout << ">> Latest : " << cranberries::interval_lib::version_tag::latest << endl;
+  cout << ">> Stable : " << cranberries::version_tag::stable << endl;
+  cout << ">> Latest : " << cranberries::version_tag::latest << endl;
   cout << std::boolalpha << std::setprecision( std::numeric_limits<long double>::digits10 + 1 );
   // ctor
   interval<>{};
@@ -185,9 +185,9 @@ try
   intersect( interval<>{1, 3}, interval<>{2, 4} );
 
   max( x, interval<>{} );
-  cranberries::interval_lib::max( { x,interval<>{},interval<>{} } );
+  cranberries::max( { x,interval<>{},interval<>{} } );
   min( x, interval<>{} );
-  cranberries::interval_lib::min( { x,interval<>{},interval<>{} } );
+  cranberries::min( { x,interval<>{},interval<>{} } );
   min( interval<>{}, interval<>{}, interval<>{}, interval<>{} );
   /*  accessors  */
   // getter and setter
@@ -211,7 +211,7 @@ try
   cout << ">> Expression Template Complete!" << endl;
   try
   {
-    CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "@" );
+    CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "@success" );
   }
   catch ( cranberries::domain_error const& )
   {

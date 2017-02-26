@@ -5,7 +5,6 @@
 #include "explicit.hpp"
 
 namespace cranberries {
-namespace interval_lib {
 namespace compare {
 namespace partial_ordering_policy
 {
@@ -619,6 +618,5 @@ namespace partial_ordering_policy
 
 } // ! partial_order
 } // ! compare
-} // ! interval_lib
 } // ! cranberries
 #endif

@@ -5,10 +5,8 @@
 #include "order_symbol.hpp"
 
 namespace cranberries {
-namespace interval_lib {
 namespace compare {
-namespace func_obj
-{
+
   /*  interval compare function objrct  */
   template < order = order::Total >
   struct less
@@ -407,8 +405,6 @@ namespace func_obj
     }
   };
 
-} // ! func_obj
 } // ! compare
-} // ! interval_lib
 } // ! cranberries
 #endif

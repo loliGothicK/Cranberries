@@ -7,10 +7,7 @@
 #include "./compare/advance.hpp"
 
 namespace cranberries {
-namespace interval_lib{
 
-
-} // ! interval_lib
 } // ! cranberries
 
 #endif

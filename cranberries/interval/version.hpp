@@ -2,10 +2,9 @@
 #define CRANBERRIESE_INTERVAL_LIB_VERSION_HPP
 
 namespace cranberries {
-namespace interval_lib {
 
   /*  version tag  */
-  enum class version_tag
+  enum class interval_version
   {
     v1_0_0 = 0x01000000,
     v1_0_1,
@@ -34,11 +33,12 @@ namespace interval_lib {
     v5_0_0 = 0x05000000,
     v6_0_0 = 0x06000000,
   	v6_0_1,
-    stable = v6_0_1,
-    latest = v6_0_1,
+    // constexpr
+    v7_0_0 = 0x07000000,
+    stable = v7_0_0,
+    latest = v7_0_0,
   };
 
-} // ! interval_lib
 } // ! cranbrries
 
 #endif 

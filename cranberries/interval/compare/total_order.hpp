@@ -3,13 +3,11 @@
 
 #include <utility>
 #include <type_traits>
-#include "../detail/concept.hpp"
 #include "../interval.hpp"
 #include "explicit.hpp"
 
 namespace cranberries {
-namespace interval_lib
-{
+
   template < typename T, typename U >
   constexpr auto operator<( T&& x, U&& y )->decltype( total_less( x, y ) )
   {
@@ -40,6 +38,5 @@ namespace interval_lib
   {
     return !total_equal( std::forward<T>( x ), std::forward<U>( y ) );
   }
-} // ! interval_lib
 } // ! cranberries
 #endif

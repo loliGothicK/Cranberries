@@ -25,9 +25,9 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-#include "./interval/detail/detail.hpp"
+#include "./interval/cranberries_magic/detail.hpp"
 #include "./interval/rounding_control.hpp"
-#include "../exception.hpp"
+#include "./interval/exception.hpp"
 #include "./interval/math_impl.hpp"
 #include "./interval/interval.hpp"
 #include "./interval/relational.hpp"
@@ -44,7 +44,4 @@
 #include "./interval/expression.hpp"
 #include "./interval/version.hpp"
 
-
-#undef ACCURACY_ASSURANCE
-#undef ACCURACY_ASSURANCE_WITH_OVERFLOW_CHECK
 #endif

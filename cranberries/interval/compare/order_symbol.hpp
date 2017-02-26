@@ -2,9 +2,7 @@
 #define CRANBERRIES_INTERVAL_LIB_COMPARE_ODER_SYMBOL_HPP
 
 namespace cranberries {
-namespace interval_lib {
-namespace compare
-{
+namespace compare {
 
   //---------------------//
   /*   Ordering Symbol   */
@@ -19,7 +17,6 @@ namespace compare
   enum class interval_ordering { less, unordered, greater };
 
 } // ! compare
-} // ! interval_lib
 } // ! cranberries
 
 #endif

@@ -10,9 +10,8 @@
 #include "./set_order.hpp"
 
 namespace cranberries {
-namespace interval_lib {
-namespace compare
-{
+namespace compare {
+
   /*  Advanced Interval Ordering  */
   enum class interval_relation
   {
@@ -155,6 +154,5 @@ namespace compare
 
 
 } // ! compare
-} // ! interval_lib
 } // ! cranberries
 #endif

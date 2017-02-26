@@ -11,7 +11,6 @@
 #include "compare.hpp"
 
 namespace cranberries {
-namespace interval_lib {
 
   /*  Interval Max  */
 
@@ -44,7 +43,7 @@ namespace interval_lib {
   }
 
   /*  Tow interval and Predicate Argument Max   */
-  template < typename T, typename Compare, std::enable_if_t<!detail::concept::is_interval_v<Compare>, std::nullptr_t> = nullptr >
+  template < typename T, typename Compare, std::enable_if_t<!cranberries_magic::concept::is_interval_v<Compare>, std::nullptr_t> = nullptr >
   inline interval<T> max( interval<T> const& a, interval<T> const& b, Compare comp ) noexcept
   {
     return comp( a, b ) ? a : b;
@@ -97,7 +96,7 @@ namespace interval_lib {
 
   /*  Two intervals and Predicate Argument Min   */
 
-  template < typename T, typename Compare, std::enable_if_t<!detail::concept::is_interval_v<Compare>, std::nullptr_t> = nullptr >
+  template < typename T, typename Compare, std::enable_if_t<!cranberries_magic::concept::is_interval_v<Compare>, std::nullptr_t> = nullptr >
   inline interval<T> min( interval<T> const& a, interval<T> const& b, Compare comp ) noexcept
   {
     return comp( a, b ) ? a : b;
@@ -145,6 +144,5 @@ namespace interval_lib {
     return std::make_pair( *( hold.first ), *( hold.second ) );
   }
 
-} // ! interval_lib
 } // ! cranberries  
 #endif

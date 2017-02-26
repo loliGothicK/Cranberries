@@ -2,11 +2,10 @@
 #define CRANBRIIES_INTERVAL_LIB_COMPARE_EXPLICIT_HPP
 
 #include <type_traits>
-#include "../detail/detail.hpp"
+#include "../cranberries_magic/detail.hpp"
 #include "../interval.hpp"
 
 namespace cranberries {
-namespace interval_lib {
 
   //-----------------------------------//
   /*   interval relational functions   */
@@ -375,19 +374,18 @@ namespace interval_lib {
     return ( x.lower() == y.lower() && x.upper() == y.upper() );
   }
 
-  template < typename L, typename R, std::enable_if_t<!detail::concept::is_interval_v<R>, std::nullptr_t> = nullptr >
+  template < typename L, typename R, std::enable_if_t<!cranberries_magic::concept::is_interval_v<R>, std::nullptr_t> = nullptr >
   inline constexpr bool total_equal( R const& x, interval<L> const& y ) noexcept
   {
     return ( x == y.lower() && x == y.upper() );
   }
 
-  template < typename L, typename R, std::enable_if_t<!detail::concept::is_interval_v<R>, std::nullptr_t> = nullptr >
+  template < typename L, typename R, std::enable_if_t<!cranberries_magic::concept::is_interval_v<R>, std::nullptr_t> = nullptr >
   inline constexpr bool total_equal( interval<L> const& x, R const& y ) noexcept
   {
     return ( x.lower() == std::forward<L>( y ) && x.upper() == std::forward<L>( y ) );
   }
 
 
-} // ! interval_lib
 } // ! cranberries
 #endif

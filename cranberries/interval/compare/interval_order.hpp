@@ -5,7 +5,6 @@
 #include "explicit.hpp"
 
 namespace cranberries {
-namespace interval_lib {
 namespace compare {
 namespace interval_ordering_policy
 {
@@ -619,6 +618,5 @@ namespace interval_ordering_policy
 
 } // ! interval_oder
 } // ! compare
-} // ! interval_lib
 } // ! cranberries
 #endif

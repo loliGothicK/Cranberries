@@ -2,16 +2,14 @@
 #define CRANBRIIES_INTERVAL_LIB_EXPRESSION_HPP
 
 #include "interval.hpp"
-#include "detail/detail.hpp"
+#include "cranberries_magic/detail.hpp"
 
 namespace cranberries {
-namespace interval_lib{
-
 
   template < class A, class Func >
-  class Expr1 : detail::concept::expr_tag
+  class Expr1 : cranberries_magic::concept::expr_tag
   {
-    std::decay_t<detail::Expr_ref<A>> arg;
+    std::decay_t<cranberries_magic::Expr_ref<A>> arg;
   public:
     Expr1( A const& a )
       :arg{ a } {}
@@ -24,10 +22,10 @@ namespace interval_lib{
   };
 
   template <class L, class Op, class R >
-  class Expr2 : detail::concept::expr_tag
+  class Expr2 : cranberries_magic::concept::expr_tag
   {
-    std::decay_t<detail::Expr_ref<L>> l_;
-    std::decay_t<detail::Expr_ref<R>> r_;
+    std::decay_t<cranberries_magic::Expr_ref<L>> l_;
+    std::decay_t<cranberries_magic::Expr_ref<R>> r_;
   public:
     Expr2( L const& l, R const& r )
       : l_{ l }, r_{ r } {}
@@ -40,11 +38,11 @@ namespace interval_lib{
   };
 
   template <class T1, class T2, class T3, class Func >
-  class Expr3 : detail::concept::expr_tag
+  class Expr3 : cranberries_magic::concept::expr_tag
   {
-    std::decay_t<detail::Expr_ref<T1>> v1_;
-    std::decay_t<detail::Expr_ref<T2>> v2_;
-    std::decay_t<detail::Expr_ref<T3>> v3_;
+    std::decay_t<cranberries_magic::Expr_ref<T1>> v1_;
+    std::decay_t<cranberries_magic::Expr_ref<T2>> v2_;
+    std::decay_t<cranberries_magic::Expr_ref<T3>> v3_;
   public:
     Expr3( T1 const& v1, T2 const& v2, T3 const& v3 )
       : v1_{ v1 }, v2_{ v2 }, v3_{ v3 } {}
@@ -558,7 +556,6 @@ namespace interval_lib{
     return min_( std::forward<T>( head ), min_( std::forward<Args>( args )... ) );
   }
 
-}
-}
+} // ! namespace cranberries
 
 #endif
