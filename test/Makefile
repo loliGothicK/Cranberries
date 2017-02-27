@@ -23,5 +23,5 @@ clean:
 	cd stream; make clean;
 	cd ..;
 	cd interval; make clean;
-  cd ..;
+	cd ..;
 	cd common; make clean;
