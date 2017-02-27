@@ -447,6 +447,18 @@ namespace cranberries_magic{
   constexpr bool is_nothrow_callable_v = is_nothrow_callable<T, R>::value;
 
 
+  template < typename T, std::size_t N >
+  struct generate_tuple
+  {
+    template < std::size_t ...I >
+    auto seq(std::index_sequence<I...>)
+      -> std::tuple<std::decay_t< decltype(I,std::declval<T>())>... >;
+    
+    using type = decltype(seq(std::make_index_sequence<N>());
+  };
+
+  template < typename T, std::size_t N >
+  using generate_tuple_t = typename generate_tuple<T,N>::type;
 
 }
 
