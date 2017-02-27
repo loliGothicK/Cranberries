@@ -454,7 +454,7 @@ namespace cranberries_magic{
     auto seq(std::index_sequence<I...>)
       -> std::tuple<std::decay_t< decltype(I,std::declval<T>())>... >;
     
-    using type = decltype(seq(std::make_index_sequence<N>());
+    using type = decltype(seq(std::make_index_sequence<N>()));
   };
 
   template < typename T, std::size_t N >
