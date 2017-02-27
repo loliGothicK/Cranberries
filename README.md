@@ -2,13 +2,17 @@ Cranberries Library [![Build Status](https://travis-ci.org/LoliGothick/Cranberri
 ===========
 雑多な趣味コーディングによる成果物の墓場です
 
-- interval.hpp(区間演算)
+- Interval Arithmetic Library(区間演算ライブラリ)
+cranberries/interval.hpp
 
-- time_elapsed.hpp(実行時間計測用)
+- Time Measurement Library(実行時間計測ライブラリ)
+cranberries/time_elapsed.hpp
 
-- interpolation.hpp(補間法：最小２乗法, チェビシェフ多項式近似)
+- Interpolation Library(補間法ライブラリ：最小２乗法, チェビシェフ多項式近似)
+cranberries/interpolation.hpp
 
-- dual_number.hpp(二重数)
+- Dual Number Library(自動微分用の二重数ライブラリ)
+cranberries/dual_number.hpp
 
-- experimental(実験的実装)
- - stream.hpp(ストリームAPI)
+- Stream API Library(ストリームAPIライブラリ)
+cranberries/stream.hpp
