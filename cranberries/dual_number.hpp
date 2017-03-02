@@ -53,7 +53,7 @@ namespace cranberries
     constexpr dual_number(dual_number const& a) : dual_number{ a.real_, a.basis_ } {}
     constexpr dual_number(dual_number&& a) : dual_number{ a.real_, a.basis_ } {}
 
-    dual_number operator -() const noexcept {
+    constexpr dual_number operator -() const noexcept {
       return dual_number( -real_, -basis_ );
     }
 
@@ -61,10 +61,10 @@ namespace cranberries
       return out << '[' << rhs.real_ << ", " << rhs.basis_ << ']';
     }
 
-    value_type& real() noexcept { return real_; }
-    value_type& basis() noexcept { return basis_; }
-    value_type const& real() const noexcept { return real_; }
-    value_type const& basis() const noexcept { return basis_; }
+    constexpr value_type& real() noexcept { return real_; }
+    constexpr value_type& basis() noexcept { return basis_; }
+    constexpr value_type  real() const noexcept { return real_; }
+    constexpr value_type  basis() const noexcept { return basis_; }
 
   private:
     value_type real_;
