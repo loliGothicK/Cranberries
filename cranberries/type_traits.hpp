@@ -2,9 +2,15 @@
 #define CRANBERRIES_TYPE_TRAITS_HPP
 #include <type_traits>
 #include <utility>
+#include <tuple>
+#include <bitset>
+#include <iterator>
 
 namespace cranberries
 {
+  template < bool B >
+  using bool_constant = std::integral_constant<bool, B>;
+
   template < bool Pred, typename IfType = std::nullptr_t >
   using enabler_t = std::enable_if_t<Pred, IfType>;
 
@@ -65,129 +71,227 @@ namespace cranberries_magic
   template < typename B >
   constexpr bool negation_v = negation<B>::value;
 
+  namespace cranberries_magic {
+    template < typename T, template<class> class Head, template<class> class ...Tail >
+    struct conjunctional_impl : bool_constant< Head<T>::value && conjunctional_impl<T, Tail...>::value > {};
 
-  template < typename T, template<class> class Head, template<class> class ...Tail >
-  struct conjunctional_impl : bool_constant< Head<T>::value && conjunctional_impl<T, Tail...>::value > {};
+    template < typename T, template<class> class Pred >
+    struct conjunctional_impl<T, Pred> : bool_constant< Pred<T>::value > {};
 
-  template < typename T, template<class> class Pred >
-  struct conjunctional_impl<T,Pred> : bool_constant< Pred<T>::value > {};
+    template < typename T, template<class> class Head, template<class> class ...Tail >
+    struct disjunctional_impl : bool_constant< Head<T>::value && conjunctional_impl<T, Tail...>::value > {};
 
-namespace cranberries_magic{
-  template < typename T, template<class> class Head, template<class> class ...Tail >
-  struct disjunctional_impl : bool_constant< Head<T>::value && conjunctional_impl<T, Tail...>::value > {};
+    template < typename T, template<class> class Pred >
+    struct disjunctional_impl<T, Pred> : bool_constant< Pred<T>::value > {};
 
-  template < typename T, template<class> class Pred >
-  struct disjunctional_impl<T, Pred> : bool_constant< Pred<T>::value > {};
-
-  template < typename T, template<class> class Pred >
-  struct negational_impl : bool_constant<!Pred<T>::value> {};
-} // ! namespace cranberries_magic
+    template < typename T, template<class> class Pred >
+    struct negational_impl : bool_constant<!Pred<T>::value> {};
+  } // ! namespace cranberries_magic
 
   template <
     template<class>class ...Preds
   >
-  struct conjunctional
-  {
+  struct conjunctional {
     template < typename T >
-    using type = cranberries_magic::conjunctional_impl<T, Preds...>;
+    using pred = cranberries_magic::conjunctional_impl<T, Preds...>;
   };
 
   template < template<class>class ...Preds >
-  struct disjunctional
-  {
+  struct disjunctional {
     template < typename T >
-    using type = cranberries_magic::conjunctional_impl<T, Preds...>;
+    using pred = cranberries_magic::conjunctional_impl<T, Preds...>;
   };
 
   template < template<class> class Pred >
-  struct negational
-  {
+  struct negational {
     template < typename T >
-    using type = cranberries_magic::negational_impl<T, Pred>;
+    using pred = cranberries_magic::negational_impl<T, Pred>;
+  };
+
+  template < template<class...> class Pred, typename ...Types >
+  struct apply_ {
+    using type = Pred<Types...>;
+  };
+
+  template < template<class...> class Pred, typename ...Types >
+  struct apply_decay {
+    using type = Pred<std::decay_t<Types>...>;
+  };
+
+  template < template<class...> class Pred, typename ...Types >
+  struct apply_remove_cvr {
+    using type = Pred<remove_cvr_t<Types>...>;
+  };
+
+  template < template<class...> class Pred, typename ...Types >
+  using apply_t = typename apply_<Pred, Types...>::type;
+
+  template < template<class...> class Pred, typename ...Types >
+  using apply_decay_t = typename apply_decay<Pred, Types...>::type;
+
+  template < template<class...> class Pred, typename ...Types >
+  using apply_remove_cvr_t = typename apply_remove_cvr<Pred, Types...>::type;
+
+  template < template<class...> class Pred, typename ...Types >
+  using apply_result_t = typename apply_t<Pred, Types...>::type;
+
+  template < template<class...> class Pred, typename ...Types >
+  constexpr bool apply_result_v = apply_t<Pred, Types...>::value;
+
+  template < template<class...> class Pred, typename ...Types >
+  using apply_decay_result_t = typename apply_decay_t<Pred, Types...>::type;
+
+  template < template<class...> class Pred, typename ...Types >
+  constexpr bool apply_decay_result_v = apply_decay_t<Pred, Types...>::value;
+
+  template < template<class...> class Pred, typename ...Types >
+  using apply_remove_cvr_result_t = typename apply_remove_cvr_t<Pred, Types...>::type;
+
+  template < template<class...> class Pred, typename ...Types >
+  constexpr bool apply_remove_cvr_result_v = apply_remove_cvr_t<Pred, Types...>::value;
+
+namespace cranberries_magic {
+
+  struct meta_bind_placeholders {};
+
+  template < typename T >
+  constexpr bool is_placeholder_v = std::is_base_of<meta_bind_placeholders, std::decay_t<T>>::value;
+
+  template < class ...Types >
+  struct pack {
+    template < template<class...>class Expr >
+    using expr = Expr<Types...>;
+  };
+
+  template < class >
+  struct pack_split {};
+
+  template < class Head, class ...Tail >
+  struct pack_split<pack<Head, Tail...>> {
+    using head = pack<Head>;
+    using tail = pack<Tail...>;
+  };
+
+  template < >
+  struct pack_split<pack<>> {
+    using head = pack<>;
+    using tail = pack<>;
+  };
+
+  template < class Pack1, class Pack2 >
+  struct pack_cat {
+    template < typename ...L, typename ...R >
+    static constexpr pack<L..., R...> cat(pack<L...>, pack<R...>);
+
+    using type = decltype(cat(std::declval<Pack1>(), std::declval<Pack2>()));
+  };
+
+  template < class Pack1, class Pack2 >
+  using pack_cat_t = typename pack_cat<Pack1, Pack2>::type;
+
+  template < class Tuple >
+  using pack_head = typename pack_split<Tuple>::head;
+
+  template < class Tuple >
+  using pack_tail = typename pack_split<Tuple>::tail;
+
+  template < class >
+  struct pack_if {};
+
+  template < class Head, class ...Tail >
+  struct pack_if<pack<Head, Tail...>> {
+    static constexpr bool value = is_placeholder_v<Head>;
+  };
+
+  template < class X, class A, class Result = pack<> >
+  struct expansion {
+    using type = std::conditional_t< pack_if<X>::value,
+      typename expansion< pack_tail<X>, pack_tail<A>, pack_cat_t< Result, pack_head<A> > >::type,
+      typename expansion< pack_tail<X>, A, pack_cat_t< Result, pack_head<X> > >::type>;
   };
 
 
+  template < class ...A, class Result >
+  struct expansion<pack<>, pack<A...>, Result> {
+    using type = Result;
+  };
+
+} // ! namespace cranberries_magic
+
+  class x_ : cranberries_magic::meta_bind_placeholders {};
+
+  template < template<class...> class Expr, typename ...Types >
+  struct bind_ {
+    template < typename ...Apply >
+    using expr = typename cranberries_magic::expansion<
+      cranberries_magic::pack<Types...>, cranberries_magic::pack<Apply...>
+    >::type:: template expr<Expr>;
+  };
+
+  template < template<class...> class Expr, typename ...Types >
+  struct bind_single {
+    template < typename Apply >
+    using expr = typename cranberries_magic::expansion<
+      cranberries_magic::pack<Types...>, cranberries_magic::pack<Apply>
+    >::type:: template expr<Expr>;
+  };
+
+  template < template<class...> class Pred >
+  using bind_one = bind_single<Pred, x_>;
+
+  template < template<class...> class Pred, class ...Types>
+  using bind_1st = bind_single<Pred, x_, Types...>;
+
+  template < template<class...> class Pred, class T, class ...Types >
+  using bind_2nd = bind_single<Pred, T, x_, Types...>;
+
+
+  template < typename T, typename ...Types >
+  struct all_match : conjunction<std::is_same<T, Types>...> {};
+
+  template < typename T, typename ...Types >
+  struct any_match : disjunction<std::is_same<T, Types>...> {};
+
+  template < typename T, typename ...Types >
+  struct none_match : conjunction<negation<std::is_same<T, Types>>...> {};
+
+  template < typename T, typename ...Types >
+  using all_same = all_match<T, Types...>;
+
+  template < template<class> class Pred, class ...Types >
+  struct all_match_if : conjunction<Pred<Types>...>;
+
+  template < template<class> class Pred, class ...Types >
+  struct any_match_if : disjunction<Pred<Types>...>;
+
+  template < template<class> class Pred, class ...Types >
+  struct none_match_if : disjunction<negation<Pred<Types>>...>;
+  
+namespace cranberries_magic {
+  template < template<class...> class Pred, class T, class Tuple >
+  struct tuple_match_impl {
+    template < class T, class ...Types >
+    static constexpr auto x(std::tuple<Types...>)->Pred<T, Types...>;
+    using type = decltype(x(std::declval<Tuple>()));
+  };
+}
   template < typename T, typename Tuple >
-  struct tuple_all_match;
+  using tuple_all_match = typename cranberries_magic::tuple_match_impl<all_match,T, Tuple>::type;
 
-  template < typename T >
-  struct tuple_all_match<T, std::tuple<>> : std::false_type {};
-
-  template < typename T, typename U, typename ...Rest >
-  struct tuple_all_match<T, std::tuple<U, Rest...>> : std::false_type {};
-
-  template < typename T, typename ...Rest >
-  struct tuple_all_match<T, std::tuple<T, Rest...>> : tuple_all_match<T, std::tuple<Rest...>> {};
-
-  template < typename T >
-  struct tuple_all_match<T, std::tuple<T>> : std::true_type {};
+  template < class Tuple >
+  using tuple_all_same = tuple_all_match<std::tuple_element_t<0, Tuple>, Tuple>;
 
   template < typename T, typename Tuple >
-  struct tuple_any_match;
-
-  template < typename T >
-  struct tuple_any_match<T, std::tuple<>> : std::false_type {};
-
-  template < typename T, typename U, typename ...Rest >
-  struct tuple_any_match<T, std::tuple<U, Rest...>> : tuple_any_match<T, std::tuple<Rest...>> {};
-
-  template < typename T, typename ...Rest >
-  struct tuple_any_match<T, std::tuple<T, Rest...>> : std::true_type {};
+  using tuple_any_match = typename cranberries_magic::tuple_match_impl<any_match, T, Tuple>::type;
 
   template < typename T, typename Tuple >
-  struct tuple_none_match;
-
-  template < typename T >
-  struct tuple_none_match<T, std::tuple<>> : std::false_type {};
-
-  template < typename T, typename U, typename ...Rest >
-  struct tuple_none_match<T, std::tuple<U, Rest...>> : tuple_none_match<T, std::tuple<Rest...>> {};
-
-  template < typename T, typename ...Rest >
-  struct tuple_none_match < T, std::tuple<T, Rest...>> : std::false_type {};
-
-  template < typename T, typename U >
-  struct tuple_none_match<T, std::tuple<U>> : std::true_type {};
-
-  template < template <class> class Pred, typename Tuple >
-  struct tuple_all_match_if;
-
-  template < template <class> class Pred >
-  struct tuple_all_match_if<Pred, std::tuple<>> : std::false_type {};
-
-  template < template <class> class Pred, typename T, typename ...Rest >
-  struct tuple_all_match_if<Pred, std::tuple<T, Rest...>> : std::conditional_t<Pred<T>::value, tuple_all_match_if<Pred,std::tuple<Rest...>>,std::false_type> {};
-
-  template < template <class> class Pred, typename T >
-  struct tuple_all_match_if<Pred, std::tuple<T>> : std::conditional_t<Pred<T>::value, std::true_type, std::false_type> {};
-
-  template < template <class> class Pred, typename Tuple >
-  struct tuple_any_match_if;
-
-  template < template <class> class Pred >
-  struct tuple_any_match_if<Pred, std::tuple<>> : std::false_type {};
-
-  template < template <class> class Pred, typename T, typename ...Rest >
-  struct tuple_any_match_if<Pred, std::tuple<T, Rest...>> : std::conditional_t<Pred<T>::value, std::true_type, tuple_any_match_if<Pred, std::tuple<Rest...>>> {};
-
-  template < template <class> class Pred, typename T >
-  struct tuple_any_match_if<Pred, std::tuple<T>> : std::conditional_t<Pred<T>::value, std::true_type, std::false_type> {};
-
-  template < template <class> class Pred, typename Tuple >
-  struct tuple_none_match_if;
-
-  template < template <class> class Pred >
-  struct tuple_none_match_if<Pred, std::tuple<>> : std::false_type {};
-
-  template < template <class> class Pred, typename T, typename ...Rest >
-  struct tuple_none_match_if<Pred, std::tuple<T, Rest...>> : std::conditional_t<!Pred<T>::value, tuple_all_match_if<Pred, std::tuple<Rest...>>, std::false_type> {};
-
-  template < template <class> class Pred, typename T >
-  struct tuple_none_match_if<Pred, std::tuple<T>> : std::conditional_t<!Pred<T>::value, std::true_type, std::false_type> {};
-
+  using tuple_none_match = typename cranberries_magic::tuple_match_impl<none_match, T, Tuple>::type;
 
   template < typename T, class Tuple >
   constexpr bool tuple_all_match_v = tuple_all_match<T, Tuple>::value;
+
+  template < class Tuple >
+  constexpr bool tuple_all_same_v = tuple_all_same<Tuple>::value;
 
   template < typename T, class Tuple >
   constexpr bool tuple_any_match_v = tuple_any_match<T, Tuple>::value;
@@ -203,25 +307,6 @@ namespace cranberries_magic{
 
   template < template<class> class Pred, class Tuple >
   constexpr bool tuple_none_match_if_v = tuple_none_match_if<Pred, Tuple>::value;
-
-  template < typename T, typename ...Args >
-  struct all_match : tuple_all_match<T, std::tuple<Args...>> {};
-
-  template < typename T, typename ...Args >
-  struct any_match : tuple_any_match<T, std::tuple<Args...>> {};
-
-  template < typename T, typename ...Args >
-  struct none_match : tuple_none_match<T, std::tuple<Args...>> {};
-
-  template < template<class> class Pred, typename ...Args >
-  struct all_match_if : tuple_all_match_if<Pred, std::tuple<Args...>> {};
-
-  template < template<class> class Pred, typename ...Args >
-  struct any_match_if : tuple_any_match_if<Pred, std::tuple<Args...>> {};
-
-  template < template<class> class Pred, typename ...Args >
-  struct none_match_if : tuple_none_match_if<Pred, std::tuple<Args...>> {};
-
 
   template < typename T, typename ...Args >
   constexpr bool all_match_v = all_match<T, Args...>::value;
@@ -258,9 +343,6 @@ namespace cranberries_magic{
   struct is_bitset<std::bitset<N>> : std::true_type {};
 
   template < typename T >
-  struct is_bitset : is_bitset<T> {};
-
-  template < typename T >
   constexpr bool is_bitset_v = is_bitset<T>::value;
 
 
@@ -286,9 +368,9 @@ namespace cranberries_magic{
 } // ! namespace cranberries_magic
 
   template < typename T >
-  using is_range = typename disjunctional<
-      cranberries_magic::enable_std_begin_end,
-      cranberries_magic::enable_adl_begin_end>::template type<T>;
+  using is_range  = typename disjunctional<
+    bind_one<cranberries_magic::enable_std_begin_end>::expr,
+    bind_one<cranberries_magic::enable_adl_begin_end>::expr>::pred<T>;
 
   template < typename T >
   constexpr bool is_range_v = is_range<T>::value;
