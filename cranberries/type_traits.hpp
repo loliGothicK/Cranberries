@@ -71,41 +71,23 @@ namespace cranberries_magic
   template < typename B >
   constexpr bool negation_v = negation<B>::value;
 
-  namespace cranberries_magic {
-    template < typename T, template<class> class Head, template<class> class ...Tail >
-    struct conjunctional_impl : bool_constant< Head<T>::value && conjunctional_impl<T, Tail...>::value > {};
 
-    template < typename T, template<class> class Pred >
-    struct conjunctional_impl<T, Pred> : bool_constant< Pred<T>::value > {};
-
-    template < typename T, template<class> class Head, template<class> class ...Tail >
-    struct disjunctional_impl : bool_constant< Head<T>::value && conjunctional_impl<T, Tail...>::value > {};
-
-    template < typename T, template<class> class Pred >
-    struct disjunctional_impl<T, Pred> : bool_constant< Pred<T>::value > {};
-
-    template < typename T, template<class> class Pred >
-    struct negational_impl : bool_constant<!Pred<T>::value> {};
-  } // ! namespace cranberries_magic
-
-  template <
-    template<class>class ...Preds
-  >
+  template < template<class>class ...Preds >
   struct conjunctional {
     template < typename T >
-    using pred = cranberries_magic::conjunctional_impl<T, Preds...>;
+    using pred = conjunction<Preds<T>...>;
   };
 
   template < template<class>class ...Preds >
   struct disjunctional {
     template < typename T >
-    using pred = cranberries_magic::conjunctional_impl<T, Preds...>;
+    using pred = disjunction<Preds<T>...>;
   };
 
   template < template<class> class Pred >
   struct negational {
     template < typename T >
-    using pred = cranberries_magic::negational_impl<T, Pred>;
+    using pred = negation<Pred<T>>;
   };
 
   template < template<class...> class Pred, typename ...Types >
@@ -236,9 +218,6 @@ namespace cranberries_magic {
     >::type:: template expr<Expr>;
   };
 
-  template < template<class...> class Pred >
-  using bind_one = bind_single<Pred, x_>;
-
   template < template<class...> class Pred, class ...Types>
   using bind_1st = bind_single<Pred, x_, Types...>;
 
@@ -259,19 +238,20 @@ namespace cranberries_magic {
   using all_same = all_match<T, Types...>;
 
   template < template<class> class Pred, class ...Types >
-  struct all_match_if : conjunction<Pred<Types>...>;
+  struct all_match_if : conjunction<Pred<Types>...> {};
 
   template < template<class> class Pred, class ...Types >
-  struct any_match_if : disjunction<Pred<Types>...>;
+  struct any_match_if : disjunction<Pred<Types>...> {};
 
   template < template<class> class Pred, class ...Types >
-  struct none_match_if : disjunction<negation<Pred<Types>>...>;
+  struct none_match_if : disjunction<negation<Pred<Types>>...> {};
   
 namespace cranberries_magic {
   template < template<class...> class Pred, class T, class Tuple >
   struct tuple_match_impl {
-    template < class T, class ...Types >
-    static constexpr auto x(std::tuple<Types...>)->Pred<T, Types...>;
+    template < class U, class ...Types >
+    static constexpr auto x(std::tuple<Types...>)->Pred<U, Types...>;
+    
     using type = decltype(x(std::declval<Tuple>()));
   };
 }
@@ -353,7 +333,7 @@ namespace cranberries_magic{
   
   template < typename T >
   struct enable_std_begin_end<T,
-      std::void_t<decltype( std::begin(std::declval<const T&>()),std::end(std::declval<const T&>()) )>>
+      std::void_t<decltype( std::begin(std::declval<T&>()),std::end(std::declval<T&>()) )>>
   : std::true_type {};
 
   template < class, class = void >
@@ -361,16 +341,16 @@ namespace cranberries_magic{
   
   template < typename T >
   struct enable_adl_begin_end<T,
-      std::void_t<decltype( begin(std::declval<const T&>()),end(std::declval<const T&>()) )>>
+      std::void_t<decltype( begin(std::declval<T&>()),end(std::declval<T&>()) )>>
   : std::true_type {};
 
 
 } // ! namespace cranberries_magic
 
   template < typename T >
-  using is_range  = typename disjunctional<
-    bind_one<cranberries_magic::enable_std_begin_end>::expr,
-    bind_one<cranberries_magic::enable_adl_begin_end>::expr>::pred<T>;
+  using is_range = disjunctional<
+    bind_1st<cranberries_magic::enable_std_begin_end>::expr,
+    bind_1st<cranberries_magic::enable_adl_begin_end>::expr>::pred<T>;
 
   template < typename T >
   constexpr bool is_range_v = is_range<T>::value;
@@ -529,6 +509,18 @@ namespace cranberries_magic{
   constexpr bool is_nothrow_callable_v = is_nothrow_callable<T, R>::value;
 
 
+  template < typename T, std::size_t N >
+  struct generate_tuple
+  {
+    template < std::size_t ...I >
+    static constexpr auto seq(std::index_sequence<I...>)
+      ->std::tuple< decltype(I, T{})... > ;
+    
+    using type = decltype(seq(std::declval<std::make_index_sequence<N>>()));
+  };
+
+  template < typename T, std::size_t N >
+  using generate_tuple_t = typename generate_tuple<T,N>::type;
 
 }
 
