@@ -271,7 +271,11 @@ namespace cranberries_magic{
   
   template < typename T >
   struct enable_std_begin_end<T,
+<<<<<<< HEAD
       std::void_t<decltype( std::begin(std::declval<const T&>()),std::end(std::declval<const T&>()) )>>
+=======
+      cranberries::void_t<decltype( std::begin(std::declval<T&>()),std::end(std::declval<T&>()) )>>
+>>>>>>> 008bca4... [fix] interval
   : std::true_type {};
 
   template < class, class = void >
@@ -279,7 +283,7 @@ namespace cranberries_magic{
   
   template < typename T >
   struct enable_adl_begin_end<T,
-      std::void_t<decltype( begin(std::declval<const T&>()),end(std::declval<const T&>()) )>>
+      cranberries::void_t<decltype( begin(std::declval<T&>()),end(std::declval<T&>()) )>>
   : std::true_type {};
 
 
