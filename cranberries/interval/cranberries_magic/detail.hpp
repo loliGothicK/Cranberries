@@ -5,7 +5,7 @@
 #include <limits>
 #include <cmath>
 #include <type_traits>
-
+#include "../../type_traits.hpp"
 
 
 namespace cranberries {
@@ -17,24 +17,23 @@ namespace concept {
 // Class inheritancing interval_tag is interval.
 // expr_tag similar to.
 // Empty Base Optimization just works.
-class interval_tag {};
-class expr_tag {};
+class interval_base {};
+class expr_base {};
 
 // is_ineterval_v definition
 template < typename T >
-constexpr bool is_interval_v = std::is_base_of<interval_tag, T>::value;
+constexpr bool is_interval_v = std::is_base_of<interval_base, T>::value;
 
 // is_expr_v definition
 template < typename T >
-constexpr bool is_expr_v = std::is_base_of<expr_tag, T>::value;
+constexpr bool is_expr_v = std::is_base_of<expr_base, T>::value;
 
-template < typename L, typename R, class=void>
+
+template < typename T, typename R, class = void >
 struct is_available_total_order : std::false_type {};
 
 template < typename L, typename R >
-struct is_available_total_order<L,R,
-	std::enable_if_t<decltype(total_less(std::declval<L>(), std::declval<R>()),std::true_type{})::value>
-> : std::true_type {};
+struct is_available_total_order<L,R,cranberries::void_t<decltype(total_less(std::declval<L const&>, std::declval<R const&>()))>> : std::true_type {};
 
 template < typename L, typename R >
 constexpr bool is_available_total_order_v = is_available_total_order<L, R>::value;
@@ -49,7 +48,7 @@ namespace cranberries {
 // This class bind value.
 // Applying eval() for Expression Template evaluation chain.
 template < typename T >
-struct Val : public cranberries_magic::concept::expr_tag
+struct Val : public cranberries_magic::concept::expr_base
 {
   T value;
   Val( T v ) : value{ v } {}

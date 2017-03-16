@@ -4,6 +4,7 @@
 #include <cmath>
 #include "interval.hpp"
 #include "constants.hpp"
+#include "rounding_control.hpp"
 
 namespace cranberries {
   /*  interval cosine  */
@@ -13,8 +14,8 @@ namespace cranberries {
   {
     using math_impl::cos_down;
     using math_impl::cos_up;
-    auto&& a = x.lower();
-    auto&& b = x.upper();
+    auto a = x.lower();
+    auto b = x.upper();
 
     if ( b - a >= static_cast<T>( 2.0L ) * interval_constants::pi<T> )
       return interval<T>{ -interval_constants::one<T>, interval_constants::one<T> };
@@ -35,19 +36,19 @@ namespace cranberries {
       ( y1 < base2 && base2 < y2 ) ? interval<T>{ -interval_constants::one<T>, interval_constants::one<T> }
     : [&] {
       DOWNWARD_POLICY;
-      auto&& l = static_cast<T>( cos_down( a ) );
-      auto&& r = static_cast<T>( cos_down( b ) );
+      auto l = static_cast<T>( cos_down( a ) );
+      auto r = static_cast<T>( cos_down( b ) );
       return interval<T>{ std::fmin( l, r ), interval_constants::one<T> };
     }( ) )
       : ( y1 < base2 && base2 < y2 ) ? [&] {
       UPWARD_POLICY;
-      auto&& l = static_cast<T>( cos_up( a ) );
-      auto&& r = static_cast<T>( cos_up( b ) );
+      auto l = static_cast<T>( cos_up( a ) );
+      auto r = static_cast<T>( cos_up( b ) );
       return interval<T>{ -interval_constants::one<T>, std::fmax( l, r ) };
     }( )
       : ( cos_up( a ) < cos_up( b ) )
-      ? ACCURACY_ASSURANCE( static_cast<T>( cos_down( a ) ), static_cast<T>( cos_up( b ) ) )
-      : ACCURACY_ASSURANCE( static_cast<T>( cos_down( b ) ), static_cast<T>( cos_up( a ) ) );
+      ? cranberries_magic::make_interval_with_accuracy_assurance( static_cast<T>( cos_down( a ) ), static_cast<T>( cos_up( b ) ) )
+      : cranberries_magic::make_interval_with_accuracy_assurance( static_cast<T>( cos_down( b ) ), static_cast<T>( cos_up( a ) ) );
   }
 
   /*  interval sine  */
@@ -79,19 +80,19 @@ namespace cranberries {
       ( y1 < base2 && base2 < y2 ) ? interval<T>{ -interval_constants::one<T>, interval_constants::one<T> }
     : [&] {
       DOWNWARD_POLICY;
-      auto&& l = static_cast<T>( sin_down( a ) );
-      auto&& r = static_cast<T>( sin_down( b ) );
+      auto l = static_cast<T>( sin_down( a ) );
+      auto r = static_cast<T>( sin_down( b ) );
       return interval<T>{ std::fmin( l, r ), interval_constants::one<T> };
     }( ) )
       : ( y1 < base2 && base2 < y2 ) ? [&] {
       UPWARD_POLICY;
-      auto&& l = static_cast<T>( sin_up( a ) );
-      auto&& r = static_cast<T>( sin_up( b ) );
+      auto l = static_cast<T>( sin_up( a ) );
+      auto r = static_cast<T>( sin_up( b ) );
       return interval<T>{ -interval_constants::one<T>, std::fmax( l, r ) };
     }( )
       : ( sin_up( a ) < sin_up( b ) )
-      ? ACCURACY_ASSURANCE( static_cast<T>( sin_down( a ) ), static_cast<T>( sin_up( b ) ) )
-      : ACCURACY_ASSURANCE( static_cast<T>( sin_down( b ) ), static_cast<T>( sin_up( a ) ) );
+      ? cranberries_magic::make_interval_with_accuracy_assurance( static_cast<T>( sin_down( a ) ), static_cast<T>( sin_up( b ) ) )
+      : cranberries_magic::make_interval_with_accuracy_assurance( static_cast<T>( sin_down( b ) ), static_cast<T>( sin_up( a ) ) );
   }
 
   /*  interval tangent  */
@@ -101,13 +102,13 @@ namespace cranberries {
   {
     using math_impl::sin_up; using math_impl::sin_down;
     using math_impl::cos_up; using math_impl::cos_down;
-    auto&& a = x.lower();
-    auto&& b = x.upper();
+    auto a = x.lower();
+    auto b = x.upper();
 
     return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( b - a >= interval_constants::pi<T> )
       : CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( static_cast<int>( b * 2 / interval_constants::pi<T> ) - static_cast<int>( a * 2 / interval_constants::pi<T> ) != 0 )
       : CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( cranberries_magic::is_overflow( sin_down( a ) / cos_up( a ), sin_up( b ) / cos_down( b ) ) )
-      : ACCURACY_ASSURANCE( sin_down( a ) / cos_up( a ), sin_up( b ) / cos_down( b ) );
+      : cranberries_magic::make_interval_with_accuracy_assurance( sin_down( a ) / cos_up( a ), sin_up( b ) / cos_down( b ) );
   }
 
   template < typename T >
@@ -136,7 +137,7 @@ namespace cranberries {
   {
     using std::acos;
     return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < -interval_constants::one<T> || interval_constants::one<T> < x.upper() )
-      : ACCURACY_ASSURANCE( acos( x.lower() ), acos( x.upper() ) );
+      : cranberries_magic::make_interval_with_accuracy_assurance( acos( x.lower() ), acos( x.upper() ) );
   }
 
   /*  interval arc sine  */
@@ -146,7 +147,7 @@ namespace cranberries {
   {
     using std::asin;
     return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < -interval_constants::one<T> || interval_constants::one<T> < x.upper() )
-      : ACCURACY_ASSURANCE( asin( x.lower() ), asin( x.upper() ) );
+      : cranberries_magic::make_interval_with_accuracy_assurance( asin( x.lower() ), asin( x.upper() ) );
   }
 
   /*  interval arc tangent  */
@@ -154,7 +155,7 @@ namespace cranberries {
   template < typename T >
   inline constexpr interval<T> atan( interval<T> const& x )
   {
-    return ACCURACY_ASSURANCE( std::atan( x.lower() ), std::atan( x.upper() ) );
+    return cranberries_magic::make_interval_with_accuracy_assurance( std::atan( x.lower() ), std::atan( x.upper() ) );
   }
 
   template < typename T >
@@ -162,7 +163,7 @@ namespace cranberries {
   {
     using std::acos;
     return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( !( x.upper() < -1.0 || 1.0 < x.lower() ) )
-      : ACCURACY_ASSURANCE( acos( 1.0 / x.lower() ), acos( 1.0 / x.upper() ) );
+      : cranberries_magic::make_interval_with_accuracy_assurance( acos( 1.0 / x.lower() ), acos( 1.0 / x.upper() ) );
   }
 
   template < typename T >
@@ -170,7 +171,7 @@ namespace cranberries {
   {
     using std::asin;
     return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( !( x.upper() < -1.0 || 1.0 < x.lower() ) )
-      : ACCURACY_ASSURANCE( asin( 1.0 / x.upper() ), asin( 1.0 / x.lower() ) );
+      : cranberries_magic::make_interval_with_accuracy_assurance( asin( 1.0 / x.upper() ), asin( 1.0 / x.lower() ) );
   }
 
   template < typename T >
@@ -180,8 +181,8 @@ namespace cranberries {
     using std::abs;
     return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( x.lower() == interval_constants::zero<T> || x.upper() == interval_constants::zero<T> )
       : ( abs( x.lower() ) < abs( x.upper() ) )
-      ? ACCURACY_ASSURANCE( atan( 1.0 / x.upper() ), atan( 1.0 / x.lower() ) )
-      : ACCURACY_ASSURANCE( atan( 1.0 / x.lower() ), atan( 1.0 / x.upper() ) );
+      ? cranberries_magic::make_interval_with_accuracy_assurance( atan( 1.0 / x.upper() ), atan( 1.0 / x.lower() ) )
+      : cranberries_magic::make_interval_with_accuracy_assurance( atan( 1.0 / x.lower() ), atan( 1.0 / x.upper() ) );
   }
 
   /*  interval hyperbolic cosine  */
@@ -190,15 +191,15 @@ namespace cranberries {
   inline constexpr interval<T> cosh( interval<T> const& x )
   {
     using std::cosh;
-    auto&& a = x.lower();
-    auto&& b = x.upper();
+    auto a = x.lower();
+    auto b = x.upper();
     return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( cranberries_magic::is_overflow( cosh( a ), cosh( b ) ) )
-      : ( b < interval_constants::zero<T> ) ? ACCURACY_ASSURANCE( cosh( b ), cosh( a ) )
-      : ( interval_constants::zero<T> < a ) ? ACCURACY_ASSURANCE( cosh( a ), cosh( b ) )
+      : ( b < interval_constants::zero<T> ) ? cranberries_magic::make_interval_with_accuracy_assurance( cosh( b ), cosh( a ) )
+      : ( interval_constants::zero<T> < a ) ? cranberries_magic::make_interval_with_accuracy_assurance( cosh( a ), cosh( b ) )
       : [&] {
       UPWARD_POLICY;
-      auto&& l = cosh( a );
-      auto&& r = cosh( b );
+      auto l = cosh( a );
+      auto r = cosh( b );
       return interval<T>{ interval_constants::one<T>, std::fmax( l, r ) };
     }( );
   }
@@ -210,7 +211,7 @@ namespace cranberries {
   {
     using std::sinh;
     return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( cranberries_magic::is_overflow( sinh( x.lower() ), sinh( x.upper() ) ) )
-      : ACCURACY_ASSURANCE( sinh( x.lower() ), sinh( x.upper() ) );
+      : cranberries_magic::make_interval_with_accuracy_assurance( sinh( x.lower() ), sinh( x.upper() ) );
   }
 
   /*  interval hyperbolic tangent  */
@@ -219,7 +220,7 @@ namespace cranberries {
   inline constexpr interval<T> tanh( interval<T> const& x ) noexcept
   {
     using std::tanh;
-    return ACCURACY_ASSURANCE( tanh( x.lower() ), tanh( x.upper() ) );
+    return cranberries_magic::make_interval_with_accuracy_assurance( tanh( x.lower() ), tanh( x.upper() ) );
   }
 
   template < typename T >
@@ -247,7 +248,7 @@ namespace cranberries {
   {
     using std::acosh;
     return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < interval_constants::one<T> )
-      : ACCURACY_ASSURANCE( acosh( x.lower() ), acosh( x.upper() ) );
+      : cranberries_magic::make_interval_with_accuracy_assurance( acosh( x.lower() ), acosh( x.upper() ) );
   }
 
   /*  interval arc hyperbolic sine  */
@@ -256,7 +257,7 @@ namespace cranberries {
   inline constexpr interval<T> asinh( interval<T> const& x ) noexcept
   {
     using std::asinh;
-    return ACCURACY_ASSURANCE( asinh( x.lower() ), asinh( x.upper() ) );
+    return cranberries_magic::make_interval_with_accuracy_assurance( asinh( x.lower() ), asinh( x.upper() ) );
   }
 
   /*  interval arc hyperbolic tangent  */
@@ -266,7 +267,7 @@ namespace cranberries {
   {
     using std::atanh;
     return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < -interval_constants::one<T> || interval_constants::one<T> < x.upper() )
-      : ACCURACY_ASSURANCE( atanh( x.lower() ), atanh( x.upper() ) );
+      : cranberries_magic::make_interval_with_accuracy_assurance( atanh( x.lower() ), atanh( x.upper() ) );
   }
 
   template < typename T >
@@ -298,8 +299,8 @@ namespace cranberries {
     using math_impl::pow_up;
     using math_impl::pow_down;
     using std::pow;
-    auto&& a = x.lower();
-    auto&& b = x.upper();
+    auto a = x.lower();
+    auto b = x.upper();
     return ( n < 0 ) ? pow( x.inverse(), -n )
       : ( fmodl( n, 1 ) == 0 )
       ? (
@@ -345,14 +346,14 @@ namespace cranberries {
   {
     using std::sqrt;
     return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < interval_constants::zero<T> )
-      : ACCURACY_ASSURANCE( sqrt( x.lower() ), sqrt( x.upper() ) );
+      : cranberries_magic::make_interval_with_accuracy_assurance( sqrt( x.lower() ), sqrt( x.upper() ) );
   }
 
   template < typename T >
   inline constexpr interval<T> cbrt( interval<T> const& x ) noexcept
   {
     using std::cbrt;
-    return ACCURACY_ASSURANCE( cbrt( x.lower() ), cbrt( x.upper() ) );
+    return cranberries_magic::make_interval_with_accuracy_assurance( cbrt( x.lower() ), cbrt( x.upper() ) );
   }
 
   /*  interval expconstants::onential function ( base = e )  */
@@ -362,7 +363,7 @@ namespace cranberries {
   {
     using std::exp;
     return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( cranberries_magic::is_overflow( exp( x.lower() ), exp( x.upper() ) ) )
-      : ACCURACY_ASSURANCE( exp( x.lower() ), exp( x.upper() ) );
+      : cranberries_magic::make_interval_with_accuracy_assurance( exp( x.lower() ), exp( x.upper() ) );
   }
 
   /*  interval expconstants::onential function ( base = 2 )  */
@@ -372,7 +373,7 @@ namespace cranberries {
   {
     using std::exp2;
     return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( cranberries_magic::is_overflow( exp2( x.lower() ), exp2( x.upper() ) ) )
-      : ACCURACY_ASSURANCE( exp2( x.lower() ), exp2( x.upper() ) );
+      : cranberries_magic::make_interval_with_accuracy_assurance( exp2( x.lower() ), exp2( x.upper() ) );
   }
 
   /*  interval exp( x ) - 1  */
@@ -381,7 +382,7 @@ namespace cranberries {
   inline constexpr interval<T> expm1( interval<T> const& x )
   {
     using std::expm1;
-    return cranberries_magic::is_overflow( expm1( x.lower() ), expm1( x.upper() ) ) ? CRANBERRIES_RANGE_ERROR_THROW_WITH_MSG( "Overflow has occurred." ) : ACCURACY_ASSURANCE( expm1( x.lower() ), expm1( x.upper() ) );
+    return cranberries_magic::is_overflow( expm1( x.lower() ), expm1( x.upper() ) ) ? CRANBERRIES_RANGE_ERROR_THROW_WITH_MSG( "Overflow has occurred." ) : cranberries_magic::make_interval_with_accuracy_assurance( expm1( x.lower() ), expm1( x.upper() ) );
   }
 
   /*  interval logarithmic function ( base = e ) */
@@ -390,7 +391,7 @@ namespace cranberries {
   inline constexpr interval<T> log( interval<T> const& x )
   {
     using std::log;
-    return ( interval_constants::zero<T> < x.lower() ) ? ACCURACY_ASSURANCE( log( x.lower() ), log( x.upper() ) ) : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
+    return ( interval_constants::zero<T> < x.lower() ) ? cranberries_magic::make_interval_with_accuracy_assurance( log( x.lower() ), log( x.upper() ) ) : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
   }
 
   /*  interval log( x ) + 1  */
@@ -398,7 +399,7 @@ namespace cranberries {
   inline constexpr interval<T> log1p( interval<T> const& x )
   {
     using std::log1p;
-    return ( -interval_constants::one<T> < x.lower() ) ? ACCURACY_ASSURANCE( log1p( x.lower() ), log1p( x.upper() ) ) : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
+    return ( -interval_constants::one<T> < x.lower() ) ? cranberries_magic::make_interval_with_accuracy_assurance( log1p( x.lower() ), log1p( x.upper() ) ) : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
   }
 
   /*  interval logarithmic function ( base = 10 )  */
@@ -407,7 +408,7 @@ namespace cranberries {
   inline constexpr interval<T> log10( interval<T> const& x )
   {
     using std::log10;
-    return ( interval_constants::zero<T> < x.lower() ) ? ACCURACY_ASSURANCE( log10( x.lower() ), log10( x.upper() ) ) : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
+    return ( interval_constants::zero<T> < x.lower() ) ? cranberries_magic::make_interval_with_accuracy_assurance( log10( x.lower() ), log10( x.upper() ) ) : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
   }
 
   /*  interval logarithmic function ( base = 2 )  */
@@ -415,7 +416,7 @@ namespace cranberries {
   inline constexpr interval<T> log2( interval<T> const& x )
   {
     using std::log2;
-    return ( interval_constants::zero<T> < x.lower() ) ? ACCURACY_ASSURANCE( log2( x.lower() ), log2( x.upper() ) ) : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
+    return ( interval_constants::zero<T> < x.lower() ) ? cranberries_magic::make_interval_with_accuracy_assurance( log2( x.lower() ), log2( x.upper() ) ) : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
   }
 
   /*  interval absolute funtion  */
@@ -424,10 +425,10 @@ namespace cranberries {
   inline constexpr interval<T> abs( interval<T> const& x )
   {
     using std::abs;
-    auto&& low = x.lower();
-    auto&& up = x.upper();
-    return ( low < -interval_constants::zero<T> && interval_constants::zero<T> <= up ) ? [&] { auto&& l = abs( low ); auto&& r = abs( up ); return interval<T>{ interval_constants::zero<T>, std::fmax( l, r ) }; }( )
-      : ( up < interval_constants::zero<T> ) ? [&] { auto&& l = abs( up ); auto&& r = abs( low ); return interval<T>{ l, r }; }( )
+    auto low = x.lower();
+    auto up = x.upper();
+    return ( low < -interval_constants::zero<T> && interval_constants::zero<T> <= up ) ? [&] { auto l = abs( low ); auto r = abs( up ); return interval<T>{ interval_constants::zero<T>, std::fmax( l, r ) }; }( )
+      : ( up < interval_constants::zero<T> ) ? [&] { auto l = abs( up ); auto r = abs( low ); return interval<T>{ l, r }; }( )
       : interval<T>{ x };
   }
 
@@ -444,16 +445,16 @@ namespace cranberries {
     auto y_up = y.upper();
     auto z_up = z.upper();
 
-    return ( x_low >= interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? ACCURACY_ASSURANCE( fma( x_low, y_low, z_low ), fma( x_up, y_up, z_up ) )
-      : ( x_low >= interval_constants::zero<T1> && y_low < interval_constants::zero<T2> && y_up > interval_constants::zero<T2> ) ? ACCURACY_ASSURANCE( fma( x_up, y_low, z_low ), fma( x_low, y_up, z_up ) )
-      : ( x_low >= interval_constants::zero<T1> && y_up <= interval_constants::zero<T2> ) ? ACCURACY_ASSURANCE( fma( x_up, y_low, z_low ), fma( x_low, y_up, z_up ) )
-      : ( x_low < interval_constants::zero<T1> && x_up > interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? ACCURACY_ASSURANCE( fma( x_low, y_up, z_low ), fma( x_up, y_up, z_up ) )
-      : ( x_low < interval_constants::zero<T1> && x_up > interval_constants::zero<T1> && y_low <= interval_constants::zero<T2> ) ? ACCURACY_ASSURANCE( fma( x_up, y_low, z_low ), fma( x_low, y_low, z_up ) )
-      : ( x_up <= interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? ACCURACY_ASSURANCE( fma( x_low, y_up, z_low ), fma( x_up, y_low, z_up ) )
-      : ( x_up <= interval_constants::zero<T> && y_low < interval_constants::zero<T> && y_up > interval_constants::zero<T> ) ? ACCURACY_ASSURANCE( fma( x_low, y_up, z_low ), fma( x_low, y_low, z_up ) )
-      : ( x_up <= interval_constants::zero<T> && y_up <= interval_constants::zero<T2> ) ? ACCURACY_ASSURANCE( fma( x_up, y_up, z_low ), fma( x_low, y_low, z_up ) )
-      : ( x_up*y_low < x_low*y_up ) ? ACCURACY_ASSURANCE( fma( x_up, y_low, z_low ), fma( x_low, y_up, z_up ) )
-      : ACCURACY_ASSURANCE( fma( x_low, y_up, z_low ), fma( x_up, y_low, z_up ) );
+    return ( x_low >= interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_low, y_low, z_low ), fma( x_up, y_up, z_up ) )
+      : ( x_low >= interval_constants::zero<T1> && y_low < interval_constants::zero<T2> && y_up > interval_constants::zero<T2> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_up, y_low, z_low ), fma( x_low, y_up, z_up ) )
+      : ( x_low >= interval_constants::zero<T1> && y_up <= interval_constants::zero<T2> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_up, y_low, z_low ), fma( x_low, y_up, z_up ) )
+      : ( x_low < interval_constants::zero<T1> && x_up > interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_low, y_up, z_low ), fma( x_up, y_up, z_up ) )
+      : ( x_low < interval_constants::zero<T1> && x_up > interval_constants::zero<T1> && y_low <= interval_constants::zero<T2> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_up, y_low, z_low ), fma( x_low, y_low, z_up ) )
+      : ( x_up <= interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_low, y_up, z_low ), fma( x_up, y_low, z_up ) )
+      : ( x_up <= interval_constants::zero<T> && y_low < interval_constants::zero<T> && y_up > interval_constants::zero<T> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_low, y_up, z_low ), fma( x_low, y_low, z_up ) )
+      : ( x_up <= interval_constants::zero<T> && y_up <= interval_constants::zero<T2> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_up, y_up, z_low ), fma( x_low, y_low, z_up ) )
+      : ( x_up*y_low < x_low*y_up ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_up, y_low, z_low ), fma( x_low, y_up, z_up ) )
+      : cranberries_magic::make_interval_with_accuracy_assurance( fma( x_low, y_up, z_low ), fma( x_up, y_low, z_up ) );
   }
 
   /*  interval fused multiplyply-add function fma( interval<T>, interval<T>, T)  */
@@ -467,16 +468,16 @@ namespace cranberries {
     auto y_up = y.upper();
     auto x_up = x.upper();
 
-    return ( x_low >= interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? ACCURACY_ASSURANCE( fma( x_low, y_low, z ), fma( x_up, y_up, z ) )
-      : ( x_low >= interval_constants::zero<T1> && y_low < interval_constants::zero<T2> && y_up > interval_constants::zero<T2> ) ? ACCURACY_ASSURANCE( fma( x_up, y_low, z ), fma( x_low, y_up, z ) )
-      : ( x_low >= interval_constants::zero<T1> && y_up <= interval_constants::zero<T2> ) ? ACCURACY_ASSURANCE( fma( x_up, y_low, z ), fma( x_low, y_up, z ) )
-      : ( x_low < interval_constants::zero<T1> && x_up > interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? ACCURACY_ASSURANCE( fma( x_low, y_up, z ), fma( x_up, y_up, z ) )
-      : ( x_low < interval_constants::zero<T1> && x_up > interval_constants::zero<T1> && y_low <= interval_constants::zero<T2> ) ? ACCURACY_ASSURANCE( fma( x_up, y_low, z ), fma( x_low, y_low, z ) )
-      : ( x_up <= interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? ACCURACY_ASSURANCE( fma( x_low, y_up, z ), fma( x_up, y_low, z ) )
-      : ( x_up <= interval_constants::zero<T> && y_low < interval_constants::zero<T> && y_up > interval_constants::zero<T> ) ? ACCURACY_ASSURANCE( fma( x_low, y_up, z ), fma( x_low, y_low, z ) )
-      : ( x_up <= interval_constants::zero<T> && y_up <= interval_constants::zero<T2> ) ? ACCURACY_ASSURANCE( fma( x_up, y_up, z ), fma( x_low, y_low, z ) )
-      : ( x_up*y_low < x_low*y_up ) ? ACCURACY_ASSURANCE( fma( x_up, y_low, z ), fma( x_low, y_up, z ) )
-      : ACCURACY_ASSURANCE( fma( x_low, y_up, z ), fma( x_up, y_low, z ) );
+    return ( x_low >= interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_low, y_low, z ), fma( x_up, y_up, z ) )
+      : ( x_low >= interval_constants::zero<T1> && y_low < interval_constants::zero<T2> && y_up > interval_constants::zero<T2> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_up, y_low, z ), fma( x_low, y_up, z ) )
+      : ( x_low >= interval_constants::zero<T1> && y_up <= interval_constants::zero<T2> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_up, y_low, z ), fma( x_low, y_up, z ) )
+      : ( x_low < interval_constants::zero<T1> && x_up > interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_low, y_up, z ), fma( x_up, y_up, z ) )
+      : ( x_low < interval_constants::zero<T1> && x_up > interval_constants::zero<T1> && y_low <= interval_constants::zero<T2> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_up, y_low, z ), fma( x_low, y_low, z ) )
+      : ( x_up <= interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_low, y_up, z ), fma( x_up, y_low, z ) )
+      : ( x_up <= interval_constants::zero<T> && y_low < interval_constants::zero<T> && y_up > interval_constants::zero<T> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_low, y_up, z ), fma( x_low, y_low, z ) )
+      : ( x_up <= interval_constants::zero<T> && y_up <= interval_constants::zero<T2> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_up, y_up, z ), fma( x_low, y_low, z ) )
+      : ( x_up*y_low < x_low*y_up ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x_up, y_low, z ), fma( x_low, y_up, z ) )
+      : cranberries_magic::make_interval_with_accuracy_assurance( fma( x_low, y_up, z ), fma( x_up, y_low, z ) );
   }
 
   /*  interval fused multiplyply-add function fma( interval<T>, T, interval<T>)  */
@@ -485,8 +486,8 @@ namespace cranberries {
   inline constexpr interval<T> fma( interval<T1> const& x, T const& y, interval<T3> const& z ) noexcept
   {
     using std::fma;
-    return ( y < interval_constants::zero<T> ) ? ACCURACY_ASSURANCE( fma( x.upper(), y, z.lower() ), fma( x.lower(), y, z.upper() ) )
-      : ACCURACY_ASSURANCE( fma( x.lower(), y, z.lower() ), fma( x.upper(), y, z.upper() ) );
+    return ( y < interval_constants::zero<T> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x.upper(), y, z.lower() ), fma( x.lower(), y, z.upper() ) )
+      : cranberries_magic::make_interval_with_accuracy_assurance( fma( x.lower(), y, z.lower() ), fma( x.upper(), y, z.upper() ) );
   }
 
   /*  interval fused multiplyply-add function fma( T, interval<T>, interval<T>)  */
@@ -495,8 +496,8 @@ namespace cranberries {
   inline constexpr interval<T> fma( T const& x, interval<T2> const& y, interval<T3> const& z ) noexcept
   {
     using std::fma;
-    return ( x < interval_constants::zero<T> ) ? ACCURACY_ASSURANCE( fma( x, y.upper(), z.lower() ), fma( x, y.lower(), z.upper() ) )
-      : ACCURACY_ASSURANCE( fma( x, y.lower(), z.lower() ), fma( x, y.upper(), z.upper() ) );
+    return ( x < interval_constants::zero<T> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x, y.upper(), z.lower() ), fma( x, y.lower(), z.upper() ) )
+      : cranberries_magic::make_interval_with_accuracy_assurance( fma( x, y.lower(), z.lower() ), fma( x, y.upper(), z.upper() ) );
   }
 
   /*  interval fused multiplyply-add function fma( interval<T>, T, T)  */
@@ -505,8 +506,8 @@ namespace cranberries {
   inline constexpr interval<T> fma( interval<T> const& x, typename interval<T>::value_type const& y, typename interval<T>::value_type const& z ) noexcept
   {
     using std::fma;
-    return ( y < interval_constants::zero<T> ) ? ACCURACY_ASSURANCE( fma( x.upper(), y, z ), fma( x.lower(), y, z ) )
-      : ACCURACY_ASSURANCE( fma( x.lower(), y, z ), fma( x.upper(), y, z ) );
+    return ( y < interval_constants::zero<T> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x.upper(), y, z ), fma( x.lower(), y, z ) )
+      : cranberries_magic::make_interval_with_accuracy_assurance( fma( x.lower(), y, z ), fma( x.upper(), y, z ) );
   }
 
   /*  interval fused multiplyply-add function fma( T, interval<T>, T)  */
@@ -515,8 +516,8 @@ namespace cranberries {
   inline constexpr interval<T> fma( typename interval<T>::value_type const& x, interval<T> const& y, typename interval<T>::value_type const& z ) noexcept
   {
     using std::fma;
-    return ( x < interval_constants::zero<T> ) ? ACCURACY_ASSURANCE( fma( x, y.upper(), z ), fma( x, y.lower(), z ) )
-      : ACCURACY_ASSURANCE( fma( x, y.lower(), z ), fma( x, y.upper(), z ) );
+    return ( x < interval_constants::zero<T> ) ? cranberries_magic::make_interval_with_accuracy_assurance( fma( x, y.upper(), z ), fma( x, y.lower(), z ) )
+      : cranberries_magic::make_interval_with_accuracy_assurance( fma( x, y.lower(), z ), fma( x, y.upper(), z ) );
   }
 
   /*  interval fused multiplyply-add function fma( T, T, interval<T>)  */
@@ -525,7 +526,7 @@ namespace cranberries {
   inline constexpr interval<T> fma( typename interval<T>::value_type const& x, typename interval<T>::value_type const& y, interval<T> const& z ) noexcept
   {
     using std::fma;
-    return ACCURACY_ASSURANCE( fma( x, y, z.lower() ), fma( x, y, z.upper() ) );
+    return cranberries_magic::make_interval_with_accuracy_assurance( fma( x, y, z.lower() ), fma( x, y, z.upper() ) );
   }
 
   /*  interval error function  */
@@ -534,7 +535,7 @@ namespace cranberries {
   inline constexpr interval<T> erf( interval<T> const& x ) noexcept
   {
     using std::erf;
-    return ACCURACY_ASSURANCE( erf( x.lower() ), erf( x.upper() ) );
+    return cranberries_magic::make_interval_with_accuracy_assurance( erf( x.lower() ), erf( x.upper() ) );
   }
 
   /*  interval complementary error function  */
@@ -543,7 +544,7 @@ namespace cranberries {
   inline constexpr interval<T> erfc( interval<T> const& x ) noexcept
   {
     using std::erfc;
-    return ACCURACY_ASSURANCE( erfc( x.upper() ), erfc( x.lower() ) );
+    return cranberries_magic::make_interval_with_accuracy_assurance( erfc( x.upper() ), erfc( x.lower() ) );
   }
 
   /*  is_singleton  */

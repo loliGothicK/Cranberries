@@ -111,8 +111,8 @@ namespace cranberries {
     return x.lower() < y.lower() && y.upper() < x.upper() ? interval<T>( y )
       : y.lower() < x.lower() && x.upper() < y.upper() ? interval<T>( x )
       : x.lower() < y.upper() ? interval<T>{ x.lower(), y.upper() }
-    : y.lower() < x.upper() ? interval<T>{ y.lower(), x.upper() }
-    : CRANBERRIES_INVALID_ARGUMENT_THROW_WITH_MSG( "x and y do not overlap each other." );
+      : y.lower() < x.upper() ? interval<T>{ y.lower(), x.upper() }
+      : CRANBERRIES_INVALID_ARGUMENT_THROW_WITH_MSG( "x and y do not overlap each other." );
   }
 
 

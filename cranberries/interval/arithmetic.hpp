@@ -62,7 +62,7 @@ namespace cranberries {
   inline constexpr interval<T> interval<T>::inverse() const
   {
     return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( lower() <= 0.0 && 0.0 <= upper() )
-      : ACCURACY_ASSURANCE( 1.0 / upper(), 1.0 / lower() );
+      : cranberries_magic::make_interval_with_accuracy_assurance( 1.0 / upper(), 1.0 / lower() );
   }
 
 
