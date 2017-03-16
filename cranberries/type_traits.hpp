@@ -330,7 +330,10 @@ namespace cranberries_magic{
 
   template < class, class = void >
   struct enable_std_begin_end : std::false_type {};
-        cranberries::void_t<decltype( std::begin(std::declval<T&>()),std::end(std::declval<T&>()) )>>
+
+  template < typename T >
+  struct enable_std_begin_end<T,
+      cranberries::void_t<decltype( std::begin(std::declval<T&>()),std::end(std::declval<T&>()) )>>
   : std::true_type {};
 
   template < class, class = void >
