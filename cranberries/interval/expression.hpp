@@ -7,7 +7,7 @@
 namespace cranberries {
 
   template < class A, class Func >
-  class Expr1 : cranberries_magic::concept::expr_tag
+  class Expr1 : cranberries_magic::concept::expr_base
   {
     std::decay_t<cranberries_magic::Expr_ref<A>> arg;
   public:
@@ -22,7 +22,7 @@ namespace cranberries {
   };
 
   template <class L, class Op, class R >
-  class Expr2 : cranberries_magic::concept::expr_tag
+  class Expr2 : cranberries_magic::concept::expr_base
   {
     std::decay_t<cranberries_magic::Expr_ref<L>> l_;
     std::decay_t<cranberries_magic::Expr_ref<R>> r_;
@@ -38,7 +38,7 @@ namespace cranberries {
   };
 
   template <class T1, class T2, class T3, class Func >
-  class Expr3 : cranberries_magic::concept::expr_tag
+  class Expr3 : cranberries_magic::concept::expr_base
   {
     std::decay_t<cranberries_magic::Expr_ref<T1>> v1_;
     std::decay_t<cranberries_magic::Expr_ref<T2>> v2_;

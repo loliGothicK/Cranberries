@@ -31,14 +31,14 @@ namespace cranberries {
   //----------------------------------//
 
   template < typename T = double >
-  class interval : cranberries_magic::concept::interval_tag
+  class interval
+    : cranberries_magic::concept::interval_base
   {
     CRANBERRIES_CONCEPT_ASSERT( std::is_arithmetic<T>::value && std::is_signed<T>::value );
   public:
     using value_type = T;
 
     /*  ctor  */
-    constexpr interval(T&&, T&&);
     constexpr interval() noexcept : interval{ T{}, T{} } {};
     constexpr interval( T const&, T const& );
     constexpr interval( T const& v ) noexcept : interval{ v, v } {};
@@ -59,9 +59,7 @@ namespace cranberries {
     constexpr interval operator --( int ) noexcept;
 
     /*  numeric functions  */
-
     constexpr interval inverse() const;
-
 
     /*  interval functions  */
     constexpr T mid() const noexcept;
@@ -88,7 +86,7 @@ namespace cranberries {
     constexpr void swap( interval& x ) noexcept;
 
     friend std::ostream& operator<< (std::ostream& os, interval const& v) {
-      return os << "[" << v.lower() << ", " << v.upper() << "]";
+      return os << "[" << v.lower_ << ", " << v.upper_ << "]";
     }
 
 
@@ -149,6 +147,7 @@ namespace cranberries {
     inline constexpr interval& operator/=( interval&& x ) {
       return divide_assign( *this, x );
     }
+
   private:
     T lower_{};
     T upper_{};
@@ -201,13 +200,6 @@ namespace cranberries {
   //-------------------------//
 
   /*  Two value Arguments Ctor  */
-
-  template < typename T >
-  inline constexpr interval<T>::interval(T&& low, T&& up)
-    : lower_{ std::move(low) }, upper_{ std::move(up) }
-  {
-    CRANBERRIES_INVALID_ARGUMENT_THROW_WITH_MSG_IF( up < low, "upper_bound less than lower_bound!" );
-  }
 
   template < typename T >
   inline constexpr interval<T>::interval( T const& low, T const& up )

@@ -1,9 +1,7 @@
 #ifndef CRANBERRIES_INTERVAL_LIB_ROUNDING_CONTROL_HPP
-#define CRANBERRIES_INTERVAL_LIB_ROUNDING_CONTROL_HPP 
-
-#define ACCURACY_ASSURANCE(lower,upper) [&]{ DOWNWARD_POLICY; auto&& l = lower; UPWARD_POLICY; auto&& r = upper; return interval<T>{ l, r }; }()
-#define ACCURACY_ASSURANCE_WITH_OVERFLOW_CHECK(lower,upper) [&]{ DOWNWARD_POLICY; auto&& l = lower; UPWARD_POLICY; auto&& r = upper; return interval<T>{ CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL(cranberries_magic::is_overflow(l)):l, CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL(cranberries_magic::is_overflow(r)):r }; }()
-
+#define CRANBERRIES_INTERVAL_LIB_ROUNDING_CONTROL_HPP
+#include "exception.hpp"
+#include "../common/macros.hpp"
 /*
 workaround for MSVC below
 [ Note : FE_DOWNWARD and FE_UPWARD are reverse defined in MSVC. - end note]
@@ -16,12 +14,40 @@ workaround for MSVC below
 #define DOWNWARD_POLICY std::fesetround(FE_DOWNWARD)
 #endif
 
-#ifdef _MSC_VER
-#define UPWARD_CALC(EXPR) [&] {std::fesetround(FE_DOWNWARD); auto&& tmp = EXPR; return tmp;}()
-#define DOWNWARD_CALC(EXPR) [&] {std::fesetround(FE_UPWARD); auto&& tmp = EXPR; return tmp;}()
-#else
-#define UPWARD_CALC(EXPR) [&] {std::fesetround(FE_UPWARD); auto&& tmp = EXPR; return tmp;}()
-#define DOWNWARD_CALC(EXPR) [&] {std::fesetround(FE_DOWNWARD); auto&& tmp = EXPR; return tmp;}()
-#endif
+
+namespace cranberries {
+namespace cranberries_magic {
+  template < typename T >
+  inline
+  constexpr auto downward_multiply(T x, T y) noexcept {
+    DOWNWARD_POLICY;
+    auto result = x*y;
+    return result;
+  }
+
+  template < typename T >
+  inline
+  constexpr auto upward_multiply(T x, T y) noexcept {
+    UPWARD_POLICY;
+    auto result = x*y;
+    return result;
+  }
+}
+}
+namespace cranberries {
+namespace cranberries_magic {
+  template < typename T >
+  inline
+  constexpr auto make_interval_with_accuracy_assurance(T lower, T upper) noexcept {
+    DOWNWARD_POLICY;
+    auto l = lower;
+    UPWARD_POLICY;
+    auto r = upper;
+    return interval<T>{ l, r };
+  }
+
+}
+}
+
 
 #endif // ! SET_ROUND_HPP
