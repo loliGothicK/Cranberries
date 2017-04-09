@@ -1,4 +1,4 @@
-#include "..cranberries/interval.hpp"
+#include "../../cranberries/interval.hpp"
 #include <iostream>
 #include <cassert>
 #include <vector>
