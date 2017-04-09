@@ -63,8 +63,8 @@ namespace cranberries
 
     constexpr value_type& real() noexcept { return real_; }
     constexpr value_type& basis() noexcept { return basis_; }
-    constexpr value_type  real() const noexcept { return real_; }
-    constexpr value_type  basis() const noexcept { return basis_; }
+    constexpr value_type cosnt& real() const noexcept { return real_; }
+    constexpr value_type cosnt& basis() const noexcept { return basis_; }
 
   private:
     value_type real_;
