@@ -4,7 +4,7 @@
 #include <iostream>
 #include <cmath>
 #include <type_traits>
-#include "../except/exception.hpp"
+#include "exception.hpp"
 
 namespace cranberries
 {
