@@ -9,11 +9,11 @@ using std::cout;
 using std::endl;
 
 struct F{
-  void operator()(int,int){ return 0; }
+  void operator()(int,int){ }
 };
 
 struct G{
-  void operator()(int,int) noexcept { return 0; }
+  void operator()(int,int) noexcept { }
 };
 
 int main()
