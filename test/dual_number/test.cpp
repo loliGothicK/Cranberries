@@ -7,7 +7,7 @@ try
 {
   using cranberries::dual_number;
   using cranberries::make_dual;
-  using cranberries::interval_lib::interval;
+  using cranberries::interval;
   using namespace cranberries::literals;
   using std::cout;
   using std::endl;
