@@ -3,10 +3,18 @@
 #include "../../cranberries/utility.hpp"
 #include <vector>
 #include <array>
+#include <except>
 
 using std::cout;
 using std::endl;
 
+struct F{
+  void operator()(int,int){ return 0; }
+};
+
+struct G{
+  void operator()(int,int) noexcept { return 0; }
+};
 
 int main()
 try{
@@ -71,18 +79,18 @@ try{
         none_match_v< int, float, unsigned, double >,
         "fail"
         );
-      static_assert(
-        all_match_if_v< std::is_signed, float, int, double >,
-        "fail"
-        );
-      static_assert(
-        any_match_if_v< std::is_signed, float, int, unsigned >,
-        "fail"
-        );
-      static_assert(
-        none_match_if_v< std::is_unsigned, float, int, double >,
-        "fail"
-        );
+      // static_assert(
+      //   all_match_if_v< std::is_signed, float, int, double >,
+      //   "fail"
+      //   );
+      // static_assert(
+      //   any_match_if_v< std::is_signed, float, int, unsigned >,
+      //   "fail"
+      //   );
+      // static_assert(
+      //   none_match_if_v< std::is_unsigned, float, int, double >,
+      //   "fail"
+      //   );
       static_assert(
         is_callable<F(int,int),void>::value,
         "fail"
@@ -129,7 +137,7 @@ try{
         );
 
 }
-catch (cranberries::runtime_error const& e) {
+catch (std::runtime_error const& e) {
   cout << e.what() << endl;
   return 0;
 }
