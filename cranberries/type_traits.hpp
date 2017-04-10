@@ -279,14 +279,14 @@ namespace cranberries_magic {
   template < typename T, class Tuple >
   constexpr bool tuple_none_match_v = tuple_none_match<T, Tuple>::value;
 
-  template < template<class> class Pred, class Tuple >
-  constexpr bool tuple_all_match_if_v = tuple_all_match_if<Pred, Tuple>::value;
+//  template < template<class> class Pred, class Tuple >
+//  constexpr bool tuple_all_match_if_v = tuple_all_match_if<Pred, Tuple>::value;
 
-  template < template<class> class Pred, class Tuple >
-  constexpr bool tuple_any_match_if_v = tuple_any_match_if<Pred, Tuple>::value;
+//  template < template<class> class Pred, class Tuple >
+//  constexpr bool tuple_any_match_if_v = tuple_any_match_if<Pred, Tuple>::value;
 
-  template < template<class> class Pred, class Tuple >
-  constexpr bool tuple_none_match_if_v = tuple_none_match_if<Pred, Tuple>::value;
+//  template < template<class> class Pred, class Tuple >
+//  constexpr bool tuple_none_match_if_v = tuple_none_match_if<Pred, Tuple>::value;
 
   template < typename T, typename ...Args >
   constexpr bool all_match_v = all_match<T, Args...>::value;
@@ -297,14 +297,14 @@ namespace cranberries_magic {
   template < typename T, typename ...Args >
   constexpr bool none_match_v = none_match<T, Args...>::value;
 
-  template < template<class> class Pred, typename ...Args >
-  constexpr bool all_match_if_v = all_match_if<Pred, Args...>::value;
+//  template < template<class> class Pred, typename ...Args >
+//  constexpr bool all_match_if_v = all_match_if<Pred, Args...>::value;
 
-  template < template<class> class Pred, typename ...Args >
-  constexpr bool any_match_if_v = any_match_if<Pred, Args...>::value;
+//  template < template<class> class Pred, typename ...Args >
+//  constexpr bool any_match_if_v = any_match_if<Pred, Args...>::value;
 
-  template < template<class> class Pred, typename ...Args >
-  constexpr bool none_match_if_v = none_match_if<Pred, Args...>::value;
+//  template < template<class> class Pred, typename ...Args >
+//  constexpr bool none_match_if_v = none_match_if<Pred, Args...>::value;
 
   template < typename T >
   struct is_tuple : std::false_type {};

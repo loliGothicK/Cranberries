@@ -21,7 +21,7 @@ namespace cranberries
 namespace cranberries_magic
 {
   template<class T>
-  using not_ref_wrapper = negation<is_ref_wrapper<std::decay_t<T>>>;
+  using not_ref_wrapper = negation<is_reference_wrapper<std::decay_t<T>>>;
 
   template <class D, class...> struct return_type_helper { using type = D; };
   template <class... Types>
