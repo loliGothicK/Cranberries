@@ -10,6 +10,17 @@ namespace cranberries
 {
   namespace cranberries_magic {
     class dual_number_base{};
+    
+    template < typename T >
+    constexpr T sqrt(T s){
+      T x = s / 2.0;
+      T prev = 0.0;
+
+      while(x != prev){
+        x = (x + s / x) / 2.0;
+      }
+      return x;
+    }
   }
 
   template < typename T >
