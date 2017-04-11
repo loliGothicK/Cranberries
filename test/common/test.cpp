@@ -8,7 +8,6 @@
 using std::cout;
 using std::endl;
 
-<<<<<<< HEAD
 struct F{
   void operator()(int,int){ }
 };
@@ -20,12 +19,6 @@ struct G{
 int main()
 try{
   using namespace cranberries;
-=======
-
-int main()
-try{
-  using cranberries;
->>>>>>> common
       static_assert(
         std::is_same<cranberries::generate_tuple_t<int, 3>, std::tuple<int, int, int>>::value,
         "fail"
@@ -86,7 +79,6 @@ try{
         none_match_v< int, float, unsigned, double >,
         "fail"
         );
-<<<<<<< HEAD
       // static_assert(
       //   all_match_if_v< std::is_signed, float, int, double >,
       //   "fail"
@@ -99,20 +91,6 @@ try{
       //   none_match_if_v< std::is_unsigned, float, int, double >,
       //   "fail"
       //   );
-=======
-      static_assert(
-        all_match_if_v< std::is_signed, float, int, double >,
-        "fail"
-        );
-      static_assert(
-        any_match_if_v< std::is_signed, float, int, unsigned >,
-        "fail"
-        );
-      static_assert(
-        none_match_if_v< std::is_unsigned, float, int, double >,
-        "fail"
-        );
->>>>>>> common
       static_assert(
         is_callable<F(int,int),void>::value,
         "fail"
@@ -159,11 +137,7 @@ try{
         );
 
 }
-<<<<<<< HEAD
 catch (std::runtime_error const& e) {
-=======
-catch (cranberries::runtime_error const& e) {
->>>>>>> common
   cout << e.what() << endl;
   return 0;
 }
