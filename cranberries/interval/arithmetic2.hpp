@@ -193,8 +193,7 @@ namespace cranberries {
     using std::cosh;
     auto a = x.lower();
     auto b = x.upper();
-    return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( cranberries_magic::is_overflow( cosh( a ), cosh( b ) ) )
-      : ( b < interval_constants::zero<T> ) ? cranberries_magic::make_interval_with_accuracy_assurance( cosh( b ), cosh( a ) )
+    return ( b < interval_constants::zero<T> ) ? cranberries_magic::make_interval_with_accuracy_assurance( cosh( b ), cosh( a ) )
       : ( interval_constants::zero<T> < a ) ? cranberries_magic::make_interval_with_accuracy_assurance( cosh( a ), cosh( b ) )
       : [&] {
       UPWARD_POLICY;
@@ -210,8 +209,7 @@ namespace cranberries {
   inline constexpr interval<T> sinh( interval<T> const& x )
   {
     using std::sinh;
-    return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( cranberries_magic::is_overflow( sinh( x.lower() ), sinh( x.upper() ) ) )
-      : cranberries_magic::make_interval_with_accuracy_assurance( sinh( x.lower() ), sinh( x.upper() ) );
+    return cranberries_magic::make_interval_with_accuracy_assurance( sinh( x.lower() ), sinh( x.upper() ) );
   }
 
   /*  interval hyperbolic tangent  */
