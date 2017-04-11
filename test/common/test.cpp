@@ -79,18 +79,18 @@ try{
         none_match_v< int, float, unsigned, double >,
         "fail"
         );
-      // static_assert(
-      //   all_match_if_v< std::is_signed, float, int, double >,
-      //   "fail"
-      //   );
-      // static_assert(
-      //   any_match_if_v< std::is_signed, float, int, unsigned >,
-      //   "fail"
-      //   );
-      // static_assert(
-      //   none_match_if_v< std::is_unsigned, float, int, double >,
-      //   "fail"
-      //   );
+      static_assert(
+        all_match_if_v< std::is_signed, float, int, double >,
+        "fail"
+        );
+      static_assert(
+        any_match_if_v< std::is_signed, float, int, unsigned >,
+        "fail"
+        );
+      static_assert(
+        none_match_if_v< std::is_unsigned, float, int, double >,
+        "fail"
+        );
       static_assert(
         is_callable<F(int,int),void>::value,
         "fail"
