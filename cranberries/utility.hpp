@@ -13,7 +13,7 @@ namespace cranberries
   }
 
   template <class T, std::size_t N>
-  constexpr std::size_t size( const T( &array )[N] ) noexcept
+  constexpr std::size_t size( const T(&)[N] ) noexcept
   {
     return N;
   }
