@@ -1,16 +1,9 @@
 ﻿#include <iostream>
-<<<<<<< HEAD
 #include "../../cranberries/type_traits.hpp"
 #include "../../cranberries/utility.hpp"
 #include <vector>
 #include <array>
 #include <stdexcept>
-=======
-#include "../cranberries/type_traits.hpp"
-#include "../cranberries/utility.hpp"
-#include <vector>
-#include <array>
->>>>>>> common
 
 using std::cout;
 using std::endl;
