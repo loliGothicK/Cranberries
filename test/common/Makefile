@@ -1,7 +1,12 @@
 # Makefile for test
 
+<<<<<<< HEAD
 TARGET 	= test.out
 SRCS 	= ./test.cpp
+=======
+TARGET1 	= test.out
+SRCS1 	= ./test.cpp
+>>>>>>> common
 
 # 基本コマンド
 RM 		:= rm
@@ -27,7 +32,11 @@ Release: all
 
 all: $(TARGET)
 $(TARGET): $(SRCS)
+<<<<<<< HEAD
 	touch $(SRCS) && $(CXX) $^ -o $@ $(CXXFLAGS) $(CPPFLAGS) && ./$(TARGET)
+=======
+	$(CXX) $^ -o $@ $(CXXFLAGS) $(CPPFLAGS) && ./$(TARGET)
+>>>>>>> common
 
 # make clean
 .PHONY: clean

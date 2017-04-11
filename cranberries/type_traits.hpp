@@ -201,6 +201,8 @@ namespace cranberries_magic {
 } // ! namespace cranberries_magic
 
   class x_ : cranberries_magic::meta_bind_placeholders {};
+<<<<<<< HEAD
+=======
 
   template < template<class...> class Expr, typename ...Types >
   struct bind_ {
@@ -266,6 +268,84 @@ namespace cranberries_magic {
 
   template < typename T, typename Tuple >
   using tuple_none_match = typename cranberries_magic::tuple_match_impl<none_match, T, Tuple>::type;
+>>>>>>> common
+
+  template < template<class...> class Expr, typename ...Types >
+  struct bind_ {
+    template < typename ...Apply >
+    using expr = typename cranberries_magic::expansion<
+      cranberries_magic::pack<Types...>, cranberries_magic::pack<Apply...>
+    >::type:: template expr<Expr>;
+  };
+
+<<<<<<< HEAD
+  template < template<class...> class Expr, typename ...Types >
+  struct bind_single {
+    template < typename Apply >
+    using expr = typename cranberries_magic::expansion<
+      cranberries_magic::pack<Types...>, cranberries_magic::pack<Apply>
+    >::type:: template expr<Expr>;
+  };
+=======
+  template < class Tuple >
+  constexpr bool tuple_all_same_v = tuple_all_same<Tuple>::value;
+
+  template < typename T, class Tuple >
+  constexpr bool tuple_any_match_v = tuple_any_match<T, Tuple>::value;
+  
+  template < typename T, class Tuple >
+  constexpr bool tuple_none_match_v = tuple_none_match<T, Tuple>::value;
+>>>>>>> common
+
+  template < template<class...> class Pred, class ...Types>
+  using bind_1st = bind_single<Pred, x_, Types...>;
+
+  template < template<class...> class Pred, class T, class ...Types >
+  using bind_2nd = bind_single<Pred, T, x_, Types...>;
+
+
+<<<<<<< HEAD
+  template < typename T, typename ...Types >
+  struct all_match : conjunction<std::is_same<T, Types>...> {};
+
+  template < typename T, typename ...Types >
+  struct any_match : disjunction<std::is_same<T, Types>...> {};
+
+  template < typename T, typename ...Types >
+  struct none_match : conjunction<negation<std::is_same<T, Types>>...> {};
+
+  template < typename T, typename ...Types >
+  using all_same = all_match<T, Types...>;
+
+  template < template<class> class Pred, class ...Types >
+  struct all_match_if : conjunction<Pred<Types>...> {};
+
+  template < template<class> class Pred, class ...Types >
+  struct any_match_if : disjunction<Pred<Types>...> {};
+
+  template < template<class> class Pred, class ...Types >
+  struct none_match_if : disjunction<negation<Pred<Types>>...> {};
+  
+namespace cranberries_magic {
+  template < template<class...> class Pred, class T, class Tuple >
+  struct tuple_match_impl {
+    template < class U, class ...Types >
+    static constexpr auto x(std::tuple<Types...>)->Pred<U, Types...>;
+    
+    using type = decltype(x(std::declval<Tuple>()));
+  };
+}
+  template < typename T, typename Tuple >
+  using tuple_all_match = typename cranberries_magic::tuple_match_impl<all_match,T, Tuple>::type;
+
+  template < class Tuple >
+  using tuple_all_same = tuple_all_match<std::tuple_element_t<0, Tuple>, Tuple>;
+
+  template < typename T, typename Tuple >
+  using tuple_any_match = typename cranberries_magic::tuple_match_impl<any_match, T, Tuple>::type;
+
+  template < typename T, typename Tuple >
+  using tuple_none_match = typename cranberries_magic::tuple_match_impl<none_match, T, Tuple>::type;
 
   template < typename T, class Tuple >
   constexpr bool tuple_all_match_v = tuple_all_match<T, Tuple>::value;
@@ -288,6 +368,8 @@ namespace cranberries_magic {
 //  template < template<class> class Pred, class Tuple >
 //  constexpr bool tuple_none_match_if_v = tuple_none_match_if<Pred, Tuple>::value;
 
+=======
+>>>>>>> common
   template < typename T, typename ...Args >
   constexpr bool all_match_v = all_match<T, Args...>::value;
 
@@ -333,7 +415,11 @@ namespace cranberries_magic{
 
   template < typename T >
   struct enable_std_begin_end<T,
+<<<<<<< HEAD
       cranberries::void_t<decltype( std::begin(std::declval<T&>()),std::end(std::declval<T&>()) )>>
+=======
+      std::void_t<decltype( std::begin(std::declval<T&>()),std::end(std::declval<T&>()) )>>
+>>>>>>> common
   : std::true_type {};
 
   template < class, class = void >
@@ -341,7 +427,11 @@ namespace cranberries_magic{
   
   template < typename T >
   struct enable_adl_begin_end<T,
+<<<<<<< HEAD
       cranberries::void_t<decltype( begin(std::declval<T&>()),end(std::declval<T&>()) )>>
+=======
+      std::void_t<decltype( begin(std::declval<T&>()),end(std::declval<T&>()) )>>
+>>>>>>> common
   : std::true_type {};
 
 
