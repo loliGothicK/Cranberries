@@ -40,7 +40,7 @@
 #include "streams/forward.hpp"
 #include "streams/operators.hpp"
 #include "streams/operations.hpp"
-#include "streams/utility.hpp"
+#include "utility.hpp"
 #include "streams/adaptors.hpp"
 #include "streams/stream.hpp"
 #include "streams/InfiniteStream.hpp"

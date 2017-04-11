@@ -1,7 +1,7 @@
 # Makefile for test
 
-TARGET1 	= test.out
-SRCS1 	= ./test.cpp
+TARGET 	= test.out
+SRCS 	= ./test.cpp
 
 # 基本コマンド
 RM 		:= rm
@@ -27,7 +27,7 @@ Release: all
 
 all: $(TARGET)
 $(TARGET): $(SRCS)
-	$(CXX) $^ -o $@ $(CXXFLAGS) $(CPPFLAGS) && ./$(TARGET)
+	touch $(SRCS) && $(CXX) $^ -o $@ $(CXXFLAGS) $(CPPFLAGS) && ./$(TARGET)
 
 # make clean
 .PHONY: clean

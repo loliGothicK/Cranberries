@@ -1,5 +1,5 @@
 Cranberries Library [![Build Status](https://travis-ci.org/LoliGothick/Cranberries.svg?branch=interval)](https://travis-ci.org/LoliGothick/Cranberries)
-===========
+==========
 雑多な趣味コーディングによる成果物の墓場です
 
 - Interval Arithmetic Library(区間演算ライブラリ)

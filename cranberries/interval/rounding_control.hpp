@@ -1,6 +1,7 @@
 #ifndef CRANBERRIES_INTERVAL_LIB_ROUNDING_CONTROL_HPP
 #define CRANBERRIES_INTERVAL_LIB_ROUNDING_CONTROL_HPP
 #include "exception.hpp"
+#include "interval.hpp"
 #include "../common/macros.hpp"
 /*
 workaround for MSVC below

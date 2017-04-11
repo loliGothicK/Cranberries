@@ -5,6 +5,9 @@ Debug:
 	cd stream; make Debug;
 	cd ..;
 	cd interval; make Debug;
+	cd ..;
+	cd common; make Debug;
+
 .PHONY: Release
 Release:
 	cd dual_number; make Release;
@@ -12,6 +15,9 @@ Release:
 	cd stream; make Release;
 	cd ..;
 	cd interval; make Debug;
+	cd ..;
+	cd common; make Debug;
+
 .PHONY: clean
 clean:
 	cd dual_number; make clean;
@@ -19,3 +25,5 @@ clean:
 	cd stream; make clean;
 	cd ..;
 	cd interval; make clean;
+	cd ..;
+	cd common; make clean;

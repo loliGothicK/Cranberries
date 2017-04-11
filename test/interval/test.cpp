@@ -1,4 +1,4 @@
-#include "..cranberries/interval.hpp"
+#include "../../cranberries/interval.hpp"
 #include <iostream>
 #include <cassert>
 #include <vector>
@@ -20,8 +20,8 @@ try
 {
   // target version
   cout << ">> Target Version" << endl;
-  cout << ">> Stable : " << cranberries::version_tag::stable << endl;
-  cout << ">> Latest : " << cranberries::version_tag::latest << endl;
+  cout << ">> Stable : " << cranberries::interval_version::stable << endl;
+  cout << ">> Latest : " << cranberries::interval_version::latest << endl;
   cout << std::boolalpha << std::setprecision( std::numeric_limits<long double>::digits10 + 1 );
   // ctor
   interval<>{};
