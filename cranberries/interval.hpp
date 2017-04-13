@@ -27,9 +27,9 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
+#include "../cranberries/common/exception.hpp"
 #include "./interval/cranberries_magic/detail.hpp"
 #include "./interval/rounding_control.hpp"
-#include "./interval/exception.hpp"
 #include "./interval/math_impl.hpp"
 #include "./interval/interval.hpp"
 #include "./interval/relational.hpp"

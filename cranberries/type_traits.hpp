@@ -46,7 +46,7 @@ namespace cranberries_magic
   struct conj_impl<B> : bool_constant<B::value> {};
 
   template < typename Head, typename ...Tail >
-  struct disj_impl : bool_constant<Head::value || conj_impl<Tail...>::value> {};
+  struct disj_impl : bool_constant<Head::value || disj_impl<Tail...>::value> {};
 
   template < typename B >
   struct disj_impl<B> : bool_constant<B::value> {};

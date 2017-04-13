@@ -2,7 +2,7 @@
 #define CRANBERRIES_STREAM_ERROR_HPP
 #include <exception>
 #include <stdexcept>
-#include "./exception.hpp"
+#include "../common/exception.hpp"
 
 #define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( EXPR ) if( EXPR ){ throw cranberries::streams::except::stream_empty_error("stream_empty_error", __FILE__, CRANBERRIES_FUNCTION, __LINE__, #EXPR ); }
 #define CRANBERRIES_STREAM_EMPTY_ERROR_THROW_ELSE_IF( EXPR ) else if( EXPR ){ throw cranberries::streams::except::stream_empty_error("stream_empty_error", __FILE__, CRANBERRIES_FUNCTION, __LINE__, #EXPR ); }

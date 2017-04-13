@@ -4,7 +4,7 @@
 #include <initializer_list>
 #include <type_traits>
 #include <utility>
-#include "exception.hpp"
+#include "../common/exception.hpp"
 #include "operators/Identity.hpp"
 #include "cranberries_magic/enable_men_fn.hpp"
 #include "OperationTree.hpp"

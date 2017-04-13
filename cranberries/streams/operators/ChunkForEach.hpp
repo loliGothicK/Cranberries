@@ -23,11 +23,11 @@ namespace operators {
     ~ChunkForEach() = default;
 
     template < typename T, size_t ...I >
-    static constexpr auto check(std::index_sequence<I...>)
+    static constexpr auto check(T, std::index_sequence<I...>)
       -> is_callable< Func( decltype(I, std::declval<T&>())... ), cranberries::return_any >;
 
     template < typename T, size_t Nth>
-    using check_t = decltype(check<T>(std::make_index_sequence<Nth>()));
+    using check_t = decltype(check( std::declval<T>(), std::make_index_sequence<Nth>()));
 
     template <
       typename Stream,

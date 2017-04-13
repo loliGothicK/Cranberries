@@ -161,7 +161,7 @@ namespace cranberries {
     {
       return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( y.lower() <= interval_constants::zero<T> && interval_constants::zero<T> <= y.upper() )
         : ( &x == &y )
-        ? CRANBERRIES_MAKE_INTERVAL(T, interval_constants::one<T>, interval_constants::one<T> )
+        ? CRANBERRIES_MAKE_INTERVAL(T, 1.0, 1.0 )
       : normal_accuracy::divide( x, y );
     }
     template < typename L, typename R, typename T = std::common_type_t<L, R> >
@@ -219,7 +219,7 @@ namespace cranberries {
     inline constexpr interval<T>& divide_assign( interval<T>& x, interval<T> const& y )
     {
       CRANBERRIES_OVERFLOW_ERROR_THROW_IF( y.lower() <= interval_constants::zero<T> && interval_constants::zero<T> <= y.upper() );
-      return ( &x == &y ) ? x = { interval_constants::one<T> } : normal_accuracy::divide_assign( x, y );
+      return ( &x == &y ) ? x = { 1.0 } : normal_accuracy::divide_assign( x, y );
     }
   }
 
