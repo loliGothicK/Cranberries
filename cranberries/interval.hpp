@@ -19,7 +19,9 @@
 //                    MACROs
 /*------------------------------------------------------------------------------------------------*/
 
+#if !defined(CRANBERRIES_ASSERT)
 #define CRANBERRIES_ASSERT(expr) static_assert((expr), #expr)
+#endif
 
 #define CRANBERRIES_CONCEPT_ASSERT(expr) static_assert((expr), "Concepts not satisfied : "#expr)
 

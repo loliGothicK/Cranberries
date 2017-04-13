@@ -33,7 +33,7 @@ struct is_available_total_order : std::false_type {};
 
 template < typename L, typename R >
 struct is_available_total_order<L,R,
-	std::enable_if_t<decltype(total_less(std::declval<L>(), std::declval<R>()),std::true_type{})::value>
+	std::enable_if_t<std::is_same<decltype(total_less(std::declval<const L&>(), std::declval<const R&>())),bool>::value>
 > : std::true_type {};
 
 template < typename L, typename R >
