@@ -321,26 +321,19 @@ namespace streams {
     }
 
     template <
-      typename T
-    >
-    void
-    push_tuple
-    (
-      T&& arg
-    ) noexcept {
-      proj_.emplace_back(std::move(arg));
-    }
-
-    template <
-      typename Head,
-      typename ...Tail
+      typename Tuple,
+      size_t ...I,
+      size_t N = std::tuple_size<std::decay_t<Tuple>>::value
     >
     void
     push_tuple(
-      Head&& head,
-      Tail&& ...tail
+      Tuple&& t,
+      std::index_sequence<I...>
     ) noexcept {
-      return push_tuple(std::forward<Tail>(tail)...), proj_.emplace_back(std::move(head));
+      using swallow = std::initializer_list<int>;
+      (void)swallow{
+        (void( proj_.emplace_back( std::get<N-I-1>(t) ) ), 0)...
+      };
     }
 
     template <
@@ -370,7 +363,7 @@ namespace streams {
     )
       noexcept
     {
-      apply( [&](auto&& ...args) { push_tuple(std::forward<decltype(args)>(args)...); }, std::forward<Tuple>(tup) );
+      push_tuple( std::forward<Tuple>( tup ), std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>{} );
     }
 
 

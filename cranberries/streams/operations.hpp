@@ -192,7 +192,7 @@ namespace streams {
     template <
       typename Stream,
       enabler_t<
-        disjunction_v<cranberries_magic::is_infinite_stream<Stream>, is_range<Stream>>
+        cranberries_magic::is_stream_v<Stream> || is_range_v<Stream>
       > = nullptr
     >
     inline
@@ -209,7 +209,7 @@ namespace streams {
     template <
       typename Range,
       enabler_t<
-        disjunction_v<cranberries_magic::is_stream<Range>, is_range<Range>>
+        cranberries_magic::is_stream_v<Range> || is_range_v<Range>
       > = nullptr
     >
     inline
