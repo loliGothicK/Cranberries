@@ -1,3 +1,4 @@
+#define CRANBERRIES_INTERVAL_DEBUG_MODE
 #include "../../cranberries/interval.hpp"
 #include <iostream>
 #include <cassert>
