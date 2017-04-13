@@ -1,21 +1,69 @@
 compiler:
-  - clang
-cache:
-  apt: true
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-      - llvm-toolchain-precise-3.8
-      - llvm-toolchain-precise
-    packages:
-      - clang-3.8
-      - g++-6
-      - gcc-6
-install:
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-6" CC="gcc-6"; fi
-  - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.8" CC="clang-3.7"; fi
 language: cpp
+sudo: required
+matrix:
+  include:
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6.1
+      env: CXX=g++-6.1
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6.2
+      env: CXX=g++-6.2
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+          packages:
+            - g++-6.3
+      env: CXX=g++-6.3
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+          packages:
+            - clang-3.7
+      env: CXX=clang++-3.7
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.8
+          packages:
+            - clang-3.8
+      env: CXX=clang++-3.8
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.9
+          packages:
+            - clang-3.9
+      env: CXX=clang++-3.9
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-4.0
+          packages:
+            - clang-4.0
+      env: CXX=clang++-4.0
 script:
   - make Debug CXX="${CXX}"
   - make clean
