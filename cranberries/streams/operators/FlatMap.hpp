@@ -48,7 +48,7 @@ namespace operators {
     push
     (
       Stream&& stream_,
-      T&& proj
+      T&& proj_
     )
       noexcept
     {
