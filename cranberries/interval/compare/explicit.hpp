@@ -374,13 +374,13 @@ namespace cranberries {
     return ( x.lower() == y.lower() && x.upper() == y.upper() );
   }
 
-  template < typename L, typename R, std::enable_if_t<!cranberries_magic::concept::is_interval_v<R>, std::nullptr_t> = nullptr >
+  template < typename L, typename R, std::enable_if_t<!is_interval_v<R>, std::nullptr_t> = nullptr >
   inline constexpr bool total_equal( R const& x, interval<L> const& y ) noexcept
   {
     return ( x == y.lower() && x == y.upper() );
   }
 
-  template < typename L, typename R, std::enable_if_t<!cranberries_magic::concept::is_interval_v<R>, std::nullptr_t> = nullptr >
+  template < typename L, typename R, std::enable_if_t<!is_interval_v<R>, std::nullptr_t> = nullptr >
   inline constexpr bool total_equal( interval<L> const& x, R const& y ) noexcept
   {
     return ( x.lower() == std::forward<L>( y ) && x.upper() == std::forward<L>( y ) );

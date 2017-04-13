@@ -90,42 +90,42 @@ namespace weak_ordering_policy {
     {
       return weak_less( x, y );
     }
-    template < typename L, typename R, std::enable_if_t<cranberries_magic::concept::is_interval_v<R>, std::nullptr_t> = nullptr >
+    template < typename L, typename R, std::enable_if_t<is_interval_v<R>, std::nullptr_t> = nullptr >
     inline constexpr bool operator<( interval<L>& x, R&& y )
     {
       return weak_less( x, std::forward<R>( y ) );
     }
-    template < typename L, typename R, std::enable_if_t<cranberries_magic::concept::is_interval_v<R>, std::nullptr_t> = nullptr >
+    template < typename L, typename R, std::enable_if_t<is_interval_v<R>, std::nullptr_t> = nullptr >
     inline constexpr bool operator<( interval<L> const& x, R&& y )
     {
       return weak_less( x, std::forward<R>( y ) );
     }
-    template < typename L, typename R, std::enable_if_t<cranberries_magic::concept::is_interval_v<R>, std::nullptr_t> = nullptr >
+    template < typename L, typename R, std::enable_if_t<is_interval_v<R>, std::nullptr_t> = nullptr >
     inline constexpr bool operator<( interval<L>&& x, R&& y )
     {
       return weak_less( x, std::forward<R>( y ) );
     }
-    template < typename L, typename R, std::enable_if_t<cranberries_magic::concept::is_interval_v<R>, std::nullptr_t> = nullptr >
+    template < typename L, typename R, std::enable_if_t<is_interval_v<R>, std::nullptr_t> = nullptr >
     inline constexpr bool operator<( interval<L> const&& x, R&& y )
     {
       return weak_less( x, std::forward<R>( y ) );
     }
-    template < typename L, typename R, std::enable_if_t<cranberries_magic::concept::is_interval_v<L>, std::nullptr_t> = nullptr >
+    template < typename L, typename R, std::enable_if_t<is_interval_v<L>, std::nullptr_t> = nullptr >
     inline constexpr bool operator<( L&& x, interval<R>& y )
     {
       return weak_less( std::forward<L>( x ), y );
     }
-    template < typename L, typename R, std::enable_if_t<cranberries_magic::concept::is_interval_v<L>, std::nullptr_t> = nullptr >
+    template < typename L, typename R, std::enable_if_t<is_interval_v<L>, std::nullptr_t> = nullptr >
     inline constexpr bool operator<( L&& x, interval<R> const& y )
     {
       return weak_less( std::forward<L>( x ), y );
     }
-    template < typename L, typename R, std::enable_if_t<cranberries_magic::concept::is_interval_v<L>, std::nullptr_t> = nullptr >
+    template < typename L, typename R, std::enable_if_t<is_interval_v<L>, std::nullptr_t> = nullptr >
     inline constexpr bool operator<( L&& x, interval<R>&& y )
     {
       return weak_less( std::forward<L>( x ), y );
     }
-    template < typename L, typename R, std::enable_if_t<cranberries_magic::concept::is_interval_v<L>, std::nullptr_t> = nullptr >
+    template < typename L, typename R, std::enable_if_t<is_interval_v<L>, std::nullptr_t> = nullptr >
     inline constexpr bool operator<( L&& x, interval<R> const&& y )
     {
       return weak_less( std::forward<L>( x ), y );
@@ -211,42 +211,42 @@ namespace weak_ordering_policy {
     {
       return weak_less_or_equal( x, y );
     }
-    template < typename L, typename R, std::enable_if_t<cranberries_magic::concept::is_interval_v<R>, std::nullptr_t> = nullptr >
+    template < typename L, typename R, std::enable_if_t<is_interval_v<R>, std::nullptr_t> = nullptr >
     inline constexpr bool operator<=( interval<L>& x, R&& y )
     {
       return weak_less_or_equal( x, std::forward<R>( y ) );
     }
-    template < typename L, typename R, std::enable_if_t<cranberries_magic::concept::is_interval_v<R>, std::nullptr_t> = nullptr >
+    template < typename L, typename R, std::enable_if_t<is_interval_v<R>, std::nullptr_t> = nullptr >
     inline constexpr bool operator<=( interval<L> const& x, R&& y )
     {
       return weak_less_or_equal( x, std::forward<R>( y ) );
     }
-    template < typename L, typename R, std::enable_if_t<cranberries_magic::concept::is_interval_v<R>, std::nullptr_t> = nullptr >
+    template < typename L, typename R, std::enable_if_t<is_interval_v<R>, std::nullptr_t> = nullptr >
     inline constexpr bool operator<=( interval<L>&& x, R&& y )
     {
       return weak_less_or_equal( x, std::forward<R>( y ) );
     }
-    template < typename L, typename R, std::enable_if_t<cranberries_magic::concept::is_interval_v<R>, std::nullptr_t> = nullptr >
+    template < typename L, typename R, std::enable_if_t<is_interval_v<R>, std::nullptr_t> = nullptr >
     inline constexpr bool operator<=( interval<L> const&& x, R&& y )
     {
       return weak_less_or_equal( x, std::forward<R>( y ) );
     }
-    template < typename L, typename R, std::enable_if_t<cranberries_magic::concept::is_interval_v<L>, std::nullptr_t> = nullptr >
+    template < typename L, typename R, std::enable_if_t<is_interval_v<L>, std::nullptr_t> = nullptr >
     inline constexpr bool operator<=( L&& x, interval<R>& y )
     {
       return weak_less_or_equal( std::forward<L>( x ), y );
     }
-    template < typename L, typename R, std::enable_if_t<cranberries_magic::concept::is_interval_v<L>, std::nullptr_t> = nullptr >
+    template < typename L, typename R, std::enable_if_t<is_interval_v<L>, std::nullptr_t> = nullptr >
     inline constexpr bool operator<=( L&& x, interval<R> const& y )
     {
       return weak_less_or_equal( std::forward<L>( x ), y );
     }
-    template < typename L, typename R, std::enable_if_t<cranberries_magic::concept::is_interval_v<L>, std::nullptr_t> = nullptr >
+    template < typename L, typename R, std::enable_if_t<is_interval_v<L>, std::nullptr_t> = nullptr >
     inline constexpr bool operator<=( L&& x, interval<R>&& y )
     {
       return weak_less_or_equal( std::forward<L>( x ), y );
     }
-    template < typename L, typename R, std::enable_if_t<cranberries_magic::concept::is_interval_v<L>, std::nullptr_t> = nullptr >
+    template < typename L, typename R, std::enable_if_t<is_interval_v<L>, std::nullptr_t> = nullptr >
     inline constexpr bool operator<=( L&& x, interval<R> const&& y )
     {
       return weak_less_or_equal( std::forward<L>( x ), y );

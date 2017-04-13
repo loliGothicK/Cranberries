@@ -32,7 +32,7 @@ namespace cranberries {
 
   template < typename T = double >
   class interval
-    : cranberries_magic::concept::interval_base
+    : cranberries_magic::interval_base
   {
     CRANBERRIES_CONCEPT_ASSERT( std::is_arithmetic<T>::value && std::is_signed<T>::value );
   public:

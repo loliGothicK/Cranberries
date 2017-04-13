@@ -24,9 +24,9 @@
 
 /*
 workaround for MSVC below
-[ Note : FE_DOWNWARD and FE_UPWARD are reverse defined in MSVC. - end note]
+[ Note : Before Visual Studio 2017, FE_DOWNWARD and FE_UPWARD are reverse defined in MSVC. - end note]
 */
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && _MSC_FULL_VER < 191025017
 #define UPWARD_POLICY std::fesetround(FE_DOWNWARD)
 #define DOWNWARD_POLICY std::fesetround(FE_UPWARD)
 #else

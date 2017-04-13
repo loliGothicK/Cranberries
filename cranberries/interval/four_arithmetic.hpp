@@ -662,25 +662,25 @@ namespace normal_accurate_policy {
     template < typename L, typename R >
     inline constexpr auto operator+( L&& x, R&& y )->decltype( add( x, y ) )
     {
-      CRANBERRIES_ASSERT( !( cranberries_magic::concept::is_expr_v<L> || cranberries_magic::concept::is_expr_v<R> ) );
+      CRANBERRIES_ASSERT( !( cranberries_magic::is_expr_v<L> || cranberries_magic::is_expr_v<R> ) );
       return add( std::forward<L>( x ), std::forward<R>( y ) );
     }
     template < typename L, typename R >
     inline constexpr auto operator-( L&& x, R&& y )->decltype( subtract( x, y ) )
     {
-      CRANBERRIES_ASSERT( !( cranberries_magic::concept::is_expr_v<L> || cranberries_magic::concept::is_expr_v<R> ) );
+      CRANBERRIES_ASSERT( !( cranberries_magic::is_expr_v<L> || cranberries_magic::is_expr_v<R> ) );
       return subtract( std::forward<L>( x ), std::forward<R>( y ) );
     }
     template < typename L, typename R >
     inline constexpr auto operator*( L&& x, R&& y )->decltype( multiply( x, y ) )
     {
-      CRANBERRIES_ASSERT( !( cranberries_magic::concept::is_expr_v<L> || cranberries_magic::concept::is_expr_v<R> ) );
+      CRANBERRIES_ASSERT( !( cranberries_magic::is_expr_v<L> || cranberries_magic::is_expr_v<R> ) );
       return multiply( std::forward<L>( x ), std::forward<R>( y ) );
     }
     template < typename L, typename R >
     inline constexpr auto operator/( L&& x, R&& y )->decltype( divide( x, y ) )
     {
-      CRANBERRIES_ASSERT( !( cranberries_magic::concept::is_expr_v<L> || cranberries_magic::concept::is_expr_v<R> ) );
+      CRANBERRIES_ASSERT( !( cranberries_magic::is_expr_v<L> || cranberries_magic::is_expr_v<R> ) );
       return divide( std::forward<L>( x ), std::forward<R>( y ) );
     }
     template < typename L, typename R >

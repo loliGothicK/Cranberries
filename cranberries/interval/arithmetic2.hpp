@@ -18,7 +18,7 @@ namespace cranberries {
     auto b = x.upper();
 
     if ( b - a >= static_cast<T>( 2.0L ) * interval_constants::pi<T> )
-      return CRANBERRIES_MAKE_INTERVAL(T, -interval_constants::one<T>, interval_constants::one<T> );
+      return CRANBERRIES_MAKE_INTERVAL(T, -1.0, 1.0 );
 
     /*  base point reset  */
     auto pi = interval_constants::pi<T>;
@@ -33,18 +33,18 @@ namespace cranberries {
     /*  checking phase  */
     return ( x1 < base1 && base1 < x2 )
       ? (
-      ( y1 < base2 && base2 < y2 ) ? CRANBERRIES_MAKE_INTERVAL(T, -interval_constants::one<T>, interval_constants::one<T> )
+      ( y1 < base2 && base2 < y2 ) ? CRANBERRIES_MAKE_INTERVAL(T, -1.0, 1.0 )
     : [&] {
       DOWNWARD_POLICY;
       auto l = static_cast<T>( cos_down( a ) );
       auto r = static_cast<T>( cos_down( b ) );
-      return CRANBERRIES_MAKE_INTERVAL(T, std::fmin( l, r ), interval_constants::one<T> );
+      return CRANBERRIES_MAKE_INTERVAL(T, std::fmin( l, r ), 1.0 );
     }( ) )
       : ( y1 < base2 && base2 < y2 ) ? [&] {
       UPWARD_POLICY;
       auto l = static_cast<T>( cos_up( a ) );
       auto r = static_cast<T>( cos_up( b ) );
-      return CRANBERRIES_MAKE_INTERVAL(T, -interval_constants::one<T>, std::fmax( l, r ) );
+      return CRANBERRIES_MAKE_INTERVAL(T, -1.0, std::fmax( l, r ) );
     }( )
       : ( cos_up( a ) < cos_up( b ) )
       ? CRANBERRIES_MAKE_INTERVAL(T, static_cast<T>( cos_down( a ) ), static_cast<T>( cos_up( b ) ) )
@@ -62,7 +62,7 @@ namespace cranberries {
     auto b = x.upper();
 
     if ( b - a >= static_cast<T>( 2.0L ) * interval_constants::pi<T> )
-      return CRANBERRIES_MAKE_INTERVAL(T, -interval_constants::one<T>, interval_constants::one<T> );
+      return CRANBERRIES_MAKE_INTERVAL(T, -1.0, 1.0 );
 
     /*  base point reset  */
     auto pi = interval_constants::pi<T>;
@@ -77,18 +77,18 @@ namespace cranberries {
     /*  checking phase  */
     return ( x1 < base1 && base1 < x2 )
       ? (
-      ( y1 < base2 && base2 < y2 ) ? CRANBERRIES_MAKE_INTERVAL(T, -interval_constants::one<T>, interval_constants::one<T> )
+      ( y1 < base2 && base2 < y2 ) ? CRANBERRIES_MAKE_INTERVAL(T, -1.0, 1.0 )
     : [&] {
       DOWNWARD_POLICY;
       auto l = static_cast<T>( sin_down( a ) );
       auto r = static_cast<T>( sin_down( b ) );
-      return CRANBERRIES_MAKE_INTERVAL(T, std::fmin( l, r ), interval_constants::one<T> );
+      return CRANBERRIES_MAKE_INTERVAL(T, std::fmin( l, r ), 1.0 );
     }( ) )
       : ( y1 < base2 && base2 < y2 ) ? [&] {
       UPWARD_POLICY;
       auto l = static_cast<T>( sin_up( a ) );
       auto r = static_cast<T>( sin_up( b ) );
-      return CRANBERRIES_MAKE_INTERVAL(T, -interval_constants::one<T>, std::fmax( l, r ) );
+      return CRANBERRIES_MAKE_INTERVAL(T, -1.0, std::fmax( l, r ) );
     }( )
       : ( sin_up( a ) < sin_up( b ) )
       ? CRANBERRIES_MAKE_INTERVAL(T, static_cast<T>( sin_down( a ) ), static_cast<T>( sin_up( b ) ) )
@@ -136,7 +136,7 @@ namespace cranberries {
   inline constexpr interval<T> acos( interval<T> const& x )
   {
     using std::acos;
-    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < -interval_constants::one<T> || interval_constants::one<T> < x.upper() )
+    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < -1.0 || 1.0 < x.upper() )
       : CRANBERRIES_MAKE_INTERVAL(T, acos( x.lower() ), acos( x.upper() ) );
   }
 
@@ -146,7 +146,7 @@ namespace cranberries {
   inline constexpr interval<T> asin( interval<T> const& x )
   {
     using std::asin;
-    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < -interval_constants::one<T> || interval_constants::one<T> < x.upper() )
+    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < -1.0 || 1.0 < x.upper() )
       : CRANBERRIES_MAKE_INTERVAL(T, asin( x.lower() ), asin( x.upper() ) );
   }
 
@@ -199,7 +199,7 @@ namespace cranberries {
       UPWARD_POLICY;
       auto l = cosh( a );
       auto r = cosh( b );
-      return CRANBERRIES_MAKE_INTERVAL(T, interval_constants::one<T>, std::fmax( l, r ) );
+      return CRANBERRIES_MAKE_INTERVAL(T, 1.0, std::fmax( l, r ) );
     }( );
   }
 
@@ -245,7 +245,7 @@ namespace cranberries {
   inline constexpr interval<T> acosh( interval<T> const& x )
   {
     using std::acosh;
-    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < interval_constants::one<T> )
+    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < 1.0 )
       : CRANBERRIES_MAKE_INTERVAL(T, acosh( x.lower() ), acosh( x.upper() ) );
   }
 
@@ -261,15 +261,15 @@ namespace cranberries {
   /*  interval arc hyperbolic tangent  */
 
   template < typename T >
-  inline constexpr interval<T> atanh( interval<T> const& x )
+  inline interval<T> atanh( interval<T> const& x )
   {
     using std::atanh;
-    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < -interval_constants::one<T> || interval_constants::one<T> < x.upper() )
+    return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( x.lower() < -1.0 || 1.0 < x.upper() )
       : CRANBERRIES_MAKE_INTERVAL(T, atanh( x.lower() ), atanh( x.upper() ) );
   }
 
   template < typename T >
-  inline constexpr interval<T> asech( interval<T> const& x )
+  inline interval<T> asech( interval<T> const& x )
   {
     return CRANBERRIES_DOMAIN_ERROR_THROW_CONDITIONAL( !( 0.0 < x.lower() && x.upper() <= 1.0 ) )
       : acosh( x.inverse() );
@@ -303,7 +303,7 @@ namespace cranberries {
       : ( fmodl( n, 1 ) == 0 )
       ? (
       ( n == 0.0 )
-        ? CRANBERRIES_MAKE_INTERVAL(T, interval_constants::one<T>, interval_constants::one<T> )
+        ? CRANBERRIES_MAKE_INTERVAL(T, 1.0, 1.0 )
     : ( a <= 0.0 && 0.0 <= b )
       ? [&] {
       T l = pow_up( a, static_cast< std::size_t >( n ) );
@@ -397,7 +397,7 @@ namespace cranberries {
   inline constexpr interval<T> log1p( interval<T> const& x )
   {
     using std::log1p;
-    return ( -interval_constants::one<T> < x.lower() ) ? CRANBERRIES_MAKE_INTERVAL(T, log1p( x.lower() ), log1p( x.upper() ) ) : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
+    return ( -1.0 < x.lower() ) ? CRANBERRIES_MAKE_INTERVAL(T, log1p( x.lower() ), log1p( x.upper() ) ) : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
   }
 
   /*  interval logarithmic function ( base = 10 )  */
