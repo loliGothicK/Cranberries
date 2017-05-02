@@ -1,12 +1,7 @@
 ﻿#include <iostream>
 #include "../../cranberries/stopwatch.hpp"
-using std::cout;
-using std::endl;
-using cranberries::make_finally;
 
-
-int main()
-try{
+int main(){
   auto timer = cranberries::stopwatch{};
   timer.start();
   timer.get_ticks();
@@ -14,8 +9,4 @@ try{
   timer.lap();
   timer.stop();
   timer.clear();
-}
-catch (cranberries::runtime_error const& e) {
-  cout << e.what() << endl;
-  return 0;
 }
