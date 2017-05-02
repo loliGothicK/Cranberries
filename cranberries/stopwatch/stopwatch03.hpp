@@ -16,23 +16,23 @@ public:
     typedef clock_t tick_t;
 
     // clears the timer
-    TimerBaseClock()        { start_ = -1; }
+    TimerBaseClock() throw() { start_ = -1; }
 
     // clears the timer
-    void clear()            { start_ = -1; }
+    void clear() throw() { start_ = -1; }
 
     // returns true if the timer is running
-    bool is_started() const { return (start_ != -1); }
+    bool is_started() const throw() { return (start_ != -1); }
 
     // start the timer
-    void Start()            { start_ = clock(); }
+    void Start() throw() { start_ = clock(); }
 
     // get elapsed time in ticks
-    tick_t get_ticks() {
+    tick_t get_ticks() throw() {
         return is_started() ? clock() - start_ : 0;
     }
 
-    unsigned get_ms(tick_t dt) {
+    unsigned get_ms(tick_t dt) throw() {
         return (unsigned long)((dt + (500 / CLOCKS_PER_SEC)) * (1000 / CLOCKS_PER_SEC));
     }
 private:
