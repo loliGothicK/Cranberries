@@ -1,6 +1,6 @@
 message(STATUS "Building tests")
 
-set(target stream_lib_tests)
+set(target stopwatch_lib_tests)
 message(STATUS "Building library ${target}")
 
 set(sources
