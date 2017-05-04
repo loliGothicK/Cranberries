@@ -57,7 +57,7 @@ namespace operators {
       push_tuple(
         std::forward<Stream>(stream_),
         std::forward<T>(proj_),
-        std::make_index_sequence<tuple_size<std::decay_t<T>>::value>{}
+        std::make_index_sequence<std::tuple_size<std::decay_t<T>>::value>{}
       );
     }
 
