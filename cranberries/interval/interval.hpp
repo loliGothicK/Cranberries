@@ -42,6 +42,7 @@ namespace cranberries {
     constexpr interval() noexcept : interval{ T{}, T{} } {};
     constexpr interval( T const&, T const& );
     constexpr interval( T const& v ) noexcept : interval{ v, v } {};
+    constexpr interval( std::pair<T, T> p ) : interval{ p.first, p.second } {}
 
     /*  copy ctor  */
     constexpr interval( interval const& ) noexcept;

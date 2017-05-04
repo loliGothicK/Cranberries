@@ -1,10 +1,10 @@
 #ifndef CRANBERRIES_INTERVAL_LIB_ROUNDING_CONTROL_HPP
 #define CRANBERRIES_INTERVAL_LIB_ROUNDING_CONTROL_HPP
-#include "exception.hpp"
+#include "../common/exception.hpp"
 #include "interval.hpp"
 #include "../common/macros.hpp"
 
-#if defined(CRANBERRIES_INTERVAL_DEBUG_MODE)
+#ifdef CRANBERRIES_INTERVAL_DEBUG_MODE
 #define CRANBERRIES_MAKE_INTERVAL(TYPE, LOW_EXPR, UP_EXPR) [&]{\
   DOWNWARD_POLICY;\
   auto low = LOW_EXPR;\

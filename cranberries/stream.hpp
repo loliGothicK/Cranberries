@@ -34,14 +34,17 @@
 #include "utility.hpp"
 #include "type_traits.hpp"
 // exception
-#include "streams/exception.hpp"
+#include "../cranberries/common/exception.hpp"
 #include "streams/stream_error.hpp"
+// stream magic
 #include "streams/cranberries_magic/tag.hpp"
 #include "streams/forward.hpp"
+// stream operations
 #include "streams/operators.hpp"
 #include "streams/operations.hpp"
 #include "utility.hpp"
 #include "streams/adaptors.hpp"
+// stream core
 #include "streams/stream.hpp"
 #include "streams/InfiniteStream.hpp"
 #include "streams/StreamGenerator.hpp"

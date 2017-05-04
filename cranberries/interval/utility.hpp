@@ -1,5 +1,5 @@
-#ifndef CRANBRRIES_INTERVAL_LIB_UTILITY_HPP
-#define CRANBRRIES_INTERVAL_LIB_UTILITY_HPP
+#ifndef CRANBERRIES_INTERVAL_LIB_UTILITY_HPP
+#define CRANEBRRIES_INTERVAL_LIB_UTILITY_HPP
 
 #include <utility>
 #include <tuple>
@@ -24,13 +24,13 @@ namespace cranberries {
   template < typename T >
   inline constexpr T mid( interval<T> const& x ) noexcept
   {
-    return ( x.upper() + x.lower() ) / static_cast<T>( 2.0L );
+    return x.upper() + ( x.upper() - x.lower() ) / static_cast<T>( 2.0L );
   }
 
   template < typename T >
   inline constexpr T middle( interval<T> const& x ) noexcept
   {
-    return ( x.upper() + x.lower() ) / static_cast<T>( 2.0L );
+    return x.upper() + (x.upper() - x.lower()) / static_cast<T>(2.0L);
   }
 
   /*  width  */

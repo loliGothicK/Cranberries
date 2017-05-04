@@ -193,6 +193,8 @@ namespace cranberries_magic {
     }
   }
 
-}
+
+
+} // ! - end namespace cranberries
 
 #endif

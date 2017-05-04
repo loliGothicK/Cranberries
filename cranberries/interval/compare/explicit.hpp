@@ -6,7 +6,6 @@
 #include "../interval.hpp"
 
 namespace cranberries {
-
   //-----------------------------------//
   /*   interval relational functions   */
   //-----------------------------------//

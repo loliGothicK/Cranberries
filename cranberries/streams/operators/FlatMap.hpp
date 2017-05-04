@@ -23,19 +23,34 @@ namespace operators {
 
     template <
       typename Stream,
-      typename Tuple,
-      size_t ...I
+      typename T
+    >
+    void
+    push_tuple
+    (
+      Stream&& stream_,
+      T&& arg
+    )
+      noexcept
+    {
+      stream_.emplace_back(std::move(arg));
+      return;
+    }
+
+    template <
+      typename Stream,
+      typename Head,
+      typename ...Tail
     >
     void
     push_tuple(
       Stream&& stream_,
-      Tuple&& t,
-      std::index_sequence<I...>
+      Head&& head,
+      Tail&& ...tail
     )
       noexcept
     {
-      using swallow = std::initializer_list<int>;
-      (void)swallow{ (void( stream_.emplace_back( std::get<I>(t) ) ),0)... };
+      return stream_.emplace_back( std::move( head ) ), push_tuple( std::forward<Stream>( stream_ ), std::forward<Tail>( tail )... );
     }
 
 
@@ -48,11 +63,14 @@ namespace operators {
     push
     (
       Stream&& stream_,
-      T&& proj_
+      T&& proj
     )
       noexcept
     {
-      push_tuple( std::forward<Stream>(stream_), std::forward<T>(proj_), std::make_index_sequence<std::tuple_size<std::decay_t<T>>::value>{} );
+      cranberries::apply(
+        [&]( auto&& ...args ) {
+        push_tuple( std::forward<Stream>( stream_ ), std::forward<decltype( args )>( args )... ); 
+      }, std::forward<T>( proj ) );
     }
 
     template <

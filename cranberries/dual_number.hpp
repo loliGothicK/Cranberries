@@ -4,7 +4,9 @@
 #include <iostream>
 #include <cmath>
 #include <type_traits>
-#include "exception.hpp"
+#include "type_traits.hpp"
+#include "utility.hpp"
+#include "./common/exception.hpp"
 
 namespace cranberries
 {
@@ -64,6 +66,8 @@ namespace cranberries
     constexpr dual_number(dual_number const& a) : dual_number{ a.real_, a.basis_ } {}
     constexpr dual_number(dual_number&& a) : dual_number{ a.real_, a.basis_ } {}
 
+    constexpr auto deconstruct() { return std::make_tuple( real_, basis_ ); }
+
     constexpr dual_number operator -() const noexcept {
       return dual_number( -real_, -basis_ );
     }
@@ -74,8 +78,8 @@ namespace cranberries
 
     constexpr value_type& real() noexcept { return real_; }
     constexpr value_type& basis() noexcept { return basis_; }
-    constexpr value_type  real() const noexcept { return real_; }
-    constexpr value_type  basis() const noexcept { return basis_; }
+    constexpr const value_type&  real() const noexcept { return real_; }
+    constexpr const value_type&  basis() const noexcept { return basis_; }
 
   private:
     value_type real_;
@@ -465,6 +469,26 @@ namespace cranberries
     using std::erfc; using std::exp;
     return { erfc(x.real()), -x.basis() * 2 * exp(-x.real()*x.real()) * pi_root_inv<T> };
   }
+  
+  template < typename DualNumber >
+  std::enable_if_t<is_dual_v<DualNumber>>
+  operator<<
+  (
+    generate_tuple_t<remove_cvr_t<element_type_of_t<DualNumber>>&, 2>&& t,
+    DualNumber&& d
+  ) noexcept {
+    t = std::forward_as_tuple(d.real(), d.basis());
+  }
+
+  template < typename T >
+  void
+  operator>>
+  ( generate_tuple_t<remove_cvr_t<T>, 2>&& t,
+    dual_number<T>& d    
+  ) noexcept {
+    std::forward_as_tuple( d.real(), d.basis() ) = t;
+  }
+
 
 namespace literals {
   inline cranberries::dual_number<double> operator "" _dual(long double x) { return cranberries::make_dual(static_cast<double>(x), 0.0); }
