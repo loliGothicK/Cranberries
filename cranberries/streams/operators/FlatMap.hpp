@@ -23,34 +23,21 @@ namespace operators {
 
     template <
       typename Stream,
-      typename T
-    >
-    void
-    push_tuple
-    (
-      Stream&& stream_,
-      T&& arg
-    )
-      noexcept
-    {
-      stream_.emplace_back(std::move(arg));
-      return;
-    }
-
-    template <
-      typename Stream,
-      typename Head,
-      typename ...Tail
+      typename Tuple,
+      size_t... I
     >
     void
     push_tuple(
       Stream&& stream_,
-      Head&& head,
-      Tail&& ...tail
+      Tuple&& t,
+      std::index_sequence<I...>
     )
       noexcept
     {
-      return stream_.emplace_back( std::move( head ) ), push_tuple( std::forward<Stream>( stream_ ), std::forward<Tail>( tail )... );
+      using swallow = std::initializer_list<int>;
+      (void)swallow {
+        (void(stream_.emplace_back(std::get<I>(t))), 0)...
+      };
     }
 
 
