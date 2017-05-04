@@ -50,14 +50,15 @@ namespace operators {
     push
     (
       Stream&& stream_,
-      T&& proj
+      T&& proj_
     )
       noexcept
     {
-      cranberries::apply(
-        [&]( auto&& ...args ) {
-        push_tuple( std::forward<Stream>( stream_ ), std::forward<decltype( args )>( args )... ); 
-      }, std::forward<T>( proj ) );
+      push_tuple(
+        std::forward<Stream>(stream),
+        std::forward<T>(proj_),
+        std::make_index_sequence<tuple_size<std::decay_t<T>>::value>{}
+      );
     }
 
     template <
