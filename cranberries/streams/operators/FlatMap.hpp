@@ -55,7 +55,7 @@ namespace operators {
       noexcept
     {
       push_tuple(
-        std::forward<Stream>(stream),
+        std::forward<Stream>(stream_),
         std::forward<T>(proj_),
         std::make_index_sequence<tuple_size<std::decay_t<T>>::value>{}
       );
