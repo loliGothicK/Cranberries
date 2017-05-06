@@ -6,7 +6,7 @@ Cranberries Library [![Build Status](https://travis-ci.org/LoliGothick/Cranberri
   - cranberries/interval.hpp
 
 - Time Measurement Library(実行時間計測ライブラリ)
-  - cranberries/time_elapsed.hpp
+  - cranberries/stopwatch.hpp
 
 - Interpolation Library(補間法ライブラリ : 最小２乗法, チェビシェフ多項式近似)
   - cranberries/interpolation.hpp
@@ -16,4 +16,9 @@ Cranberries Library [![Build Status](https://travis-ci.org/LoliGothick/Cranberri
 
 - Stream API Library(ストリームAPIライブラリ)
   - cranberries/stream.hpp
-s
+
+- Type Traits Library（メタ関数ライブラリ）
+  - cranberries/type_traits.hpp
+  
+- Utility Library（ユーティリティーライブラリ）
+  - cranberries/utility.hpp
