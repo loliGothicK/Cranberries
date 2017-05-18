@@ -1,5 +1,6 @@
 #define CRANBERRIES_INTERVAL_DEBUG_MODE
 #include "../../cranberries/interval.hpp"
+#include "../../cranberries/expression.hpp"
 #include <iostream>
 #include <cassert>
 #include <vector>
@@ -10,15 +11,10 @@ using std::vector;
 using cranberries::interval;
 using cranberries::hull;
 using cranberries::compare::less;
-using cranberries::compare::order;
-namespace normal_accurate_policy = cranberries::normal_accurate_policy;
-namespace interval_ordering_policy = cranberries::compare::interval_ordering_policy;
-namespace partial_ordering_policy = cranberries::compare::partial_ordering_policy;
-namespace weak_ordering_policy = cranberries::compare::weak_ordering_policy;
+using cranberries::compare::OrderPolocy;
 
 int main()
-try
-{
+try{
   // target version
   cout << ">> Target Version" << endl;
   cout << ">> Stable : " << cranberries::interval_version::stable << endl;
@@ -30,7 +26,7 @@ try
   interval<char>{0}, interval<signed char>{0}, interval<short>{0}, interval<short int>{0}, interval<signed short>{0}, interval<signed short int>{0}, interval<int>{0}, interval<signed>{0}, interval<signed int>{0}, interval<long>{0}, interval<long int>{0}, interval<signed long>{0}, interval<signed long int>{0}, interval<long long>{0}, interval<long long int>{0}, interval<signed long long>{0}, interval<signed long long int>{0}, interval<float>{0}, interval<double>{0}, interval<long double>{0}, interval<std::int8_t>{0}, interval<std::int16_t>{0}, interval<std::int32_t>{0}, interval<std::int64_t>{0}, interval<std::int_least8_t>{0}, interval<std::int_least16_t>{0}, interval<std::int_least32_t>{0}, interval<std::int_least64_t>{0}, interval<std::int_fast8_t>{0}, interval<std::int_fast16_t>{0}, interval<std::int_fast32_t>{0}, interval<std::int_fast64_t>{0};
   interval<char>{0, 0}, interval<signed char>{0, 0}, interval<short>{0, 0}, interval<short int>{0, 0}, interval<signed short>{0, 0}, interval<signed short int>{0, 0}, interval<int>{0, 0}, interval<signed>{0, 0}, interval<signed int>{0, 0}, interval<long>{0, 0}, interval<long int>{0, 0}, interval<signed long>{0, 0}, interval<signed long int>{0, 0}, interval<long long>{0, 0}, interval<long long int>{0, 0}, interval<signed long long>{0, 0}, interval<signed long long int>{0, 0}, interval<float>{0, 0}, interval<double>{0, 0}, interval<long double>{0, 0}, interval<std::int8_t>{0, 0}, interval<std::int16_t>{0, 0}, interval<std::int32_t>{0, 0}, interval<std::int64_t>{0, 0}, interval<std::int_least8_t>{0, 0}, interval<std::int_least16_t>{0, 0}, interval<std::int_least32_t>{0, 0}, interval<std::int_least64_t>{0, 0}, interval<std::int_fast8_t>{0, 0}, interval<std::int_fast16_t>{0, 0}, interval<std::int_fast32_t>{0, 0}, interval<std::int_fast64_t>{0, 0};
 
-  auto t = interval<>{ 1.1,1.2 };
+  const auto t = interval<>{ 1.1,1.2 };
   interval<>{t};
   interval<>{interval<>{}};
   interval<> s = { 1.0, 1.0 };
@@ -56,8 +52,8 @@ try
     interval<>{} +tmp;
     tmp + 2;
     2 + tmp;
-    tmp + typename decltype( tmp )::value_type{};
-    typename decltype( tmp )::value_type{} +tmp;
+    tmp + typename decltype(tmp)::value_type{};
+    typename decltype(tmp)::value_type{} +tmp;
     interval<>{-1, 1}*interval<>{-1, 1};
   }
 
@@ -65,61 +61,17 @@ try
 
   const interval<double> a{ 1,3 }, b{ 3,4 }, c{ 5,6 }, d{ 6,7 };
   vector<interval<double>> vec{ a,b,c,d };
-  std::sort( vec.begin(), vec.end(), less<order::Weak>() );
-  std::sort( vec.begin(), vec.end(), less<order::Total>() );
+  std::sort( vec.begin(), vec.end(), less<OrderPolocy::Weak>() );
   assert( std::is_sorted( vec.begin(), vec.end() ) == true );
 
   cout << ">> Sort Complete!" << endl;
 
-  {
-    using namespace normal_accurate_policy;
-    interval<> ans{};
-    x + x;
-    x - x != interval<>{};
-    assert( z * z != pow( z, 2 ) );
-    assert( x / x != interval<>{1} );
-    ans += x;
-    ans *= 2;
-    ans /= 2;
-    ans -= ans;
-  }
-
-  cout << ">> Accurate Policy Complete!" << endl;
-  {
-    a < b;
-    a > b;
-    a <= b;
-    a >= b;
-    a == b;
-    a != b;
-  }
-  {
-    using namespace interval_ordering_policy;
-    a < b;
-    a > b;
-    a <= b;
-    a >= b;
-    a == b;
-    a != b;
-  }
-  {
-    using namespace partial_ordering_policy;
-    a < b;
-    a > b;
-    a <= b;
-    a >= b;
-    a == b;
-    a != b;
-  }
-  {
-    using namespace weak_ordering_policy;
-    a < b;
-    a > b;
-    a <= b;
-    a >= b;
-    a == b;
-    a != b;
-  }
+  a < b;
+  a > b;
+  a <= b;
+  a >= b;
+  a == b;
+  a != b;
 
   cout << ">> Comparison Complete!" << endl;
 
@@ -190,22 +142,15 @@ try
   min( x, interval<>{} );
   cranberries::min( { x,interval<>{},interval<>{} } );
   min( interval<>{}, interval<>{}, interval<>{}, interval<>{} );
-  /*  accessors  */
-  // getter and setter
-  //lower( x ); // TODO
-  //upper( x ); // TODO
-  // swap
-  swap( s, z );
 
   cout << ">> Math Functions Complete!" << endl;
 
   {
     interval<> hoge{};
     auto f = []( interval<> const& a ) { return a - 1; };
-    auto expr = subtract_( add_( max_( sin_( a ), b ), multiply_( a, max_( a, b, c, sin_( a ) ) ) ), min_( pow_( c, 2 ), divide_( erf_( d ), a ) ) );
+    auto expr = sub_( add_( max_( sin_( a ), b ), mul_( a, max_( a, b, c, sin_( a ) ) ) ), min_( pow_( c, 2 ), div_( erf_( d ), a ) ) );
     hoge = expr;
     hoge = f( expr );
-    hoge = static_cast<interval<>>( expr );
     expr.eval();
   }
 
@@ -214,7 +159,7 @@ try
   {
     CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "@success" );
   }
-  catch ( cranberries::domain_error const& )
+  catch (cranberries::domain_error const&)
   {
     cout << ">> Exception Complete!" << endl;
   }
@@ -228,67 +173,8 @@ try
     cout << ">> DEBUG MODE TEST" << endl;
     cout << e.what() << endl;
   }
-
-
-  return 0;
 }
-catch ( cranberries::domain_error const& e )
-{
-  cout << e.what() << endl;
-  return 0;
-}
-catch ( cranberries::invalid_argument const& e )
-{
-  cout << e.what() << endl;
-  return 0;
-}
-catch ( cranberries::length_error const& e )
-{
-  cout << e.what() << endl;
-  return 0;
-}
-catch ( cranberries::out_of_range const& e )
-{
-  cout << e.what() << endl;
-  return 0;
-}
-catch ( cranberries::range_error const& e )
-{
-  cout << e.what() << endl;
-  return 0;
-}
-catch ( cranberries::overflow_error const& e )
-{
-  cout << e.what() << endl;
-  return 0;
-}
-catch ( cranberries::underflow_error const& e )
-{
-  cout << e.what() << endl;
-  return 0;
-}
-catch ( cranberries::logic_error const& e )
-{
-  cout << e.what() << endl;
-  return 0;
-}
-catch ( cranberries::runtime_error const& e )
-{
-  cout << e.what() << endl;
-  return 0;
-}
-catch ( std::logic_error const& e )
-{
-  cout << e.what() << endl;
-  return 0;
-}
-catch ( std::runtime_error const& e )
-{
-  cout << e.what() << endl;
-  return 0;
-}
-catch ( std::exception const& e )
-{
+catch (cranberries::runtime_error const& e) {
   cout << e.what() << endl;
   return 0;
 }
