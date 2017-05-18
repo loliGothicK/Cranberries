@@ -342,7 +342,7 @@ namespace cranberries_magic {
 
   template < template <class...>class T, template <class...>class U, class... clazz >
   struct is_specialize_of<T, U<clazz...>> {
-    static constexpr bool value = std::is_same<T<clazz...>, U<clazz...>>;
+    static constexpr bool value = std::is_same<T<clazz...>, U<clazz...>>::value;
   };
 
   template < template<class...>class T, class U >
