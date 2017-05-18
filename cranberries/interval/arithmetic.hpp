@@ -1,3 +1,4 @@
+#include "interval.hpp"
 #ifndef CRANBRIIES_INTERVAL_LIB_ARITHMETIC_HPP
 #define CRANBRIIES_INTERVAL_LIB_ARITHMETIC_HPP
 
@@ -15,7 +16,7 @@ namespace cranberries {
 
   //  prefix increment
   template < typename T >
-  inline constexpr interval<T> interval<T>::operator ++() noexcept
+  inline constexpr auto& interval<T>::operator ++() noexcept
   {
     ++lower_;
     ++upper_;
@@ -24,7 +25,7 @@ namespace cranberries {
 
   //  postfix increment
   template < typename T >
-  inline constexpr interval<T> interval<T>::operator ++( int ) noexcept
+  inline constexpr auto interval<T>::operator ++( int ) noexcept
   {
     auto tmp( *this );
     --(*this);
@@ -35,7 +36,7 @@ namespace cranberries {
 
   //  prefix decrement
   template < typename T >
-  inline constexpr interval<T> interval<T>::operator --() noexcept
+  inline constexpr auto& interval<T>::operator --() noexcept
   {
     --lower_;
     --upper_;
@@ -44,12 +45,19 @@ namespace cranberries {
 
   //  postfix decrement
   template < typename T >
-  inline constexpr interval<T> interval<T>::operator --( int ) noexcept
+  inline constexpr auto interval<T>::operator --( int ) noexcept
   {
     auto tmp( *this );
     --(*this);
     return tmp;
   }
+
+  template < typename T >
+  inline constexpr interval<T> interval<T>::operator -() const noexcept
+  {
+    return {-upper_, -lower_};
+  }
+
 
   //----------------------------------------//
   //                                        //
@@ -59,7 +67,7 @@ namespace cranberries {
 
 
   template < typename T >
-  inline constexpr interval<T> interval<T>::inverse() const
+  inline constexpr auto interval<T>::inverse() const
   {
     return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( lower() <= 0.0 && 0.0 <= upper() )
       : CRANBERRIES_MAKE_INTERVAL( T, 1.0 / upper(), 1.0 / lower() );

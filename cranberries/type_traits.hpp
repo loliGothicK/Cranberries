@@ -337,6 +337,17 @@ namespace cranberries_magic {
   template < typename T >
   constexpr bool is_bitset_v = is_bitset<T>::value;
 
+  template < template<class...>class T, class U >
+  struct is_specialize_of : std::false_type {};
+
+  template < template <class...>class T, template <class...>class U, class... clazz >
+  struct is_specialize_of<T, U<clazz...>> {
+    static constexpr bool value = std::is_same<T<clazz...>, U<clazz...>>;
+  };
+
+  template < template<class...>class T, class U >
+  constexpr bool is_specialize_of_v = is_specialize_of<T, U>::value;
+
 
 namespace cranberries_magic{
 
@@ -520,17 +531,19 @@ namespace cranberries_magic{
   template <class T, class R = void>
   constexpr bool is_nothrow_callable_v = is_nothrow_callable<T, R>::value;
 
-
-  template < typename T, std::size_t N >
-  struct generate_tuple
-  {
-    template < std::size_t ...I >
-    static constexpr auto seq(std::index_sequence<I...>)
-      ->std::tuple< decltype(I, std::declval<T>())... > ;
-    
-    using type = decltype(seq(std::declval<std::make_index_sequence<N>>()));
+  template <class T, int N>
+  struct generate_tuple {
+    using partial_type = typename generate_tuple<T, N / 2>::type;
+    using type = std::conditional_t<N % 2 == 0
+      ,decltype(std::tuple_cat(std::declval<partial_type>(), std::declval<partial_type>()))
+      ,decltype(std::tuple_cat(std::declval<partial_type>(), std::declval<partial_type>(), std::declval<std::tuple<T>>()))>;
   };
 
+  template <class T>
+  struct generate_tuple<T,1>
+  {
+    using type = std::tuple<T>;
+  };
   template < typename T, std::size_t N >
   using generate_tuple_t = typename generate_tuple<T,N>::type;
 

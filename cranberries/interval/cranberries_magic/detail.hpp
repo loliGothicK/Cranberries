@@ -17,16 +17,6 @@ namespace cranberries {
     // expr_tag similar to.
     // Empty Base Optimization just works.
     class interval_base {};
-    class expr_base {};
-
-
-    // is_expr_v definition
-    template < typename T >
-    struct is_expr {
-      static constexpr bool value = std::is_base_of<expr_base, T>::value;
-    };
-    template < typename T >
-    constexpr bool is_expr_v = is_expr<T>::value;
 
     template < typename L, typename R, class = void>
     struct is_available_total_order : std::false_type {};
@@ -54,16 +44,6 @@ namespace cranberries {
 
 namespace cranberries {
 
-  // for Expression Template.
-  // This class bind value.
-  // Applying eval() for Expression Template evaluation chain.
-  template < typename T >
-  struct Val : public cranberries_magic::expr_base
-  {
-    T value;
-    Val( T v ) : value{ v } {}
-    T eval() const { return value; }
-  };
 
 
   namespace cranberries_magic {
@@ -101,26 +81,6 @@ namespace cranberries {
         || std::abs( b ) == std::numeric_limits<std::decay_t<T>>::max();
     }
 
-    // Expr primary class template.
-    // Equivalent to Expr<T,false>.
-    // Top level expression template bind values as wrapper class Val.
-    template < typename T, bool Label = is_expr<T>::value >
-    struct Expr
-    {
-      using Ref = Val<T>;
-    };
-
-    // Expr specialization template.
-    // Expression template bind expression.
-    template <typename T >
-    struct Expr<T, true >
-    {
-      using Ref = T;
-    };
-
-    // Expr::Ref alias.
-    template < typename T >
-    using Expr_ref = typename Expr<T>::Ref;
 
 
   } // ! cranberries_magic 

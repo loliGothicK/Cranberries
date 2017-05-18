@@ -483,7 +483,8 @@ namespace cranberries
   template < typename T >
   void
   operator>>
-  ( generate_tuple_t<remove_cvr_t<T>, 2>&& t,
+  (
+    generate_tuple_t<remove_cvr_t<T>, 2>&& t,
     dual_number<T>& d    
   ) noexcept {
     std::forward_as_tuple( d.real(), d.basis() ) = t;

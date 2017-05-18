@@ -7,18 +7,20 @@
 #ifdef CRANBERRIES_INTERVAL_DEBUG_MODE
 #define CRANBERRIES_MAKE_INTERVAL(TYPE, LOW_EXPR, UP_EXPR) [&]{\
   DOWNWARD_POLICY;\
-  auto low = LOW_EXPR;\
+  auto lower_p_cranberries_unique_0000 = LOW_EXPR;\
   UPWARD_POLICY;\
-  auto up = UP_EXPR;\
-  return  up < low ? throw cranberries::invalid_argument( "invalid_argument", __FILE__, __FUNCTION__, __LINE__, "up < low" ) : interval<TYPE>(low,up);\
+  auto upper_p_cranberries_unique_0000 = UP_EXPR;\
+  return  upper_p_cranberries_unique_0000 < lower_p_cranberries_unique_0000\
+    ? throw cranberries::invalid_argument( "invalid_argument", __FILE__, __FUNCTION__, __LINE__, "up < low" )\
+    : interval<TYPE>(lower_p_cranberries_unique_0000,upper_p_cranberries_unique_0000);\
 }()
 #else
 #define CRANBERRIES_MAKE_INTERVAL(TYPE, LOW_EXPR, UP_EXPR) [&]{\
   DOWNWARD_POLICY;\
-  auto low = LOW_EXPR;\
+  auto lower_p_cranberries_unique_0000 = LOW_EXPR;\
   UPWARD_POLICY;\
-  auto up = UP_EXPR;\
-  return interval<TYPE>(low,up);\
+  auto upper_p_cranberries_unique_0000 = UP_EXPR;\
+  return interval<TYPE>(lower_p_cranberries_unique_0000,upper_p_cranberries_unique_0000);\
 }()
 #endif
 

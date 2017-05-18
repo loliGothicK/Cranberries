@@ -32,8 +32,8 @@
 #include "./interval/rounding_control.hpp"
 #include "./interval/math_impl.hpp"
 #include "./interval/interval.hpp"
-#include "./interval/relational.hpp"
 #include "./interval/compare.hpp"
+#include "./interval/relational.hpp"
 #include "./interval/four_arithmetic_impl.hpp"
 #include "./interval/four_arithmetic.hpp"
 #include "./interval/algorithm.hpp"
@@ -43,7 +43,6 @@
 
 
 #include "./interval/io.hpp"
-#include "./interval/expression.hpp"
 #include "./interval/version.hpp"
 
 #endif

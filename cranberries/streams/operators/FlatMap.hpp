@@ -17,8 +17,8 @@ namespace operators {
     : private cranberries_magic::LazyOperationModuleBase
   {
   public:
-    FlatMap( UnaryOp op ) noexcept
-      : op_{ std::forward<UnaryOp>( op ) }
+    FlatMap(UnaryOp op) noexcept
+      : op_{ std::forward<UnaryOp>(op) }
     {}
 
     template <
@@ -27,7 +27,8 @@ namespace operators {
       size_t... I
     >
     void
-    push_tuple(
+    push_tuple
+    (
       Stream&& stream_,
       Tuple&& t,
       std::index_sequence<I...>
@@ -35,7 +36,7 @@ namespace operators {
       noexcept
     {
       using swallow = std::initializer_list<int>;
-      (void)swallow {
+      (void)swallow{
         (void(stream_.emplace_back(std::get<I>(t))), 0)...
       };
     }
@@ -44,7 +45,7 @@ namespace operators {
     template <
       typename T,
       typename Stream,
-      std::enable_if_t<is_tuple_v<std::decay_t<T>>,std::nullptr_t> = nullptr
+      std::enable_if_t<is_tuple_v<std::decay_t<T>>, std::nullptr_t> = nullptr
     >
     void
     push
@@ -64,9 +65,8 @@ namespace operators {
     template <
       typename Stream,
       typename Range,
-      std::enable_if_t<
-        is_range_v<std::decay_t<Range>>,
-        std::nullptr_t
+      enabler_t<
+        is_range_v<std::decay_t<Range>>
       > = nullptr
     >
     void
@@ -82,36 +82,22 @@ namespace operators {
       >::invoke(std::forward<Stream>(stream_), std::forward<Range>(range_));
     }
 
-    template <
-      typename Stream
-    >
+    template < typename Stream >
     decltype(auto)
-    operator()
-    (
-      Stream&& stream_
-    )
-      noexcept(false)
-    {
-      CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF( stream_.empty() );
+    operator()(Stream&& stream_) noexcept(false) {
+      CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF(stream_.empty());
       auto old = stream_.get();
       stream_.clear();
-      for (auto&& e : old ) {
-        push( stream_, op_( e ) );
+      for (auto&& e : old) {
+        push(stream_, op_(e));
       }
-      return std::forward<Stream>( stream_ );
+      return std::forward<Stream>(stream_);
     }
 
 
-    template <
-      typename T
-    >
+    template < typename T >
     decltype(auto)
-    operator[]
-    (
-      T&& a
-    )
-      noexcept
-    {
+    operator[](T&& a) noexcept {
       return op_(a);
     }
 

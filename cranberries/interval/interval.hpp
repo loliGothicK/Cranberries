@@ -7,19 +7,23 @@
 #include "./cranberries_magic/detail.hpp"
 
 namespace cranberries {
-  // Forward declaratoin for Ref
-  template < typename T >
-  struct Val;
+  namespace expressions {
+    class expr_base {};
+    // is_expr_v definition
+    template < typename T >
+    struct is_expr {
+      static constexpr bool value = std::is_base_of<expr_base, T>::value;
+    };
+    template < typename T >
+    constexpr bool is_expr_v = is_expr<T>::value;
 
-  template <class T1, class T2, class T3, class Func >
-  class Expr3;
+    // Forward declaratoin for Ref
+    template < typename T >
+    struct ValWrapper_;
 
-  template < class L, class Op, class R >
-  class Expr2;
-
-  template < class A, class Func >
-  class Expr1;
-
+    template < class Func, class... >
+    class ExprProxy_;
+  }
 
   //----------------------------------//
   /*                                  */
@@ -37,7 +41,6 @@ namespace cranberries {
     CRANBERRIES_CONCEPT_ASSERT( std::is_arithmetic<T>::value && std::is_signed<T>::value );
   public:
     using value_type = T;
-
     /*  ctor  */
     constexpr interval() noexcept : interval{ T{}, T{} } {};
     constexpr interval( T const&, T const& );
@@ -54,13 +57,15 @@ namespace cranberries {
     constexpr interval& operator=( interval&& ) noexcept;
 
     /*  increment/decrement Op  */
-    constexpr interval operator ++() noexcept;
-    constexpr interval operator ++( int ) noexcept;
-    constexpr interval operator --() noexcept;
-    constexpr interval operator --( int ) noexcept;
+    constexpr auto& operator ++() noexcept;
+    constexpr auto operator ++( int ) noexcept;
+    constexpr auto& operator --() noexcept;
+    constexpr auto operator --( int ) noexcept;
+
+    constexpr interval operator-() const noexcept;
 
     /*  numeric functions  */
-    constexpr interval inverse() const;
+    constexpr auto inverse() const;
 
     /*  interval functions  */
     constexpr T mid() const noexcept;
@@ -91,63 +96,32 @@ namespace cranberries {
     }
 
 
-    template <class T1, class T2, class T3, class Func >
-    inline constexpr interval& operator=( Expr3<T1, T2, T3, Func> x ) noexcept
+    template <
+      class EXPRESSION,
+      std::enable_if_t<
+        expressions::is_expr_v<std::decay_t<EXPRESSION>>,
+        std::nullptr_t
+      > = nullptr
+    >
+    constexpr interval& operator=(EXPRESSION&& x ) noexcept
     {
       ( *this ) = x.eval();
       return *this;
     }
 
-    template <class L, class Op, class R >
-    inline constexpr interval& operator=( Expr2<L, Op, R> x ) noexcept
-    {
-      ( *this ) = x.eval();
-      return *this;
-    }
-
-    template <class A, class Func >
-    inline constexpr interval& operator=( Expr1<A, Func> x ) noexcept
-    {
-      ( *this ) = x.eval();
-      return *this;
-    }
-
-    template <class T1, class T2, class T3, class Func >
-    inline constexpr interval& operator+=( Expr3<T1, T2, T3, Func> x ) noexcept
+    template <
+      class EXPRESSION,
+      std::enable_if_t<
+      expressions::is_expr_v<std::decay_t<EXPRESSION>>,
+      std::nullptr_t
+      > = nullptr
+    >
+    constexpr interval& operator+=(EXPRESSION&& x) noexcept
     {
       ( *this ) = *this + x.eval();
       return *this;
     }
 
-    template <class A, class Func >
-    inline constexpr interval& operator+=( Expr1<A, Func> x ) noexcept
-    {
-      *this = *this + x.eval();
-      return *this;
-    }
-
-    template <class L, class Op, class R >
-    inline constexpr interval& operator+=( Expr2<L, Op, R> x ) noexcept
-    {
-      *this = *this + x.eval();
-      return *this;
-    }
-
-    inline constexpr interval& operator+=( interval&& x ) {
-      return add_assign( *this, x );
-    }
-
-    inline constexpr interval& operator-=( interval&& x ) {
-      return subtract_assign( *this, x );
-    }
-
-    inline constexpr interval& operator*=( interval&& x ) {
-      return multiply_assign( *this, x );
-    }
-
-    inline constexpr interval& operator/=( interval&& x ) {
-      return divide_assign( *this, x );
-    }
 
   private:
     T lower_{};
@@ -164,7 +138,7 @@ namespace cranberries {
 
   /*
   [ Example : Let interval<T> a,b ;
-  "a < b" equals "total_less( a, b )".
+  "a < b" equals "weak_less( a, b )".
   - end example ]
   */
 
@@ -227,7 +201,7 @@ namespace cranberries {
   /*  Copy Assignment Op  */
 
   template < typename T >
-  inline constexpr interval<T>& interval<T>::operator=( interval<T> const& x ) noexcept
+  inline constexpr interval<T>& interval<T>::operator=( interval const& x ) noexcept
   {
     lower_ = x.lower_;
     upper_ = x.upper_;
@@ -237,7 +211,7 @@ namespace cranberries {
   /*  Move Assignment Op  */
 
   template < typename T >
-  inline constexpr interval<T>& interval<T>::operator=( interval<T>&& x ) noexcept
+  inline constexpr interval<T>& interval<T>::operator=( interval&& x ) noexcept
   {
     lower_ = std::move(x.lower_);
     upper_ = std::move(x.upper_);

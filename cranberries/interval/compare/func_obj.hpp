@@ -7,29 +7,12 @@
 namespace cranberries {
 namespace compare {
 
-  /*  interval compare function objrct  */
-  template < order = order::Total >
-  struct less
-  {
-    template < typename L, typename R >
-    constexpr bool operator()( interval<L> const& a, interval<R> const& b ) const noexcept
-    {
-      return total_less( a, b );
-    }
-    template < typename R >
-    constexpr bool operator()( typename interval<R>::value_type const& a, interval<R> const& b ) const noexcept
-    {
-      return total_less( a, b );
-    }
-    template < typename L >
-    constexpr bool operator()( interval<L> const& a, typename interval<L>::value_type const& b ) const noexcept
-    {
-      return total_less( a, b );
-    }
-  };
+  /*  interval compare function object  */
+  template < OrderPolocy Policy = OrderPolocy::Weak >
+  struct less;
 
   template < >
-  struct less < order::Weak >
+  struct less < OrderPolocy::Weak >
   {
     template < typename L, typename R >
     constexpr bool operator()( interval<L> const& a, interval<R> const& b ) const noexcept
@@ -49,7 +32,7 @@ namespace compare {
   };
 
   template < >
-  struct less < order::Partial >
+  struct less < OrderPolocy::Partial >
   {
     template < typename L, typename R >
     constexpr bool operator()( interval<L> const& a, interval<R> const& b ) const noexcept
@@ -69,7 +52,7 @@ namespace compare {
   };
 
   template < >
-  struct less < order::Interval >
+  struct less < OrderPolocy::Interval >
   {
     template < typename L, typename R >
     constexpr bool operator()( interval<L> const& a, interval<L> const& b ) const noexcept
@@ -88,28 +71,12 @@ namespace compare {
     }
   };
 
-  template < order = order::Total >
-  struct less_or_equal
-  {
-    template < typename L, typename R >
-    constexpr bool operator()( interval<L> const& a, interval<R> const& b ) const
-    {
-      return total_less_or_equal( a, b );
-    }
-    template < typename L, typename R >
-    constexpr bool operator()( R const a, interval<L> const& b ) const noexcept
-    {
-      return total_less_or_equal( a, b );
-    }
-    template < typename L >
-    constexpr bool operator()( interval<L> const& a, typename interval<L>::value_type const& b ) const noexcept
-    {
-      return total_less_or_equal( a, b );
-    }
-  };
+
+  template < OrderPolocy Policy = OrderPolocy::Weak >
+  struct less_or_equal;
 
   template < >
-  struct less_or_equal < order::Weak >
+  struct less_or_equal < OrderPolocy::Weak >
   {
     template < typename L, typename R >
     constexpr bool operator()( interval<L> const& a, interval<R> const& b ) const noexcept
@@ -129,7 +96,7 @@ namespace compare {
   };
 
   template < >
-  struct less_or_equal < order::Partial >
+  struct less_or_equal < OrderPolocy::Partial >
   {
     template < typename L, typename R >
     constexpr bool operator()( interval<L> const& a, interval<R> const& b ) const noexcept
@@ -149,7 +116,7 @@ namespace compare {
   };
 
   template < >
-  struct less_or_equal < order::Interval >
+  struct less_or_equal < OrderPolocy::Interval >
   {
     template < typename L, typename R >
     constexpr bool operator()( interval<L> const& a, interval<L> const& b ) const noexcept
@@ -168,28 +135,11 @@ namespace compare {
     }
   };
 
-  template < order = order::Total >
-  struct greater
-  {
-    template < typename L, typename R >
-    constexpr bool operator()( interval<L> const& a, interval<R> const& b ) const noexcept
-    {
-      return total_greater( a, b );
-    }
-    template < typename R >
-    constexpr bool operator()( typename interval<R>::value_type const& a, interval<R> const& b ) const noexcept
-    {
-      return total_greater( a, b );
-    }
-    template < typename L >
-    constexpr bool operator()( interval<L> const& a, typename interval<L>::value_type const& b ) const noexcept
-    {
-      return total_greater( a, b );
-    }
-  };
+  template < OrderPolocy Policy = OrderPolocy::Weak >
+  struct greater;
 
   template < >
-  struct greater < order::Weak >
+  struct greater < OrderPolocy::Weak >
   {
     template < typename L, typename R >
     constexpr bool operator()( interval<L> const& a, interval<R> const& b ) const noexcept
@@ -209,7 +159,7 @@ namespace compare {
   };
 
   template < >
-  struct greater < order::Partial >
+  struct greater < OrderPolocy::Partial >
   {
     template < typename L, typename R >
     constexpr bool operator()( interval<L> const& a, interval<R> const& b ) const noexcept
@@ -229,7 +179,7 @@ namespace compare {
   };
 
   template < >
-  struct greater < order::Interval >
+  struct greater < OrderPolocy::Interval >
   {
     template < typename L, typename R >
     constexpr bool operator()( interval<L> const& a, interval<R> const& b ) const noexcept
@@ -248,28 +198,11 @@ namespace compare {
     }
   };
 
-  template < order = order::Total >
-  struct greater_or_equal
-  {
-    template < typename L, typename R >
-    constexpr bool operator()( interval<L> const& a, interval<R> const& b ) const noexcept
-    {
-      return total_greater_or_equal( a, b );
-    }
-    template < typename L, typename R >
-    constexpr bool operator()( R const a, interval<L> const& b ) const noexcept
-    {
-      return total_greater_or_equal( a, b );
-    }
-    template < typename L >
-    constexpr bool operator()( interval<L> const& a, typename interval<L>::value_type const& b ) const noexcept
-    {
-      return total_greater_or_equal( a, b );
-    }
-  };
+  template < OrderPolocy Policy = OrderPolocy::Weak >
+  struct greater_or_equal;
 
   template < >
-  struct greater_or_equal < order::Weak >
+  struct greater_or_equal < OrderPolocy::Weak >
   {
     template < typename L, typename R >
     constexpr bool operator()( interval<L> const& a, interval<R> const& b ) const noexcept
@@ -289,7 +222,7 @@ namespace compare {
   };
 
   template < >
-  struct greater_or_equal < order::Partial >
+  struct greater_or_equal < OrderPolocy::Partial >
   {
     template < typename L, typename R >
     constexpr bool operator()( interval<L> const& a, interval<R> const& b ) const noexcept
@@ -309,7 +242,7 @@ namespace compare {
   };
 
   template < >
-  struct greater_or_equal < order::Interval >
+  struct greater_or_equal < OrderPolocy::Interval >
   {
     template < typename L, typename R >
     constexpr bool operator()( interval<L> const& a, interval<L> const& b ) const noexcept
@@ -328,27 +261,11 @@ namespace compare {
     }
   };
 
-  template < order = order::Total >
-  struct equal
-  {
-    template < typename L, typename R >
-    constexpr bool operator()( interval<L> const& a, interval<R> const& b ) const noexcept
-    {
-      return total_equal( a, b );
-    }
-    template < typename R >
-    constexpr bool operator()( typename interval<R>::value_type const& a, interval<R> const& b ) const noexcept
-    {
-      return total_equal( a, b );
-    }
-    template < typename L >
-    constexpr bool operator()( interval<L> const& a, typename interval<L>::value_type const& b ) const noexcept
-    {
-      return total_equal( a, b );
-    }
-  };
+  template < OrderPolocy Policy = OrderPolocy::Weak >
+  struct equal;
+
   template < >
-  struct equal < order::Weak >
+  struct equal < OrderPolocy::Weak >
   {
     template < typename L, typename R >
     constexpr bool operator()( interval<L> const& a, interval<R> const& b ) const noexcept
@@ -366,7 +283,8 @@ namespace compare {
       return weak_equal( a, b );
     }
   };
-  template < order = order::Partial >
+
+  template < OrderPolocy Policy = OrderPolocy::Partial >
   struct undorderesd
   {
     template < typename L, typename R >
@@ -386,7 +304,7 @@ namespace compare {
     }
   };
   template < >
-  struct undorderesd < order::Interval >
+  struct undorderesd < OrderPolocy::Interval >
   {
     template < typename L, typename R >
     constexpr bool operator()( interval<L> const& a, interval<R> const& b ) const noexcept

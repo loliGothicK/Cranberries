@@ -8,7 +8,7 @@ namespace compare {
   /*   Ordering Symbol   */
   //---------------------//
 
-  enum class order { Total, Weak, Partial, Interval };
+  enum class OrderPolocy { Weak, Partial, Interval, Set };
 
   /*  3 Values of Ordering  */
   enum class partial_ordering { less, unordered, greater };

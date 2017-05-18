@@ -380,7 +380,9 @@ namespace cranberries {
   inline constexpr interval<T> expm1( interval<T> const& x )
   {
     using std::expm1;
-    return cranberries_magic::is_overflow( expm1( x.lower() ), expm1( x.upper() ) ) ? CRANBERRIES_RANGE_ERROR_THROW_WITH_MSG( "Overflow has occurred." ) : CRANBERRIES_MAKE_INTERVAL(T, expm1( x.lower() ), expm1( x.upper() ) );
+    return cranberries_magic::is_overflow( expm1( x.lower() ), expm1( x.upper() ) )
+      ? CRANBERRIES_RANGE_ERROR_THROW_WITH_MSG( "Overflow has occurred." )
+      : CRANBERRIES_MAKE_INTERVAL(T, expm1( x.lower() ), expm1( x.upper() ) );
   }
 
   /*  interval logarithmic function ( base = e ) */
@@ -389,7 +391,9 @@ namespace cranberries {
   inline constexpr interval<T> log( interval<T> const& x )
   {
     using std::log;
-    return ( interval_constants::zero<T> < x.lower() ) ? CRANBERRIES_MAKE_INTERVAL(T, log( x.lower() ), log( x.upper() ) ) : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
+    return interval_constants::zero<T> < x.lower()
+      ? CRANBERRIES_MAKE_INTERVAL(T, log( x.lower() ), log( x.upper() ) )
+      : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
   }
 
   /*  interval log( x ) + 1  */
@@ -397,7 +401,9 @@ namespace cranberries {
   inline constexpr interval<T> log1p( interval<T> const& x )
   {
     using std::log1p;
-    return ( -1.0 < x.lower() ) ? CRANBERRIES_MAKE_INTERVAL(T, log1p( x.lower() ), log1p( x.upper() ) ) : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
+    return -1.0 < x.lower()
+      ? CRANBERRIES_MAKE_INTERVAL(T, log1p( x.lower() ), log1p( x.upper() ) )
+      : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
   }
 
   /*  interval logarithmic function ( base = 10 )  */
@@ -406,7 +412,9 @@ namespace cranberries {
   inline constexpr interval<T> log10( interval<T> const& x )
   {
     using std::log10;
-    return ( interval_constants::zero<T> < x.lower() ) ? CRANBERRIES_MAKE_INTERVAL(T, log10( x.lower() ), log10( x.upper() ) ) : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
+    return interval_constants::zero<T> < x.lower()
+      ? CRANBERRIES_MAKE_INTERVAL(T, log10( x.lower() ), log10( x.upper() ) )
+      : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
   }
 
   /*  interval logarithmic function ( base = 2 )  */
@@ -414,7 +422,9 @@ namespace cranberries {
   inline constexpr interval<T> log2( interval<T> const& x )
   {
     using std::log2;
-    return ( interval_constants::zero<T> < x.lower() ) ? CRANBERRIES_MAKE_INTERVAL(T, log2( x.lower() ), log2( x.upper() ) ) : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
+    return interval_constants::zero<T> < x.lower()
+      ? CRANBERRIES_MAKE_INTERVAL(T, log2( x.lower() ), log2( x.upper() ) )
+      : CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "lower_bound must be greater than zero." );
   }
 
   /*  interval absolute funtion  */
@@ -425,9 +435,11 @@ namespace cranberries {
     using std::abs;
     auto low = x.lower();
     auto up = x.upper();
-    return ( low < -interval_constants::zero<T> && interval_constants::zero<T> <= up ) ? [&] { auto l = abs( low ); auto r = abs( up ); return CRANBERRIES_MAKE_INTERVAL(T, interval_constants::zero<T>, std::fmax( l, r )); }( )
-      : (up < interval_constants::zero<T>) ? [ & ] { auto l = abs( up ); auto r = abs( low ); return CRANBERRIES_MAKE_INTERVAL( T, l, r ); }()
-      : interval<T>{ x };
+    return low < -interval_constants::zero<T> && interval_constants::zero<T> <= up 
+      ? CRANBERRIES_MAKE_INTERVAL(T, interval_constants::zero<T>, std::fmax(abs(low), abs(up)))
+      : up < interval_constants::zero<T>
+        ? CRANBERRIES_MAKE_INTERVAL( T, abs(up), abs(low))
+        : interval<T>{ x };
   }
 
 
@@ -443,16 +455,25 @@ namespace cranberries {
     auto y_up = y.upper();
     auto z_up = z.upper();
 
-    return ( x_low >= interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_low, z_low ), fma( x_up, y_up, z_up ) )
-      : ( x_low >= interval_constants::zero<T1> && y_low < interval_constants::zero<T2> && y_up > interval_constants::zero<T2> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_low, z_low ), fma( x_low, y_up, z_up ) )
-      : ( x_low >= interval_constants::zero<T1> && y_up <= interval_constants::zero<T2> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_low, z_low ), fma( x_low, y_up, z_up ) )
-      : ( x_low < interval_constants::zero<T1> && x_up > interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_up, z_low ), fma( x_up, y_up, z_up ) )
-      : ( x_low < interval_constants::zero<T1> && x_up > interval_constants::zero<T1> && y_low <= interval_constants::zero<T2> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_low, z_low ), fma( x_low, y_low, z_up ) )
-      : ( x_up <= interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_up, z_low ), fma( x_up, y_low, z_up ) )
-      : ( x_up <= interval_constants::zero<T> && y_low < interval_constants::zero<T> && y_up > interval_constants::zero<T> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_up, z_low ), fma( x_low, y_low, z_up ) )
-      : ( x_up <= interval_constants::zero<T> && y_up <= interval_constants::zero<T2> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_up, z_low ), fma( x_low, y_low, z_up ) )
-      : ( x_up*y_low < x_low*y_up ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_low, z_low ), fma( x_low, y_up, z_up ) )
-      : CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_up, z_low ), fma( x_up, y_low, z_up ) );
+    return x_low >= interval_constants::zero<T1> && y_low >= interval_constants::zero<T2>
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_low, z_low ), fma( x_up, y_up, z_up ) )
+      : x_low >= interval_constants::zero<T1> && y_low < interval_constants::zero<T2> && y_up > interval_constants::zero<T2>
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_low, z_low ), fma( x_low, y_up, z_up ) )
+      : x_low >= interval_constants::zero<T1> && y_up <= interval_constants::zero<T2>
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_low, z_low ), fma( x_low, y_up, z_up ) )
+      : x_low < interval_constants::zero<T1> && x_up > interval_constants::zero<T1> && y_low >= interval_constants::zero<T2>
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_up, z_low ), fma( x_up, y_up, z_up ) )
+      : x_low < interval_constants::zero<T1> && x_up > interval_constants::zero<T1> && y_low <= interval_constants::zero<T2>
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_low, z_low ), fma( x_low, y_low, z_up ) )
+      : x_up <= interval_constants::zero<T1> && y_low >= interval_constants::zero<T2>
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_up, z_low ), fma( x_up, y_low, z_up ) )
+      : x_up <= interval_constants::zero<T> && y_low < interval_constants::zero<T> && y_up > interval_constants::zero<T>
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_up, z_low ), fma( x_low, y_low, z_up ) )
+      : x_up <= interval_constants::zero<T> && y_up <= interval_constants::zero<T2>
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_up, z_low ), fma( x_low, y_low, z_up ) )
+      : x_up*y_low < x_low*y_up
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_low, z_low ), fma( x_low, y_up, z_up ) )
+        : CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_up, z_low ), fma( x_up, y_low, z_up ) );
   }
 
   /*  interval fused multiplyply-add function fma( interval<T>, interval<T>, T)  */
@@ -466,16 +487,25 @@ namespace cranberries {
     auto y_up = y.upper();
     auto x_up = x.upper();
 
-    return ( x_low >= interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_low, z ), fma( x_up, y_up, z ) )
-      : ( x_low >= interval_constants::zero<T1> && y_low < interval_constants::zero<T2> && y_up > interval_constants::zero<T2> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_low, z ), fma( x_low, y_up, z ) )
-      : ( x_low >= interval_constants::zero<T1> && y_up <= interval_constants::zero<T2> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_low, z ), fma( x_low, y_up, z ) )
-      : ( x_low < interval_constants::zero<T1> && x_up > interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_up, z ), fma( x_up, y_up, z ) )
-      : ( x_low < interval_constants::zero<T1> && x_up > interval_constants::zero<T1> && y_low <= interval_constants::zero<T2> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_low, z ), fma( x_low, y_low, z ) )
-      : ( x_up <= interval_constants::zero<T1> && y_low >= interval_constants::zero<T2> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_up, z ), fma( x_up, y_low, z ) )
-      : ( x_up <= interval_constants::zero<T> && y_low < interval_constants::zero<T> && y_up > interval_constants::zero<T> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_up, z ), fma( x_low, y_low, z ) )
-      : ( x_up <= interval_constants::zero<T> && y_up <= interval_constants::zero<T2> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_up, z ), fma( x_low, y_low, z ) )
-      : ( x_up*y_low < x_low*y_up ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_low, z ), fma( x_low, y_up, z ) )
-      : CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_up, z ), fma( x_up, y_low, z ) );
+    return x_low >= interval_constants::zero<T1> && y_low >= interval_constants::zero<T2>
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_low, z ), fma( x_up, y_up, z ) )
+      : x_low >= interval_constants::zero<T1> && y_low < interval_constants::zero<T2> && y_up > interval_constants::zero<T2>
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_low, z ), fma( x_low, y_up, z ) )
+      : x_low >= interval_constants::zero<T1> && y_up <= interval_constants::zero<T2>
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_low, z ), fma( x_low, y_up, z ) )
+      : x_low < interval_constants::zero<T1> && x_up > interval_constants::zero<T1> && y_low >= interval_constants::zero<T2>
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_up, z ), fma( x_up, y_up, z ) )
+      : x_low < interval_constants::zero<T1> && x_up > interval_constants::zero<T1> && y_low <= interval_constants::zero<T2>
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_low, z ), fma( x_low, y_low, z ) )
+      : x_up <= interval_constants::zero<T1> && y_low >= interval_constants::zero<T2>
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_up, z ), fma( x_up, y_low, z ) )
+      : x_up <= interval_constants::zero<T> && y_low < interval_constants::zero<T> && y_up > interval_constants::zero<T>
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_up, z ), fma( x_low, y_low, z ) )
+      : x_up <= interval_constants::zero<T> && y_up <= interval_constants::zero<T2>
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_up, z ), fma( x_low, y_low, z ) )
+      : x_up*y_low < x_low*y_up
+        ? CRANBERRIES_MAKE_INTERVAL(T, fma( x_up, y_low, z ), fma( x_low, y_up, z ) )
+        : CRANBERRIES_MAKE_INTERVAL(T, fma( x_low, y_up, z ), fma( x_up, y_low, z ) );
   }
 
   /*  interval fused multiplyply-add function fma( interval<T>, T, interval<T>)  */
@@ -484,7 +514,8 @@ namespace cranberries {
   inline constexpr interval<T> fma( interval<T1> const& x, T const& y, interval<T3> const& z ) noexcept
   {
     using std::fma;
-    return ( y < interval_constants::zero<T> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x.upper(), y, z.lower() ), fma( x.lower(), y, z.upper() ) )
+    return y < interval_constants::zero<T>
+      ? CRANBERRIES_MAKE_INTERVAL(T, fma( x.upper(), y, z.lower() ), fma( x.lower(), y, z.upper() ) )
       : CRANBERRIES_MAKE_INTERVAL(T, fma( x.lower(), y, z.lower() ), fma( x.upper(), y, z.upper() ) );
   }
 
@@ -494,7 +525,8 @@ namespace cranberries {
   inline constexpr interval<T> fma( T const& x, interval<T2> const& y, interval<T3> const& z ) noexcept
   {
     using std::fma;
-    return ( x < interval_constants::zero<T> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x, y.upper(), z.lower() ), fma( x, y.lower(), z.upper() ) )
+    return x < interval_constants::zero<T>
+      ? CRANBERRIES_MAKE_INTERVAL(T, fma( x, y.upper(), z.lower() ), fma( x, y.lower(), z.upper() ) )
       : CRANBERRIES_MAKE_INTERVAL(T, fma( x, y.lower(), z.lower() ), fma( x, y.upper(), z.upper() ) );
   }
 
@@ -504,7 +536,8 @@ namespace cranberries {
   inline constexpr interval<T> fma( interval<T> const& x, typename interval<T>::value_type const& y, typename interval<T>::value_type const& z ) noexcept
   {
     using std::fma;
-    return ( y < interval_constants::zero<T> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x.upper(), y, z ), fma( x.lower(), y, z ) )
+    return y < interval_constants::zero<T>
+      ? CRANBERRIES_MAKE_INTERVAL(T, fma( x.upper(), y, z ), fma( x.lower(), y, z ) )
       : CRANBERRIES_MAKE_INTERVAL(T, fma( x.lower(), y, z ), fma( x.upper(), y, z ) );
   }
 
@@ -514,7 +547,8 @@ namespace cranberries {
   inline constexpr interval<T> fma( typename interval<T>::value_type const& x, interval<T> const& y, typename interval<T>::value_type const& z ) noexcept
   {
     using std::fma;
-    return ( x < interval_constants::zero<T> ) ? CRANBERRIES_MAKE_INTERVAL(T, fma( x, y.upper(), z ), fma( x, y.lower(), z ) )
+    return x < interval_constants::zero<T>
+      ? CRANBERRIES_MAKE_INTERVAL(T, fma( x, y.upper(), z ), fma( x, y.lower(), z ) )
       : CRANBERRIES_MAKE_INTERVAL(T, fma( x, y.lower(), z ), fma( x, y.upper(), z ) );
   }
 

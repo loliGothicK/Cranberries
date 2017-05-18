@@ -2,709 +2,284 @@
 #define CRANBRIIES_INTERVAL_LIB_FOUR_ARITHMETIC_HPP
 
 #include "interval.hpp"
-#include "four_arithmetic_impl.hpp"
+#include "rounding_control.hpp"
 #include "cranberries_magic/detail.hpp"
+#include "constants.hpp"
+#include "rounding_control.hpp"
 
 namespace cranberries {
-namespace normal_accurate_policy {
-
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L>& x, interval<R>& y )
-    {
-      return normal_accuracy::add( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L>& x, interval<R> const& y )
-    {
-      return normal_accuracy::add( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L>& x, interval<R>&& y )
-    {
-      return normal_accuracy::add( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L>& x, interval<R> const&& y )
-    {
-      return normal_accuracy::add( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L> const& x, interval<R>& y )
-    {
-      return normal_accuracy::add( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L> const& x, interval<R> const& y )
-    {
-      return normal_accuracy::add( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L> const& x, interval<R>&& y )
-    {
-      return normal_accuracy::add( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L> const& x, interval<R> const&& y )
-    {
-      return normal_accuracy::add( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L>&& x, interval<R>& y )
-    {
-      return normal_accuracy::add( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L>&& x, interval<R> const& y )
-    {
-      return normal_accuracy::add( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L>&& x, interval<R>&& y )
-    {
-      return normal_accuracy::add( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L>&& x, interval<R> const&& y )
-    {
-      return normal_accuracy::add( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L> const&& x, interval<R>& y )
-    {
-      return normal_accuracy::add( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L> const&& x, interval<R> const& y )
-    {
-      return normal_accuracy::add( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L> const&& x, interval<R>&& y )
-    {
-      return normal_accuracy::add( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L> const&& x, interval<R> const&& y )
-    {
-      return normal_accuracy::add( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L>& x, R&& y )
-    {
-      return add( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L> const& x, R&& y )
-    {
-      return add( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L>&& x, R&& y )
-    {
-      return add( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( interval<L> const&& x, R&& y )
-    {
-      return add( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( L&& x, interval<R>& y )
-    {
-      return add( std::forward<L>( x ), y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( L&& x, interval<R> const& y )
-    {
-      return add( std::forward<L>( x ), y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( L&& x, interval<R>&& y )
-    {
-      return add( std::forward<L>( x ), y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+( L&& x, interval<R> const&& y )
-    {
-      return add( std::forward<L>( x ), y );
-    }
-
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L>& x, interval<R>& y )
-    {
-      return normal_accuracy::subtract( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L>& x, interval<R> const& y )
-    {
-      return normal_accuracy::subtract( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L>& x, interval<R>&& y )
-    {
-      return normal_accuracy::subtract( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L>& x, interval<R> const&& y )
-    {
-      return normal_accuracy::subtract( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L> const& x, interval<R>& y )
-    {
-      return normal_accuracy::subtract( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L> const& x, interval<R> const& y )
-    {
-      return normal_accuracy::subtract( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L> const& x, interval<R>&& y )
-    {
-      return normal_accuracy::subtract( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L> const& x, interval<R> const&& y )
-    {
-      return normal_accuracy::subtract( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L>&& x, interval<R>& y )
-    {
-      return normal_accuracy::subtract( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L>&& x, interval<R> const& y )
-    {
-      return normal_accuracy::subtract( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L>&& x, interval<R>&& y )
-    {
-      return normal_accuracy::subtract( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L>&& x, interval<R> const&& y )
-    {
-      return normal_accuracy::subtract( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L> const&& x, interval<R>& y )
-    {
-      return normal_accuracy::subtract( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L> const&& x, interval<R> const& y )
-    {
-      return normal_accuracy::subtract( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L> const&& x, interval<R>&& y )
-    {
-      return normal_accuracy::subtract( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L> const&& x, interval<R> const&& y )
-    {
-      return normal_accuracy::subtract( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L>& x, R&& y )
-    {
-      return subtract( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L> const& x, R&& y )
-    {
-      return subtract( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L>&& x, R&& y )
-    {
-      return subtract( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( interval<L> const&& x, R&& y )
-    {
-      return subtract( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( L&& x, interval<R>& y )
-    {
-      return subtract( std::forward<L>( x ), y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( L&& x, interval<R> const& y )
-    {
-      return subtract( std::forward<L>( x ), y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( L&& x, interval<R>&& y )
-    {
-      return subtract( std::forward<L>( x ), y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( L&& x, interval<R> const&& y )
-    {
-      return subtract( std::forward<L>( x ), y );
-    }
-
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L>& x, interval<R>& y )
-    {
-      return normal_accuracy::multiply( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L>& x, interval<R> const& y )
-    {
-      return normal_accuracy::multiply( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L>& x, interval<R>&& y )
-    {
-      return normal_accuracy::multiply( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L>& x, interval<R> const&& y )
-    {
-      return normal_accuracy::multiply( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L> const& x, interval<R>& y )
-    {
-      return normal_accuracy::multiply( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L> const& x, interval<R> const& y )
-    {
-      return normal_accuracy::multiply( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L> const& x, interval<R>&& y )
-    {
-      return normal_accuracy::multiply( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L> const& x, interval<R> const&& y )
-    {
-      return normal_accuracy::multiply( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L>&& x, interval<R>& y )
-    {
-      return normal_accuracy::multiply( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L>&& x, interval<R> const& y )
-    {
-      return normal_accuracy::multiply( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L>&& x, interval<R>&& y )
-    {
-      return normal_accuracy::multiply( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L>&& x, interval<R> const&& y )
-    {
-      return normal_accuracy::multiply( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L> const&& x, interval<R>& y )
-    {
-      return normal_accuracy::multiply( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L> const&& x, interval<R> const& y )
-    {
-      return normal_accuracy::multiply( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L> const&& x, interval<R>&& y )
-    {
-      return normal_accuracy::multiply( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L> const&& x, interval<R> const&& y )
-    {
-      return normal_accuracy::multiply( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( L&& x, interval<R>& y )
-    {
-      return multiply( std::forward<L>( x ), y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( L&& x, interval<R> const& y )
-    {
-      return multiply( std::forward<L>( x ), y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( L&& x, interval<R>&& y )
-    {
-      return multiply( std::forward<L>( x ), y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( L&& x, interval<R> const&& y )
-    {
-      return multiply( std::forward<L>( x ), y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L>& x, R&& y )
-    {
-      return multiply( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L> const& x, R&& y )
-    {
-      return multiply( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L>&& x, R&& y )
-    {
-      return multiply( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( interval<L> const&& x, R&& y )
-    {
-      return multiply( x, std::forward<R>( y ) );
-    }
-
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L>& x, interval<R>& y )
-    {
-      return normal_accuracy::divide( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L>& x, interval<R> const& y )
-    {
-      return normal_accuracy::divide( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L>& x, interval<R>&& y )
-    {
-      return normal_accuracy::divide( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L>& x, interval<R> const&& y )
-    {
-      return normal_accuracy::divide( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L> const& x, interval<R>& y )
-    {
-      return normal_accuracy::divide( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L> const& x, interval<R> const& y )
-    {
-      return normal_accuracy::divide( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L> const& x, interval<R>&& y )
-    {
-      return normal_accuracy::divide( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L> const& x, interval<R> const&& y )
-    {
-      return normal_accuracy::divide( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L>&& x, interval<R>& y )
-    {
-      return normal_accuracy::divide( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L>&& x, interval<R> const& y )
-    {
-      return normal_accuracy::divide( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L>&& x, interval<R>&& y )
-    {
-      return normal_accuracy::divide( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L>&& x, interval<R> const&& y )
-    {
-      return normal_accuracy::divide( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L> const&& x, interval<R>& y )
-    {
-      return normal_accuracy::divide( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L> const&& x, interval<R> const& y )
-    {
-      return normal_accuracy::divide( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L> const&& x, interval<R>&& y )
-    {
-      return normal_accuracy::divide( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L> const&& x, interval<R> const&& y )
-    {
-      return normal_accuracy::divide( x, y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( L&& x, interval<R>& y )
-    {
-      return divide( std::forward<L>( x ), y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( L&& x, interval<R> const& y )
-    {
-      return divide( std::forward<L>( x ), y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( L&& x, interval<R>&& y )
-    {
-      return divide( std::forward<L>( x ), y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( L&& x, interval<R> const&& y )
-    {
-      return divide( std::forward<L>( x ), y );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L>& x, R&& y )
-    {
-      return divide( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L> const& x, R&& y )
-    {
-      return divide( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L>&& x, R&& y )
-    {
-      return divide( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( interval<L> const&& x, R&& y )
-    {
-      return divide( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline interval<L>& operator+=( interval<L>& x, interval<R>& y )
-    {
-      return normal_accuracy::add_assign( x, y );
-    }
-    template < typename L, typename R >
-    inline interval<L>& operator+=( interval<L>& x, interval<R> const& y )
-    {
-      return normal_accuracy::add_assign( x, y );
-    }
-    template < typename L, typename R >
-    inline interval<L>& operator+=( interval<L>& x, interval<R>&& y )
-    {
-      return normal_accuracy::add_assign( x, y );
-    }
-    template < typename L, typename R >
-    inline interval<L>& operator+=( interval<L>& x, interval<R> const&& y )
-    {
-      return normal_accuracy::add_assign( x, y );
-    }
-
-    template < typename L, typename R >
-    inline interval<L>& operator-=( interval<L>& x, interval<R>& y )
-    {
-      return normal_accuracy::subtract_assign( x, y );
-    }
-    template < typename L, typename R >
-    inline interval<L>& operator-=( interval<L>& x, interval<R> const& y )
-    {
-      return normal_accuracy::subtract_assign( x, y );
-    }
-    template < typename L, typename R >
-    inline interval<L>& operator-=( interval<L>& x, interval<R>&& y )
-    {
-      return normal_accuracy::subtract_assign( x, y );
-    }
-    template < typename L, typename R >
-    inline interval<L>& operator-=( interval<L>& x, interval<R> const&& y )
-    {
-      return normal_accuracy::subtract_assign( x, y );
-    }
-    template < typename L, typename R >
-    inline interval<L>& operator*=( interval<L>& x, interval<R>& y )
-    {
-      return normal_accuracy::multiply_assign( x, y );
-    }
-    template < typename L, typename R >
-    inline interval<L>& operator*=( interval<L>& x, interval<R> const& y )
-    {
-      return normal_accuracy::multiply_assign( x, y );
-    }
-    template < typename L, typename R >
-    inline interval<L>& operator*=( interval<L>& x, interval<R>&& y )
-    {
-      return normal_accuracy::multiply_assign( x, y );
-    }
-    template < typename L, typename R >
-    inline interval<L>& operator*=( interval<L>& x, interval<R> const&& y )
-    {
-      return normal_accuracy::multiply_assign( x, y );
-    }
-    template < typename L, typename R >
-    inline interval<L>& operator/=( interval<L>& x, interval<R>& y )
-    {
-      return normal_accuracy::divide_assign( x, y );
-    }
-    template < typename L, typename R >
-    inline interval<L>& operator/=( interval<L>& x, interval<R> const& y )
-    {
-      return normal_accuracy::divide_assign( x, y );
-    }
-    template < typename L, typename R >
-    inline interval<L>& operator/=( interval<L>& x, interval<R>&& y )
-    {
-      return normal_accuracy::divide_assign( x, y );
-    }
-    template < typename L, typename R >
-    inline interval<L>& operator/=( interval<L>& x, interval<R> const&& y )
-    {
-      return normal_accuracy::divide_assign( x, y );
-    }
-    template < typename L >
-    inline interval<L>& operator+=( interval<L>& x, typename interval<L>::value_type& y )
-    {
-      return add_assign( x, y );
-    }
-    template < typename L >
-    inline interval<L>& operator+=( interval<L>& x, typename interval<L>::value_type const& y )
-    {
-      return add_assign( x, y );
-    }
-    template < typename L >
-    inline interval<L>& operator+=( interval<L>& x, typename interval<L>::value_type&& y )
-    {
-      return add_assign( x, y );
-    }
-    template < typename L >
-    inline interval<L>& operator+=( interval<L>& x, typename interval<L>::value_type const&& y )
-    {
-      return add_assign( x, y );
-    }
-
-    template < typename L >
-    inline interval<L>& operator-=( interval<L>& x, typename interval<L>::value_type& y )
-    {
-      return subtract_assign( x, std::forward<L>( y ) );
-    }
-    template < typename L >
-    inline interval<L>& operator-=( interval<L>& x, typename interval<L>::value_type const& y )
-    {
-      return subtract_assign( x, std::forward<L>( y ) );
-    }
-    template < typename L >
-    inline interval<L>& operator-=( interval<L>& x, typename interval<L>::value_type&& y )
-    {
-      return subtract_assign( x, std::forward<L>( y ) );
-    }
-    template < typename L >
-    inline interval<L>& operator-=( interval<L>& x, typename interval<L>::value_type const&& y )
-    {
-      return subtract_assign( x, std::forward<L>( y ) );
-    }
-
-    template < typename L >
-    inline interval<L>& operator*=( interval<L>& x, typename interval<L>::value_type& y )
-    {
-      return multiply_assign( x, std::forward<L>( y ) );
-    }
-    template < typename L >
-    inline interval<L>& operator*=( interval<L>& x, typename interval<L>::value_type const& y )
-    {
-      return multiply_assign( x, std::forward<L>( y ) );
-    }
-    template < typename L >
-    inline interval<L>& operator*=( interval<L>& x, typename interval<L>::value_type&& y )
-    {
-      return multiply_assign( x, std::forward<L>( y ) );
-    }
-    template < typename L >
-    inline interval<L>& operator*=( interval<L>& x, typename interval<L>::value_type const&& y )
-    {
-      return multiply_assign( x, std::forward<L>( y ) );
-    }
-
-    template < typename L >
-    inline interval<L>& operator/=( interval<L>& x, typename interval<L>::value_type& y )
-    {
-      return divide_assign( x, std::forward<L>( y ) );
-    }
-    template < typename L >
-    inline interval<L>& operator/=( interval<L>& x, typename interval<L>::value_type const& y )
-    {
-      return divide_assign( x, std::forward<L>( y ) );
-    }
-    template < typename L >
-    inline interval<L>& operator/=( interval<L>& x, typename interval<L>::value_type&& y )
-    {
-      return divide_assign( x, std::forward<L>( y ) );
-    }
-    template < typename L >
-    inline interval<L>& operator/=( interval<L>& x, typename interval<L>::value_type const&& y )
-    {
-      return divide_assign( x, std::forward<L>( y ) );
-    }
-  }
-
-  inline namespace high_accurate_policy
+  template < typename L, typename R, typename T = std::common_type_t<L, R> >
+  inline constexpr interval<T> operator+(interval<L> const& x, interval<R> const& y)
   {
-    template < typename L, typename R >
-    inline constexpr auto operator+( L&& x, R&& y )->decltype( add( x, y ) )
-    {
-      CRANBERRIES_ASSERT( !( cranberries_magic::is_expr_v<L> || cranberries_magic::is_expr_v<R> ) );
-      return add( std::forward<L>( x ), std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-( L&& x, R&& y )->decltype( subtract( x, y ) )
-    {
-      CRANBERRIES_ASSERT( !( cranberries_magic::is_expr_v<L> || cranberries_magic::is_expr_v<R> ) );
-      return subtract( std::forward<L>( x ), std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*( L&& x, R&& y )->decltype( multiply( x, y ) )
-    {
-      CRANBERRIES_ASSERT( !( cranberries_magic::is_expr_v<L> || cranberries_magic::is_expr_v<R> ) );
-      return multiply( std::forward<L>( x ), std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/( L&& x, R&& y )->decltype( divide( x, y ) )
-    {
-      CRANBERRIES_ASSERT( !( cranberries_magic::is_expr_v<L> || cranberries_magic::is_expr_v<R> ) );
-      return divide( std::forward<L>( x ), std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator+=( interval<L>& x, R&& y )->decltype( add_assign( x, y ) )
-    {
-      return add_assign( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator-=( interval<L>& x, R&& y )->decltype( subtract_assign( x, y ) )
-    {
-      return subtract_assign( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator*=( interval<L>& x, R&& y )->decltype( multiply_assign( x, y ) )
-    {
-      return multiply_assign( x, std::forward<R>( y ) );
-    }
-    template < typename L, typename R >
-    inline constexpr auto operator/=( interval<L>& x, R&& y )->decltype( divide_assign( x, y ) )
-    {
-      return divide_assign( x, std::forward<R>( y ) );
-    }
+    auto x_low = x.lower();
+    auto x_up = x.upper();
+    auto y_low = y.lower();
+    auto y_up = y.upper();
 
+    return CRANBERRIES_MAKE_INTERVAL(T, x_low + y_low, x_up + y_up);
   }
+  template < typename L, typename R, typename T = std::common_type_t<L, R> >
+  inline constexpr interval<T> operator-(interval<L> const& x, interval<R> const& y)
+  {
+    return CRANBERRIES_MAKE_INTERVAL(T, x.lower() - x.upper(), y.upper() - y.lower());
+  }
+  template < typename T >
+  inline constexpr interval<T> operator-(interval<T> const& x, interval<T> const& y)
+  {
+    return &x == &y ? interval<T>{} : CRANBERRIES_MAKE_INTERVAL(T, x.lower() - x.upper(), y.upper() - y.lower());
+  }
+  template < typename L, typename R, typename T = std::common_type_t<L, R> >
+  inline constexpr interval<T> operator*(interval<L> const& x, interval<R> const& y)
+  {
+    auto x_lower = x.lower();
+    auto x_upper = x.upper();
+    auto y_lower = y.lower();
+    auto y_upper = y.upper();
+
+    return (x_lower >= interval_constants::zero<T> && y_lower >= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_lower * y_lower, x_upper * y_upper)
+      : (x_lower >= interval_constants::zero<T> && y_lower < interval_constants::zero<T> && y_upper > interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_upper * y_lower, x_upper * y_upper)
+      : (x_lower >= interval_constants::zero<T> && y_upper <= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_upper * y_lower, x_lower * y_upper)
+      : (x_lower < interval_constants::zero<T> && x_upper > interval_constants::zero<T> && y_lower >= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_lower * y_upper, x_upper * y_upper)
+      : (x_lower < interval_constants::zero<T> && x_upper > interval_constants::zero<T> && y_upper <= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_upper * y_lower, x_lower * y_lower)
+      : (x_upper <= interval_constants::zero<T> && y_lower >= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_lower * y_upper, x_upper * y_lower)
+      : (x_upper <= interval_constants::zero<T> && y_lower < interval_constants::zero<T> && y_upper > interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_lower * y_upper, x_lower * y_lower)
+      : (x_upper <= interval_constants::zero<T> && y_upper <= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_upper * y_upper, x_lower * y_lower)
+      : [&] {
+      auto lower = x_lower * y_upper < x_upper * y_lower ? cranberries_magic::downward_multiply(x_lower, y_upper) : cranberries_magic::downward_multiply(x_upper, y_lower);
+      auto upper = x_lower*y_lower < x_upper*y_upper ? cranberries_magic::upward_multiply(x_upper, y_upper) : cranberries_magic::upward_multiply(x_lower, y_lower);
+      return CRANBERRIES_MAKE_INTERVAL(T, lower, upper);
+    }();
+  }
+  template < typename T >
+  inline constexpr interval<T> operator*(interval<T> const& x, interval<T> const& y)
+  {
+    if (&x == &y) return pow(x, 2);
+
+    auto x_lower = x.lower();
+    auto x_upper = x.upper();
+    auto y_lower = y.lower();
+    auto y_upper = y.upper();
+
+    return (x_lower >= interval_constants::zero<T> && y_lower >= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_lower * y_lower, x_upper * y_upper)
+      : (x_lower >= interval_constants::zero<T> && y_lower < interval_constants::zero<T> && y_upper > interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_upper * y_lower, x_upper * y_upper)
+      : (x_lower >= interval_constants::zero<T> && y_upper <= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_upper * y_lower, x_lower * y_upper)
+      : (x_lower < interval_constants::zero<T> && x_upper > interval_constants::zero<T> && y_lower >= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_lower * y_upper, x_upper * y_upper)
+      : (x_lower < interval_constants::zero<T> && x_upper > interval_constants::zero<T> && y_upper <= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_upper * y_lower, x_lower * y_lower)
+      : (x_upper <= interval_constants::zero<T> && y_lower >= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_lower * y_upper, x_upper * y_lower)
+      : (x_upper <= interval_constants::zero<T> && y_lower < interval_constants::zero<T> && y_upper > interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_lower * y_upper, x_lower * y_lower)
+      : (x_upper <= interval_constants::zero<T> && y_upper <= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_upper * y_upper, x_lower * y_lower)
+      : [&] {
+      auto lower = x_lower * y_upper < x_upper * y_lower ? cranberries_magic::downward_multiply(x_lower, y_upper) : cranberries_magic::downward_multiply(x_upper, y_lower);
+      auto upper = x_lower*y_lower < x_upper*y_upper ? cranberries_magic::upward_multiply(x_upper, y_upper) : cranberries_magic::upward_multiply(x_lower, y_lower);
+      return CRANBERRIES_MAKE_INTERVAL(T, lower, upper);
+    }();
+  }
+  template < typename L, typename R, typename T = std::common_type_t<L, R> >
+  inline constexpr interval<T> operator/(interval<L> const& x, interval<R> const& y)
+  {
+    return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL(y.lower() <= interval_constants::zero<R> && y.upper() >= interval_constants::zero<R>)
+      : operator*(x, CRANBERRIES_MAKE_INTERVAL(T, interval_constants::one<R> / y.upper(), interval_constants::one<R> / y.lower()));
+  }
+  template < typename T >
+  inline constexpr interval<T> operator/(interval<T> const& x, interval<T> const& y)
+  {
+    return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL(y.lower() <= interval_constants::zero<T> && y.upper() >= interval_constants::zero<T>)
+      : &x == &y
+      ? interval<T>{1}
+    : operator*(x, CRANBERRIES_MAKE_INTERVAL(T, interval_constants::one<T> / y.upper(), interval_constants::one<T> / y.lower()));
+  }
+  template < typename T, typename R >
+  inline constexpr interval<T>& operator+=(interval<T>& x, interval<R> const& y)
+  {
+    return x = CRANBERRIES_MAKE_INTERVAL(T, x.lower() + y.lower(), x.upper() + y.upper());
+  }
+  template < typename T, typename R >
+  inline constexpr interval<T>& operator-=(interval<T>& x, interval<R> const& y)
+  {
+    return x = CRANBERRIES_MAKE_INTERVAL(T, x.lower() - y.upper(), x.upper() - y.lower());
+  }
+  template < typename T >
+  inline constexpr interval<T>& operator-=(interval<T>& x, interval<T> const& y)
+  {
+    return x = (&x == &y ? interval<T>{} : CRANBERRIES_MAKE_INTERVAL(T, x.lower() - y.upper(), x.upper() - y.lower()));
+  }
+  template < typename T, typename R >
+  inline constexpr interval<T>& operator*=(interval<T>& x, interval<R> const& y)
+  {
+    auto x_lower = x.lower();
+    auto x_upper = x.upper();
+    auto y_lower = y.lower();
+    auto y_upper = y.upper();
+
+    return x = (x_lower >= interval_constants::zero<T> && y_lower >= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_lower * y_lower, x_upper * y_upper)
+      : (x_lower >= interval_constants::zero<T> && y_lower < interval_constants::zero<T> && y_upper > interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_upper * y_lower, x_upper * y_upper)
+      : (x_lower >= interval_constants::zero<T> && y_upper <= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_upper * y_lower, x_lower * y_upper)
+      : (x_lower < interval_constants::zero<T> && x_upper > interval_constants::zero<T> && y_lower >= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_lower * y_upper, x_upper * y_upper)
+      : (x_lower < interval_constants::zero<T> && x_upper > interval_constants::zero<T> && y_upper <= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_upper * y_lower, x_lower * y_lower)
+      : (x_upper <= interval_constants::zero<T> && y_lower >= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_lower * y_upper, x_upper * y_lower)
+      : (x_upper <= interval_constants::zero<T> && y_lower < interval_constants::zero<T> && y_upper > interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_lower * y_upper, x_lower * y_lower)
+      : (x_upper <= interval_constants::zero<T> && y_upper <= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_upper * y_upper, x_lower * y_lower)
+      : [&] {
+      auto lower = x_lower * y_upper < x_upper * y_lower ? cranberries_magic::downward_multiply(x_lower, y_upper) : cranberries_magic::downward_multiply(x_upper, y_lower);
+      auto upper = x_lower*y_lower < x_upper*y_upper ? cranberries_magic::upward_multiply(x_upper, y_upper) : cranberries_magic::upward_multiply(x_lower, y_lower);
+      return CRANBERRIES_MAKE_INTERVAL(T, lower, upper);
+    }();
+  }
+  template < typename T >
+  inline constexpr interval<T>& operator*=(interval<T>& x, interval<T> const& y)
+  {
+    if (&x == &y) return x = pow(x, 2);
+
+    auto x_lower = x.lower();
+    auto x_upper = x.upper();
+    auto y_lower = y.lower();
+    auto y_upper = y.upper();
+
+    return x = (x_lower >= interval_constants::zero<T> && y_lower >= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_lower * y_lower, x_upper * y_upper)
+      : (x_lower >= interval_constants::zero<T> && y_lower < interval_constants::zero<T> && y_upper > interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_upper * y_lower, x_upper * y_upper)
+      : (x_lower >= interval_constants::zero<T> && y_upper <= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_upper * y_lower, x_lower * y_upper)
+      : (x_lower < interval_constants::zero<T> && x_upper > interval_constants::zero<T> && y_lower >= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_lower * y_upper, x_upper * y_upper)
+      : (x_lower < interval_constants::zero<T> && x_upper > interval_constants::zero<T> && y_upper <= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_upper * y_lower, x_lower * y_lower)
+      : (x_upper <= interval_constants::zero<T> && y_lower >= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_lower * y_upper, x_upper * y_lower)
+      : (x_upper <= interval_constants::zero<T> && y_lower < interval_constants::zero<T> && y_upper > interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_lower * y_upper, x_lower * y_lower)
+      : (x_upper <= interval_constants::zero<T> && y_upper <= interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x_upper * y_upper, x_lower * y_lower)
+      : [&] {
+      auto lower = x_lower * y_upper < x_upper * y_lower ? cranberries_magic::downward_multiply(x_lower, y_upper) : cranberries_magic::downward_multiply(x_upper, y_lower);
+      auto upper = x_lower*y_lower < x_upper*y_upper ? cranberries_magic::upward_multiply(x_upper, y_upper) : cranberries_magic::upward_multiply(x_lower, y_lower);
+      return CRANBERRIES_MAKE_INTERVAL(T, lower, upper);
+    }();
+  }
+  template < typename T, typename R >
+  inline constexpr interval<T>& operator/=(interval<T>& x, interval<R> const& y)
+  {
+    CRANBERRIES_RANGE_ERROR_THROW_IF(y.lower() <= interval_constants::zero<R> && interval_constants::zero<R> <= y.upper());
+    return operator*=(x, CRANBERRIES_MAKE_INTERVAL(T, interval_constants::one<R> / y.upper(), interval_constants::one<R> / y.lower()));
+  }
+  template < typename T >
+  inline constexpr interval<T>& operator/=(interval<T>& x, interval<T> const& y)
+  {
+    CRANBERRIES_RANGE_ERROR_THROW_IF(y.lower() <= interval_constants::zero<T> && interval_constants::zero<T> <= y.upper());
+    if (&x == &y) return x = interval<T>(1, 1);
+    return operator*=(x, CRANBERRIES_MAKE_INTERVAL(T, interval_constants::one<T> / y.upper(), interval_constants::one<T> / y.lower()));
+  }
+  template < typename T >
+  inline constexpr interval<T> operator-(typename interval<T>::value_type const& x, interval<T> const& y)
+  {
+    return CRANBERRIES_MAKE_INTERVAL(T, x - y.upper(), x - y.lower());
+  }
+
+  template < typename T >
+  inline constexpr interval<T> operator-(interval<T> const& x, typename interval<T>::value_type const& y)
+  {
+    return CRANBERRIES_MAKE_INTERVAL(T, x.lower() - y, x.upper() - y);
+  }
+
+  template < typename T >
+  inline constexpr interval<T> operator+(typename interval<T>::value_type const& x, interval<T> const& y)
+  {
+    return CRANBERRIES_MAKE_INTERVAL(T, x + y.lower(), x + y.upper());
+  }
+
+  template < typename T >
+  inline constexpr interval<T> operator+(interval<T> const& x, typename interval<T>::value_type const& y)
+  {
+    return CRANBERRIES_MAKE_INTERVAL(T, x.lower() + y, x.upper() + y);
+  }
+
+  template < typename T >
+  inline constexpr interval<T> operator*(typename interval<T>::value_type const& x, interval<T> const& y)
+  {
+    return (x < interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x * y.upper(), x * y.lower())
+      : CRANBERRIES_MAKE_INTERVAL(T, x * y.lower(), x * y.upper());
+  }
+
+  template < typename T >
+  inline constexpr interval<T> operator*(interval<T> const& x, typename interval<T>::value_type const& y)
+  {
+    return  (y < interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x.upper() * y, x.lower() * y)
+      : CRANBERRIES_MAKE_INTERVAL(T, x.lower() * y, x.upper() * y);
+  }
+
+  template < typename T >
+  inline constexpr interval<T> operator/(interval<T> const& x, typename interval<T>::value_type const& y)
+  {
+    return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL(y == interval_constants::zero<T>)
+      : (y < interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x.upper() / y, x.lower() / y)
+      : CRANBERRIES_MAKE_INTERVAL(T, x.lower() / y, x.upper() / y);
+  }
+
+  template < typename T >
+  inline constexpr interval<T> operator/(typename interval<T>::value_type const& x, interval<T> const& y)
+  {
+    return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL(y.lower() < interval_constants::zero<T> && interval_constants::zero<T> <= y.upper())
+      : (y.lower() > interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x / y.upper(), x / y.lower())
+      : CRANBERRIES_MAKE_INTERVAL(T, x / y.lower(), x / y.upper());
+  }
+
+  template < typename T >
+  inline constexpr interval<T>& operator+=(interval<T>& x, typename interval<T>::value_type const& y)
+  {
+    return x = CRANBERRIES_MAKE_INTERVAL(T, x.lower() + y, x.upper() + y);
+  }
+
+  template < typename T >
+  inline constexpr interval<T>& operator-=(interval<T>& x, typename interval<T>::value_type const& y)
+  {
+    return x = CRANBERRIES_MAKE_INTERVAL(T, x.lower() - y, x.upper() - y);
+  }
+
+  template < typename T >
+  inline constexpr interval<T>& operator*=(interval<T>& x, typename interval<T>::value_type const& y)
+  {
+    return x = (y < interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x.upper() * y, x.lower() * y)
+      : CRANBERRIES_MAKE_INTERVAL(T, x.lower() * y, x.upper() * y);
+  }
+  template < typename T >
+  inline constexpr interval<T>& operator/=(interval<T>& x, typename interval<T>::value_type const& y)
+  {
+    return x = CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL(y == interval_constants::zero<T>)
+      : (y < interval_constants::zero<T>)
+      ? CRANBERRIES_MAKE_INTERVAL(T, x.upper() / y, x.lower() / y)
+      : CRANBERRIES_MAKE_INTERVAL(T, x.lower() / y, x.upper() / y);
+  }
+
 
 } // ! cranberries
 #endif // ! CRANBRIIES_INTERVAL_LIB_ARITHMETIC_HPP
