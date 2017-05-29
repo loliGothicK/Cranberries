@@ -146,12 +146,12 @@ try{
   cout << ">> Math Functions Complete!" << endl;
 
   {
-    interval<> hoge{};
-    auto f = [](interval<> const& a) { return a - 1; };
-    auto expr = cranberries::make_delegate([&] {return max(sin(a) - b, a * max(a, b, c, sin(a))) + min(pow(c, 2), erf(d) / a); });
-    hoge = expr();
-    hoge = f(expr());
-    expr();
+    // interval<> hoge{};
+    // auto f = [](interval<> const& a) { return a - 1; };
+    // auto expr = cranberries::make_delegate([&] {return max(sin(a) - b, a * max(a, b, c, sin(a))) + min(pow(c, 2), erf(d) / a); });
+    // hoge = expr();
+    // hoge = f(expr());
+    // expr();
   }
 
   cout << ">> Expression Complete!" << endl;
