@@ -1,6 +1,6 @@
 #define CRANBERRIES_INTERVAL_DEBUG_MODE
 #include "../../cranberries/interval.hpp"
-#include "../../cranberries/expression.hpp"
+#include "../../cranberries/utility.hpp"
 #include <iostream>
 #include <cassert>
 #include <vector>
@@ -147,14 +147,14 @@ try{
 
   {
     interval<> hoge{};
-    auto f = []( interval<> const& a ) { return a - 1; };
-    auto expr = sub_( add_( max_( sin_( a ), b ), mul_( a, max_( a, b, c, sin_( a ) ) ) ), min_( pow_( c, 2 ), div_( erf_( d ), a ) ) );
-    hoge = expr;
-    hoge = f( expr );
-    expr.eval();
+    auto f = [](interval<> const& a) { return a - 1; };
+    auto expr = cranberries::make_delegate([&] {return max(sin(a) - b, a * max(a, b, c, sin(a))) + min(pow(c, 2), erf(d) / a); });
+    hoge = expr();
+    hoge = f(expr());
+    expr();
   }
 
-  cout << ">> Expression Template Complete!" << endl;
+  cout << ">> Expression Complete!" << endl;
   try
   {
     CRANBERRIES_DOMAIN_ERROR_THROW_WITH_MSG( "@success" );
