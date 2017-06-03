@@ -4,8 +4,8 @@
 #include <utility>
 #include <tuple>
 #include <vector>
-#include "common/exception.hpp"
-#include "type_traits.hpp"
+#include "../common/exception.hpp"
+#include "../type_traits.hpp"
 
 namespace cranberries {
   template < typename F >
