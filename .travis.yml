@@ -25,6 +25,8 @@ script:
   - ./dual_number_lib_tests
   - ./interval_lib_tests
   - ./stream_lib_tests
+  - ./rkf45_lib_tests
+  - ./stopwatch_ilb_tests
   
 # # Use new trusty images, should yield newer compilers and packages
 # sudo: required
