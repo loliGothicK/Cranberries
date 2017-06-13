@@ -1,4 +1,4 @@
-[![logo](https://github.com/LoliGothick/Cranberries/blob/master/icon/logo_with_txt.png)
+![logo](https://github.com/LoliGothick/Cranberries/blob/master/icon/logo_with_txt.png)
 [![Build Status](https://travis-ci.org/LoliGothick/Cranberries.svg?branch=master)](https://travis-ci.org/LoliGothick/Cranberries)
 ==========
 雑多な趣味コーディングによる成果物の墓場です
