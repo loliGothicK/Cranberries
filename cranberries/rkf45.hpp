@@ -38,7 +38,7 @@ namespace cranberries {
     template < class State >
     enabler_t<is_range_v<State>,long double>
     check(State&& state) noexcept {
-      return *std::min_element(std::begin(state), std::end(state));
+      return *std::max_element(std::begin(state), std::end(state));
     }
 
   public:
