@@ -140,30 +140,50 @@ namespace cranberries_magic {
   constexpr bool is_placeholder_v = std::is_base_of<meta_bind_placeholders, std::decay_t<T>>::value;
 
   template < class ...Types >
-  struct pack {
+  struct type_pack {
     template < template<class...>class Expr >
     using expr = Expr<Types...>;
   };
+
+  template < class T, T ...Args >
+  struct value_pack {};
+
 
   template < class >
   struct pack_split {};
 
   template < class Head, class ...Tail >
-  struct pack_split<pack<Head, Tail...>> {
-    using head = pack<Head>;
-    using tail = pack<Tail...>;
+  struct pack_split<type_pack<Head, Tail...>> {
+    using head = type_pack<Head>;
+    using tail = type_pack<Tail...>;
   };
 
   template < >
-  struct pack_split<pack<>> {
-    using head = pack<>;
-    using tail = pack<>;
+  struct pack_split<type_pack<>> {
+    using head = type_pack<>;
+    using tail = type_pack<>;
   };
+
+  template < class T, T Head, T ...Tail >
+  struct pack_split<value_pack<T, Head, Tail...>> {
+    using head = value_pack<T,Head>;
+    using tail = value_pack<T,Tail...>;
+  };
+
+  template < class T >
+  struct pack_split<value_pack<T>> {
+    using head = value_pack<T>;
+    using tail = value_pack<T>;
+  };
+
 
   template < class Pack1, class Pack2 >
   struct pack_cat {
     template < typename ...L, typename ...R >
-    static constexpr pack<L..., R...> cat(pack<L...>, pack<R...>);
+    static constexpr type_pack<L..., R...> cat(type_pack<L...>, type_pack<R...>);
+
+    template < class T, T ...L, T ...R >
+    static constexpr value_pack<T, L..., R...> cat(value_pack<T, L...>, value_pack<T, R...>);
 
     using type = decltype(cat(std::declval<Pack1>(), std::declval<Pack2>()));
   };
@@ -171,21 +191,21 @@ namespace cranberries_magic {
   template < class Pack1, class Pack2 >
   using pack_cat_t = typename pack_cat<Pack1, Pack2>::type;
 
-  template < class Tuple >
-  using pack_head = typename pack_split<Tuple>::head;
+  template < class Pack >
+  using pack_head = typename pack_split<Pack>::head;
 
-  template < class Tuple >
-  using pack_tail = typename pack_split<Tuple>::tail;
+  template < class Pack >
+  using pack_tail = typename pack_split<Pack>::tail;
 
   template < class >
   struct pack_if {};
 
   template < class Head, class ...Tail >
-  struct pack_if<pack<Head, Tail...>> {
+  struct pack_if<type_pack<Head, Tail...>> {
     static constexpr bool value = is_placeholder_v<Head>;
   };
 
-  template < class X, class A, class Result = pack<> >
+  template < class X, class A, class Result = type_pack<> >
   struct expansion {
     using type = std::conditional_t< pack_if<X>::value,
       typename expansion< pack_tail<X>, pack_tail<A>, pack_cat_t< Result, pack_head<A> > >::type,
@@ -194,11 +214,158 @@ namespace cranberries_magic {
 
 
   template < class ...A, class Result >
-  struct expansion<pack<>, pack<A...>, Result> {
+  struct expansion<type_pack<>, type_pack<A...>, Result> {
     using type = Result;
   };
 
+  template < template < class ... >class, class, class >
+  struct type_revert;
+
+  template < template < class... > class Seq, class... R, class Head, class... Tail >
+  struct type_revert<Seq, type_pack<R...>, type_pack<Head, Tail...>> {
+    using type = typename type_revert<Seq, type_pack<Head, R...>, type_pack<Tail...>>::type;
+  };
+
+  template < template < class... > class Seq, class... R, class Head >
+  struct type_revert<Seq, type_pack<R...>, type_pack<Head>> {
+    using type = Seq<Head, R...>;
+  };
+
+
+  template < template<class T, T...>class, class, class, class >
+  struct value_revert;
+
+  template < template < class T, T... > class Seq, class Ty, Ty... R, Ty Head, Ty... Tail >
+  struct value_revert<Seq, Ty, value_pack<Ty,R...>, value_pack<Ty,Head, Tail...>> {
+    using type = typename value_revert<Seq, Ty, value_pack<Ty,Head, R...>, value_pack<Ty,Tail...>>::type;
+  };
+
+  template < template < class T, T... > class Seq, class Ty, Ty... R, Ty Head >
+  struct value_revert<Seq, Ty, value_pack<Ty,R...>, value_pack<Ty,Head>> {
+    using type = Seq<Ty, Head, R...>;
+  };
+
+  template < class From, class To >
+  struct replace_pred;
+
+  template < template < class ... >class, class, class, class >
+  struct type_replace;
+
+  template < template < class... > class Seq, class From, class To, class... R, class Head, class... Tail >
+  struct type_replace<Seq, replace_pred<From, To>, type_pack<R...>, type_pack<Head, Tail...>> {
+    using type = typename type_replace<Seq, replace_pred<From, To>, type_pack<R..., std::conditional_t<std::is_same<From, Head>::value, To, Head>>, type_pack<Tail...>>::type;
+  };
+
+  template < template < class... > class Seq, class From, class To, class... R, class Head >
+  struct type_replace<Seq, replace_pred<From, To>, type_pack<R...>, type_pack<Head>> {
+    using type = Seq<R..., std::conditional_t<std::is_same<From,Head>::value,To,Head>>;
+  };
+
+  template < template < class ... >class, template<class>class, class, class, class >
+  struct type_replace_if;
+
+  template < template < class... > class Seq, template<class>class Pred, class To, class... R, class Head, class... Tail >
+  struct type_replace_if<Seq, Pred, To, type_pack<R...>, type_pack<Head, Tail...>> {
+    using type = typename type_replace_if<Seq, Pred, To, type_pack<R..., std::conditional_t<Pred<Head>::value,To,Head>>, type_pack<Tail...>>::type;
+  };
+
+  template < template < class... > class Seq, template<class>class Pred, class To, class... R, class Head >
+  struct type_replace_if<Seq, Pred, To, type_pack<R...>, type_pack<Head>> {
+    using type = Seq<R..., std::conditional_t<Pred<Head>::value, To, Head>>;
+  };
+
+
 } // ! namespace cranberries_magic
+
+namespace pack_traits {
+  template < class >
+  struct reverse;
+
+  template < template < class T, T... > class Sequence, class Type, Type... Indices >
+  struct reverse< Sequence<Type, Indices...> > {
+    using type = typename cranberries_magic::value_revert<
+      Sequence,
+      Type,
+      cranberries_magic::value_pack<Type>,
+      cranberries_magic::value_pack<Type, Indices...>
+    >::type;
+  };
+
+  template<template<class...> class T, typename... Args>
+  struct reverse< T<Args...> > {
+    using type = typename cranberries_magic::type_revert<
+      T,
+      cranberries_magic::type_pack<>,
+      cranberries_magic::type_pack<Args...>
+    >::type;
+  };
+
+  template < typename T >
+  using reversed_t = typename reverse<T>::type;
+
+  template < class >
+  struct replace_all;
+
+  template<template<typename...> class T, typename... Args>
+  struct replace_all< T<Args...> > {
+
+    template < typename... Ts >
+    using type = T<Ts...>;
+  };
+
+  template < class T, class... Ts >
+  using replace_all_t = typename replace_all<T>:: template type<Ts...>;
+
+  template < class >
+  struct replace;
+
+  template < template<class...>class T, typename... Args >
+  struct replace<T<Args...>> {
+    template < class From, class To >
+    using type = typename cranberries_magic::type_replace<
+      T,
+      cranberries_magic::replace_pred<From, To>,
+      cranberries_magic::type_pack<>,
+      cranberries_magic::type_pack<Args...>
+    >::type;
+  };
+
+  template < class T, class From, class To >
+  using replace_t = typename replace<T>:: template type<From, To>;
+
+
+  template < class >
+  struct replace_if;
+
+  template < template<class...>class T, typename... Args >
+  struct replace_if<T<Args...>> {
+    template < template<class>class Pred, class To >
+    using type = typename cranberries_magic::type_replace_if<
+      T,
+      Pred,
+      To,
+      cranberries_magic::type_pack<>,
+      cranberries_magic::type_pack<Args...>
+    >::type;
+  };
+
+  template < class T, template <class>class Pred, class To >
+  using replace_if_t = typename replace_if<T>:: template type<Pred, To>;
+
+  template < class >
+  struct repack;
+
+  template<template<typename...> class T, typename... Args>
+  struct repack< T<Args...> > {
+
+    template < template<class...> class U >
+    using type = U<Args...>;
+  };
+
+  template < typename From, template < class ... > class To >
+  using repack_t = typename repack<From>:: template type<To>;
+
+}
 
   class x_ : cranberries_magic::meta_bind_placeholders {};
 
@@ -206,7 +373,7 @@ namespace cranberries_magic {
   struct bind_ {
     template < typename ...Apply >
     using expr = typename cranberries_magic::expansion<
-      cranberries_magic::pack<Types...>, cranberries_magic::pack<Apply...>
+      cranberries_magic::type_pack<Types...>, cranberries_magic::type_pack<Apply...>
     >::type:: template expr<Expr>;
   };
 
@@ -214,7 +381,7 @@ namespace cranberries_magic {
   struct bind_single {
     template < typename Apply >
     using expr = typename cranberries_magic::expansion<
-      cranberries_magic::pack<Types...>, cranberries_magic::pack<Apply>
+      cranberries_magic::type_pack<Types...>, cranberries_magic::type_pack<Apply>
     >::type:: template expr<Expr>;
   };
 
@@ -223,7 +390,6 @@ namespace cranberries_magic {
 
   template < template<class...> class Pred, class T, class ...Types >
   using bind_2nd = bind_single<Pred, T, x_, Types...>;
-
 
   template < typename T, typename ...Types >
   struct all_match : conjunction<std::is_same<T, Types>...> {};
@@ -531,8 +697,9 @@ namespace cranberries_magic{
   template <class T, class R = void>
   constexpr bool is_nothrow_callable_v = is_nothrow_callable<T, R>::value;
 
-  template <class T, int N>
+  template <class T, std::size_t N>
   struct generate_tuple {
+    static_assert(N!=0, "Size must be greater than zero.");
     using partial_type = typename generate_tuple<T, N / 2>::type;
     using type = std::conditional_t<N % 2 == 0
       ,decltype(std::tuple_cat(std::declval<partial_type>(), std::declval<partial_type>()))
@@ -540,10 +707,12 @@ namespace cranberries_magic{
   };
 
   template <class T>
-  struct generate_tuple<T,1>
+  struct generate_tuple<T, 1>
   {
     using type = std::tuple<T>;
   };
+
+
   template < typename T, std::size_t N >
   using generate_tuple_t = typename generate_tuple<T,N>::type;
 

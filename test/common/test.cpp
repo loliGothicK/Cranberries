@@ -135,6 +135,41 @@ try{
         apply_decay_result_v<bind_1st<is_equality_comparable_to,int>::expr,double&>,
         "fail"
         );
+      static_assert(
+        std::is_same<
+          make_reversed_index_sequence<5>,
+          std::integer_sequence<size_t,4,3,2,1,0>
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+        pack_traits::reversed_t<std::tuple<int,long>>,
+        std::tuple<long,int>
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+        pack_traits::replace_all_t<std::tuple<int,int>,long,long>,
+        std::tuple<long, long>
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+        pack_traits::replace_t<std::tuple<int, int>, int, long>,
+        std::tuple<long, long>
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+        pack_traits::replace_if_t<std::tuple<int, int, std::string>, std::is_integral, double>,
+        std::tuple<double, double,std::string>
+        >::value,
+        "fail"
+        );
 
 }
 catch (std::runtime_error const& e) {

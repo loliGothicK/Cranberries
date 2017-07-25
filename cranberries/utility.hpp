@@ -36,6 +36,9 @@ namespace cranberries_magic
 
 } // ! namespace cranberries_magic
 
+  template < size_t N >
+  using make_reversed_index_sequence = typename pack_traits::reverse<std::make_index_sequence<N>>::type;
+
   template < class D = void, class... Types>
   inline constexpr cranberries_magic::return_type<D, Types...> make_array( Types&&... t ) {
     return{ std::forward<Types>( t )... };
