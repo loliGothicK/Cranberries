@@ -14,7 +14,7 @@ int main()
   state_type state0 = { 10, 1, 1 };
   bool exit_status1 = cranberries::make_rkf45_solver_for_first_order(
     // Lorenz attractor
-    [&](const long double t, const state_type& x) {
+    [&](const long double t, const auto& x) {
     state_type dxdt{};
     // x=x[0], y=x[1], z=x[2]
     dxdt[0] = -p*x[0] + p*x[1];              // dx/dt
@@ -35,17 +35,17 @@ int main()
   });
 
   bool exit_status2 = cranberries::make_rkf45_solver_for_second_order(
-    [](const long double t, const state_type& y, const state_type& z) {
+    [](const auto t, const auto& y, const auto& z) {
     return z;
   },
-    [](const state_type t, const state_type& y, const state_type& z) {
+    [](const auto t, const auto& y, const auto& z) {
     return -10.L*y - std::sqrt(40.L)*z;
   })
     .set_integrate_range({ 0,25 })
     .set_tolerance(8.0E-3L)
     .set_step_size_range({ 1.0E-6,0.05 })
     .integrate(10.L, 0.L,
-      [](auto t, state_type state) mutable {
+      [](auto t, auto state) {
         std::cout << t << "," << state << "\n";
   });
 
