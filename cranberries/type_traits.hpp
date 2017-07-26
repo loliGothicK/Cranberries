@@ -188,6 +188,24 @@ namespace cranberries_magic {
     using type = decltype(cat(std::declval<Pack1>(), std::declval<Pack2>()));
   };
 
+  template < class Pack, size_t N >
+  struct pack_element;
+
+  template < size_t N, class Head, class ...Tail >
+  struct pack_element< type_pack<Head, Tail...>, N > {
+    static_assert(sizeof...(Tail) < N, "pack out of range");
+    using type = typename pack_element< type_pack<Tail...>, N-1 >::type;
+  };
+
+  template < class Head, class... Tail >
+  struct pack_element< type_pack<Head, Tail...>, 0 > {
+    using type = Head;
+  };
+
+  template < typename Pack, size_t N >
+  using pack_element_t = typename pack_element<Pack,N>::type;
+
+
   template < class Pack1, class Pack2 >
   using pack_cat_t = typename pack_cat<Pack1, Pack2>::type;
 
@@ -301,7 +319,7 @@ namespace pack_traits {
   };
 
   template < typename T >
-  using reversed_t = typename reverse<T>::type;
+  using reverse_t = typename reverse<T>::type;
 
   template < class >
   struct replace_all;
@@ -365,6 +383,16 @@ namespace pack_traits {
   template < typename From, template < class ... > class To >
   using repack_t = typename repack<From>:: template type<To>;
 
+  template < class Fn >
+  struct args_to_pack;
+
+  template < class Fn, class... Args >
+  struct args_to_pack<Fn(Args...)> {
+    using type = cranberries_magic::type_pack<Args...>;
+  };
+
+  template < class Fn >
+  using args_to_pack_t = typename args_to_pack<Fn>::type;
 }
 
   class x_ : cranberries_magic::meta_bind_placeholders {};
@@ -696,6 +724,19 @@ namespace cranberries_magic{
 
   template <class T, class R = void>
   constexpr bool is_nothrow_callable_v = is_nothrow_callable<T, R>::value;
+
+
+  template < class, size_t >
+  struct arg_element;
+
+  template < size_t N, class Fn, class... ArgTypes >
+  struct arg_element<Fn(ArgTypes...),N> {
+    using type = cranberries_magic::pack_element_t<cranberries_magic::type_pack<ArgTypes...>, N>;
+  };
+
+  template < class Fn, size_t N >
+  using arg_element_t = typename arg_element<Fn, N>::type;
+
 
   template <class T, std::size_t N>
   struct generate_tuple {
