@@ -144,7 +144,7 @@ try{
         );
       static_assert(
         std::is_same<
-        pack_traits::reversed_t<std::tuple<int,long>>,
+        pack_traits::reverse_t<std::tuple<int,long>>,
         std::tuple<long,int>
         >::value,
         "fail"
