@@ -70,7 +70,7 @@ namespace cranberries_magic
 
     template <class ...Args>
     auto operator()(Args&& ...args) const
-      noexcept(noexcept(f_(std::move(*this), std::forward<Args>(args)...)))
+      noexcept(noexcept(f_(*std::declval<fix_result const *>(), std::declval<Args>()...)))
       -> decltype(f_(*std::declval<fix_result const *>(), std::declval<Args>()...))
     {
       return f_(std::move(*this), std::forward<Args>(args)...);
