@@ -9,7 +9,6 @@
 #include "common/exception.hpp"
 #include "type_traits.hpp"
 #include "array_vectorized_utility.hpp"
-#include <variant>
 
 namespace cranberries {
 
@@ -244,7 +243,7 @@ namespace cranberries {
 
     // Solve Equation With Observer
     template < typename State, typename Observer >
-    std::variant<bool,std::string> integrate(State y0, State z0, Observer&& ob) noexcept {
+    bool integrate(State y0, State z0, Observer&& ob) noexcept {
       /// step 0:
       // dy = k
       // dz = l
@@ -325,7 +324,7 @@ namespace cranberries {
 
 
     FAILURE:
-      return std::string{"expected step size h="} + std::to_string(h) + " is too small.";
+      return false;
     }
   };
 
