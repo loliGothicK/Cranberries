@@ -59,8 +59,28 @@ namespace cranberries_magic
   };
 
   template < typename F >
-  Finally<F> make_finally(F&& f){
+  inline Finally<std::decay_t<F>> make_finally(F&& f){
     return {std::forward<F>(f)};
+  }
+
+  template <class F>
+  struct fix_result
+  {
+    F f_;
+
+    template <class ...Args>
+    auto operator()(Args&& ...args) const
+      noexcept(noexcept(f_(std::move(*this), std::forward<Args>(args)...)))
+      -> decltype(f_(*std::declval<fix_result const *>(), std::declval<Args>()...))
+    {
+      return f_(std::move(*this), std::forward<Args>(args)...);
+    }
+  };
+
+  template <class F>
+  inline fix_result<std::decay_t<F>> make_fix(F &&f)
+  {
+    return { std::forward<F>(f) };
   }
   
 namespace cranberries_magic {
@@ -165,6 +185,14 @@ namespace cranberries_magic {
       return cranberries_magic::apply_impl(std::forward<F>(f), std::forward<Tuple>(t),
           std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>{});
   }
+
+  template <class F, class Tuple>
+  inline constexpr decltype(auto) reverse_apply(F&& f, Tuple&& t)
+  {
+    return cranberries_magic::apply_impl(std::forward<F>(f), std::forward<Tuple>(t),
+      make_reversed_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>{});
+  }
+
 
   template <
     typename Range,

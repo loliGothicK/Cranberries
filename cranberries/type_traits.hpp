@@ -132,7 +132,6 @@ namespace cranberries_magic
   template < template<class...> class Pred, typename ...Types >
   constexpr bool apply_remove_cvr_result_v = apply_remove_cvr_t<Pred, Types...>::value;
 
-namespace cranberries_magic {
 
   struct meta_bind_placeholders {};
 
@@ -293,28 +292,26 @@ namespace cranberries_magic {
   };
 
 
-} // ! namespace cranberries_magic
-
 namespace pack_traits {
   template < class >
   struct reverse;
 
   template < template < class T, T... > class Sequence, class Type, Type... Indices >
   struct reverse< Sequence<Type, Indices...> > {
-    using type = typename cranberries_magic::value_revert<
+    using type = typename value_revert<
       Sequence,
       Type,
-      cranberries_magic::value_pack<Type>,
-      cranberries_magic::value_pack<Type, Indices...>
+      value_pack<Type>,
+      value_pack<Type, Indices...>
     >::type;
   };
 
   template<template<class...> class T, typename... Args>
   struct reverse< T<Args...> > {
-    using type = typename cranberries_magic::type_revert<
+    using type = typename type_revert<
       T,
-      cranberries_magic::type_pack<>,
-      cranberries_magic::type_pack<Args...>
+      type_pack<>,
+      type_pack<Args...>
     >::type;
   };
 
@@ -340,11 +337,11 @@ namespace pack_traits {
   template < template<class...>class T, typename... Args >
   struct replace<T<Args...>> {
     template < class From, class To >
-    using type = typename cranberries_magic::type_replace<
+    using type = typename type_replace<
       T,
-      cranberries_magic::replace_pred<From, To>,
-      cranberries_magic::type_pack<>,
-      cranberries_magic::type_pack<Args...>
+      replace_pred<From, To>,
+      type_pack<>,
+      type_pack<Args...>
     >::type;
   };
 
@@ -358,12 +355,12 @@ namespace pack_traits {
   template < template<class...>class T, typename... Args >
   struct replace_if<T<Args...>> {
     template < template<class>class Pred, class To >
-    using type = typename cranberries_magic::type_replace_if<
+    using type = typename type_replace_if<
       T,
       Pred,
       To,
-      cranberries_magic::type_pack<>,
-      cranberries_magic::type_pack<Args...>
+      type_pack<>,
+      type_pack<Args...>
     >::type;
   };
 
@@ -388,28 +385,28 @@ namespace pack_traits {
 
   template < class Fn, class... Args >
   struct args_to_pack<Fn(Args...)> {
-    using type = cranberries_magic::type_pack<Args...>;
+    using type = type_pack<Args...>;
   };
 
   template < class Fn >
   using args_to_pack_t = typename args_to_pack<Fn>::type;
 }
 
-  class x_ : cranberries_magic::meta_bind_placeholders {};
+  class x_ : meta_bind_placeholders {};
 
   template < template<class...> class Expr, typename ...Types >
   struct bind_ {
     template < typename ...Apply >
-    using expr = typename cranberries_magic::expansion<
-      cranberries_magic::type_pack<Types...>, cranberries_magic::type_pack<Apply...>
+    using expr = typename expansion<
+      type_pack<Types...>, type_pack<Apply...>
     >::type:: template expr<Expr>;
   };
 
   template < template<class...> class Expr, typename ...Types >
   struct bind_single {
     template < typename Apply >
-    using expr = typename cranberries_magic::expansion<
-      cranberries_magic::type_pack<Types...>, cranberries_magic::type_pack<Apply>
+    using expr = typename expansion<
+      type_pack<Types...>, type_pack<Apply>
     >::type:: template expr<Expr>;
   };
 
@@ -731,7 +728,7 @@ namespace cranberries_magic{
 
   template < size_t N, class Fn, class... ArgTypes >
   struct arg_element<Fn(ArgTypes...),N> {
-    using type = cranberries_magic::pack_element_t<cranberries_magic::type_pack<ArgTypes...>, N>;
+    using type = pack_element_t<type_pack<ArgTypes...>, N>;
   };
 
   template < class Fn, size_t N >
