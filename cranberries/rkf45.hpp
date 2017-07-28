@@ -9,6 +9,7 @@
 #include "common/exception.hpp"
 #include "type_traits.hpp"
 #include "array_vectorized_utility.hpp"
+#include <variant>
 
 namespace cranberries {
 
@@ -243,7 +244,7 @@ namespace cranberries {
 
     // Solve Equation With Observer
     template < typename State, typename Observer >
-    bool integrate(State y0, State z0, Observer&& ob) noexcept {
+    std::variant<bool,std::string> integrate(State y0, State z0, Observer&& ob) noexcept {
       /// step 0:
       // dy = k
       // dz = l
@@ -252,7 +253,7 @@ namespace cranberries {
       long double R{}, sigma{};
       /// step 1:
       // initialization
-      auto t = a;
+      auto t = 0.01L;
       State y{}, z{};
       std::tie(y,z) = std::tie(y0,z0);
       auto h = h_min;
@@ -298,9 +299,9 @@ namespace cranberries {
             array_vectorized_util::abs(l1 / 360.0L - 128.0L / 4275.0L*l3 - 2197.0L / 75240.0L*l4 + l5 / 50.0L + 2.0L / 55.0L*l6)
             );
         }());
-        sigma = 0.84L*std::sqrtl(std::sqrtl(tol / R));
+        sigma = 0.84L*std::sqrt(std::sqrt(tol / R));
         /// step 7:
-        //std::cout << h << "\n";
+        std::cout << h << "\n";
         // step size control
         h = sigma <= 0.1L ? 0.1L*h :
           sigma >= 4.0L ? 4.0L*h :
@@ -324,7 +325,7 @@ namespace cranberries {
 
 
     FAILURE:
-      return false;
+      return std::string{"expected step size h="} + std::to_string(h) + " is too small.";
     }
   };
 
