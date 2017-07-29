@@ -27,11 +27,6 @@ int main()
   .set_step_size_range({ 1.0E-6,0.05 })
   .integrate(state0,
       [&](auto t, state_type state){
-      std::cout
-        << "t=" << t << " "
-        << "x=" << state[0] << " "
-        << "y=" << state[1] << " "
-        << "z=" << state[2] << "\n";
   });
 
   bool exit_status2 = cranberries::make_rkf45_solver_for_second_order(
@@ -46,7 +41,6 @@ int main()
     .set_step_size_range({ 1.0E-6,0.05 })
     .integrate(10.L, 0.L,
       [](auto t, auto state) {
-        std::cout << t << "," << state << "\n";
   });
 
   return exit_status1 && exit_status2 ? EXIT_SUCCESS : EXIT_FAILURE;
