@@ -29,6 +29,33 @@ namespace cranberries {
 
   template < std::size_t N >
   using int_t = typename int_t_traits<N>::type;
+
+  template < std::size_t N >
+  struct uint_t_traits;
+
+  template < >
+  struct uint_t_traits<8> {
+    using type = std::uint8_t;
+  };
+
+  template < >
+  struct uint_t_traits<16> {
+    using type = std::uint16_t;
+  };
+
+  template < >
+  struct uint_t_traits<32> {
+    using type = std::uint32_t;
+  };
+
+  template < >
+  struct uint_t_traits<64> {
+    using type = std::uint64_t;
+  };
+
+  template < std::size_t N >
+  using uint_t = typename uint_t_traits<N>::type;
+
 }
 
 

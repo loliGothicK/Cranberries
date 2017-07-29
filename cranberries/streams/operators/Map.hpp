@@ -8,15 +8,15 @@ namespace streams {
 namespace operators {
 
 
-  template < typename F >
+  template < typename System >
   class TransformProxy
     : private cranberries_magic::LazyOperationModuleBase
     , private cranberries_magic::SequencialOperatorBase
     , private cranberries_magic::StreamOperatorBase
   {
   public:
-    TransformProxy( F f ) noexcept
-      : f{ std::forward<F>( f ) }
+    TransformProxy( System f ) noexcept
+      : f{ std::forward<System>( f ) }
     {}
 
     template <
@@ -32,7 +32,7 @@ namespace operators {
       return f( a );
     }
 
-    F f;
+    System f;
   };
 
   template <
@@ -52,8 +52,8 @@ namespace operators {
       : f_{ std::forward<UnaryFunc>( f ) }
     {}
 
-    template < typename F, typename T >
-    void apply( F&& f, T&& a ) noexcept {
+    template < typename System, typename T >
+    void apply( System&& f, T&& a ) noexcept {
       a =  f(std::forward<T>(a));
     }
 

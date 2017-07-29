@@ -3,6 +3,7 @@
 #include <utility>
 #include <type_traits>
 #include "type_traits.hpp"
+#include "pack_traits.hpp"
 
 namespace cranberries
 {
@@ -37,7 +38,7 @@ namespace cranberries_magic
 } // ! namespace cranberries_magic
 
   template < size_t N >
-  using make_reversed_index_sequence = typename pack_traits::reverse<std::make_index_sequence<N>>::type;
+  using make_reversed_index_sequence = typename pack_reverse<std::make_index_sequence<N>>::type;
 
   template < class D = void, class... Types>
   inline constexpr cranberries_magic::return_type<D, Types...> make_array( Types&&... t ) {

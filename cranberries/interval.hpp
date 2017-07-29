@@ -45,4 +45,7 @@
 #include "./interval/io.hpp"
 #include "./interval/version.hpp"
 
+#undef CRANBERRIES_MAKE_INTERVAL
+#undef UPWARD_PLICY
+#undef DOWNWARD_PLICY
 #endif

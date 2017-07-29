@@ -7,33 +7,8 @@
 #include "./cranberries_magic/detail.hpp"
 
 namespace cranberries {
-  namespace expressions {
-    class expr_base {};
-    // is_expr_v definition
-    template < typename T >
-    struct is_expr {
-      static constexpr bool value = std::is_base_of<expr_base, T>::value;
-    };
-    template < typename T >
-    constexpr bool is_expr_v = is_expr<T>::value;
 
-    // Forward declaratoin for Ref
-    template < typename T >
-    struct ValWrapper_;
-
-    template < class Func, class... >
-    class ExprProxy_;
-  }
-
-  //----------------------------------//
-  /*                                  */
-  /*     Class Declaration            */
-  /*                                  */
-  /*    Interval Class                */
-  /*    (Body )                       */
-  /*                                  */
-  //----------------------------------//
-
+  // TEMPLATE CLASS interval
   template < typename T = double >
   class interval
     : cranberries_magic::interval_base
@@ -94,34 +69,6 @@ namespace cranberries {
     friend std::ostream& operator<< (std::ostream& os, interval const& v) {
       return os << "[" << v.lower_ << ", " << v.upper_ << "]";
     }
-
-
-    template <
-      class EXPRESSION,
-      std::enable_if_t<
-        expressions::is_expr_v<std::decay_t<EXPRESSION>>,
-        std::nullptr_t
-      > = nullptr
-    >
-    constexpr interval& operator=(EXPRESSION&& x ) noexcept
-    {
-      ( *this ) = x.eval();
-      return *this;
-    }
-
-    template <
-      class EXPRESSION,
-      std::enable_if_t<
-      expressions::is_expr_v<std::decay_t<EXPRESSION>>,
-      std::nullptr_t
-      > = nullptr
-    >
-    constexpr interval& operator+=(EXPRESSION&& x) noexcept
-    {
-      ( *this ) = *this + x.eval();
-      return *this;
-    }
-
 
   private:
     T lower_{};

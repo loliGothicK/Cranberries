@@ -416,11 +416,11 @@ namespace streams {
       return current_ =
         flag
         ? ( stream_1.advance(), stream_1.get() <= stream_2.get() )
-        ? ( flag = true, stream_1.get() )
-        : ( flag = false, stream_2.get() )
+          ? ( flag = true, stream_1.get() )
+          : ( flag = false, stream_2.get() )
         : ( stream_2.advance(), stream_1.get() <= stream_2.get() )
-        ? ( flag = true, stream_1.get() )
-        : ( flag = false, stream_2.get() );
+          ? ( flag = true, stream_1.get() )
+          : ( flag = false, stream_2.get() );
     }
 
     element_type current() noexcept { return current_; }

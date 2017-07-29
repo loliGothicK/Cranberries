@@ -12,7 +12,7 @@ namespace cranberries {
   inline constexpr interval<T> hull( T&& low, T&& up )
   {
     return CRANBERRIES_INVALID_ARGUMENT_THROW_CONDITIONAL_WITH_MSG( low > up, "upper_bound less than lower_bound!" )
-      : interval<T>{ std::forward<T>( low ), std::forward<T>( up ) };
+      : CRANBERRIES_MAKE_INTERVAL( T, std::forward<T>( low ), std::forward<T>( up ) );
   }
 
   template < typename T >

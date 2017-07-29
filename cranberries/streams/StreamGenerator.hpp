@@ -59,19 +59,18 @@ namespace streams {
     typename Engine,
     typename Seed = unsigned
   >
-  class GeneralizedDistributionGenerator
+  class GeneralizedDistGen
   {
   public:
-    GeneralizedDistributionGenerator( Init init, Seed seed ) noexcept
+    GeneralizedDistGen( Init init, Seed seed ) noexcept
       : dist_{ init }
       , engine_{ seed }
     {}
 
-    GeneralizedDistributionGenerator( Init init1, Init init2, Seed seed ) noexcept
+    GeneralizedDistGen( Init init1, Init init2, Seed seed ) noexcept
       : dist_( init1, init2 )
       , engine_{ seed }
     {}
-
 
     ResultType operator()() noexcept { return dist_( engine_ ); }
 
@@ -395,7 +394,7 @@ namespace streams {
     static
     GenerateStream<
       bool,
-      GeneralizedDistributionGenerator<
+      GeneralizedDistGen<
         bool,
         Init,
         std::bernoulli_distribution,
@@ -422,7 +421,7 @@ namespace streams {
     static
     GenerateStream<
       IntType,
-      GeneralizedDistributionGenerator<
+      GeneralizedDistGen<
         IntType,
         Init,
         std::poisson_distribution<IntType>,
@@ -450,7 +449,7 @@ namespace streams {
     static
     GenerateStream<
       RealType,
-      GeneralizedDistributionGenerator<
+      GeneralizedDistGen<
         RealType,
         Init,
         std::exponential_distribution<RealType>,
@@ -477,7 +476,7 @@ namespace streams {
     static
     GenerateStream<
       RealType,
-      GeneralizedDistributionGenerator<
+      GeneralizedDistGen<
         RealType,
         Init,
         std::gamma_distribution<RealType>,
@@ -505,7 +504,7 @@ namespace streams {
     static
     GenerateStream<
       RealType,
-      GeneralizedDistributionGenerator<
+      GeneralizedDistGen<
         RealType,
         Init,
         std::weibull_distribution<RealType>,
@@ -533,7 +532,7 @@ namespace streams {
     static
     GenerateStream<
       RealType,
-      GeneralizedDistributionGenerator<
+      GeneralizedDistGen<
         RealType,
         Init,
         std::extreme_value_distribution<RealType>,
@@ -565,7 +564,7 @@ namespace streams {
     static
     GenerateStream<
       RealType,
-      GeneralizedDistributionGenerator<
+      GeneralizedDistGen<
         RealType,
         Init,
         std::normal_distribution<RealType>,
@@ -593,7 +592,7 @@ namespace streams {
     static
     GenerateStream<
       RealType,
-      GeneralizedDistributionGenerator<
+      GeneralizedDistGen<
         RealType,
         Init,
         std::lognormal_distribution<RealType>,
@@ -621,7 +620,7 @@ namespace streams {
     static
     GenerateStream<
       RealType,
-      GeneralizedDistributionGenerator<
+      GeneralizedDistGen<
         RealType,
         Init,
         std::chi_squared_distribution<RealType>,
@@ -648,7 +647,7 @@ namespace streams {
     static
     GenerateStream<
       RealType,
-      GeneralizedDistributionGenerator<
+      GeneralizedDistGen<
         RealType,
         Init,
         std::cauchy_distribution<RealType>,
@@ -676,7 +675,7 @@ namespace streams {
     static
     GenerateStream<
       RealType,
-      GeneralizedDistributionGenerator<
+      GeneralizedDistGen<
         RealType,
         Init,
         std::fisher_f_distribution<RealType>,
@@ -704,7 +703,7 @@ namespace streams {
     static
     GenerateStream<
       RealType,
-      GeneralizedDistributionGenerator<
+      GeneralizedDistGen<
         RealType,
         Init,
         std::student_t_distribution<RealType>,

@@ -19,14 +19,14 @@ namespace cranberries
     template <
       typename T
     >
-    std::bitset<sizeof(T)*8>
+    int_t<sizeof(T)*8>
     operator()
     (
       T&& a
     )
       noexcept
     {
-      std::bitset<sizeof( T )*8> key;
+      uint_t<sizeof(T)*8> key;
       std::memcpy( &key, &a, sizeof(key) );
       return key;
     }
@@ -35,16 +35,16 @@ namespace cranberries
 
   // non bitset key getter to bitset key getter
   template <
-    typename F // key getter
+    typename System // key getter
   >
   struct get_key_wrapper
   {
   public:
-    get_key_wrapper( F f ) : f_{ std::forward<F>( f ) } {}
+    get_key_wrapper( System f ) : f_{ std::forward<System>( f ) } {}
 
     template <
       typename T,
-      size_t BITS = sizeof( std::result_of_t<F( T )> )*8
+      size_t BITS = sizeof( std::result_of_t<System( T )> )*8
     >
     auto
     operator()
@@ -53,92 +53,22 @@ namespace cranberries
     )
       noexcept
     {
-      std::bitset<BITS> key;
+      uint_t<BITS> key;
       auto tmp = f_( std::forward<T>( a ) ); // perfect forwarding
       std::memcpy( &key, &tmp, BITS );
       return key;
     }
 
   private:
-    F f_; // key getter
+    System f_; // key getter
   };
 
   // make function for get_key_wrapper
-  template < typename F >
-  inline get_key_wrapper<F> make_get_key_wrapper( F&& f ) {
-    return{ std::forward<F>(f) };
+  template < typename System >
+  inline get_key_wrapper<System> make_get_key_wrapper( System&& f ) {
+    return{ std::forward<System>(f) };
   }
 
-  // increment for bitset
-  // ! invisible to ADL
-  template <
-    size_t N
-  >
-  std::bitset<N>&
-  operator++
-  (
-    std::bitset<N>& bs
-  )
-    noexcept
-  {
-    for (size_t i{}; i < N; ++i) {
-      if (bs[i]) {
-        bs.flip( i );
-        continue;
-      }
-      else {
-        bs.flip( i );
-        break;
-      }
-    }
-    return bs;
-  }
-
-  // decrement for bitset
-  // ! invisible to ADL
-  template < size_t N >
-  inline
-  std::bitset<N>&
-  operator--
-  (
-    std::bitset<N>& bs
-  )
-    noexcept
-  {
-    for (size_t i{}; i < N; ++i) {
-      if (bs[i]) {
-        bs.flip( i );
-        break;
-      }
-      else {
-        bs.flip( i );
-        continue;
-      }
-    }
-    return bs;
-  }
-
-  // full adder assignment for bitset
-  // ! invisible to ADL
-  template < size_t N >
-  inline
-  decltype(auto)
-  operator+=
-  (
-    std::bitset<N>& a,
-    std::bitset<N> const& b
-  )
-    noexcept
-  {
-    bool c = a[0] & b[0];
-    a[0] = a[0] ^ b[0];
-    for (size_t i{ 1 }; i < N; ++i) {
-      bool tmp = (a[i] & b[i]) || ((a[i] ^ b[i]) & c);
-      a[i] = (a[i] ^ b[i]) ^ c;
-      c = tmp;
-    }
-    return a;
-  }
 
 
   /***********************************************************
@@ -168,9 +98,9 @@ namespace cranberries
 #else // for GCC/Clang
     4,
 #endif
-  int UNIT = (BITS > 32 ? 8 : BITS >> 2),
+  size_t UNIT = (BITS > 32 ? 8 : BITS >> 2),
     std::enable_if_t<
-      is_bitset_v<key_type>, std::nullptr_t // key_type must be bitset
+      std::is_integral_v<key_type>, std::nullptr_t // key_type must be integer
     > = nullptr
   >
   inline
@@ -183,35 +113,33 @@ namespace cranberries
   )
     noexcept
   {
-    std::bitset<BITS> KEYS{};
-    KEYS.set( UNIT );
-    std::bitset<BITS> MASK{};
-    for (std::size_t i{}; i < UNIT; ++i) MASK.set( i );
+    uint_t<BITS> KEYS{ UNIT };
+    uint_t<BITS> MASK{ UNIT };
     const difference_type N = last - first;
     const auto& a = first;
 
     if (N < 2) return;
-    std::vector<std::bitset<BITS>> h( KEYS.to_ullong() );
+    std::vector<int_t<BITS>> h( KEYS );
     std::vector<value_type> b( N );
     const auto b0 = b.begin();
     const auto bN = b.end();
     for (std::size_t shift = 0; shift < BITS; shift += UNIT) {
-      for (std::size_t k = 0; k < KEYS.to_ullong(); k++) h[k] = std::bitset<BITS>{};
+      for (std::size_t k = 0; k < KEYS; k++) h[k] = int_t<BITS>{};
       auto bi = b0;
       bool done = true;
       for (auto ai = first; ai < last; ++ai, ++bi) {
         const value_type& x = *ai;
         const key_type y = get_key( x ) >> shift;
-        if (y.any()) done = false;
-        (++h[(y & MASK).to_ullong()]);
+        if (y) done = false;
+        ++h[y & MASK];
         *bi = x;
       }
       if (done) return;
-      for (size_t k = 1; k < KEYS.to_ullong(); k++) h[k] += h[k - 1];
+      for (size_t k = 1; k < KEYS; k++) h[k] += h[k - 1];
       for (bi = bN; bi > b0;) {
         const value_type& x = *(--bi);
-        auto y = ((get_key( x ) >> shift) & MASK).to_ullong();
-        const difference_type j = (--h[y]).to_ullong();
+        auto y = (get_key( x ) >> shift) & MASK;
+        const difference_type j = --h[y];
         a[j] = x;
       }
     }
@@ -230,9 +158,9 @@ namespace cranberries
 #else // for GCC/Clang
     4,
 #endif
-    int UNIT = ( BITS > 32 ? 8 : BITS >> 2 ),
+    size_t UNIT = ( BITS > 32 ? 8 : BITS >> 2 ),
     std::enable_if_t<
-      is_bitset_v<key_type>, std::nullptr_t
+      std::is_integral_v<key_type>, std::nullptr_t
     > = nullptr
   >
   inline
@@ -245,35 +173,33 @@ namespace cranberries
   )
     noexcept
   {
-    std::bitset<BITS> KEYS{};
-    KEYS.set( UNIT );
-    std::bitset<BITS> MASK{};
-    for (std::size_t i{}; i < UNIT; ++i) MASK.set( i );
+    uint_t<BITS> KEYS{ UNIT };
+    uint_t<BITS> MASK{ UNIT };
     const difference_type N = last - first;
     const auto& a = first;
 
     if (N < 2) return;
-    std::vector<std::bitset<BITS>> h( KEYS.to_ullong() );
+    std::vector<int_t<BITS>> h( KEYS );
     std::vector<value_type> b( N );
     const auto b0 = b.begin();
     const auto bN = b.end();
     for (std::size_t shift = 0; shift < BITS; shift += UNIT) {
-      for (std::size_t k = 0; k < KEYS.to_ullong(); k++) h[k] = std::bitset<BITS>{};
+      for (std::size_t k = 0; k < KEYS; k++) h[k] = int_t<BITS>{};
       auto bi = b0;
       bool done = true;
       for (auto ai = first; ai < last; ++ai, ++bi) {
         const value_type& x = *ai;
         const key_type y = get_key( x ) >> shift;
-        if (y.any()) done = false;
-        ++h[(y & MASK).to_ullong()];
+        if (y) done = false;
+        ++h[y & MASK];
         *bi = x;
       }
       if (done) return;
-      for (auto k = MASK.to_ullong(); k > 0; k--) h[k - 1] += h[k];
+      for (auto k = MASK; k > 0; k--) h[k - 1] += h[k];
       for (bi = bN; bi > b0;) {
         const value_type& x = *(--bi);
-        auto y = ((get_key( x ) >> shift) & MASK).to_ullong();
-        const difference_type j = (--h[y]).to_ullong();
+        auto y = (get_key( x ) >> shift) & MASK;
+        const difference_type j = --h[y];
         a[j] = x;
       }
     }
@@ -449,62 +375,8 @@ namespace cranberries
     );
   }
 
-  /*************************
-
-  | No get_key.
-  | bitset type range.
-
-  Note:
-  | Value(bitset) directly using as key.
-
-  **************************/
 
 
-  template <
-    typename RAI,
-    typename T = typename std::iterator_traits<RAI>::value_type,
-    std::enable_if_t<
-      is_bitset_v<T>,
-      std::nullptr_t
-    > = nullptr
-  >
-  inline
-  void
-  ascending_radix_sort
-  (
-    RAI first,
-    RAI last
-  )
-    noexcept
-  {
-    ascending_radix_sort_impl(
-      first, last,
-      []( auto&& a ) { return a; }
-    );
-  }
-
-  template <
-    typename RAI,
-    typename T = typename std::iterator_traits<RAI>::value_type,
-    std::enable_if_t<
-      is_bitset_v<T>,
-      std::nullptr_t
-    > = nullptr
-  >
-  inline
-  void
-  descending_radix_sort
-  (
-    RAI first,
-    RAI last
-  )
-    noexcept
-  {
-    descending_radix_sort_impl(
-      first, last,
-      []( auto&& a ) { return a; }
-    );
-  }
 
 
   /*************************
@@ -529,49 +401,33 @@ namespace cranberries
     typename RAI,
     typename T = typename std::iterator_traits<RAI>::value_type,
     std::enable_if_t<
-      !is_bitset_v<T> && !std::is_arithmetic<T>::value,
+    !std::is_integral_v<T> && !std::is_arithmetic<T>::value,
     std::nullptr_t
     > = nullptr
   >
-  [[deprecated]]
-  inline
-  void
-  ascending_radix_sort
-  (
-    RAI first,
-    RAI last
-  )
-    noexcept
-  {
-    ascending_radix_sort_impl(
-      first, last,
-      default_get_key{}
-    );
-  }
+    inline
+    void
+    ascending_radix_sort
+    (
+      RAI first,
+      RAI last
+    ) = delete;
 
   template <
     typename RAI,
     typename T = typename std::iterator_traits<RAI>::value_type,
     std::enable_if_t<
-      !is_bitset_v<T> && !std::is_arithmetic<T>::value,
+    !std::is_integral_v<T> && !std::is_arithmetic<T>::value,
     std::nullptr_t
     > = nullptr
   >
-  [[deprecated]]
-  inline
-  void
-  descending_radix_sort
-  (
-    RAI first,
-    RAI last
-  )
-    noexcept
-  {
-    descending_radix_sort_impl(
-      first, last,
-      default_get_key{}
-    );
-  }
+    inline
+    void
+    descending_radix_sort
+    (
+      RAI first,
+      RAI last
+    ) = delete;
 
 
   /*************************
@@ -598,7 +454,7 @@ namespace cranberries
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
-      !is_bitset_v<K> && std::is_signed<K>::value,
+      !std::is_integral_v<K> && std::is_signed<K>::value,
     std::nullptr_t
     > = nullptr
   >
@@ -648,7 +504,7 @@ namespace cranberries
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
-      is_bitset_v<K> && std::is_signed<K>::value,
+      std::is_integral_v<K> && std::is_signed<K>::value,
     std::nullptr_t
     > = nullptr
   >
@@ -711,7 +567,7 @@ namespace cranberries
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
-      !is_bitset_v<K> && std::is_unsigned<K>::value,
+      !std::is_integral<K>::value && std::is_unsigned<K>::value,
       std::nullptr_t
     > = nullptr
   >
@@ -737,7 +593,7 @@ namespace cranberries
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
-      !is_bitset_v<K> && std::is_unsigned<K>::value,
+      !std::is_integral<K>::value && std::is_unsigned<K>::value,
       std::nullptr_t
     > = nullptr
   >
@@ -775,7 +631,7 @@ namespace cranberries
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
-      is_bitset_v<K>,
+      std::is_integral_v<K>,
       std::nullptr_t
     > = nullptr
   >
@@ -801,7 +657,7 @@ namespace cranberries
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
-      is_bitset_v<K>,
+      std::is_integral_v<K>,
       std::nullptr_t
     > = nullptr
   >
@@ -842,55 +698,39 @@ namespace cranberries
     typename RAI,
     typename T = typename std::iterator_traits<RAI>::value_type,
     typename G,
-    typename K = std::result_of_t<G( T )>,
+    typename K = std::result_of_t<G(T)>,
     std::enable_if_t<
-      !is_bitset_v<K> && !std::is_arithmetic<K>::value,
+    !std::is_integral_v<K> && !std::is_arithmetic<K>::value,
     std::nullptr_t
     > = nullptr
   >
-  [[deprecated]]
-  inline
-  void
-  ascending_radix_sort
-  (
-    RAI first,
-    RAI last,
-    G&& key_getter
-  )
-    noexcept
-  {
-    ascending_radix_sort_impl(
-      first, last,
-      make_get_key_wrapper( std::forward<G>( key_getter ) )
-    );
-  }
+    inline
+    void
+    ascending_radix_sort
+    (
+      RAI first,
+      RAI last,
+      G&& key_getter
+    ) = delete;
 
   template <
     typename RAI,
     typename T = typename std::iterator_traits<RAI>::value_type,
     typename G,
-    typename K = std::result_of_t<G( T )>,
+    typename K = std::result_of_t<G(T)>,
     std::enable_if_t<
-      !is_bitset_v<K> && !std::is_arithmetic<K>::value,
+    !std::is_integral_v<K> && !std::is_arithmetic<K>::value,
     std::nullptr_t
     > = nullptr
   >
-  [[deprecated]]
-  inline
-  void
-  descending_radix_sort
-  (
-    RAI first,
-    RAI last,
-    G&& key_getter
-  )
-    noexcept
-  {
-    descending_radix_sort_impl(
-      first, last,
-      make_get_key_wrapper( std::forward<G>( key_getter ) )
-    );
-  }
+    inline
+    void
+    descending_radix_sort
+    (
+      RAI first,
+      RAI last,
+      G&& key_getter
+    ) = delete;
 
 } // ! namespace cranberries
 
