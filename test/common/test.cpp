@@ -1,5 +1,7 @@
 ﻿#include <iostream>
 #include "../../cranberries/type_traits.hpp"
+#include "../../cranberries/pack_traits.hpp"
+#include "../../cranberries/meta_bind.hpp"
 #include "../../cranberries/utility.hpp"
 #include <vector>
 #include <array>
@@ -19,6 +21,7 @@ struct G{
 int main()
 try{
   using namespace cranberries;
+      using namespace cranberries;
       static_assert(
         std::is_same<cranberries::generate_tuple_t<int&, 3>, std::tuple<int&, int&, int&>>::value,
         "fail"
@@ -92,27 +95,27 @@ try{
         "fail"
         );
       static_assert(
-        is_callable<F(int,int),void>::value,
+        is_callable<F( int, int ), void>::value,
         "fail"
         );
       static_assert(
-        is_callable<F(int, int), return_any>::value,
+        is_callable<F( int, int ), return_any>::value,
         "fail"
         );
       static_assert(
-        is_nothrow_callable<G(int, int), void>::value,
+        is_nothrow_callable<G( int, int ), void>::value,
         "fail"
         );
       static_assert(
-        is_nothrow_callable<G(int, int), return_any>::value,
+        is_nothrow_callable<G( int, int ), return_any>::value,
         "fail"
         );
       static_assert(
-        !is_nothrow_callable<F(int, int), return_any>::value,
+        !is_nothrow_callable<F( int, int ), return_any>::value,
         "fail"
         );
       static_assert(
-        is_callable<F(int, double), return_any>::value,
+        is_callable<F( int, double ), return_any>::value,
         "fail"
         );
       static_assert(
@@ -124,7 +127,7 @@ try{
         "fail"
         );
       static_assert(
-        is_range_v<std::array<int,5>>,
+        is_range_v<std::array<int, 5>>,
         "fail"
         );
       static_assert(
@@ -132,7 +135,7 @@ try{
         "fail"
         );
       static_assert(
-        apply_decay_result_v<bind_1st<is_equality_comparable_to,int>::expr,double&>,
+        apply_decay_result_v<bind_1st<is_equality_comparable_to, int>::expr, double&>,
         "fail"
         );
       static_assert(
@@ -144,29 +147,127 @@ try{
         );
       static_assert(
         std::is_same<
-        pack_traits::reverse_t<std::tuple<int,long>>,
+        pack_reverse_t<std::tuple<int,long>>,
         std::tuple<long,int>
         >::value,
         "fail"
         );
       static_assert(
         std::is_same<
-        pack_traits::replace_all_t<std::tuple<int,int>,long,long>,
+        pack_replace_all_t<std::tuple<int,int>,long,long>,
         std::tuple<long, long>
         >::value,
         "fail"
         );
       static_assert(
         std::is_same<
-        pack_traits::replace_t<std::tuple<int, int>, int, long>,
+        pack_replace_t<std::tuple<int, int>, int, long>,
         std::tuple<long, long>
         >::value,
         "fail"
         );
       static_assert(
         std::is_same<
-        pack_traits::replace_if_t<std::tuple<int, int, std::string>, std::is_integral, double>,
+        pack_replace_if_t<std::tuple<int, int, std::string>, std::is_integral, double>,
         std::tuple<double, double,std::string>
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+        repack_t<std::vector<int>, std::list>,
+        std::list<int>
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+          pack_element_t<2,type_pack<int,int,long>>,
+          long
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+        arg_element_t<2,struct hoge(int,int,double,int)>,
+        double
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+        pack_sliced_l<2, type_pack<int, int, double, int>>,
+        type_pack<int,int,double>
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+        pack_sliced_r<2, type_pack<int, int, double, int>>,
+        type_pack<int>
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+        pack_sliced_l<2, std::make_index_sequence<5>>,
+        std::integer_sequence<size_t,0,1,2>
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+        pack_sliced_r<2, std::make_index_sequence<5>>,
+        std::integer_sequence<size_t, 3,4>
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+        pack_remove_t<int,std::tuple<int,long,int,double>>,
+        std::tuple<long, double>
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+        pack_remove_if_t<std::is_integral, std::tuple<int, long, int, double>>,
+        std::tuple<double>
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+        pack_insert_t<2,int,std::tuple<int, long, int, double>>,
+        std::tuple<int, long, int, int, double>
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+        pack_pop_back_t<std::tuple<int, long, int, double>>,
+        std::tuple<int, long, int>
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+        pack_erase_t<1,std::tuple<int, long, int, double>>,
+        std::tuple<int, int, double>
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+        pack_block_erase_t<1,2, std::tuple<int, long, int, double>>,
+        std::tuple<int, double>
+        >::value,
+        "fail"
+        );
+      static_assert(
+        std::is_same<
+        pack_block_erase_t<0, 2, std::tuple<int, long, int, double>>,
+        std::tuple<double>
         >::value,
         "fail"
         );
