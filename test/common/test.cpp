@@ -4,6 +4,7 @@
 #include "../../cranberries/meta_bind.hpp"
 #include "../../cranberries/utility.hpp"
 #include <vector>
+#include <list>
 #include <array>
 #include <stdexcept>
 
