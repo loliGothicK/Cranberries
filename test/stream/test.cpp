@@ -57,11 +57,11 @@ try{
     >> eager::println_to()
     ;
 
-  make_stream::generate_canonical()
-    >> lazy::taken(100)
-    >> lazy::summary_stat()
-    >> eager::print_to()
-    ;
+  // make_stream::generate_canonical()
+  //   >> lazy::taken(100)
+  //   >> lazy::summary_stat()
+  //   >> eager::print_to()
+  //   ;
 
   std::vector<std::vector<int>> aa = {
     { 1,2,3 },
