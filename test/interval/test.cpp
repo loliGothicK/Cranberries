@@ -164,15 +164,6 @@ try{
     cout << ">> Exception Complete!" << endl;
   }
 
-  try
-  {
-    CRANBERRIES_MAKE_INTERVAL( int, 1, 0 );
-  }
-  catch (cranberries::invalid_argument const& e)
-  {
-    cout << ">> DEBUG MODE TEST" << endl;
-    cout << e.what() << endl;
-  }
 }
 catch (cranberries::runtime_error const& e) {
   cout << e.what() << endl;
