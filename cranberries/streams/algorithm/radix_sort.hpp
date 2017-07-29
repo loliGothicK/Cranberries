@@ -100,7 +100,7 @@ namespace cranberries
 #endif
   size_t UNIT = (BITS > 32 ? 8 : BITS >> 2),
     std::enable_if_t<
-      std::is_integral_v<key_type>, std::nullptr_t // key_type must be integer
+      std::is_integral<key_type>::value, std::nullptr_t // key_type must be integer
     > = nullptr
   >
   inline
@@ -160,7 +160,7 @@ namespace cranberries
 #endif
     size_t UNIT = ( BITS > 32 ? 8 : BITS >> 2 ),
     std::enable_if_t<
-      std::is_integral_v<key_type>, std::nullptr_t
+      std::is_integral<key_type>::value, std::nullptr_t
     > = nullptr
   >
   inline
@@ -401,7 +401,7 @@ namespace cranberries
     typename RAI,
     typename T = typename std::iterator_traits<RAI>::value_type,
     std::enable_if_t<
-    !std::is_integral_v<T> && !std::is_arithmetic<T>::value,
+    !std::is_integral<T>::value && !std::is_arithmetic<T>::value,
     std::nullptr_t
     > = nullptr
   >
@@ -417,7 +417,7 @@ namespace cranberries
     typename RAI,
     typename T = typename std::iterator_traits<RAI>::value_type,
     std::enable_if_t<
-    !std::is_integral_v<T> && !std::is_arithmetic<T>::value,
+    !std::is_integral<T>::value && !std::is_arithmetic<T>::value,
     std::nullptr_t
     > = nullptr
   >
@@ -454,7 +454,7 @@ namespace cranberries
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
-      !std::is_integral_v<K> && std::is_signed<K>::value,
+      !std::is_integral<K>::value && std::is_signed<K>::value,
     std::nullptr_t
     > = nullptr
   >
@@ -504,7 +504,7 @@ namespace cranberries
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
-      std::is_integral_v<K> && std::is_signed<K>::value,
+      std::is_integral<K>::value && std::is_signed<K>::value,
     std::nullptr_t
     > = nullptr
   >
@@ -631,7 +631,7 @@ namespace cranberries
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
-      std::is_integral_v<K>,
+      std::is_integral<K>::value,
       std::nullptr_t
     > = nullptr
   >
@@ -657,7 +657,7 @@ namespace cranberries
     typename G,
     typename K = std::result_of_t<G( T )>,
     std::enable_if_t<
-      std::is_integral_v<K>,
+      std::is_integral<K>::value,
       std::nullptr_t
     > = nullptr
   >
@@ -700,7 +700,7 @@ namespace cranberries
     typename G,
     typename K = std::result_of_t<G(T)>,
     std::enable_if_t<
-    !std::is_integral_v<K> && !std::is_arithmetic<K>::value,
+    !std::is_integral<K>::value && !std::is_arithmetic<K>::value,
     std::nullptr_t
     > = nullptr
   >
@@ -719,7 +719,7 @@ namespace cranberries
     typename G,
     typename K = std::result_of_t<G(T)>,
     std::enable_if_t<
-    !std::is_integral_v<K> && !std::is_arithmetic<K>::value,
+    !std::is_integral<K>::value && !std::is_arithmetic<K>::value,
     std::nullptr_t
     > = nullptr
   >
