@@ -52,16 +52,16 @@ try{
     >> eager::println_to()
     ;
 
-  // make_stream::of({ 9,8,7,6,5,4,3,2,1,-1,-1,-2,-1 })
-  //   >> lazy::ascending_radix_sorted()
-  //   >> eager::println_to()
-  //   ;
+  make_stream::of({ 9,8,7,6,5,4,3,2,1,-1,-1,-2,-1 })
+    >> lazy::ascending_radix_sorted()
+    >> eager::println_to()
+    ;
 
-  // make_stream::generate_canonical()
-  //   >> lazy::taken(100)
-  //   >> lazy::summary_stat()
-  //   >> eager::print_to()
-  //   ;
+  make_stream::generate_canonical()
+    >> lazy::taken(100)
+    >> lazy::summary_stat()
+    >> eager::print_to()
+    ;
 
   std::vector<std::vector<int>> aa = {
     { 1,2,3 },
