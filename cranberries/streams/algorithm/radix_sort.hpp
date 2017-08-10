@@ -122,7 +122,7 @@ namespace cranberries
     std::vector<int_t<BITS>> h( KEYS );
     std::vector<value_type> b( N );
     const auto b0 = b.begin();
-    const auto bN = b.end() -1;
+    const auto bN = b.end();
     for (std::size_t shift = 0; shift < BITS; shift += UNIT) {
       for (std::size_t k = 0; k < KEYS; k++) h[k] = int_t<BITS>{};
       auto bi = b0;
@@ -182,7 +182,7 @@ namespace cranberries
     std::vector<int_t<BITS>> h( KEYS );
     std::vector<value_type> b( N );
     const auto b0 = b.begin();
-    const auto bN = b.end() -1;
+    const auto bN = b.end();
     for (std::size_t shift = 0; shift < BITS; shift += UNIT) {
       for (std::size_t k = 0; k < KEYS; k++) h[k] = int_t<BITS>{};
       auto bi = b0;
@@ -195,7 +195,7 @@ namespace cranberries
         *bi = x;
       }
       if (done) return;
-      for (auto k = MASK; k > 0; k--) h[k - 1] += h[k];
+      for (auto k = MASK; k > 0;) h[k-1] += h[k--];
       for (bi = bN; bi > b0;) {
         const value_type& x = *(--bi);
         auto y = (get_key( x ) >> shift) & MASK;
