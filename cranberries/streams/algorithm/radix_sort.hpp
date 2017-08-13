@@ -286,7 +286,7 @@ namespace cranberries {
     size_t BIT = sizeof(std::result_of_t<F(element_type_of_t<ForwardIterator>)>) * 8,
     enabler_t<std::is_integral<std::result_of_t<F(element_type_of_t<ForwardIterator>)>>::value> = nullptr
   >
-  void descending_radix_sort(ForwardIterator first, ForwardIterator last)
+  void descending_radix_sort(ForwardIterator first, ForwardIterator last, F&& get_key)
   {
     // partition negative number to left
     auto mid = std::stable_partition(first, last, [](auto v) { return !(v < 0); });
