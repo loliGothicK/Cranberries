@@ -260,14 +260,14 @@ try{
         );
       static_assert(
         std::is_same<
-        pack_block_erase_t<1,2, std::tuple<int, long, int, double>>,
+        pack_range_erase_t<1,2, std::tuple<int, long, int, double>>,
         std::tuple<int, double>
         >::value,
         "fail"
         );
       static_assert(
         std::is_same<
-        pack_block_erase_t<0, 2, std::tuple<int, long, int, double>>,
+        pack_range_erase_t<0, 2, std::tuple<int, long, int, double>>,
         std::tuple<double>
         >::value,
         "fail"
