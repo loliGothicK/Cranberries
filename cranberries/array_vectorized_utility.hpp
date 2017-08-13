@@ -153,7 +153,7 @@ namespace cranberries {
     }
     template < size_t N >
     constexpr long double norm(std::array<long double, N> const& vec) {
-      return std::sqrtl(std::accumulate(std::begin(vec), std::end(vec), T{}, [](auto x) { return x*x; }));
+      return std::sqrt(std::accumulate(std::begin(vec), std::end(vec), 0.0L, [](auto x) { return x*x; }));
     }
 
   }
