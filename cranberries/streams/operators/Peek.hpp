@@ -8,6 +8,39 @@ namespace cranberries {
 namespace streams {
 namespace operators {
 
+  template < >
+  class Peek<cranberries_magic::defaulted_t>
+    : private cranberries_magic::LazyOperationModuleBase
+    , private cranberries_magic::StreamOperatorBase
+  {
+  public:
+    constexpr Peek() noexcept
+    {}
+
+    template <
+      typename Stream,
+      typename E = typename std::decay_t<Stream>::element_type
+    >
+    inline
+    decltype(auto)
+    operator()
+    (
+      Stream&& stream_
+    )
+      noexcept(false)
+    {
+      CRANBERRIES_STREAM_EMPTY_ERROR_THROW_IF(stream_.empty());
+      auto&& iter = stream_.begin();
+      std::cout << *iter;
+      ++iter;
+      for (; iter != stream_.end(); ++iter)
+        std::cout << ", " << *iter;
+      std::cout << std::endl;
+      return std::forward<Stream>(stream_);
+    }
+  };
+
+
   template <
     typename UnaryFunc
   >

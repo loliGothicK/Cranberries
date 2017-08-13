@@ -8,6 +8,19 @@
 
 namespace cranberries
 {
+  enum class endian
+  {
+#ifdef _WIN32
+    little = 0,
+    big = 1,
+    native = little
+#else
+    little = __ORDER_LITTLE_ENDIAN__,
+    big = __ORDER_BIG_ENDIAN__,
+    native = __BYTE_ORDER__,
+#endif
+  };
+
   template < bool B >
   using bool_constant = std::integral_constant<bool, B>;
 
@@ -37,30 +50,20 @@ namespace cranberries
   template <class T>
   constexpr bool is_reference_wrapper_v = is_reference_wrapper<T>::value;
 
-namespace cranberries_magic
-{
-  template < typename Head, typename ...Tail >
-  struct conj_impl : bool_constant<Head::value && conj_impl<Tail...>::value> {};
+  template<class...> struct conjunction : std::true_type { };
+  template<class B1> struct conjunction<B1> : B1 { };
+  template<class B1, class... Bn>
+  struct conjunction<B1, Bn...>
+    : std::conditional_t<bool(B1::value), conjunction<Bn...>, B1> {};
 
-  template < typename B >
-  struct conj_impl<B> : bool_constant<B::value> {};
+  template<class...> struct disjunction : std::false_type { };
+  template<class B1> struct disjunction<B1> : B1 { };
+  template<class B1, class... Bn>
+  struct disjunction<B1, Bn...>
+    : std::conditional_t<bool(B1::value), B1, disjunction<Bn...>> { };
 
-  template < typename Head, typename ...Tail >
-  struct disj_impl : bool_constant<Head::value || disj_impl<Tail...>::value> {};
-
-  template < typename B >
-  struct disj_impl<B> : bool_constant<B::value> {};
-} // ! namespace cranberries_magic
-
-  template < typename ...B >
-  struct conjunction : cranberries_magic::conj_impl<B...> {};
-
-  template < typename ...B >
-  struct disjunction : cranberries_magic::disj_impl<B...> {};
-
-  template < typename B >
-  struct negation : bool_constant<!B::value> {};
-
+  template < class B >
+  struct negation : bool_constant<!bool(B::value)> {};
 
   template < typename ...B >
   constexpr bool conjunction_v = conjunction<B...>::value;
@@ -89,6 +92,38 @@ namespace cranberries_magic
     template < typename T >
     using pred = negation<Pred<T>>;
   };
+
+  template<class...>
+  struct max_sizeof;
+
+  template<class T>
+  struct max_sizeof<T> : std::integral_constant<size_t, sizeof(T)> {};
+
+  template<class Head, class...Tail>
+  struct max_sizeof <Head, Tail...>
+    : std::integral_constant<size_t,
+    (sizeof(Head) > max_sizeof<Tail...>::value) ? sizeof(Head) : max_sizeof<Tail...>::value
+    >
+  {};
+  template<class...>
+  struct min_sizeof;
+
+  template<class T>
+  struct min_sizeof<T> : std::integral_constant<size_t, sizeof(T)> {};
+
+  template<class Head, class...Tail>
+  struct min_sizeof <Head, Tail...>
+    : std::integral_constant<size_t,
+    (sizeof(Head) > min_sizeof<Tail...>::value) ? sizeof(Head) : min_sizeof<Tail...>::value
+    >
+  {};
+
+  template < class... Types >
+  constexpr bool max_sizeof_v = max_sizeof<Types...>::value;
+
+  template < class... Types >
+  constexpr bool min_sizeof_v = min_sizeof<Types...>::value;
+
 
   template < template<class...> class Pred, typename ...Types >
   struct apply_ {

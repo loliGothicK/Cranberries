@@ -25,7 +25,7 @@ namespace cranberries {
 
   template < class T >
   struct is_pack 
-    : conjunction<is_type_pack<T>, is_value_pack<T>>
+    : disjunction<is_type_pack<T>, is_value_pack<T>>
   {};
 
   template < class T >
@@ -40,6 +40,67 @@ namespace cranberries {
 
   template < class T, T ...Args >
   struct value_pack {};
+
+
+  template< std::size_t I, class T >
+  struct pack_element;
+
+  // recursive case
+  template< std::size_t I, template < class... > class Pack, class Head, class... Tail >
+  struct pack_element<I, Pack<Head, Tail...>>
+    : pack_element<I - 1, Pack<Tail...>>
+  {
+    static_assert(I <= sizeof...(Tail), "pack out of range.");
+  };
+
+  // base case
+  template< template < class... > class Pack, class Head, class... Tail >
+  struct pack_element<0, Pack<Head, Tail...>> {
+    using type = Head;
+  };
+
+  template < size_t N, typename Pack >
+  using pack_element_t = typename pack_element<N, Pack>::type;
+
+  template < class >
+  struct pack_size;
+
+  template < template< class... > class Pack, class... Types >
+  struct pack_size<Pack<Types...>>
+  {
+    static constexpr bool value = sizeof...(Types);
+  };
+
+  template < template < class Ty, Ty... > class Pack, class T, T... Values >
+  struct pack_size<Pack<T, Values...>>
+  {
+    static constexpr bool value = sizeof...(Values);
+  };
+
+
+  template < class >
+  struct pack_middle_point;
+
+  template < template < class... > class Pack, class... Types >
+  struct pack_middle_point<Pack<Types...>>
+  {
+    static constexpr bool value = sizeof...(Types) > 0 ? sizeof...(Types) / 2 - 1 : 0;
+  };
+
+  template < template < class T, T... > class Pack, class Ty, Ty... Values >
+  struct pack_middle_point<Pack<Ty, Values...>>
+  {
+    static constexpr bool value = sizeof...(Values) > 0 ? sizeof...(Values) / 2 - 1 : 0;
+  };
+
+
+  template < class Pack >
+  constexpr bool pack_size_v = pack_size<Pack>::value;
+
+  template < class Pack >
+  constexpr bool pack_middle_point_v = pack_middle_point<Pack>::value;
+
+
 
 namespace cranberries_magic {
 
@@ -114,6 +175,13 @@ namespace cranberries_magic {
   template < class Pack >
   using pack_tail = pack_sliced_r<0, Pack>;
 
+  template < class Pack >
+  using pack_half_sliced_l = pack_sliced_l<pack_middle_point_v<Pack>, Pack>;
+
+  template < class Pack >
+  using pack_half_sliced_r = pack_sliced_r<pack_middle_point_v<Pack>, Pack>;
+
+
   template < class... >
   struct pack_cat;
 
@@ -130,45 +198,6 @@ namespace cranberries_magic {
 
   template < class... Pack >
   using pack_cat_t = typename pack_cat<Pack...>::type;
-
-
-  template< std::size_t I, class T >
-  struct pack_element;
-
-  // recursive case
-  template< std::size_t I, template < class... > class Pack, class Head, class... Tail >
-  struct pack_element<I, Pack<Head, Tail...>>
-    : pack_element<I - 1, Pack<Tail...>>
-  {
-    static_assert(I <= sizeof...(Tail), "pack out of range.");
-  };
-
-  // base case
-  template< template < class... > class Pack, class Head, class... Tail >
-  struct pack_element<0, Pack<Head, Tail...>> {
-    using type = Head;
-  };
-
-  template < size_t N, typename Pack >
-  using pack_element_t = typename pack_element<N, Pack>::type;
-
-  template < class >
-  struct pack_size;
-
-  template < template< class... > class Pack, class... Types >
-  struct pack_size<Pack<Types...>>
-  {
-    static constexpr bool value = sizeof...(Types);
-  };
-
-  template < template < class Ty, Ty... > class Pack, class T, T... Values >
-  struct pack_size<Pack<T, Values...>>
-  {
-    static constexpr bool value = sizeof...(Values);
-  };
-
-  template < class Pack >
-  constexpr bool pack_size_v = pack_size<Pack>::value;
 
 
   template < class, class >
@@ -265,29 +294,27 @@ namespace cranberries_magic {
   using pack_replace_t = typename replace<T>:: template type<From, To>;
 
 
-  template < class >
+  template < class, template<class>class, class >
   struct pack_replace_if;
 
-  template < template<class...>class T, typename... Args >
-  struct pack_replace_if<T<Args...>> {
-    template < template<class>class Pred, class To >
+  template < template<class...>class T, typename... Args, template<class>class Pred, class To >
+  struct pack_replace_if<T<Args...>, Pred, To> {
     using type = typename pack_replace_if_impl< Pred, To, T<>, T<Args...> >::type;
   };
 
   template < class T, template <class>class Pred, class To >
-  using pack_replace_if_t = typename pack_replace_if<T>:: template type<Pred, To>;
+  using pack_replace_if_t = typename pack_replace_if<T, Pred, To>::type;
 
-  template < class >
+  template < class, template < class ... > class >
   struct repack;
 
-  template<template<typename...> class T, typename... Args>
-  struct repack< T<Args...> > {
-    template < template<class...> class U >
+  template< template<class...> class T, template<class...> class U, class... Args>
+  struct repack< T<Args...>, U > {
     using type = U<Args...>;
   };
 
   template < typename From, template < class ... > class To >
-  using repack_t = typename repack<From>:: template type<To>;
+  using repack_t = typename repack<From,To>::type;
 
 namespace cranberries_magic {
 
@@ -299,7 +326,8 @@ namespace cranberries_magic {
     : std::conditional_t<std::is_same<T, Head>::value,
         pack_remove_impl<T, Pack<Tail...>, Pack<Result...>>,
         pack_remove_impl<T, Pack<Tail...>, Pack<Result..., Head>>
-    > {};
+    >
+  {};
 
   template < class T, template < class... > class Pack, class... Result >
   struct pack_remove_impl<T, Pack<>, Pack<Result...>>
@@ -419,19 +447,19 @@ namespace cranberries_magic {
   using pack_pop_back_t = typename pack_pop_back<Pack>::type;
 
   template < size_t From, size_t To,  class Pack >
-  struct pack_block_erase
+  struct pack_range_erase
   {
     using type = pack_cat_t<pack_sliced_l<From-1, Pack>, pack_sliced_r<To, Pack>>;
   };
 
   template < size_t To, class Pack >
-  struct pack_block_erase<0, To, Pack>
+  struct pack_range_erase<0, To, Pack>
   {
     using type = pack_sliced_r<To, Pack>;
   };
 
   template < size_t From, size_t To, class Pack >
-  using pack_block_erase_t = typename pack_block_erase<From, To, Pack>::type;
+  using pack_range_erase_t = typename pack_range_erase<From, To, Pack>::type;
 
 
   template < template<class...>class, class Fn >

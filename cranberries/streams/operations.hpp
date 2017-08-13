@@ -132,6 +132,12 @@ namespace streams {
     template < typename To >
     inline operators::MapToProxy<To> transformed_to() noexcept { return{}; }
 
+    inline
+    operators::Peek<cranberries_magic::defaulted_t>
+    peeked() noexcept {
+      return{ };
+    }
+
 
     template <
       typename UnaryFunc
