@@ -1,28 +1,15 @@
-language: cpp
-sudo: required
-
-os:
-    - linux
-
 compiler:
-    - clang
-
-env:
-    - TARGET_CPU=x86 BUILD_CONFIGURATION=Debug
-    - TARGET_CPU=x86 BUILD_CONFIGURATION=Release
-    - TARGET_CPU=x64 BUILD_CONFIGURATION=Debug
-    - TARGET_CPU=x64 BUILD_CONFIGURATION=Release
-    - TARGET_CPU=amd64 BUILD_CONFIGURATION=Debug
-    - TARGET_CPU=amd64 BUILD_CONFIGURATION=Release
-
-before_install:  
-  - sudo apt-add-repository "deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-4.0 main"
-  - sudo apt-get update -qq
-
-install: 
-  - sudo apt-get install libboost-all-dev
-  - sudo apt-get install --allow-unauthenticated -qq clang++-4.0
-  - export CXX="clang++-4.0"
+  - gcc
+cache:
+  apt: true
+addons:
+  apt:
+    sources:
+    packages:
+      - g++-6
+install:
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-6" CC="gcc-6" COMPILER="g++-6"; fi
+language: cpp
 script:
   - mkdir build
   - cd build
