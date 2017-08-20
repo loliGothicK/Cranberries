@@ -15,12 +15,6 @@ namespace streams {
 
 } // ! namespace stream
 
-namespace cranberries_magic {
-
-  // Defaluted Tag
-  struct defaulted_t {};
-
-} // ! namespace cranberries_magic
 
 } // ! namespace cranberries
 

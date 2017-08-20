@@ -40,8 +40,8 @@ namespace streams {
   You can execute Terminate Operation or convert stream to container.
   Execute Terminate Operation or onvert to container, evaluating Intermidiate Operation Pipeline.
 
-  Let 's' is a stream and 'A', 'B' are Intermidiate Querys, and 'C' is Terminate Operation.
-  stream Intermidiate Querys are combine with operator >> and Terminate Operation using operator >> .
+  Let 's' is a stream and 'A', 'B' are Intermidiate Queries, and 'C' is Terminate Operation.
+  stream Intermidiate Queries are combine with operator >> and Terminate Operation using operator >> .
 
   [ Example :
   s >> A >> B >> C;

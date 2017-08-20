@@ -1,5 +1,5 @@
-#ifndef CRANBRRIES_INTERVAL_LIB_UTILITY_HPP
-#define CRANBRRIES_INTERVAL_LIB_UTILITY_HPP
+#ifndef CRANBERRIES_INTERVAL_LIB_UTILITY_HPP
+#define CRANBERRIES_INTERVAL_LIB_UTILITY_HPP
 
 #include <utility>
 #include <tuple>
@@ -12,7 +12,7 @@ namespace cranberries {
   inline constexpr interval<T> hull( T&& low, T&& up )
   {
     return CRANBERRIES_INVALID_ARGUMENT_THROW_CONDITIONAL_WITH_MSG( low > up, "upper_bound less than lower_bound!" )
-      : interval<T>{ std::forward<T>( low ), std::forward<T>( up ) };
+      : CRANBERRIES_MAKE_INTERVAL( T, std::forward<T>( low ), std::forward<T>( up ) );
   }
 
   template < typename T >
@@ -24,13 +24,13 @@ namespace cranberries {
   template < typename T >
   inline constexpr T mid( interval<T> const& x ) noexcept
   {
-    return ( x.upper() + x.lower() ) / static_cast<T>( 2.0L );
+    return x.upper() + ( x.upper() - x.lower() ) / static_cast<T>( 2.0L );
   }
 
   template < typename T >
   inline constexpr T middle( interval<T> const& x ) noexcept
   {
-    return ( x.upper() + x.lower() ) / static_cast<T>( 2.0L );
+    return x.upper() + (x.upper() - x.lower()) / static_cast<T>(2.0L);
   }
 
   /*  width  */

@@ -4,7 +4,6 @@
 #include <utility>
 #include <type_traits>
 #include "interval.hpp"
-#include "./compare/advance.hpp"
 
 namespace cranberries {
 

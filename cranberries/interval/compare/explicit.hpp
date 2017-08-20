@@ -6,7 +6,6 @@
 #include "../interval.hpp"
 
 namespace cranberries {
-
   //-----------------------------------//
   /*   interval relational functions   */
   //-----------------------------------//
@@ -196,50 +195,50 @@ namespace cranberries {
     return false;
   }
 
-  /*  Weak Ordering  */
+  /*  weak Ordering  */
 
   // weak less
   template < typename L, typename R >
   inline constexpr bool weak_less( interval<L> const& x, interval<R> const& y ) noexcept
   {
-    return ( x.lower() < y.lower() );
+    return x.lower() == y.lower() ? x.upper() < y.upper() : x.lower() < y.lower();
   }
 
   template < typename R >
   inline constexpr bool weak_less( typename interval<R>::value_type const& x, interval<R> const& y ) noexcept
   {
-    return ( x < y.lower() );
+    return ( x < y.upper() );
   }
 
   template < typename L >
   inline constexpr bool weak_less( interval<L> const& x, typename interval<L>::value_type const& y ) noexcept
   {
-    return ( x.lower() > y );
+    return ( x.lower() < y );
   }
 
   template < typename L, typename R >
   inline constexpr bool weak_less_or_equal( interval<L> const& x, interval<R> const& y ) noexcept
   {
-    return ( x.lower() <= y.lower() );
+    return x.lower() == y.lower() ? x.upper() <= y.upper() : x.lower() <= y.lower();
   }
 
   template < typename R >
   inline constexpr bool weak_less_or_equal( typename interval<R>::value_type const& x, interval<R> const& y ) noexcept
   {
-    return ( x <= y.lower() );
+    return ( x <= y.upper() );
   }
 
   template < typename L >
   inline constexpr bool weak_less_or_equal( interval<L> const& x, typename interval<L>::value_type const& y ) noexcept
   {
-    return ( x.lower() >= std::forward<L>( y ) );
+    return ( x.lower() <= y );
   }
 
   // weak greater
   template < typename L, typename R >
   inline constexpr bool weak_greater( interval<L> const& x, interval<R> const& y ) noexcept
   {
-    return ( x.lower() > y.lower() );
+    return x.lower() == y.lower() ? x.upper() > y.upper() : x.lower() > y.lower();
   }
 
   template < typename R >
@@ -251,13 +250,13 @@ namespace cranberries {
   template < typename L >
   inline constexpr bool weak_greater( interval<L> const& x, typename interval<L>::value_type const& y ) noexcept
   {
-    return ( x.lower() > y );
+    return ( x.upper() > y );
   }
 
   template < typename L, typename R >
   inline constexpr bool weak_greater_or_equal( interval<L> const& x, interval<R> const& y ) noexcept
   {
-    return ( x.lower() >= y.lower() );
+    return x.lower() == y.lower() ? x.upper() >= y.upper() : x.lower() >= y.lower();
   }
 
   template < typename R >
@@ -269,119 +268,24 @@ namespace cranberries {
   template < typename L >
   inline constexpr bool weak_greater_or_equal( interval<L> const& x, typename interval<L>::value_type const& y ) noexcept
   {
-    return ( x.lower() >= y );
+    return ( x.upper() >= y );
   }
 
   // weak equal
   template < typename L, typename R >
   inline constexpr bool weak_equal( interval<L> const& x, interval<R> const& y ) noexcept
   {
-    return ( weak_less( x, y ) == false && weak_less( y, x ) == false );
-  }
-
-  template < typename R >
-  inline constexpr bool weak_equal( typename interval<R>::value_type const& x, interval<R> const& y ) noexcept
-  {
-    return ( x == y.lower() );
-  }
-
-  template < typename L >
-  inline constexpr bool weak_equal( interval<L> const& x, typename interval<L>::value_type const& y ) noexcept
-  {
-    return ( x.lower() == std::forward<L>( y ) );
-  }
-
-  /*  Total Ordering  */
-
-  // total less
-  template < typename L, typename R >
-  inline constexpr bool total_less( interval<L> const& x, interval<R> const& y ) noexcept
-  {
-    return x.lower() == y.lower() ? x.upper() < y.upper() : x.lower() < y.lower();
-  }
-
-  template < typename R >
-  inline constexpr bool total_less( typename interval<R>::value_type const& x, interval<R> const& y ) noexcept
-  {
-    return ( x < y.upper() );
-  }
-
-  template < typename L >
-  inline constexpr bool total_less( interval<L> const& x, typename interval<L>::value_type const& y ) noexcept
-  {
-    return ( x.lower() < y );
-  }
-
-  template < typename L, typename R >
-  inline constexpr bool total_less_or_equal( interval<L> const& x, interval<R> const& y ) noexcept
-  {
-    return x.lower() == y.lower() ? x.upper() <= y.upper() : x.lower() <= y.lower();
-  }
-
-  template < typename R >
-  inline constexpr bool total_less_or_equal( typename interval<R>::value_type const& x, interval<R> const& y ) noexcept
-  {
-    return ( x <= y.upper() );
-  }
-
-  template < typename L >
-  inline constexpr bool total_less_or_equal( interval<L> const& x, typename interval<L>::value_type const& y ) noexcept
-  {
-    return ( x.lower() <= y );
-  }
-
-  // total greater
-  template < typename L, typename R >
-  inline constexpr bool total_greater( interval<L> const& x, interval<R> const& y ) noexcept
-  {
-    return x.lower() == y.lower() ? x.upper() > y.upper() : x.lower() > y.lower();
-  }
-
-  template < typename R >
-  inline constexpr bool total_greater( typename interval<R>::value_type const& x, interval<R> const& y ) noexcept
-  {
-    return ( x > y.lower() );
-  }
-
-  template < typename L >
-  inline constexpr bool total_greater( interval<L> const& x, typename interval<L>::value_type const& y ) noexcept
-  {
-    return ( x.upper() > y );
-  }
-
-  template < typename L, typename R >
-  inline constexpr bool total_greater_or_equal( interval<L> const& x, interval<R> const& y ) noexcept
-  {
-    return x.lower() == y.lower() ? x.upper() >= y.upper() : x.lower() >= y.lower();
-  }
-
-  template < typename R >
-  inline constexpr bool total_greater_or_equal( typename interval<R>::value_type const& x, interval<R> const& y ) noexcept
-  {
-    return ( x >= y.lower() );
-  }
-
-  template < typename L >
-  inline constexpr bool total_greater_or_equal( interval<L> const& x, typename interval<L>::value_type const& y ) noexcept
-  {
-    return ( x.upper() >= y );
-  }
-
-  // total equal
-  template < typename L, typename R >
-  inline constexpr bool total_equal( interval<L> const& x, interval<R> const& y ) noexcept
-  {
     return ( x.lower() == y.lower() && x.upper() == y.upper() );
   }
 
   template < typename L, typename R, std::enable_if_t<!is_interval_v<R>, std::nullptr_t> = nullptr >
-  inline constexpr bool total_equal( R const& x, interval<L> const& y ) noexcept
+  inline constexpr bool weak_equal( R const& x, interval<L> const& y ) noexcept
   {
     return ( x == y.lower() && x == y.upper() );
   }
 
   template < typename L, typename R, std::enable_if_t<!is_interval_v<R>, std::nullptr_t> = nullptr >
-  inline constexpr bool total_equal( interval<L> const& x, R const& y ) noexcept
+  inline constexpr bool weak_equal( interval<L> const& x, R const& y ) noexcept
   {
     return ( x.lower() == std::forward<L>( y ) && x.upper() == std::forward<L>( y ) );
   }

@@ -331,7 +331,9 @@ namespace streams {
       std::index_sequence<I...>
     ) noexcept {
       using swallow = std::initializer_list<int>;
-      (void)swallow{ (void( proj_.emplace_back( std::get<N-I-1>(t) ) ),0)... };
+      (void)swallow{
+        (void( proj_.emplace_back( std::get<N-I-1>(t) ) ), 0)...
+      };
     }
 
     template <
@@ -361,7 +363,7 @@ namespace streams {
     )
       noexcept
     {
-      push_tuple( std::forward<Tuple>(tup), std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>{} );
+      push_tuple( std::forward<Tuple>( tup ), std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>{} );
     }
 
 
@@ -414,11 +416,11 @@ namespace streams {
       return current_ =
         flag
         ? ( stream_1.advance(), stream_1.get() <= stream_2.get() )
-        ? ( flag = true, stream_1.get() )
-        : ( flag = false, stream_2.get() )
+          ? ( flag = true, stream_1.get() )
+          : ( flag = false, stream_2.get() )
         : ( stream_2.advance(), stream_1.get() <= stream_2.get() )
-        ? ( flag = true, stream_1.get() )
-        : ( flag = false, stream_2.get() );
+          ? ( flag = true, stream_1.get() )
+          : ( flag = false, stream_2.get() );
     }
 
     element_type current() noexcept { return current_; }

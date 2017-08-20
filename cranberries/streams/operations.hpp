@@ -5,6 +5,7 @@
 #include <type_traits>
 #include "forward.hpp"
 #include "cranberries_magic/tag.hpp"
+#include "../common/defaulted_type.hpp"
 
 
 namespace cranberries {
@@ -131,6 +132,12 @@ namespace streams {
 
     template < typename To >
     inline operators::MapToProxy<To> transformed_to() noexcept { return{}; }
+
+    inline
+    operators::Peek<cranberries_magic::defaulted_t>
+    peeked() noexcept {
+      return{ };
+    }
 
 
     template <

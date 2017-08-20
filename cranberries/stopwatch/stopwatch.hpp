@@ -59,10 +59,10 @@ namespace cranberries {
                                           clears lap time
 
       printing can be suppressed (get time using LapGet()
-          ctor("") or ctor(nullptr)       prints nothing
-          Show("") or Show(nullptr)       prints nothing, sets lap time
-          Start("") or Start(nullptr):    prints nothing, sets lap time if running
-          Stop("") or Stop(nullptr):      sets lap time. Get with LapGet()
+          ctor("") or ctor(CRANBERRIES_NULLPTR)       prints nothing
+          Show("") or Show(CRANBERRIES_NULLPTR)       prints nothing, sets lap time
+          Start("") or Start(CRANBERRIES_NULLPTR):    prints nothing, sets lap time if running
+          Stop("") or Stop(CRANBERRIES_NULLPTR):      sets lap time. Get with LapGet()
   */
 
   template < typename T >
@@ -74,27 +74,27 @@ namespace cranberries {
     typedef typename T::tick_t tick_t;
 
     // create, optionally start timing an activity
-    explicit basic_stopwatch( bool start ) throw();
-    explicit basic_stopwatch( char const* activity = "Stopwatch", bool start = true ) throw();
-    basic_stopwatch( std::ostream& log, char const* activity = "Stopwatch", bool start = true ) throw();
+    explicit basic_stopwatch( bool start ) CRANBERRIES_NOEXCEPT;
+    explicit basic_stopwatch( char const* activity = "Stopwatch", bool start = true ) CRANBERRIES_NOEXCEPT;
+    basic_stopwatch( std::ostream& log, char const* activity = "Stopwatch", bool start = true ) CRANBERRIES_NOEXCEPT;
 
     // stop and destroy a stopwatch
-    ~basic_stopwatch() throw();
+    ~basic_stopwatch() CRANBERRIES_NOEXCEPT;
 
     // get last lap time (time of last stop)
-    tick_t lap() const throw();
+    tick_t lap() const CRANBERRIES_NOEXCEPT;
 
     // predicate: return true if the stopwatch is running
-    bool is_started() const throw();
+    bool is_started() const CRANBERRIES_NOEXCEPT;
 
     // show accumulated time, keep running, set/return lap
-    tick_t show( char const* event = "show" ) throw();
+    tick_t show( char const* event = "show" ) CRANBERRIES_NOEXCEPT;
 
     // (re)start a stopwatch, set/return lap time
-    tick_t start( char const* event_namee = "start" ) throw();
+    tick_t start( char const* event_namee = "start" ) CRANBERRIES_NOEXCEPT;
 
     // stop a running stopwatch, set/return lap time
-    tick_t stop( char const* event_name = "stop" ) throw();
+    tick_t stop( char const* event_name = "stop" ) CRANBERRIES_NOEXCEPT;
 
   private:    //  members
     char const*     activity_; // "activity" string
@@ -103,7 +103,7 @@ namespace cranberries {
   };
 
   //  performs a Start() if start_now == true
-  template <typename T> inline basic_stopwatch<T>::basic_stopwatch( bool start_now ) throw()
+  template <typename T> inline basic_stopwatch<T>::basic_stopwatch( bool start_now ) CRANBERRIES_NOEXCEPT
     : activity_( "Stopwatch" )
     , lap_{}
     , log_{ std::cout }
@@ -112,62 +112,60 @@ namespace cranberries {
   }
 
   //  performs a start if start_now == true, suppress print by ctor("")
-  template <typename T> inline basic_stopwatch<T>::basic_stopwatch( char const* activity, bool start_now )  throw()
-    : activity_( activity && activity[0] ? activity : nullptr )
+  template <typename T> inline basic_stopwatch<T>::basic_stopwatch( char const* activity, bool start_now )  CRANBERRIES_NOEXCEPT
+    : activity_( activity && activity[0] ? activity : CRANBERRIES_NULLPTR )
     , lap_{}
     , log_{ std::cout }
- {
-    if (start_now)
-      activity_ ? start() : start( nullptr );
+  {
+    if (start_now) activity_ ? start() : start( CRANBERRIES_NULLPTR );
   }
 
   //  set log output, optional printout, optional start
-  template <typename T> inline basic_stopwatch<T>::basic_stopwatch( std::ostream& log, char const* activity, bool start_now )  throw()
-    : activity_( activity && activity[0] ? activity : nullptr )
+  template <typename T> inline basic_stopwatch<T>::basic_stopwatch( std::ostream& log, char const* activity, bool start_now )  CRANBERRIES_NOEXCEPT
+    : activity_( activity && activity[0] ? activity : CRANBERRIES_NULLPTR )
     , lap_{}
     , log_{ log }
   {
-    if (start_now)
-      activity_ ? start() : start( nullptr );
+    if (start_now) activity_ ? start() : start( CRANBERRIES_NULLPTR );
   }
 
   //  stop/destroy stopwatch, print message if activity was set in ctor
-  template <typename T> inline basic_stopwatch<T>::~basic_stopwatch() throw() {
-    if (is_started())
-      activity_ ? stop() : stop( nullptr );
+  template <typename T> inline basic_stopwatch<T>::~basic_stopwatch() CRANBERRIES_NOEXCEPT {
+    if (is_started()) activity_ ? stop() : stop( CRANBERRIES_NULLPTR );
   }
 
   //   predicate: return true if the stopwatch is running
-  template <typename T> inline bool basic_stopwatch<T>::is_started() const throw() {
+  template <typename T> inline bool basic_stopwatch<T>::is_started() const CRANBERRIES_NOEXCEPT {
     return BaseTimer::is_started();
   }
 
   //  get the last lap time (time of last stop)
-  template <typename T> inline typename basic_stopwatch<T>::tick_t basic_stopwatch<T>::lap() const {
+  template <typename T> inline typename basic_stopwatch<T>::tick_t basic_stopwatch<T>::lap() const CRANBERRIES_NOEXCEPT {
     return lap_;
   }
 
   //   show accumulated time, keep running, get/return lap time
+<<<<<<< HEAD
   template <typename T> inline typename basic_stopwatch<T>::tick_t basic_stopwatch<T>::show( char const* event_name ) throw() {
     return is_started() ? (( lap_ = BaseTimer::get_ticks()
       ,( (event_name && event_name[0] ? log_ << activity_ << ": " : log_ ) << event_name << " at " << get_ms( lap_ ) << "[ms]" << std::endl))
+=======
+  template <typename T> inline typename basic_stopwatch<T>::tick_t basic_stopwatch<T>::show( char const* event_name ) CRANBERRIES_NOEXCEPT {
+    return is_started() ? (( lap_ = BaseTimer::get_ticks()
+      ,( (event_name && event_name[0] ? log_ << activity_ << ": " : log_ ) << event_name << " at " << BaseTimer::get_ms( lap_ ) << "[ms]" << std::endl))
+>>>>>>> dev
       , lap_)
       : activity_ ? ( log_ << activity_ << ": not started" << std::endl, lap_ ) : lap_;
   }
 
   //   (re)start a stopwatch, set/return lap time
-  template <typename T> inline typename basic_stopwatch<T>::tick_t basic_stopwatch<T>::start( char const* event_name ) throw() {
+  template <typename T> inline typename basic_stopwatch<T>::tick_t basic_stopwatch<T>::start( char const* event_name ) CRANBERRIES_NOEXCEPT {
     if (is_started()) {
       stop( event_name );
     }
     else {
-      if (event_name && event_name[0]) {
-        if (activity_)
-        {
-          log_ << activity_ << ": ";
-        }
-        log_ << event_name << std::endl;
-      }
+      if(event_name && event_name[0])
+        (activity_ ? log_ << activity_ << ": " : log_) << event_name << std::endl;
     }
     BaseTimer::start();
     return lap_;
@@ -175,9 +173,10 @@ namespace cranberries {
 
   //   stop a running stopwatch and print the accumulated time
   template <typename T>
-  inline typename basic_stopwatch<T>::tick_t basic_stopwatch<T>::stop( char const* event_name ) throw() {
+  inline typename basic_stopwatch<T>::tick_t basic_stopwatch<T>::stop( char const* event_name ) CRANBERRIES_NOEXCEPT {
     if (is_started()) {
       lap_ = BaseTimer::get_ticks();
+<<<<<<< HEAD
       if (event_name && event_name[0]) {
         if (activity_)
         {
@@ -185,6 +184,11 @@ namespace cranberries {
         }
         log_ << event_name << " " << get_ms( lap_ ) << "[ms]" << std::endl;
       }
+=======
+      if(event_name && event_name[0])
+        (activity_ ? log_ << activity_ << ": " : log_)
+        << event_name << " " << BaseTimer::get_ms( lap_ ) << "[ms]" << std::endl;
+>>>>>>> dev
     }
     BaseTimer::clear();
     return lap_;

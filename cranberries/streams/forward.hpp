@@ -3,6 +3,7 @@
 
 #include <random>
 #include "cranberries_magic/tag.hpp"
+#include "../common/defaulted_type.hpp"
 #include "operators/Identity.hpp"
 
 namespace cranberries {

@@ -57,54 +57,6 @@ namespace compare {
     }
   }
 
-  //total_ordering to string
-  const std::string enum2str( compare::total_ordering const& x )
-  {
-    switch ( x )
-    {
-    case compare::total_ordering::less:
-      return std::string{ "less" };
-    case compare::total_ordering::greater:
-      return std::string{ "greater" };
-    case compare::total_ordering::equal:
-      return std::string{ "equal" };
-    default:
-      return std::string{ "niether" };
-    }
-  }
-
-  //interval_relation to string to string
-  const std::string enum2str( compare::interval_relation const& x )
-  {
-    switch ( x )
-    {
-    case compare::interval_relation::interval_less:
-      return std::string{ "interval_less" };
-    case compare::interval_relation::interval_greater:
-      return std::string{ "interval_greater" };
-    case compare::interval_relation::partial_less:
-      return std::string{ "partial_less" };
-    case compare::interval_relation::partial_greater:
-      return std::string{ "partial_greater" };
-    case compare::interval_relation::weak_less:
-      return std::string{ "weak_less" };
-    case compare::interval_relation::weak_greater:
-      return std::string{ "weak_greater" };
-    case compare::interval_relation::total_less:
-      return std::string{ "total_less" };
-    case compare::interval_relation::total_greater:
-      return std::string{ "total_greater" };
-    case compare::interval_relation::contain:
-      return std::string{ "contain" };
-    case compare::interval_relation::part_of:
-      return std::string{ "part_of" };
-    case compare::interval_relation::equal:
-      return std::string{ "equal" };
-    case compare::interval_relation::niether:
-      return std::string{ "niether" };
-    }
-    CRANBERRIES_LOGIC_ERROR_THROW_WITH_MSG( "unknown enumerator." );
-  }
 
   /*  ostream << enum overload  */
 
@@ -122,18 +74,6 @@ namespace compare {
 
   //ostream << weak_ordering
   std::ostream& operator<<( std::ostream& s, compare::weak_ordering const& x )
-  {
-    return ( s << enum2str( x ) );
-  }
-
-  //ostream << total_ordering
-  std::ostream& operator<<( std::ostream& s, compare::total_ordering const& x )
-  {
-    return ( s << enum2str( x ) );
-  }
-
-  //ostream << interval_relation
-  std::ostream& operator<<( std::ostream& s, compare::interval_relation const& x )
   {
     return ( s << enum2str( x ) );
   }

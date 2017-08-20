@@ -8,15 +8,15 @@ namespace streams {
 namespace operators {
 
 
-  template < typename F >
+  template < typename System >
   class TransformProxy
     : private cranberries_magic::LazyOperationModuleBase
     , private cranberries_magic::SequencialOperatorBase
     , private cranberries_magic::StreamOperatorBase
   {
   public:
-    TransformProxy( F f ) noexcept
-      : f{ std::forward<F>( f ) }
+    TransformProxy( System f ) noexcept
+      : f{ std::forward<System>( f ) }
     {}
 
     template <
@@ -32,7 +32,7 @@ namespace operators {
       return f( a );
     }
 
-    F f;
+    System f;
   };
 
   template <
@@ -52,8 +52,8 @@ namespace operators {
       : f_{ std::forward<UnaryFunc>( f ) }
     {}
 
-    template < typename F, typename T >
-    void apply( F&& f, T&& a ) noexcept {
+    template < typename System, typename T >
+    void apply( System&& f, T&& a ) noexcept {
       a =  f(std::forward<T>(a));
     }
 
@@ -71,17 +71,17 @@ namespace operators {
     {
       auto&& v = stream_.get();
       size_t i{};
-      for(;i<v.size() % 8;++i)
-          apply(f_,v[i]);
-      for(; i<v.size();i+=8){
-          apply(f_,v[i]);
-          apply(f_,v[i+1]);
-          apply(f_,v[i+2]);
-          apply(f_,v[i+3]);
-          apply(f_,v[i+4]);
-          apply(f_,v[i+5]);
-          apply(f_,v[i+6]);
-          apply(f_,v[i+7]);
+      for (; i<v.size() % 8; ++i)
+        apply(f_, v[i]);
+      for (; i<v.size(); i += 8) {
+        apply(f_, v[i]);
+        apply(f_, v[i + 1]);
+        apply(f_, v[i + 2]);
+        apply(f_, v[i + 3]);
+        apply(f_, v[i + 4]);
+        apply(f_, v[i + 5]);
+        apply(f_, v[i + 6]);
+        apply(f_, v[i + 7]);
       }
       return std::forward<Stream>(stream_);
     }
@@ -128,16 +128,16 @@ namespace operators {
       auto&& v = old.get();
       size_t i{};
       for(;i<v.size() % 8;++i)
-          stream_.emplace_back(v[i]);
+          stream_.emplace_back(f_(v[i]));
       for(; i<v.size();i+=8){
-          stream_.emplace_back(v[i]);
-          stream_.emplace_back(v[i+1]);
-          stream_.emplace_back(v[i+2]);
-          stream_.emplace_back(v[i+3]);
-          stream_.emplace_back(v[i+4]);
-          stream_.emplace_back(v[i+5]);
-          stream_.emplace_back(v[i+6]);
-          stream_.emplace_back(v[i+7]);
+          stream_.emplace_back(f_(v[i]));
+          stream_.emplace_back(f_(v[i+1]));
+          stream_.emplace_back(f_(v[i+2]));
+          stream_.emplace_back(f_(v[i+3]));
+          stream_.emplace_back(f_(v[i+4]));
+          stream_.emplace_back(f_(v[i+5]));
+          stream_.emplace_back(f_(v[i+6]));
+          stream_.emplace_back(f_(v[i+7]));
       }
       return std::forward<Stream>(stream_);
     }

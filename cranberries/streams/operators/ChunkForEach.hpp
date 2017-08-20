@@ -37,7 +37,7 @@ namespace operators {
     operator()(Stream&& stream_) {
       static_assert(
         check_t<T,N>::value,
-        "Error! invalid function desginated!"
+        "Error! invalid non-type template argument specified!"
       );
       apply(stream_, std::make_index_sequence<N>());
       return std::forward<Stream>(stream_);

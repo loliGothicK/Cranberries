@@ -19,7 +19,7 @@ namespace cranberries {
   template < typename T >
   inline interval<T> max( interval<T> const& a, interval<T> const& b ) noexcept
   {
-    return total_less( a, b ) ? b : a;
+    return weak_less( a, b ) ? b : a;
   }
 
   /*  initializer_list<interval> Argument Max  */
@@ -28,7 +28,7 @@ namespace cranberries {
   inline interval<T> max( std::initializer_list< interval<T> > list ) noexcept
   {
     std::vector< interval<T> > tmp( list );
-    std::nth_element( tmp.begin(), tmp.begin(), tmp.end(), [&]( interval<T> const& a, interval<T> const& b ) { return total_greater( a, b ); } );
+    std::nth_element( tmp.begin(), tmp.begin(), tmp.end(), [&]( interval<T> const& a, interval<T> const& b ) { return weak_greater( a, b ); } );
     return *( tmp.begin() );
   }
 
@@ -52,7 +52,7 @@ namespace cranberries {
   template < typename First, typename Second >
   inline constexpr First max( First&& a, Second&& b )
   {
-    return total_less( a, b ) ? a : b;
+    return weak_less( a, b ) ? a : b;
   }
 
   /*  Variadic arguments Max  */
@@ -71,7 +71,7 @@ namespace cranberries {
   template < typename T >
   inline interval<T> min( interval<T> const& a, interval<T> const& b ) noexcept
   {
-    return total_less( a, b ) ? a : b;
+    return weak_less( a, b ) ? a : b;
   }
 
   /*  iitializer_list<interval> Argument Min  */
@@ -80,7 +80,7 @@ namespace cranberries {
   inline interval<T> min( std::initializer_list< interval<T> > list ) noexcept
   {
     std::vector< interval<T> > tmp( list );
-    std::nth_element( tmp.begin(), tmp.begin(), tmp.end(), [&]( interval<T>& a, interval<T>& b ) { return total_less( a, b ); } );
+    std::nth_element( tmp.begin(), tmp.begin(), tmp.end(), [&]( interval<T>& a, interval<T>& b ) { return weak_less( a, b ); } );
     return *( tmp.begin() );
   }
 
@@ -105,7 +105,7 @@ namespace cranberries {
   template < typename First, typename Second >
   inline constexpr First min( First&& a, Second&& b )
   {
-    return total_less( a, b ) ? a : b;
+    return weak_less( a, b ) ? a : b;
   }
 
   /*  Variadic arguments Min  */

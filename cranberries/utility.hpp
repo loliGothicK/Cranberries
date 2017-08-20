@@ -2,21 +2,47 @@
 #define CRANBERRIES_UTILITY_HPP
 #include <utility>
 #include <type_traits>
+#include <algorithm>
 #include "type_traits.hpp"
+#include "pack_operations.hpp"
+#include "integers.hpp"
 
 namespace cranberries
 {
   template <class C>
-  constexpr auto size( const C& c ) -> decltype(c.size())
+  inline constexpr auto size( const C& c ) -> decltype(c.size())
   {
     return c.size();
   }
 
   template <class T, std::size_t N>
-  constexpr std::size_t size( const T(&)[N] ) noexcept
+  inline constexpr std::size_t size( const T(&)[N] ) noexcept
   {
     return N;
   }
+
+  template < class , class = void >
+  struct enable_get : std::false_type{};
+  
+  template < class T >
+  struct enable_get<T,
+    cranberries::void_t<decltype(std::get<0>(std::declval<T>()))>
+  > : std::true_type {};
+  
+  template < class T >
+  constexpr bool enable_get_v = enable_get<T>::value;
+  
+  template < typename T >
+  inline constexpr auto byte_swap(T&& v) {
+    uint8_t* bytes = reinterpret_cast<uint8_t*>(&v);
+    std::reverse(bytes, bytes + sizeof(T));
+    return *reinterpret_cast<cranberries::uint_t<sizeof(T) * 8>*>(bytes);
+  }
+  
+  struct Swallows {
+    template < class ... Dummy >
+    constexpr Swallows(Dummy&&...) noexcept {}
+  };
 
 namespace cranberries_magic
 {
@@ -36,9 +62,12 @@ namespace cranberries_magic
 
 } // ! namespace cranberries_magic
 
+  template < size_t N >
+  using make_reversed_index_sequence = typename pack_reverse<std::make_index_sequence<N>>::type;
+
   template < class D = void, class... Types>
-  constexpr cranberries_magic::return_type<D, Types...> make_array( Types&&... t ) {
-    return{ std::forward<Types>( t )... };
+  inline constexpr cranberries_magic::return_type<D, Types...> make_array( Types&&... t ) {
+    return{{ std::forward<Types>( t )... }};
   }
 
   template < typename F >
@@ -46,24 +75,44 @@ namespace cranberries_magic
   {
      F f_;
   public:
-    Finally( F f ) noexcept : f_( f ) {}
+    constexpr Finally( F f ) noexcept : f_( f ) {}
     Finally() = delete;
     Finally( const Finally& ) = delete;
-    Finally( Finally&& ) = default;
+    Finally( Finally&& ) = delete;
     Finally& operator=( const Finally& ) = delete;
-    Finally& operator=( Finally&& ) = default;
+    Finally& operator=( Finally&& ) = delete;
     ~Finally() noexcept { f_(); }
   };
 
   template < typename F >
-  Finally<F> make_finally(F&& f){
+  inline constexpr Finally<std::decay_t<F>> make_finally(F&& f){
     return {std::forward<F>(f)};
+  }
+
+  template <class F>
+  struct fix_result
+  {
+    F f_;
+
+    template <class ...Args>
+    constexpr auto operator()(Args&& ...args) const
+      noexcept(noexcept(f_(*std::declval<fix_result const *>(), std::declval<Args>()...)))
+      -> decltype(f_(*std::declval<fix_result const *>(), std::declval<Args>()...))
+    {
+      return f_(std::move(*this), std::forward<Args>(args)...);
+    }
+  };
+
+  template <class F>
+  inline constexpr fix_result<std::decay_t<F>> make_fix(F &&f) noexcept
+  {
+    return { std::forward<F>(f) };
   }
   
 namespace cranberries_magic {
  
   template <class Base, class T, class Derived, class... Args>
-  auto INVOKE(T Base::*pmf, Derived&& ref, Args&&... args)
+  inline auto INVOKE(T Base::*pmf, Derived&& ref, Args&&... args)
       noexcept(noexcept((std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...)))
    -> std::enable_if_t<std::is_function<T>::value &&
                        std::is_base_of<Base, std::decay_t<Derived>>::value,
@@ -73,7 +122,7 @@ namespace cranberries_magic {
   }
  
   template <class Base, class T, class RefWrap, class... Args>
-  auto INVOKE(T Base::*pmf, RefWrap&& ref, Args&&... args)
+  inline auto INVOKE(T Base::*pmf, RefWrap&& ref, Args&&... args)
       noexcept(noexcept((ref.get().*pmf)(std::forward<Args>(args)...)))
    -> std::enable_if_t<std::is_function<T>::value &&
                        is_reference_wrapper_v<std::decay_t<RefWrap>>,
@@ -84,7 +133,7 @@ namespace cranberries_magic {
   }
  
   template <class Base, class T, class Pointer, class... Args>
-  auto INVOKE(T Base::*pmf, Pointer&& ptr, Args&&... args)
+  inline auto INVOKE(T Base::*pmf, Pointer&& ptr, Args&&... args)
       noexcept(noexcept(((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...)))
    -> std::enable_if_t<std::is_function<T>::value &&
                        !is_reference_wrapper_v<std::decay_t<Pointer>> &&
@@ -95,7 +144,7 @@ namespace cranberries_magic {
   }
  
   template <class Base, class T, class Derived>
-  auto INVOKE(T Base::*pmd, Derived&& ref)
+  inline auto INVOKE(T Base::*pmd, Derived&& ref)
       noexcept(noexcept(std::forward<Derived>(ref).*pmd))
    -> std::enable_if_t<!std::is_function<T>::value &&
                        std::is_base_of<Base, std::decay_t<Derived>>::value,
@@ -105,7 +154,7 @@ namespace cranberries_magic {
   }
  
   template <class Base, class T, class RefWrap>
-  auto INVOKE(T Base::*pmd, RefWrap&& ref)
+  inline auto INVOKE(T Base::*pmd, RefWrap&& ref)
       noexcept(noexcept(ref.get().*pmd))
    -> std::enable_if_t<!std::is_function<T>::value &&
                        is_reference_wrapper_v<std::decay_t<RefWrap>>,
@@ -115,7 +164,7 @@ namespace cranberries_magic {
   }
  
   template <class Base, class T, class Pointer>
-  auto INVOKE(T Base::*pmd, Pointer&& ptr)
+  inline auto INVOKE(T Base::*pmd, Pointer&& ptr)
       noexcept(noexcept((*std::forward<Pointer>(ptr)).*pmd))
    -> std::enable_if_t<!std::is_function<T>::value &&
                        !is_reference_wrapper_v<std::decay_t<Pointer>> &&
@@ -126,7 +175,7 @@ namespace cranberries_magic {
   }
  
   template <class F, class... Args>
-  auto INVOKE(F&& f, Args&&... args)
+  inline auto INVOKE(F&& f, Args&&... args)
       noexcept(noexcept(std::forward<F>(f)(std::forward<Args>(args)...)))
    -> std::enable_if_t<!std::is_member_pointer<std::decay_t<F>>::value,
       decltype(std::forward<F>(f)(std::forward<Args>(args)...))>
@@ -137,7 +186,7 @@ namespace cranberries_magic {
 } // ! namespace cranberries_magic
  
   template< class F, class... ArgTypes >
-  auto invoke(F&& f, ArgTypes&&... args)
+  inline auto invoke(F&& f, ArgTypes&&... args)
       // exception specification for QoI
       noexcept(noexcept(cranberries_magic::INVOKE(std::forward<F>(f), std::forward<ArgTypes>(args)...)))
    -> decltype(cranberries_magic::INVOKE(std::forward<F>(f), std::forward<ArgTypes>(args)...))
@@ -148,7 +197,7 @@ namespace cranberries_magic {
 namespace cranberries_magic {
 
   template <class F, class Tuple, std::size_t... I>
-  constexpr decltype(auto) apply_impl( F&& f, Tuple&& t, std::index_sequence<I...> )
+  inline constexpr decltype(auto) apply_impl( F&& f, Tuple&& t, std::index_sequence<I...> )
   {
     return cranberries::invoke(std::forward<F>(f), std::get<I>(std::forward<Tuple>(t))...);
     // Note: std::invoke is a C++17 feature
@@ -157,11 +206,19 @@ namespace cranberries_magic {
 } // ! namespace cranberries_magic
  
   template <class F, class Tuple>
-  constexpr decltype(auto) apply(F&& f, Tuple&& t)
+  inline constexpr decltype(auto) apply(F&& f, Tuple&& t)
   {
       return cranberries_magic::apply_impl(std::forward<F>(f), std::forward<Tuple>(t),
           std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>{});
   }
+
+  template <class F, class Tuple>
+  inline constexpr decltype(auto) reverse_apply(F&& f, Tuple&& t)
+  {
+    return cranberries_magic::apply_impl(std::forward<F>(f), std::forward<Tuple>(t),
+      make_reversed_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>{});
+  }
+
 
   template <
     typename Range,
@@ -172,7 +229,7 @@ namespace cranberries_magic {
           is_callable<BinaryOp,T,T>
     >> = nullptr
   >
-  void adjacent_for_each
+  inline void adjacent_for_each
   (
     Range&& range,
     BinaryOp&& f
@@ -193,6 +250,14 @@ namespace cranberries_magic {
     }
   }
 
-}
+  template < typename F >
+  inline auto make_delegate(F&& f) noexcept {
+    return[f = std::move(f)](auto&&... args){
+      return f(std::forward<decltype(args)>(args)...);
+    };
+  }
+
+
+} // ! - end namespace cranberries
 
 #endif

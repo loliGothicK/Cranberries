@@ -1,6 +1,5 @@
 ![logo](https://github.com/LoliGothick/Cranberries/blob/master/icon/logo_with_txt.png)
 [![Build Status](https://travis-ci.org/LoliGothick/Cranberries.svg?branch=master)](https://travis-ci.org/LoliGothick/Cranberries)
-==========
 雑多な趣味コーディングによる成果物の墓場です
 
 # License
@@ -26,6 +25,21 @@ MIT License
 
 - Type Traits Library（メタ関数ライブラリ）
   - cranberries/type_traits.hpp
-  
+
 - Utility Library（ユーティリティーライブラリ）
   - cranberries/utility.hpp
+
+- Pack Operations Library (パック操作ライブラリ)
+  - cranberries/pack_operations.hpp
+
+- Function Utility Library (関数ユーティリティーライブラリ)
+  - cranberries/func_util.hpp
+
+- Meta Bind Library (メタ関数バインドとカリー化ライブラリ)
+  - cranberries/meta_bind.hpp
+
+- Math Library (数学ライブラリ)
+  - cranberries/math.hpp
+
+- Algorithm Library (アルゴリズムライブラリ)
+  - cranberries/algorithm.hpp

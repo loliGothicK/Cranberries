@@ -27,16 +27,16 @@ try{
       )
     ;
 
-  make_stream::fopen("./file_io_test.dat")
-    >> eager::read_line()
-    >> lazy::transformed([](auto&& a) { return a += "hoge"; })
-    >> eager::write()
-    ;
+  // make_stream::fopen("./file_io_test.dat")
+  //   >> eager::read_line()
+  //   >> lazy::transformed([](auto&& a) { return a += "hoge"; })
+  //   >> eager::write()
+  //   ;
 
-  make_stream::fopen<char>("./binary.dat")
-    >> eager::read_byte()
-    >> eager::println_to()
-    ;
+  // make_stream::fopen<char>("./binary.dat")
+  //   >> eager::read_byte()
+  //   >> eager::println_to()
+  //   ;
 
   std::vector<int> v1 = make_stream::range(1, 4) >> eager::convert;
 
