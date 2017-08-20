@@ -170,19 +170,9 @@ namespace cranberries {
   inline typename basic_stopwatch<T>::tick_t basic_stopwatch<T>::stop( char const* event_name ) CRANBERRIES_NOEXCEPT {
     if (is_started()) {
       lap_ = BaseTimer::get_ticks();
-<<<<<<< HEAD
-      if (event_name && event_name[0]) {
-        if (activity_)
-        {
-          log_ << activity_ << ": ";
-        }
-        log_ << event_name << " " << get_ms( lap_ ) << "[ms]" << std::endl;
-      }
-=======
       if(event_name && event_name[0])
         (activity_ ? log_ << activity_ << ": " : log_)
         << event_name << " " << BaseTimer::get_ms( lap_ ) << "[ms]" << std::endl;
->>>>>>> dev
     }
     BaseTimer::clear();
     return lap_;
