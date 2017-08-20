@@ -1,14 +1,21 @@
 compiler:
+#  - clang
   - gcc
 cache:
   apt: true
 addons:
   apt:
     sources:
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-precise-3.8
+      - llvm-toolchain-precise
     packages:
+      - clang-3.8
       - g++-6
+      - gcc-6
 install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-6" CC="gcc-6" COMPILER="g++-6"; fi
+  - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.8" CC="clang-3.8" COMPILER="clang++-3.8"; fi
 language: cpp
 script:
   - mkdir build
@@ -18,6 +25,4 @@ script:
   - ./dual_number_lib_tests
   - ./interval_lib_tests
   - ./stream_lib_tests
-  - ./rkf45_lib_tests
-  - ./stopwatch_lib_tests
   - ./func_util_lib_tests
