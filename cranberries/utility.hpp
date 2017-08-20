@@ -3,7 +3,8 @@
 #include <utility>
 #include <type_traits>
 #include "type_traits.hpp"
-#include "pack_traits.hpp"
+#include "pack_operations.hpp"
+#include "integers.hpp"
 
 namespace cranberries
 {
@@ -18,6 +19,29 @@ namespace cranberries
   {
     return N;
   }
+
+  template < class , class = void >
+  struct enable_get : std::false_type{};
+  
+  template < class T >
+  struct enable_get<T,
+    cranberries::void_t<decltype(std::get<0>(std::declval<T>()))>
+  > : std::true_type {};
+  
+  template < class T >
+  constexpr bool enable_get_v = enable_get<T>::value;
+  
+  template < typename T >
+  inline constexpr auto byte_swap(T&& v) {
+    uint8_t* bytes = reinterpret_cast<uint8_t*>(&v);
+    std::reverse(bytes, bytes + sizeof(T));
+    return *reinterpret_cast<cranberries::uint_t<sizeof(T) * 8>*>(bytes);
+  }
+  
+  struct Swallows {
+    template < class ... Dummy >
+    constexpr Swallows(Dummy&&...) noexcept {}
+  };
 
 namespace cranberries_magic
 {
@@ -42,7 +66,7 @@ namespace cranberries_magic
 
   template < class D = void, class... Types>
   inline constexpr cranberries_magic::return_type<D, Types...> make_array( Types&&... t ) {
-    return{ std::forward<Types>( t )... };
+    return{{ std::forward<Types>( t )... }};
   }
 
   template < typename F >
@@ -50,17 +74,17 @@ namespace cranberries_magic
   {
      F f_;
   public:
-    Finally( F f ) noexcept : f_( f ) {}
+    constexpr Finally( F f ) noexcept : f_( f ) {}
     Finally() = delete;
     Finally( const Finally& ) = delete;
-    Finally( Finally&& ) = default;
+    Finally( Finally&& ) = delete;
     Finally& operator=( const Finally& ) = delete;
-    Finally& operator=( Finally&& ) = default;
+    Finally& operator=( Finally&& ) = delete;
     ~Finally() noexcept { f_(); }
   };
 
   template < typename F >
-  inline Finally<std::decay_t<F>> make_finally(F&& f){
+  inline constexpr Finally<std::decay_t<F>> make_finally(F&& f){
     return {std::forward<F>(f)};
   }
 
@@ -70,7 +94,7 @@ namespace cranberries_magic
     F f_;
 
     template <class ...Args>
-    auto operator()(Args&& ...args) const
+    constexpr auto operator()(Args&& ...args) const
       noexcept(noexcept(f_(*std::declval<fix_result const *>(), std::declval<Args>()...)))
       -> decltype(f_(*std::declval<fix_result const *>(), std::declval<Args>()...))
     {
@@ -79,7 +103,7 @@ namespace cranberries_magic
   };
 
   template <class F>
-  inline fix_result<std::decay_t<F>> make_fix(F &&f)
+  inline constexpr fix_result<std::decay_t<F>> make_fix(F &&f) noexcept
   {
     return { std::forward<F>(f) };
   }

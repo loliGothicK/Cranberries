@@ -5,6 +5,8 @@
 #include <algorithm>
 #include "../stream_error.hpp"
 #include "../utility.hpp"
+#include "../../common/defaulted_type.hpp"
+
 
 namespace cranberries {
 namespace streams {

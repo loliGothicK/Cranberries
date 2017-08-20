@@ -21,8 +21,22 @@ namespace cranberries
 #endif
   };
 
+  template < class T >
+  struct nested_type_class {
+    using type = T;
+  };
+  
+  template < class T >
+  using get_type = typename T::type;
+  
+  template < class T >
+  constexpr auto get_value = T::value;
+
   template < bool B >
   using bool_constant = std::integral_constant<bool, B>;
+
+  template < size_t S >
+  using size_constant = std::integral_constant<size_t, S>;
 
   template < bool Pred, typename IfType = std::nullptr_t >
   using enabler_t = std::enable_if_t<Pred, IfType>;
@@ -125,62 +139,29 @@ namespace cranberries
   constexpr bool min_sizeof_v = min_sizeof<Types...>::value;
 
 
-  template < template<class...> class Pred, typename ...Types >
-  struct apply_ {
-    using type = Pred<Types...>;
-  };
-
-  template < template<class...> class Pred, typename ...Types >
-  struct apply_decay {
-    using type = Pred<std::decay_t<Types>...>;
-  };
-
-  template < template<class...> class Pred, typename ...Types >
-  struct apply_remove_cvr {
-    using type = Pred<remove_cvr_t<Types>...>;
-  };
-
-  template < template<class...> class Pred, typename ...Types >
-  using apply_t = typename apply_<Pred, Types...>::type;
-
-  template < template<class...> class Pred, typename ...Types >
-  using apply_decay_t = typename apply_decay<Pred, Types...>::type;
-
-  template < template<class...> class Pred, typename ...Types >
-  using apply_remove_cvr_t = typename apply_remove_cvr<Pred, Types...>::type;
-
-  template < template<class...> class Pred, typename ...Types >
-  using apply_result_t = typename apply_t<Pred, Types...>::type;
-
-  template < template<class...> class Pred, typename ...Types >
-  constexpr bool apply_result_v = apply_t<Pred, Types...>::value;
-
-  template < template<class...> class Pred, typename ...Types >
-  using apply_decay_result_t = typename apply_decay_t<Pred, Types...>::type;
-
-  template < template<class...> class Pred, typename ...Types >
-  constexpr bool apply_decay_result_v = apply_decay_t<Pred, Types...>::value;
-
-  template < template<class...> class Pred, typename ...Types >
-  using apply_remove_cvr_result_t = typename apply_remove_cvr_t<Pred, Types...>::type;
-
-  template < template<class...> class Pred, typename ...Types >
-  constexpr bool apply_remove_cvr_result_v = apply_remove_cvr_t<Pred, Types...>::value;
-
-
-
-
   template < typename T, typename ...Types >
   struct all_match : conjunction<std::is_same<T, Types>...> {};
+
+  template < typename T, typename ...Types >
+  constexpr bool all_match_v = all_match<T, Types...>::value;
 
   template < typename T, typename ...Types >
   struct any_match : disjunction<std::is_same<T, Types>...> {};
 
   template < typename T, typename ...Types >
+  constexpr bool any_match_v = any_match<T, Types...>::value;
+
+  template < typename T, typename ...Types >
   struct none_match : conjunction<negation<std::is_same<T, Types>>...> {};
+ 
+  template < typename T, typename ...Types >
+  constexpr bool none_match_v = none_match<T, Types...>::value;
 
   template < typename T, typename ...Types >
   using all_same = all_match<T, Types...>;
+
+  template < typename T, typename ...Types >
+  constexpr bool all_same_v = all_match<T, Types...>::value;
 
   template < template<class> class Pred, class ...Types >
   struct all_match_if : conjunction<Pred<Types>...> {};
@@ -190,6 +171,16 @@ namespace cranberries
 
   template < template<class> class Pred, class ...Types >
   struct none_match_if : disjunction<negation<Pred<Types>>...> {};
+
+  template < template<class> class Pred, class ...Types >
+  constexpr bool all_match_if_v = all_match_if<Pred, Types...>::value;
+
+  template < template<class> class Pred, class ...Types >
+  constexpr bool any_match_if_v = any_match_if<Pred, Types...>::value;
+
+  template < template<class> class Pred, class ...Types >
+  constexpr bool none_match_if_v = none_match_if<Pred, Types...>::value;
+
   
 namespace cranberries_magic {
   template < template<class...> class Pred, class T, class Tuple >
@@ -247,21 +238,6 @@ namespace cranberries_magic {
   template < template<class> class Pred, class Tuple >
   constexpr bool tuple_none_match_if_v = tuple_none_match_if<Pred, Tuple>::value;
 
-  template < typename T, typename ...Args >
-  constexpr bool all_match_v = all_match<T, Args...>::value;
-
-  template < typename T, typename ...Args >
-  constexpr bool any_match_v = any_match<T, Args...>::value;
-
-  template < typename T, typename ...Args >
-  constexpr bool none_match_v = none_match<T, Args...>::value;
-
-  template < template<class> class Pred, typename ...Args >
-  constexpr bool all_match_if_v = all_match_if<Pred, Args...>::value;
-  template < template<class> class Pred, typename ...Args >
-  constexpr bool any_match_if_v = any_match_if<Pred, Args...>::value;
-  template < template<class> class Pred, typename ...Args >
-  constexpr bool none_match_if_v = none_match_if<Pred, Args...>::value;
 
   template < typename T >
   struct is_tuple : std::false_type {};
@@ -380,6 +356,18 @@ namespace cranberries_magic{
   template < typename T >
   constexpr bool has_value_field_v = has_value_field<T>::value;
 
+  template < class, class = void >
+  struct has_type_member : std::false_type
+  {};
+
+  template < class T >
+  struct has_type_member<T,
+    void_t<decltype(std::declval<typename std::decay_t<T>::type>())>
+  > : std::true_type
+  {};
+
+  template < typename T >
+  constexpr bool has_type_member_v = has_type_member<T>::value;
 
   template <
     typename T,
@@ -470,10 +458,10 @@ namespace cranberries_magic{
   {};
 
   // variable template
-  template <class T, class R = void>
+  template <class T, class R = return_any>
   constexpr bool is_callable_v = is_callable<T, R>::value;
 
-  template <class T, class R = void>
+  template <class T, class R = return_any>
   constexpr bool is_nothrow_callable_v = is_nothrow_callable<T, R>::value;
 
 

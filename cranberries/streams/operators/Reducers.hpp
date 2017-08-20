@@ -7,6 +7,8 @@
 #include <cstddef>
 #include "../utility.hpp"
 #include "../stat/stat.hpp"
+#include "../../common/defaulted_type.hpp"
+
 
 namespace cranberries{
 namespace streams{

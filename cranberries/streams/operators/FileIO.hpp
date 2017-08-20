@@ -6,6 +6,8 @@
 #include <cstring>
 #include "../utility.hpp"
 #include "../concept.hpp"
+#include "../../common/defaulted_type.hpp"
+
 
 namespace cranberries {
 namespace streams {

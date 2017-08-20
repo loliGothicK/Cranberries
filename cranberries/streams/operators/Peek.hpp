@@ -3,6 +3,7 @@
 #include <utility>
 #include <type_traits>
 #include "../utility.hpp"
+#include "../../common/defaulted_type.hpp"
 
 namespace cranberries {
 namespace streams {

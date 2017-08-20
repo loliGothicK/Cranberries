@@ -4,8 +4,9 @@
 #include <type_traits>
 #include "../stream_error.hpp"
 #include "../utility.hpp"
-#include "../algorithm/radix_sort.hpp"
+#include "../../algorithm.hpp"
 #include "../cranberries_magic/tag.hpp"
+#include "../../common/defaulted_type.hpp"
 
 namespace cranberries {
 namespace streams {

@@ -8,6 +8,8 @@
 #include "utility.hpp"
 #include "InfiniteStream.hpp"
 #include "StreamConverter.hpp"
+#include "../common/defaulted_type.hpp"
+
 
 namespace cranberries{
 namespace streams{

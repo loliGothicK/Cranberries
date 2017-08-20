@@ -5,6 +5,7 @@
 #include <type_traits>
 #include "forward.hpp"
 #include "cranberries_magic/tag.hpp"
+#include "../common/defaulted_type.hpp"
 
 
 namespace cranberries {
