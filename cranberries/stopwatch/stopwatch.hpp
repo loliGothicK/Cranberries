@@ -145,15 +145,9 @@ namespace cranberries {
   }
 
   //   show accumulated time, keep running, get/return lap time
-<<<<<<< HEAD
-  template <typename T> inline typename basic_stopwatch<T>::tick_t basic_stopwatch<T>::show( char const* event_name ) throw() {
-    return is_started() ? (( lap_ = BaseTimer::get_ticks()
-      ,( (event_name && event_name[0] ? log_ << activity_ << ": " : log_ ) << event_name << " at " << get_ms( lap_ ) << "[ms]" << std::endl))
-=======
   template <typename T> inline typename basic_stopwatch<T>::tick_t basic_stopwatch<T>::show( char const* event_name ) CRANBERRIES_NOEXCEPT {
     return is_started() ? (( lap_ = BaseTimer::get_ticks()
       ,( (event_name && event_name[0] ? log_ << activity_ << ": " : log_ ) << event_name << " at " << BaseTimer::get_ms( lap_ ) << "[ms]" << std::endl))
->>>>>>> dev
       , lap_)
       : activity_ ? ( log_ << activity_ << ": not started" << std::endl, lap_ ) : lap_;
   }
