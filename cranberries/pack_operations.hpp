@@ -442,8 +442,8 @@ namespace cranberries {
   struct
     pack_replace_all< tPack<Types...> >
   {
-    template < class... Types >
-    using type = tPack<Types...>;
+    template < class... NewTypes >
+    using type = tPack<NewTypes...>;
   };
 
   template < class T, class... Ts >
