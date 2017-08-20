@@ -2,6 +2,7 @@
 #define CRANBERRIES_UTILITY_HPP
 #include <utility>
 #include <type_traits>
+#include <algorithm>
 #include "type_traits.hpp"
 #include "pack_operations.hpp"
 #include "integers.hpp"
