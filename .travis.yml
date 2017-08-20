@@ -1,22 +1,28 @@
-compiler:
-  - clang
-  - gcc
-cache:
-  apt: true
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-      - llvm-toolchain-precise-4.0
-      - llvm-toolchain-precise
-    packages:
-      - clang-4.0
-      - g++-6
-      - gcc-6
-install:
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-6" CC="gcc-6" COMPILER="g++-6"; fi
-  - if [ "$CXX" = "clang++" ]; then export CXX="clang++-4.0" CC="clang-4.0" COMPILER="clang++-4.0"; fi
 language: cpp
+sudo: required
+
+os:
+    - linux
+
+compiler:
+    - clang
+
+env:
+    - TARGET_CPU=x86 BUILD_CONFIGURATION=Debug
+    - TARGET_CPU=x86 BUILD_CONFIGURATION=Release
+    - TARGET_CPU=x64 BUILD_CONFIGURATION=Debug
+    - TARGET_CPU=x64 BUILD_CONFIGURATION=Release
+    - TARGET_CPU=amd64 BUILD_CONFIGURATION=Debug
+    - TARGET_CPU=amd64 BUILD_CONFIGURATION=Release
+
+before_install:  
+  - sudo apt-add-repository "deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-4.0 main"
+  - sudo apt-get update -qq
+
+install: 
+  - sudo apt-get install libboost-all-dev
+  - sudo apt-get install --allow-unauthenticated -qq clang++-4.0
+  - export CXX="clang++-4.0"
 script:
   - mkdir build
   - cd build
@@ -27,4 +33,4 @@ script:
   - ./stream_lib_tests
   - ./rkf45_lib_tests
   - ./stopwatch_lib_tests
-  
+  - ./func_util_lib_tests
