@@ -67,25 +67,25 @@ constexpr decltype(auto) operator <<= (F&& f, A&& a)
 namespace cranberries_magic {
   template < class F, class Tuple, size_t... I >
   constexpr std::enable_if_t<disjunction_v<
-    std::is_void< std::result_of_t< F(decltype(cranberries::get<I>(std::declval<std::decay_t<Tuple>>()))) > >...>
+    std::is_void< std::result_of_t< F(decltype(std::get<I>(std::declval<std::decay_t<Tuple>>()))) > >...>
   >
   each_(F&& f, Tuple&& tup, std::index_sequence<I...>)
-    noexcept(conjunction_v<bool_constant<noexcept( std::declval<F>()( cranberries::get<I>(std::declval<Tuple>()) ) )>...>)
+    noexcept(conjunction_v<bool_constant<noexcept( std::declval<F>()( std::get<I>(std::declval<Tuple>()) ) )>...>)
   {
     using swallow = std::initializer_list<int>;
     (void)swallow {
-      (void(f(cranberries::get<I>(tup))), 0)...
+      (void(f(std::get<I>(tup))), 0)...
     };
   }
 
   template < class F, class Tuple, size_t... I >
   constexpr std::enable_if_t<conjunction_v<
-    negation<std::is_void<std::result_of_t<F(decltype(cranberries::get<I>(std::declval<std::decay_t<Tuple>>())))>>>... >,
-    std::tuple<std::result_of_t<F(decltype(cranberries::get<I>(std::declval<std::decay_t<Tuple>>())))>...>>
+    negation<std::is_void<std::result_of_t<F(decltype(std::get<I>(std::declval<std::decay_t<Tuple>>())))>>>... >,
+    std::tuple<std::result_of_t<F(decltype(std::get<I>(std::declval<std::decay_t<Tuple>>())))>...>>
   each_(F&& f, Tuple&& tup, std::index_sequence<I...>)
-    noexcept(conjunction_v<bool_constant<noexcept( std::declval<F>()( cranberries::get<I>(std::declval<Tuple>()) ) )>...>)
+    noexcept(conjunction_v<bool_constant<noexcept( std::declval<F>()( std::get<I>(std::declval<Tuple>()) ) )>...>)
   {
-    return { f(cranberries::get<I>(tup))... };
+    return { f(std::get<I>(tup))... };
   }
 } // ! namespace cranberries_magic
 
@@ -105,9 +105,9 @@ namespace cranberries_magic {
 
     template < size_t I, class F, class Tuple, size_t... Indices >
     static constexpr decltype(auto) invoke(F&& f, Tuple&& t, std::index_sequence<Indices...>)
-      noexcept(noexcept( f(cranberries::get<I*N + Indices>(t)...) ))
+      noexcept(noexcept( f(std::get<I*N + Indices>(t)...) ))
     {
-      return f(cranberries::get<I*N + Indices>(t)...);
+      return f(std::get<I*N + Indices>(t)...);
     }
 
     template < class F, size_t... I >
@@ -152,9 +152,9 @@ namespace cranberries_magic {
 
     template < size_t I, class F, class Tuple, size_t... Indices >
     static constexpr decltype(auto) invoke(F&& f, Tuple&& t, std::index_sequence<Indices...>)
-      noexcept(noexcept( f(cranberries::get<I + Indices>(t)...) ))
+      noexcept(noexcept( f(std::get<I + Indices>(t)...) ))
     {
-      return f(cranberries::get<I + Indices>(t)...);
+      return f(std::get<I + Indices>(t)...);
     }
 
     template < class F, size_t... I >
