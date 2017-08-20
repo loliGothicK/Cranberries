@@ -160,14 +160,14 @@ constexpr bool apply_result_v = apply_<Pred, Types...>::value;
 
 
   template < template < class > class G, template < class > class... Preds >
-  struct curried_ {
+  struct composition_ {
     template < class T >
-    using pred = G<apply_result_t<curried_<Preds...>::template pred,T>>;
+    using pred = G<apply_result_t<composition_<Preds...>::template pred,T>>;
   };
 
 
   template < template < class > class G, template < class > class F >
-  struct curried_<G,F> {
+  struct composition_<G,F> {
     template < class T >
     using pred = G<typename F<T>::type>;
   };

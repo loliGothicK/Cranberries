@@ -32,7 +32,7 @@ namespace cranberries_magic{
 
 namespace cranberries_magic {
   template < class F, class G >
-  struct curried_proxy {
+  struct composition_proxy {
     F f;
     G g;
     template < class... Args >
@@ -46,7 +46,7 @@ namespace cranberries_magic {
 } // ! namespace cranberries_magic
 
 template < class F, class G >
-cranberries_magic::curried_proxy<std::decay_t<F>, std::decay_t<G>>
+cranberries_magic::composition_proxy<std::decay_t<F>, std::decay_t<G>>
 constexpr operator * (F&& f, G&& g) noexcept {
   return { std::forward<F>(f), std::forward<G>(g) };
 }
@@ -69,7 +69,7 @@ namespace cranberries_magic {
   template < class F, class Tuple, size_t... I >
   constexpr std::enable_if_t<pack_disjunction_v<
     pack_t2v_transform_t<
-    curried_<std::is_void, bind_2nd<bind_friendly_result_of, F>::template expr>::template pred,
+    composition_<std::is_void, bind_2nd<bind_friendly_result_of, F>::template expr>::template pred,
     std::decay_t<Tuple>>
   >, void >
   each_(F&& f, Tuple&& tup, swallow_t<I...>)
@@ -86,7 +86,7 @@ namespace cranberries_magic {
 
   template < class F, class Tuple, size_t... I >
   constexpr std::enable_if_t<pack_conjunction_v<pack_t2v_transform_t<
-      curried_<negation, std::is_void, bind_2nd<bind_friendly_result_of, F>::template expr>::template pred,
+      composition_<negation, std::is_void, bind_2nd<bind_friendly_result_of, F>::template expr>::template pred,
       std::decay_t<Tuple>
     >>,
     pack_t2t_transform_t<bind_2nd<bind_friendly_result_of, F>::template expr, std::decay_t<Tuple>>
@@ -131,7 +131,7 @@ namespace cranberries_magic {
     constexpr
     std::enable_if_t<
       pack_disjunction_v<pack_t2v_transform_t<
-        curried_<std::is_void, bind_2nd<bind_friendly_result_of, F>::template expr>::template pred,
+        composition_<std::is_void, bind_2nd<bind_friendly_result_of, F>::template expr>::template pred,
         pack_chunk_t<N, type_pack<Args...>>
       >>,
       void>
@@ -150,7 +150,7 @@ namespace cranberries_magic {
     constexpr
       std::enable_if_t<
         !pack_disjunction_v<pack_t2v_transform_t<
-          curried_<std::is_void, bind_2nd<bind_friendly_result_of, F>::template expr>::template pred,
+          composition_<std::is_void, bind_2nd<bind_friendly_result_of, F>::template expr>::template pred,
           pack_chunk_t<N, type_pack<Args...>>
       >>,
       repack_t<pack_t2t_transform_t<
@@ -183,7 +183,7 @@ namespace cranberries_magic {
     template < class F, size_t... I >
     std::enable_if_t<
       pack_disjunction_v<pack_t2v_transform_t<
-        curried_<std::is_void, bind_2nd<bind_friendly_result_of, F>::template expr>::template pred,
+        composition_<std::is_void, bind_2nd<bind_friendly_result_of, F>::template expr>::template pred,
         pack_adjacent_chunk_t<N, type_pack<Args...>>
       >>,
       void>
@@ -203,7 +203,7 @@ namespace cranberries_magic {
     constexpr
       std::enable_if_t<
         !pack_disjunction_v<pack_t2v_transform_t<
-          curried_<std::is_void, bind_2nd<bind_friendly_result_of, F>::template expr>::template pred,
+          composition_<std::is_void, bind_2nd<bind_friendly_result_of, F>::template expr>::template pred,
           pack_adjacent_chunk_t<N, type_pack<Args...>>>>,
         repack_t<pack_t2t_transform_t<
           bind_2nd<bind_friendly_result_of, F>::template expr,
