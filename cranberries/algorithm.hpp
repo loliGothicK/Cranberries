@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <algorithm>
 #include "type_traits.hpp"
-#include "utility.hpp"
+#include "utility/utility.hpp"
 #include "common/defaulted_type.hpp"
 
 namespace cranberries {

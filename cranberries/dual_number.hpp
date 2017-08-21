@@ -5,7 +5,7 @@
 #include <cmath>
 #include <type_traits>
 #include "type_traits.hpp"
-#include "utility.hpp"
+#include "utility/utility.hpp"
 #include "./common/exception.hpp"
 
 namespace cranberries
