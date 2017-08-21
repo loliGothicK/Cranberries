@@ -202,12 +202,6 @@ namespace cranberries_magic {
           std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>{});
   }
 
-  template <class F, class Tuple>
-  inline constexpr decltype(auto) reverse_apply(F&& f, Tuple&& t)
-  {
-    return cranberries_magic::apply_impl(std::forward<F>(f), std::forward<Tuple>(t),
-      make_reversed_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>{});
-  }
 
 
   template <
