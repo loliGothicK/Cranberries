@@ -9,7 +9,17 @@ struct Add {
   template < class T >
   constexpr auto operator()(T a_, T b_) const noexcept { return a_ + b_; }
 };
+struct Sum 
+{
+    template < class Head, class... Tail >
+    constexpr auto operator()(Head&& head, Tail&&... tail) const{
+        auto result = head;
+        (void)std::initializer_list<int>{ (void( result += tail),0)... };
+        return result;
+    }
+};
 
+constexpr int test(int,int,int) { return 5; }
 
 int main() {
   auto println = [](auto&& head, auto&&... tail) {
@@ -17,6 +27,18 @@ int main() {
     (void)cranberries::Swallows{ (void(std::cout << " " << tail),0)... };
     std::cout << std::endl;
   };
+
+  constexpr auto sum = Sum{};
+  constexpr auto curried_sum = cranberries::curry(sum);
+  
+  // 最後に引数なしでoperator()を呼ばないと評価されない
+  static_assert(curried_sum(1)(2)(3)(4)(5)() == 15, "");
+  // 一度に複数の引数を渡せるようにもした(カリー化とはいったい...)
+  static_assert(curried_sum(1, 2, 3)(4)(5)() == 15, "");
+  
+  constexpr int value = cranberries::curry_<4>(sum)(1)(2)(3)(4);
+  static_assert(value==10, "");
+  static_assert(cranberries::curry_(test)==5, "");
 
   using namespace cranberries::func_util;
 
