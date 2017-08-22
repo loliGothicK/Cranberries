@@ -38,7 +38,7 @@ int main() {
   
   constexpr int value = cranberries::curry_<4>(sum)(1)(2)(3)(4);
   static_assert(value==10, "");
-  static_assert(cranberries::curry_(test)(0)(0)(0)()==5, "");
+  static_assert(cranberries::curry_(test)(0)(0)(0)==5, "");
 
   using namespace cranberries::func_util;
 
