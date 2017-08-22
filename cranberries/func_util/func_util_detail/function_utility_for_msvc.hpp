@@ -30,27 +30,6 @@ namespace cranberries_magic{
     return cranberries_magic::make_tuple_from_impl(std::forward<Range>(range), std::make_index_sequence<N>{});
   }
 
-namespace cranberries_magic {
-  template < class F, class G >
-  struct composition_proxy {
-    F f;
-    G g;
-    template < class... Args >
-    constexpr decltype(auto) operator()(Args&&... args) const
-      noexcept(noexcept(f(g(std::forward<Args>(args)...))))
-    {
-      return f(g(std::forward<Args>(args)...));
-    }
-  };
-
-} // ! namespace cranberries_magic
-
-template < class F, class G >
-cranberries_magic::composition_proxy<std::decay_t<F>, std::decay_t<G>>
-constexpr operator * (F&& f, G&& g) noexcept {
-  return { std::forward<F>(f), std::forward<G>(g) };
-}
-
 template < class F, class A, enabler_t<!enable_get_v<A>> = nullptr >
 constexpr decltype(auto) operator <<= (F&& f, A&& a)
   noexcept(noexcept( f(std::forward<A>(a)) ))
