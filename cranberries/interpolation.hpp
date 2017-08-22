@@ -1,3 +1,10 @@
+/**
+ * API for Git.io
+ *
+ * These codes are licensed under CC0.
+ * http://creativecommons.org/publicdomain/zero/1.0/deed.ja
+ */
+
 #ifndef CRANBERRIES_MATH_INTERPOLATION_HPP
 #define CRANBERRIES_MATH_INTERPOLATION_HPP
 #include <iostream>

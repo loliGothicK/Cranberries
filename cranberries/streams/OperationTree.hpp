@@ -1,3 +1,10 @@
+/**
+ * API for Git.io
+ *
+ * These codes are licensed under CC0.
+ * http://creativecommons.org/publicdomain/zero/1.0/deed.ja
+ */
+
 #ifndef CRANBERRIES_STREAMS_OPERATION_TREE_HPP
 #define CRANBERRIES_STREAMS_OPERATION_TREE_HPP
 #include "./utility.hpp"

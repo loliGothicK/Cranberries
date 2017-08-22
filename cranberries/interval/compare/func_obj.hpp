@@ -1,3 +1,10 @@
+/**
+ * API for Git.io
+ *
+ * These codes are licensed under CC0.
+ * http://creativecommons.org/publicdomain/zero/1.0/deed.ja
+ */
+
 #ifndef CRANBRIIES_INTERVAL_LIB_COMPARE_FUNC_OBJ_HPP
 #define CRANBRIIES_INTERVAL_LIB_COMPARE_FUNC_OBJ_HPP
 

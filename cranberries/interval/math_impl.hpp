@@ -1,3 +1,10 @@
+/**
+ * API for Git.io
+ *
+ * These codes are licensed under CC0.
+ * http://creativecommons.org/publicdomain/zero/1.0/deed.ja
+ */
+
 #ifndef MATH_IMPL_HPP
 #define MATH_IMPL_HPP
 #include <cfenv>

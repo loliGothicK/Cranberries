@@ -1,4 +1,11 @@
-﻿#ifndef CRANBERRIES_EXCEPTION_HPP
+﻿/**
+ * API for Git.io
+ *
+ * These codes are licensed under CC0.
+ * http://creativecommons.org/publicdomain/zero/1.0/deed.ja
+ */
+
+#ifndef CRANBERRIES_EXCEPTION_HPP
 #define CRANBERRIES_EXCEPTION_HPP
 #include <exception>
 #include <stdexcept>

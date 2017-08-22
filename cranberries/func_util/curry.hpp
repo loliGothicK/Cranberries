@@ -1,3 +1,10 @@
+/**
+ * API for Git.io
+ *
+ * These codes are licensed under CC0.
+ * http://creativecommons.org/publicdomain/zero/1.0/deed.ja
+ */
+
 #ifndef CRANBERRIES_FUNC_UTIL_CURRY_HPP
 #define CRANBERRIES_FUNC_UTIL_CURRY_HPP
 

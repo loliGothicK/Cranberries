@@ -1,3 +1,10 @@
+/**
+ * API for Git.io
+ *
+ * These codes are licensed under CC0.
+ * http://creativecommons.org/publicdomain/zero/1.0/deed.ja
+ */
+
 #ifndef CRANBERRIES_STREAMS_DETAIL_ENABLE_MEN_FN
 #define CRANBERRIES_STREAMS_DETAIL_ENABLE_MEN_FN
 #include <type_traits>

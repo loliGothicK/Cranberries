@@ -1,3 +1,10 @@
+/**
+ * API for Git.io
+ *
+ * These codes are licensed under CC0.
+ * http://creativecommons.org/publicdomain/zero/1.0/deed.ja
+ */
+
 #ifndef LOOP_WITH_INDEX_HPP
 #define LOOP_WITH_INDEX_HPP
 #include <utility>
