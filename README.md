@@ -1,6 +1,11 @@
 ![logo](https://github.com/LoliGothick/Cranberries/blob/master/icon/logo_with_txt.png)
-[![Build Status](https://travis-ci.org/LoliGothick/Cranberries.svg?branch=master)](https://travis-ci.org/LoliGothick/Cranberries)
+
 雑多な趣味コーディングによる成果物の墓場です
+
+# Build Status
+
+[![Build Status](https://travis-ci.org/LoliGothick/Cranberries.svg?branch=master)](https://travis-ci.org/LoliGothick/Cranberries)
+
 
 # License
 
@@ -27,19 +32,20 @@ MIT License
   - cranberries/type_traits.hpp
 
 - Utility Library（ユーティリティーライブラリ）
-    - cranberries/utility.hpp（以下が全て含まれる）
-        - cranberries/utility/utility.hpp (pack_operations/integers に依存しない部分)
-        - cranberries/utility/reverse_index_sequence.hpp (pack_operationsに依存するreverse_index_sequenceとreverse_applyが含まれる)
-        - cranberries/utility/byte_swap.hpp (integersに依存するbyte_swapが含まれる)
+  - cranberries/utility.hpp（以下が全て含まれる）
+  - cranberries/utility/utility.hpp (pack_operations/integers に依存しない部分)
+  - cranberries/utility/reverse_index_sequence.hpp (pack_operationsに依存するreverse_index_sequenceとreverse_applyが含まれる)
+  - cranberries/utility/byte_swap.hpp (integersに依存するbyte_swapが含まれる)
+        
 
 - Pack Operations Library (型レベルパック操作ライブラリ)
   - cranberries/pack_operations.hpp
 
 - Function Utility Library (関数ユーティリティーライブラリ)
-    - cranberries/func_util.hpp（以下が全て含まれる）
-        - cranberries/func_util/curry.hpp (カリー化)
-        - cranberries/func_util/composition.hpp (関数合成)
-        - cranberries/func_util/apply_pipe.hpp (関数に引数を適用するユーティリティー群)
+  - cranberries/func_util.hpp（以下が全て含まれる）
+  - cranberries/func_util/curry.hpp (カリー化)
+  - cranberries/func_util/composition.hpp (関数合成)
+  - cranberries/func_util/apply_pipe.hpp (関数に引数を適用するユーティリティー群)
 
 - Meta Bind Library (メタ関数バインドとメタ関数合成ライブラリ)
   - cranberries/meta_bind.hpp
