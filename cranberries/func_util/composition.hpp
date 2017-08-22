@@ -27,6 +27,9 @@ namespace cranberries_magic {
       : f(f), g{std::move(g)} {}
     constexpr composition_t(F&& f, G&& g) noexcept
       : f{std::move(f)}, g{std::move(g)} {}
+    constexpr composition_t() noexcept
+      : f{}, g{} {}
+
 
     template < class... Args >
     constexpr decltype(auto) operator()(Args&&... args) &

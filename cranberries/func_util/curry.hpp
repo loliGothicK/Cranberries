@@ -79,8 +79,9 @@ namespace cranberries_magic {
         return std::forward<F>(f)();
     }
   public:
-    constexpr curried(const Fn& fn) : fn{fn} {}
-    constexpr curried(Fn&& fn) : fn{std::move(fn)} {}
+    constexpr curried(const Fn& fn) noexcept : fn{fn} {}
+    constexpr curried(Fn&& fn) noexcept : fn{std::move(fn)} {}
+    constexpr curried() noexcept : fn{} {}
     
     template<typename ...Args>
     constexpr decltype(auto) operator()(Args&& ...args) & noexcept { return apply(fn, std::forward<Args>(args)...); }
@@ -114,6 +115,7 @@ namespace cranberries_magic {
   public:
     constexpr curried_(const Fn& fn) noexcept : fn{fn} {}
     constexpr curried_(Fn&& fn) noexcept : fn{std::move(fn)} {}
+    constexpr curried_() noexcept : fn{} {}
     
     template<typename ...Args>
     constexpr decltype(auto) operator()(Args&& ...args) & noexcept { return apply(fn, std::forward<Args>(args)...); }
