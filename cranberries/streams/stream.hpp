@@ -15,7 +15,6 @@
 #include "operators/Identity.hpp"
 #include "cranberries_magic/enable_men_fn.hpp"
 #include "OperationTree.hpp"
-#include "cranberries_magic/connector.hpp"
 
 namespace cranberries {
 namespace streams {
