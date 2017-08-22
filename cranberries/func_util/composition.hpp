@@ -19,13 +19,13 @@ namespace cranberries_magic {
     F f;
     G g;
   public:
-    composition_t(const F& f, const G& g) noexcept
+    constexpr composition_t(const F& f, const G& g) noexcept
       : f(f), g(g) {}
-    composition_t(F&& f, const G& g) noexcept
+    constexpr composition_t(F&& f, const G& g) noexcept
       : f{std::move(f)}, g(g) {}
-    composition_t(const F& f, G&& g) noexcept
+    constexpr composition_t(const F& f, G&& g) noexcept
       : f(f), g{std::move(g)} {}
-    composition_t(F&& f, G&& g) noexcept
+    constexpr composition_t(F&& f, G&& g) noexcept
       : f{std::move(f)}, g{std::move(g)} {}
 
     template < class... Args >
