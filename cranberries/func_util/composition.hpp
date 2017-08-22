@@ -15,27 +15,47 @@ namespace cranberries {
 namespace cranberries_magic {
 
   template < class F, class G >
-  struct composition_t {
+  class composition_t {
     F f;
     G g;
+  public:
+    composition_t(const F& f, const G& g) noexcept
+      : f(f), g(g) {}
+    composition_t(F&& f, const G& g) noexcept
+      : f{std::move(f)}, g(g) {}
+    composition_t(const F& f, G&& g) noexcept
+      : f(f), g{std::move(g)} {}
+    composition_t(F&& f, G&& g) noexcept
+      : f{std::move(f)}, g{std::move(g)} {}
+
     template < class... Args >
-    constexpr decltype(auto) operator()(Args&&... args) const
+    constexpr decltype(auto) operator()(Args&&... args) &
       noexcept(noexcept(f(g(std::forward<Args>(args)...))))
     {
       return f(g(std::forward<Args>(args)...));
     }
+    template < class... Args >
+    constexpr decltype(auto) operator()(Args&&... args) const &
+      noexcept(noexcept(f(g(std::forward<Args>(args)...))))
+    {
+      return f(g(std::forward<Args>(args)...));
+    }
+    template < class... Args >
+    constexpr decltype(auto) operator()(Args&&... args) &&
+      noexcept(noexcept(f(g(std::forward<Args>(args)...))))
+    {
+      return std::move(f)(std::move(g)(std::forward<Args>(args)...));
+    }
+    template < class... Args >
+    constexpr decltype(auto) operator()(Args&&... args) const &&
+      noexcept(noexcept(f(g(std::forward<Args>(args)...))))
+    {
+      return std::move(f)(std::move(g)(std::forward<Args>(args)...));
+    }
+
   };
 
 } // ! namespace cranberries_magic
-
-namespace func_util {
-template < class F, class G >
-constexpr
-cranberries_magic::composition_t<std::decay_t<F>, std::decay_t<G>>
-operator * (F&& f, G&& g) noexcept {
-  return { std::forward<F>(f), std::forward<G>(g) };
-}
-} // ! namespace func_util
 
 template < class F, class G >
 constexpr
