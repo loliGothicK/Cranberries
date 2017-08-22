@@ -7,13 +7,13 @@
 #include <array>
 #include <initializer_list>
 #include <random>
-#include "../type_traits.hpp"
-#include "../common/defaulted_type.hpp"
-#include "../utility.hpp"
-#include "../pack_operations.hpp"
-#include "../math.hpp"
-#include "../algorithm.hpp"
-#include "../meta_bind.hpp"
+#include "../../type_traits.hpp"
+#include "../../common/defaulted_type.hpp"
+#include "../../utility.hpp"
+#include "../../pack_operations.hpp"
+#include "../../math.hpp"
+#include "../../algorithm.hpp"
+#include "../../meta_bind.hpp"
 
 namespace cranberries{
 namespace func_util {
