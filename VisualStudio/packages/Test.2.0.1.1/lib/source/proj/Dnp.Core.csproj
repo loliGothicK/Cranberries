@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7D47B61E-7A66-4DA5-A623-A5B9BFF2E507}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Dnp</RootNamespace>
+    <AssemblyName>Dnp</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>..\..\Dnp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Collections\Delegates.cs" />
+    <Compile Include="Collections\Generic\BinaryNode.cs" />
+    <Compile Include="Collections\INotifyDictionaryChanged.cs" />
+    <Compile Include="Collections\INotifyDictionaryChanging.cs" />
+    <Compile Include="Collections\NotifyDictionaryChangedEventArgs.cs" />
+    <Compile Include="Collections\NotifyDictionaryChangingEventArgs.cs" />
+    <Compile Include="Collections\ObservableDictionary.cs" />
+    <Compile Include="Collections\PropertyCollection.cs" />
+    <Compile Include="CommandLineParser+SwitchInfo.cs" />
+    <Compile Include="CommandLineParser+SwitchRecord.cs" />
+    <Compile Include="CommandLineParser.cs" />
+    <Compile Include="CommandLineSwitchAttribute.cs" />
+    <Compile Include="Configuration\AbstractConfigurationSource.cs" />
+    <Compile Include="Configuration\AbstractFileConfigurationSource.cs" />
+    <Compile Include="Configuration\ByteArrayConverter.cs" />
+    <Compile Include="Configuration\CommandLineConfigurationSource.cs" />
+    <Compile Include="Configuration\ConfigurationSection.cs" />
+    <Compile Include="Configuration\DotNetConfigurationSource.cs" />
+    <Compile Include="Configuration\EventHandlerExtension.cs" />
+    <Compile Include="Configuration\IConfigurationSection.cs" />
+    <Compile Include="Configuration\IConfigurationSource.cs" />
+    <Compile Include="Configuration\IniConfigurationSource.cs" />
+    <Compile Include="Configuration\IsoStorageConfigurationSource.cs" />
+    <Compile Include="Configuration\RegistryConfigurationSource.cs" />
+    <Compile Include="Configuration\SettingConverter.cs" />
+    <Compile Include="Configuration\StringArrayConverter.cs" />
+    <Compile Include="Configuration\XmlConfigurationSource.cs" />
+    <Compile Include="Data\Connection\ConnectionString.cs" />
+    <Compile Include="Data\Metadata\EdmxReader.cs" />
+    <Compile Include="Data\Metadata\Elements\EntityTypeMapping.cs" />
+    <Compile Include="Data\Metadata\Elements\MappingFragment.cs" />
+    <Compile Include="Data\Metadata\Elements\ScalarProperty.cs" />
+    <Compile Include="Data\Objects\Bases\EntityBase.cs" />
+    <Compile Include="Data\Objects\EventArguments\ObjectContextEventArgs.cs" />
+    <Compile Include="Data\Objects\Factory\MockObjectContextFactory.cs" />
+    <Compile Include="Data\Objects\Factory\MockObjectContextWithDataFactory.cs" />
+    <Compile Include="Data\Objects\Factory\ObjectContextFactory.cs" />
+    <Compile Include="Data\Objects\Factory\ObjectContextFactoryBase.cs" />
+    <Compile Include="Data\Objects\IBusinessLogic.cs" />
+    <Compile Include="Data\Objects\ICreateTimestamp.cs" />
+    <Compile Include="Data\Objects\IDisposableObject.cs" />
+    <Compile Include="Data\Objects\IFootprint.cs" />
+    <Compile Include="Data\Objects\IMockObjectSet.cs" />
+    <Compile Include="Data\Objects\INavigations.cs" />
+    <Compile Include="Data\Objects\IObjectContainer.cs" />
+    <Compile Include="Data\Objects\IObjectContext.cs" />
+    <Compile Include="Data\Objects\IObjectContextFactory.cs" />
+    <Compile Include="Data\Objects\IObjectCreated.cs" />
+    <Compile Include="Data\Objects\IObjectManager.cs" />
+    <Compile Include="Data\Objects\ISearchable.cs" />
+    <Compile Include="Data\Objects\ISearchableState.cs" />
+    <Compile Include="Data\Objects\ISimplePrimaryKey.cs" />
+    <Compile Include="Data\Objects\ISimplePrimaryKeyEquatable.cs" />
+    <Compile Include="Data\Objects\MockObjectContext.cs" />
+    <Compile Include="Data\Objects\MockObjectSet.cs" />
+    <Compile Include="Data\Objects\ObjectContainer.cs" />
+    <Compile Include="Data\Objects\ObjectContextWrapper.cs" />
+    <Compile Include="Data\TestData\DataLoader.cs" />
+    <Compile Include="Data\TestData\DataLoaderXml.cs" />
+    <Compile Include="Data\TestData\DirectoryDataLoader.cs" />
+    <Compile Include="Data\TestData\IDataLoader.cs" />
+    <Compile Include="Data\TestData\IRemoveAllRows.cs" />
+    <Compile Include="Data\TestData\ITestDataLoader.cs" />
+    <Compile Include="Data\TestData\TestDataLoader.cs" />
+    <Compile Include="Data\Objects\DisposableObject.cs" />
+    <Compile Include="Exceptions\ExceptionEmailSender.cs" />
+    <Compile Include="Expression\ExpressionProperties.cs" />
+    <Compile Include="Data\Objects\ICloneable.cs" />
+    <Compile Include="Data\Objects\ICloneableDepth.cs" />
+    <Compile Include="Data\Objects\ICloneableState.cs" />
+    <Compile Include="IO\StringWriterWithEncoding.cs" />
+    <Compile Include="Net\EmailSender.cs" />
+    <Compile Include="Net\ISmtpServer.cs" />
+    <Compile Include="Net\SmtpServer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Properties\Strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Runtime\Serialization\BinaryFormatterSerializer.cs" />
+    <Compile Include="Runtime\Serialization\DataContractSerializerExtensions.cs" />
+    <Compile Include="Runtime\Serialization\ISerializer.cs" />
+    <Compile Include="Runtime\Serialization\XmlSerializer.cs" />
+    <Compile Include="Security\Cryptography\Cryptographer.cs" />
+    <Compile Include="Security\Cryptography\IPasswordDeriver.cs" />
+    <Compile Include="Security\Cryptography\PasswordCryptographer.cs" />
+    <Compile Include="Security\Cryptography\PasswordDeriver.cs" />
+    <Compile Include="Security\Cryptography\SymmetricAlgorithmHelper.cs" />
+    <Compile Include="ServiceModel\IServiceResponseContract.cs" />
+    <Compile Include="ServiceModel\ServiceResponseContract.cs" />
+    <Compile Include="String\StringExtensions.cs" />
+    <Compile Include="Text\RegularExpressions\Expressions.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Data\DnpEntityPoco.tt" />
+    <None Include="Data\Metadata\EdmxReader.ttinclude" />
+    <None Include="Data\Metadata\Elements\EdmxReaderElements.ttinclude" />
+    <None Include="Data\TestData\DataLoader.ttinclude" />
+    <None Include="Data\TestData\DataLoaderXml.ttinclude" />
+    <None Include="Data\TestData\DirectoryDataLoader.ttinclude" />
+    <None Include="Data\TestData\IDataLoader.ttinclude" />
+    <None Include="NuManifest.nuspec" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
+      <Link>Properties\CustomDictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Math\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Configuration\LICENSE.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
