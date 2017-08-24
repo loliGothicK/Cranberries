@@ -67,7 +67,7 @@ namespace UnitTestforFuncUtil
       println <<= h |= adjacent<2>::bind(1, 2, 3, 4);
 
       std::cout << "conbinator & chunk apply(random sampling)" << "\n";
-      println <<= h |= chunk<2, randomized<10>>::bind(1, 2, 3, 4, 5, 6);
+      println <<= h |= chunk<2, randomized<5>>::bind(1, 2, 3, 4, 5, 6);
 
       std::cout << "permutations" << "\n";
       println |= permutation<2>::bind(1, 2, 3);
