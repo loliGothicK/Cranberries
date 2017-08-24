@@ -32,7 +32,7 @@ namespace RKF45Test
           .set_tolerance(1.0E-4L)
           .set_step_size_range({ 0.001,0.5 });
 
-        solver.integrate(state0, [](auto t, state_type x) { std::cout << t << " " << x[0] << " " << x[1] << " " << x[2] << '\n'; });
+        solver.integrate(state0, [](auto t, state_type x) { });
     }
 
 	};
