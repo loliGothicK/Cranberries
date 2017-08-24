@@ -311,7 +311,7 @@ template < size_t N, class = cranberries::cranberries_magic::defaulted_t >
 struct chunk {
   template < class... Args >
   static constexpr cranberries_magic::chunk_each_proxy<N, std::decay_t<Args>...>
-  bins(Args&&... args) noexcept {
+  bind(Args&&... args) noexcept {
     return { std::forward_as_tuple(std::forward<Args>(args)...) };
   }
   template < class... Args >
