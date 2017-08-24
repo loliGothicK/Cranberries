@@ -48,9 +48,9 @@ namespace IntervalTest
         cout << ">> Constructor Complete!" << endl;
 
         x + x;
-         x - x == interval<>{} ;
-         z * z == pow( z, 2 ) ;
-         x / x == interval<>{1} ;
+        x - x == interval<>{} ;
+        z * z == pow( z, 2 ) ;
+        x / x == interval<>{1} ;
 
         {
           auto tmp = interval<>{};
@@ -139,14 +139,14 @@ namespace IntervalTest
         mid( x )==1.05;
         middle( x )==1.05;
         wid( x )==0.1;
-         width( x ) == 0.1 ;
-        !is_singleton( x );
-         is_singleton( interval<>{1} ) ;
+        width( x ) == 0.1 ;
+        is_singleton( x );
+        is_singleton( interval<>{1} );
         in( 1, x );
         subset( interval<>{}, interval<>{} );
-        !proper_subset( interval<>{}, interval<>{} );
-        !overlap( interval<>{}, interval<>{} );
-         ((intersect( interval<>{1, 3}, interval<>{2, 4} )) == interval<>{2,3}) ;
+        proper_subset( interval<>{}, interval<>{} );
+        overlap( interval<>{}, interval<>{} );
+        intersect( interval<>{1, 3}, interval<>{2, 4} ) == interval<>{2,3};
 
         max( x, interval<>{} );
         cranberries::max( { x,interval<>{},interval<>{} } );
