@@ -408,12 +408,13 @@ struct adjacent {
   }
 };
 
-template < size_t R >
+template < size_t R=0 >
 struct permutation {
   template < class Head, class... Args >
   static constexpr
   cranberries_magic::permutation_each_proxy<
-    sizeof...(Args) + 1,R,
+    sizeof...(Args) + 1,
+    (R == 0 ? sizeof...(Args) : R),
     std::decay_t<Head> >
   bind(Head&& head, Args&&... args) noexcept {
     return {{{ std::forward<Head>(head), std::forward<Args>(args)... }}};

@@ -74,6 +74,12 @@ namespace UnitTestforFuncUtil
 
       std::cout << "combinations" << "\n";
       println |= combination<2>::bind(1, 2, 3);
+
+      std::cout << "permutations" << "\n";
+      println |= permutation<>::bind(1, 2, 3);
+
+      std::cout << "combinations" << "\n";
+      println |= combination<>::bind(1, 2, 3);
     }
 
 	};
