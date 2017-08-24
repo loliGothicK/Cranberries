@@ -260,11 +260,6 @@ namespace cranberries {
   struct
     pack_slicer<I, vPack<T, Values...>> 
   {
-#ifdef _MSC_VER
-    static_assert(false,
-      R"(Sorry, pack_slicer for value sequence doesn't compile
-      because MSVC is so poor.)");
-#endif
     using right_pack = typename cranberries_magic::pack_slicer_impl<I, vPack<T>, vPack<T, Values...>>::right_pack;
     using left_pack = typename cranberries_magic::pack_slicer_impl<I, vPack<T>, vPack<T, Values...>>::left_pack;
   };

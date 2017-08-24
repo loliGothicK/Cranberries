@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #define CRANBERRIES_INTERVAL_DEBUG_MODE
-#include "../Cranberries/cranberries/interval.hpp"
-#include "../Cranberries/cranberries/utility.hpp"
+#include "../../cranberries/interval.hpp"
+#include "../../cranberries/utility.hpp"
 #include <iostream>
 #include <cassert>
 #include <vector>
@@ -146,7 +146,7 @@ namespace IntervalTest
         assert(subset( interval<>{}, interval<>{} ));
         assert(!proper_subset( interval<>{}, interval<>{} ));
         assert(!overlap( interval<>{}, interval<>{} ));
-        assert( intersect( interval<>{1, 3}, interval<>{2, 4} ) == interval<>{2,3} );
+        assert( ((intersect( interval<>{1, 3}, interval<>{2, 4} )) == interval<>{2,3}) );
 
         max( x, interval<>{} );
         cranberries::max( { x,interval<>{},interval<>{} } );

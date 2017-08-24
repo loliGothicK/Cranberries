@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "../Cranberries/cranberries/common/macros.hpp"
-#include "../Cranberries/cranberries/type_traits.hpp"
-#include "../Cranberries/cranberries/pack_operations.hpp"
-#include "../Cranberries/cranberries/meta_bind.hpp"
-#include "../Cranberries/cranberries/utility.hpp"
+#include "../../cranberries/common/macros.hpp"
+#include "../../cranberries/type_traits.hpp"
+#include "../../cranberries/pack_operations.hpp"
+#include "../../cranberries/meta_bind.hpp"
+#include "../../cranberries/utility.hpp"
 #include <vector>
 #include <list>
 #include <array>
