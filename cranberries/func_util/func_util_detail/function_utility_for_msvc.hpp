@@ -368,11 +368,6 @@ struct chunk {
   bins(Args&&... args) noexcept {
     return { std::forward_as_tuple(std::forward<Args>(args)...) };
   }
-  template < class... Args >
-  static constexpr cranberries_magic::chunk_each_proxy<N, std::decay_t<Args>...>
-  bind(const std::tuple<Args...>& tup) noexcept {
-    return { tup };
-  }
 };
 
 template < size_t N, size_t Times >
@@ -395,15 +390,6 @@ struct chunk<N, randomized<Times>> {
     );
     return { make_array(std::forward<Args>(args)...) };
   }
-  template < class T, size_t Size >
-  static constexpr cranberries_magic::random_sample_chunk_each_proxy<T,N,Times,Size>
-  bind(const std::array<T,Size>& arr) noexcept {
-    static_assert(
-      N < Size,
-      "Too few arguments!"
-    );
-    return { arr };
-  }
 };
 
 
@@ -413,11 +399,6 @@ struct adjacent {
   static constexpr cranberries_magic::adjacent_each_proxy<N, std::decay_t<Args>...>
   bind(Args&&... args) noexcept {
     return { std::forward_as_tuple(std::forward<Args>(args)...) };
-  }
-  template < class... Args >
-  static constexpr cranberries_magic::adjacent_each_proxy<N, std::decay_t<Args>...>
-  bind(std::tuple<Args...> tup) noexcept {
-    return { tup };
   }
 };
 
