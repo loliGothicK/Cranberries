@@ -14,5 +14,15 @@
 #include "func_util_detail/function_utility_for_gcc_clang.hpp"
 #  endif // _MSC_VER
 
+namespace cranberries {
+namespace literals {
+  template<char... Chars>
+  constexpr func_util::randomized<to_decimal<Chars...>::value> 
+  operator"" _randomized() {
+    return {};
+  }
+  using cranberries::literals::operator"" _randomized;
+}	// ! namespace literals
+} // ! namespace cranberries
 
 #endif

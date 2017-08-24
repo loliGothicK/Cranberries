@@ -71,14 +71,14 @@ int main() {
   println |= std::forward_as_tuple(1, 2, 3, 4);
 
   std::cout << "chunk apply" << "\n";
-  println |= chunk<2>::apply(1, 2, 3, 4, 5, 6);
+  println |= chunk<2>::bind(1, 2, 3, 4, 5, 6);
 
   constexpr Twice f{};
   constexpr Add g{};
 
 
   std::cout << "conbinator & chunk apply" << "\n";
-  constexpr auto var1 = composition(f, g) |= chunk<2>::apply(1, 2, 3, 4, 5, 6);
+  constexpr auto var1 = composition(f, g) |= chunk<2>::bind(1, 2, 3, 4, 5, 6);
   static_assert(
     std::get<0>(var1) == 6 &&
     std::get<1>(var1) == 14 &&
@@ -86,26 +86,26 @@ int main() {
     ""
     );
 
-  println <<= composition(f, g) |= chunk<2>::apply(1, 2, 3, 4, 5, 6);
+  println <<= composition(f, g) |= chunk<2>::bind(1, 2, 3, 4, 5, 6);
 
 
 
   std::cout << "conbinator & adjacent apply" << "\n";
-  constexpr auto var2 = composition(f, g) |= adjacent<2>::apply(1, 2, 3, 4, 5, 6);
+  constexpr auto var2 = composition(f, g) |= adjacent<2>::bind(1, 2, 3, 4, 5, 6);
   static_assert(
     std::get<0>(var2) == 6 &&
     std::get<1>(var2) == 10 &&
     std::get<2>(var2) == 14,
     ""
     );
-  println <<= composition(f, g) |= adjacent<2>::apply(1, 2, 3, 4);
+  println <<= composition(f, g) |= adjacent<2>::bind(1, 2, 3, 4);
 
   std::cout << "conbinator & chunk apply(random sampling)" << "\n";
-  println <<= composition(f, g) |= chunk<2, random_sampling<10_times>>::apply(1, 2, 3, 4, 5, 6);
+  println <<= composition(f, g) |= chunk<2, randomized<10>>::bind(1, 2, 3, 4, 5, 6);
 
   std::cout << "permutations" << "\n";
-  println |= permutation<2>::apply(1, 2, 3);
+  println |= permutation<2>::bind(1, 2, 3);
 
   std::cout << "combinations" << "\n";
-  println |= combination<2>::apply(1, 2, 3);
+  println |= combination<2>::bind(1, 2, 3);
 }

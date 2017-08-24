@@ -11,7 +11,6 @@
 #include "../utility/utility.hpp"
 
 namespace cranberries {
-namespace cranberries_magic {
     
   template< class Fn, typename... Bind>
   class bind_expr {
@@ -52,11 +51,9 @@ namespace cranberries_magic {
     }
   };
   
-  } // ! end namespace cranberries_magic
-
   template < class F, typename... Args >
   inline constexpr
-  cranberries_magic::bind_expr<std::decay_t<F>, Args...>
+  bind_expr<std::decay_t<F>, Args...>
   make_bind_expr(F&& f, Args&&... args){
     return { std::forward<F>(f), std::forward<Args>(args)... };
   }
@@ -67,7 +64,7 @@ namespace cranberries_magic {
 
     template<typename F, typename... Args>
     static constexpr
-    curried<cranberries_magic::bind_expr<Fn, std::decay_t<Args>...>>
+    curried<bind_expr<Fn, std::decay_t<Args>...>>
     apply(F&& f, Args&&... args) noexcept {        
         return {{std::forward<F>(f), std::forward<Args>(args)...}};
     }
@@ -100,7 +97,7 @@ namespace cranberries_magic {
     template<typename F, typename... Args>
     static constexpr
     std::enable_if_t<(N-sizeof...(Args))!=0,
-        curried_<N-sizeof...(Args), cranberries_magic::bind_expr<Fn, std::decay_t<Args>...>>>
+        curried_<N-sizeof...(Args), bind_expr<Fn, std::decay_t<Args>...>>>
     apply(F&& f, Args&&... args) noexcept
     {        
         return {{std::forward<F>(f), std::forward<Args>(args)...}};

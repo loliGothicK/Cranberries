@@ -247,5 +247,22 @@ namespace cranberries_magic {
       return f(std::forward<decltype(args)>(args)...);
     };
   }
+
+  template < size_t B, size_t E >
+  struct Exp_ : size_constant<B*Exp_<B,E-1>::value> {};
+  
+  template < size_t B >
+  struct Exp_<B,1> : size_constant<B> {};
+  
+  
+  template < size_t Head, size_t... Digits >
+  struct to_decimal
+    : size_constant< (Head-size_t('0'))*Exp_<10, sizeof...(Digits)>::value + to_decimal<Digits...>::value > {};
+  
+  template < size_t Head >
+  struct to_decimal<Head>
+    : size_constant< Head-size_t('0') > {};
+
+  
 } // ! - end namespace cranberries
 #endif

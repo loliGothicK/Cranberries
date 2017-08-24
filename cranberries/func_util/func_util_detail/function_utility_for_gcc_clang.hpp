@@ -14,27 +14,15 @@
 #include <array>
 #include <initializer_list>
 #include <random>
-#include "../../type_traits.hpp"
-#include "../../common/defaulted_type.hpp"
-#include "../../utility.hpp"
-#include "../../pack_operations.hpp"
-#include "../../math.hpp"
-#include "../../algorithm.hpp"
+#include "../type_traits.hpp"
+#include "../common/defaulted_type.hpp"
+#include "../utility/utility.hpp"
+#include "../pack_operations.hpp"
+#include "../math.hpp"
+#include "../algorithm.hpp"
 
 namespace cranberries{
 namespace func_util {
-
-namespace cranberries_magic{
-  template < class Range, size_t... I >
-  constexpr decltype(auto) make_tuple_from_impl(Range&& range, std::index_sequence<I...>){
-    return std::forward_as_tuple((range[I])...);
-  }
-}
-
-  template < size_t N, class Range >
-  constexpr decltype(auto) make_tuple_from(Range&& range){
-    return cranberries_magic::make_tuple_from_impl(std::forward<Range>(range), std::make_index_sequence<N>{});
-  }
 
 template < class F, class A, enabler_t<!enable_get_v<A>> = nullptr >
 constexpr decltype(auto) operator <<= (F&& f, A&& a)
@@ -314,29 +302,27 @@ constexpr auto operator |= (F&& f, cranberries_magic::combination_each_proxy<N, 
   return proxy.apply(std::forward<F>(f), make_swallow_indices<R,combinations(N,R)>{});
 }
 
+template < size_t Times >
+struct randomized : size_constant<Times> {};
+
+
+
 template < size_t N, class = cranberries::cranberries_magic::defaulted_t >
 struct chunk {
   template < class... Args >
   static constexpr cranberries_magic::chunk_each_proxy<N, std::decay_t<Args>...>
-  apply(Args&&... args) noexcept {
+  bins(Args&&... args) noexcept {
     return { std::forward_as_tuple(std::forward<Args>(args)...) };
   }
   template < class... Args >
   static constexpr cranberries_magic::chunk_each_proxy<N, std::decay_t<Args>...>
-  apply(const std::tuple<Args...>& tup) noexcept {
+  bind(const std::tuple<Args...>& tup) noexcept {
     return { tup };
   }
 };
 
-template < size_t >
-struct random_sampling ;
-
-constexpr auto operator "" _times(long long unsigned times){
-  return times;
-}
-
 template < size_t N, size_t Times >
-struct chunk<N, random_sampling<Times>> {
+struct chunk<N, randomized<Times>> {
   template < class... Args >
   static constexpr cranberries_magic::random_sample_chunk_each_proxy<
     pack_element_t<0,type_pack<std::decay_t<Args>...>>,
@@ -344,7 +330,7 @@ struct chunk<N, random_sampling<Times>> {
     Times,
     sizeof...(Args)
   >
-  apply(Args&&... args) noexcept {
+  bind(Args&&... args) noexcept {
     static_assert(
       all_same_v<std::decay_t<Args>...>,
       "Invaild arguments!"
@@ -357,7 +343,7 @@ struct chunk<N, random_sampling<Times>> {
   }
   template < class T, size_t Size >
   static constexpr cranberries_magic::random_sample_chunk_each_proxy<T,N,Times,Size>
-  apply(const std::array<T,Size>& arr) noexcept {
+  bind(const std::array<T,Size>& arr) noexcept {
     static_assert(
       N < Size,
       "Too few arguments!"
@@ -366,16 +352,17 @@ struct chunk<N, random_sampling<Times>> {
   }
 };
 
+
 template < size_t N >
 struct adjacent {
   template < class... Args >
   static constexpr cranberries_magic::adjacent_each_proxy<N, std::decay_t<Args>...>
-    apply(Args&&... args) noexcept {
+  bind(Args&&... args) noexcept {
     return { std::forward_as_tuple(std::forward<Args>(args)...) };
   }
   template < class... Args >
   static constexpr cranberries_magic::adjacent_each_proxy<N, std::decay_t<Args>...>
-  apply(std::tuple<Args...> tup) noexcept {
+  bind(std::tuple<Args...> tup) noexcept {
     return { tup };
   }
 };
@@ -388,7 +375,7 @@ struct permutation {
     R == 0 ? sizeof...(Args) : R,
     pack_element_t<0,type_pack<std::decay_t<Args>...>>
     >
-    apply(Args&&... args) noexcept {
+    bind(Args&&... args) noexcept {
     return {{{ std::forward<Args>(args)... }}};
   }
 };
@@ -399,9 +386,8 @@ struct combination {
   static constexpr cranberries_magic::combination_each_proxy<
     sizeof...(Args),
     R == 0 ? sizeof...(Args) : R,
-    pack_element_t<0,type_pack<std::decay_t<Args>...>>
-    >
-    apply(Args&&... args) noexcept {
+    pack_element_t<0,type_pack<std::decay_t<Args>...>> >
+  bind(Args&&... args) noexcept {
     return {{{ std::forward<Args>(args)... }}};
   }
 };

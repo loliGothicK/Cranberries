@@ -12,22 +12,21 @@
 #include <type_traits>
 
 namespace cranberries {
-namespace cranberries_magic {
 
   template < class F, class G >
-  class composition_t {
+  class composited {
     F f;
     G g;
   public:
-    constexpr composition_t(const F& f, const G& g) noexcept
+    constexpr composited(const F& f, const G& g) noexcept
       : f(f), g(g) {}
-    constexpr composition_t(F&& f, const G& g) noexcept
+    constexpr composited(F&& f, const G& g) noexcept
       : f{std::move(f)}, g(g) {}
-    constexpr composition_t(const F& f, G&& g) noexcept
+    constexpr composited(const F& f, G&& g) noexcept
       : f(f), g{std::move(g)} {}
-    constexpr composition_t(F&& f, G&& g) noexcept
+    constexpr composited(F&& f, G&& g) noexcept
       : f{std::move(f)}, g{std::move(g)} {}
-    constexpr composition_t() noexcept
+    constexpr composited() noexcept
       : f{}, g{} {}
 
 
@@ -58,11 +57,10 @@ namespace cranberries_magic {
 
   };
 
-} // ! namespace cranberries_magic
 
 template < class F, class G >
 constexpr
-cranberries_magic::composition_t<std::decay_t<F>, std::decay_t<G>>
+composited<std::decay_t<F>, std::decay_t<G>>
 composition(F&& f, G&& g) noexcept {
   return { std::forward<F>(f), std::forward<G>(g) };
 }
@@ -71,7 +69,7 @@ template < class F, class G, class... Rest >
 constexpr
 auto
 composition(F&& f, G&& g, Rest&&... rest) noexcept {
-  using compsite_t = cranberries_magic::composition_t<std::decay_t<F>, std::decay_t<G>>;
+  using compsite_t = composited<std::decay_t<F>, std::decay_t<G>>;
   return composition(compsite_t{ std::forward<F>(f), std::forward<G>(g) }, std::forward<Rest>(rest)... );
 }
 
