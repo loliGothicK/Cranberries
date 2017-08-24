@@ -4,8 +4,11 @@
 
 # Build Status
 
-[![Build Status](https://travis-ci.org/LoliGothick/Cranberries.svg?branch=master)](https://travis-ci.org/LoliGothick/Cranberries)
+[![Build Status](https://travis-ci.org/LoliGothick/Cranberries.svg?branch=master)](https://travis-ci.org/LoliGothick/Cranberries) 
+Linux with GCC 6
 
+[![Build status](https://ci.appveyor.com/api/projects/status/bk0tjc41t7db0ome/branch/master?svg=true)](https://ci.appveyor.com/project/LoliGothick/cranberries/branch/master) 
+Windows with Visual Studio 2017 
 
 # License
 
