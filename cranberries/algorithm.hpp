@@ -14,6 +14,7 @@
 #include "type_traits.hpp"
 #include "utility/utility.hpp"
 #include "common/defaulted_type.hpp"
+#include "integers.hpp"
 
 namespace cranberries {
 
