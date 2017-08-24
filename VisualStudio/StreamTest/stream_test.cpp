@@ -36,13 +36,13 @@ namespace StreamTest
             )
           ;
 
-        make_stream::fopen( R"(C:\Users\lolig\OneDrive\Documents\Visual Studio 2017\Projects\CranberriesLibrary\StreamTest\file_io_test.dat)" )
+        make_stream::fopen( R"(file_io_test.dat)" )
           >> eager::read_line()
           >> lazy::transformed( []( auto&& a ) { return a += "hoge"; } )
           >> eager::write()
           ;
 
-        make_stream::fopen<char>( R"(C:\Users\lolig\OneDrive\Documents\Visual Studio 2017\Projects\CranberriesLibrary\StreamTest\binary.dat)" )
+        make_stream::fopen<char>( R"(binary.dat)" )
           >> eager::read_byte()
           >> eager::println_to()
           ;
