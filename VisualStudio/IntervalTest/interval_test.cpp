@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #define CRANBERRIES_INTERVAL_DEBUG_MODE
-#include <cranberries/interval.hpp>
-#include <cranberries/utility.hpp>
+#include "../Cranberries/cranberries/interval.hpp"
+#include "../Cranberries/cranberries/utility.hpp"
 #include <iostream>
 #include <cassert>
 #include <vector>

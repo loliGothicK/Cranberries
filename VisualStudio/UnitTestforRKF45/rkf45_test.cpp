@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include <cranberries/rkf45.hpp>
+#include "../Cranberries/cranberries/rkf45.hpp"
 #include <array>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

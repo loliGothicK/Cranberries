@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include <cranberries/dual_number.hpp>
-#include <cranberries/interval.hpp>
+#include "../Cranberries/cranberries/dual_number.hpp"
+#include "../Cranberries/cranberries/interval.hpp"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

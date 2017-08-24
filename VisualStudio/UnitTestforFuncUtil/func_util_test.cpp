@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include <cranberries/func_util.hpp>
+#include "../Cranberries/cranberries/func_util.hpp"
 #include <iostream>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

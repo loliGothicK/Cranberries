@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include <cranberries/stopwatch.hpp>
+#include "../Cranberries/cranberries/stopwatch.hpp"
 #include <iostream>
 #include <cassert>
 

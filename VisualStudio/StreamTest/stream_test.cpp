@@ -2,7 +2,7 @@
 #include "CppUnitTest.h"
 #include <iostream>
 #include <stdexcept>
-#include <cranberries/stream.hpp>
+#include "../Cranberries/cranberries/stream.hpp"
 using std::cout;
 using std::endl;
 using cranberries::make_finally;
