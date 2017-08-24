@@ -342,19 +342,6 @@ constexpr auto operator |= (F&& f, cranberries_magic::combination_each_proxy<N, 
                      make_swallow_t<meta_combinations_v<N, R>>{});
 }
 
-template < size_t N, class = cranberries::cranberries_magic::defaulted_t >
-struct chunk {
-  template < class... Args >
-  static constexpr cranberries_magic::chunk_each_proxy<N, std::decay_t<Args>...>
-  apply(Args&&... args) noexcept {
-    return { std::forward_as_tuple(std::forward<Args>(args)...) };
-  }
-  template < class... Args >
-  static constexpr cranberries_magic::chunk_each_proxy<N, std::decay_t<Args>...>
-  apply(const std::tuple<Args...>& tup) noexcept {
-    return { tup };
-  }
-};
 
 template < size_t Times >
 struct randomized : size_constant<Times> {};
