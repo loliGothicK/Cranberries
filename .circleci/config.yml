@@ -1,10 +1,12 @@
 version: 2
 jobs:
   build:
+    working_directory: /Cranberries
     docker:
       - image: purplekarrot/clang-4.0
     steps:
       - checkout
+      - run: ls
       - run: mkdir build
       - run: cd build
       - run: cmake -DCMAKE_CXX_COMPILER=$COMPILER .. && make
