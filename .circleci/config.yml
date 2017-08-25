@@ -8,7 +8,8 @@ jobs:
       - checkout
       - run: mkdir build
       - run: cd build
-      - run: cd ~/Cranberries
+      - run: cd ~/
+      - run: ls
       - run: cmake -DCMAKE_CXX_COMPILER=$CXX ~/Cranberries && make
       - run: ./common_lib_tests
       - run: ./dual_number_lib_tests
