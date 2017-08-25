@@ -308,15 +308,11 @@ namespace cranberries {
   template < class, class >
   struct pack_revert;
 
+  // type pack revert
   template < template <class... > class tPack >
   struct
     pack_revert<tPack<>, tPack<>>
     : nested_type_class<tPack<>> {};
-
-  template < class T, template <class, T... > class vPack >
-  struct
-    pack_revert<vPack<T>, vPack<T>>
-    : nested_type_class<vPack<T>> {};
 
   template < template < class... > class Seq,
              class... R, class Head,
@@ -328,13 +324,18 @@ namespace cranberries {
                   Seq<Tail...> > {};
 
   template < template < class... > class Seq,
-             class... R,
-             class Head >
+             class... R >
   struct
     pack_revert< Seq<R...>,
-                 Seq<Head> >
-    : nested_type_class<Seq<Head, R...>> {};
+                 Seq<> >
+    : nested_type_class<Seq<R...>> {};
 
+  // value pack revert
+  template < class T, template <class, T... > class vPack >
+  struct
+    pack_revert<vPack<T>, vPack<T>>
+    : nested_type_class<vPack<T>> {};
+  
   template < template < class T, T... > class Seq,
              class Ty,
              Ty... R,
@@ -348,12 +349,11 @@ namespace cranberries {
 
   template < template < class T, T... > class Seq,
              class Ty,
-             Ty... R,
-             Ty Head >
+             Ty... R >
   struct
     pack_revert< Seq<Ty, R...>,
-                      Seq<Ty, Head>>
-    : nested_type_class<Seq<Ty, Head, R...>> {};
+                      Seq<Ty>>
+    : nested_type_class<Seq<Ty,R...>> {};
 
 
   template < class, class, class, class >
