@@ -166,7 +166,7 @@ namespace cranberries {
 
   namespace cranberries_magic {
 
-    template< size_t, class, class >
+    template< size_t, class, class, bool >
     struct pack_slicer_impl {};
 
     template< size_t I,
@@ -175,15 +175,16 @@ namespace cranberries {
               class RightHead,
               class... RightTial>
     struct
-      pack_slicer_impl<I, tPack<Left...>, tPack<RightHead, RightTial...> >
-      : pack_slicer_impl<I - 1, tPack<Left..., RightHead>, tPack<RightTial...>> {};
+      pack_slicer_impl<I, tPack<Left...>, tPack<RightHead, RightTial...>, true >
+      : pack_slicer_impl<I - 1, tPack<Left..., RightHead>, tPack<RightTial...>, (I!=1)> {};
 
     template< template<class...>class tPack,
               class ...Left >
     struct
       pack_slicer_impl<0,
                        tPack<Left...>,
-                       tPack<> >
+                       tPack<>,
+                       false >
     {
       using left_pack = tPack<Left...>;
       using right_pack = tPack<>;
@@ -196,7 +197,8 @@ namespace cranberries {
     struct
       pack_slicer_impl<0,
                        tPack<Left...>,
-                       tPack<RightHead, RightTail...> >
+                       tPack<RightHead, RightTail...>,
+                       false >
     {
       using left_pack = tPack<Left...>;
       using right_pack = tPack<RightHead, RightTail...>;
@@ -204,35 +206,37 @@ namespace cranberries {
 
     template< size_t I,
               class T,
-              template <class, T...> class vPack,
+              template <class Ty, Ty...> class vPack,
               T ...Left,
               T RightHead,
-              T... RightTial>
+              T... RightTial >
     struct
-      pack_slicer_impl<I, vPack<T, Left...>, vPack<T, RightHead, RightTial...> >
-      : pack_slicer_impl<I - 1, vPack<T, Left..., RightHead>, vPack<T, RightTial...>> {};
+      pack_slicer_impl<I, vPack<T, Left...>, vPack<T, RightHead, RightTial...>, true >
+      : pack_slicer_impl<I - 1, vPack<T, Left..., RightHead>, vPack<T, RightTial...>, (I!=1) > {};
 
     template< class T,
-              template<class, T...> class vPack,
+              template<class Ty, Ty...> class vPack,
               T ...Left >
     struct
       pack_slicer_impl<0,
                        vPack<T, Left...>,
-                       vPack<T> >
+                       vPack<T>,
+                       false >
     {
       using left_pack = vPack<T, Left...>;
       using right_pack = vPack<T>;
     };
 
     template< class T,
-              template <class, T...> class vPack,
+              template <class Ty, Ty...> class vPack,
               T ...Left,
               T RightHead,
               T... RightTail >
     struct
       pack_slicer_impl<0,
                        vPack<T, Left...>,
-                       vPack<T, RightHead, RightTail...> >
+                       vPack<T, RightHead, RightTail...>,
+                       false >
     {
       using left_pack = vPack<T, Left...>;
       using right_pack = vPack<T, RightHead, RightTail...>;
@@ -249,19 +253,19 @@ namespace cranberries {
   struct
     pack_slicer<I, Pack<Types...>>
   {
-    using right_pack = typename cranberries_magic::pack_slicer_impl<I, Pack<>, Pack<Types...>>::right_pack;
-    using left_pack = typename cranberries_magic::pack_slicer_impl<I, Pack<>, Pack<Types...>>::left_pack;
+    using right_pack = typename cranberries_magic::pack_slicer_impl<I, Pack<>, Pack<Types...>, (I!=0)>::right_pack;
+    using left_pack = typename cranberries_magic::pack_slicer_impl<I, Pack<>, Pack<Types...>, (I!=0)>::left_pack;
   };
 
   template < size_t I,
+             template < class Ty, Ty... > class vPack, 
              class T,
-             template < class, T... > class vPack, 
              T... Values >
   struct
     pack_slicer<I, vPack<T, Values...>> 
   {
-    using right_pack = typename cranberries_magic::pack_slicer_impl<I, vPack<T>, vPack<T, Values...>>::right_pack;
-    using left_pack = typename cranberries_magic::pack_slicer_impl<I, vPack<T>, vPack<T, Values...>>::left_pack;
+    using right_pack = typename cranberries_magic::pack_slicer_impl<I, vPack<T>, vPack<T, Values...>, (I!=0)>::right_pack;
+    using left_pack = typename cranberries_magic::pack_slicer_impl<I, vPack<T>, vPack<T, Values...>, (I!=0)>::left_pack;
   };
 
   template < size_t I, class Pack >
