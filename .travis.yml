@@ -26,3 +26,5 @@ script:
   - ./interval_lib_tests
   - ./stream_lib_tests
   - ./func_util_lib_tests
+  - ./rkf45_lib_tests
+  - ./stopwatch_lib_tests
