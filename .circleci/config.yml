@@ -6,8 +6,8 @@ jobs:
       - image: enumack/docker_gcc
     steps:
       - checkout
-      - run: export CXX="g++-6" CC="gcc-6" COMPILER="g++-6"
-      - run: cmake -DCMAKE_CXX_COMPILER=$COMPILER && make
+      - run: export CXX="/usr/bin/g++-6" CC="/usr/bin/gcc-6"
+      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
       - run: ./common_lib_tests
       - run: ./dual_number_lib_tests
       - run: ./interval_lib_tests
@@ -21,8 +21,8 @@ jobs:
       - image: enumack/docker_clang
     steps:
       - checkout
-      - run: export CXX="clang++-4.0" CC="clang-4.0" COMPILER="clang++-4.0"
-      - run: cmake -DCMAKE_CXX_COMPILER=$COMPILER && make
+      - run: export CXX="/usr/bin/clang++-4.0" CC="/usr/bin/clang-4.0"
+      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
       - run: ./common_lib_tests
       - run: ./dual_number_lib_tests
       - run: ./interval_lib_tests
