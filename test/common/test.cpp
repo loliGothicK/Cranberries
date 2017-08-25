@@ -196,20 +196,20 @@ static_assert(
   >::value,
   "fail"
   );
-//static_assert(
-//  std::is_same<
-//  value_pack<int,0,1>,
-//  pack_sliced_l<2, value_pack<int, 0,1,2,3,4,5>>
-//  >::value,
-//  "fail"
-//  );
-//static_assert(
-//  std::is_same<
-//  pack_sliced_r<2, value_pack<int, 0,1,2,3,4,5>>,
-//  value_pack<int, 2,3,4,5>
-//  >::value,
-//  "fail"
-//  );
+static_assert(
+ std::is_same<
+ value_pack<int,0,1>,
+ pack_sliced_l<2, value_pack<int, 0,1,2,3,4,5>>
+ >::value,
+ "fail"
+ );
+static_assert(
+ std::is_same<
+ pack_sliced_r<2, value_pack<int, 0,1,2,3,4,5>>,
+ value_pack<int, 2,3,4,5>
+ >::value,
+ "fail"
+ );
 static_assert(
   std::is_same<
   pack_remove_t<int,std::tuple<int,long,int,double>>,

@@ -821,30 +821,6 @@ namespace cranberries_magic {
   template < class vPack >
   constexpr bool pack_disjunction_v = pack_disjunction<vPack>::value;
 
-  
-  template < template <class T, T, T> class, class >
-  struct
-    pack_fold;
-
-  template < class T, template <class, T, T> class Op, template < class, T... > class vPack >
-  struct
-    pack_fold<Op, vPack<T>> : std::integral_constant< T, 0 > {};
-
-  template < class T, template <class,T,T> class Op, template < class, T... > class vPack, T Head, T... Tail >
-  struct
-    pack_fold<Op, vPack<T,Head, Tail...>>
-      : std::integral_constant<T, Op<T, Head, pack_fold<Op, vPack<T, Tail...>>::value>::value>
-  {};
-
-  template < class T, template <class, T, T> class Op, template < class, T... > class vPack, T Last >
-  struct
-    pack_fold<Op, vPack<T, Last>>
-    : std::integral_constant<T, Last>
-  {};
-
-  template < template <class T, T, T> class Op, class vPack >
-  constexpr auto pack_fold_v = pack_fold<Op, vPack>::value;
-
 
 namespace cranberries_magic {
   template<size_t, class, class, template < class... > class >
