@@ -3,7 +3,7 @@ jobs:
   gcc_6:
     working_directory: /Cranberries
     docker:
-      - image: gcc
+      - image: enumhack/docker_gcc
     steps:
       - checkout
       - run: cmake -DCMAKE_CXX_COMPILER=gcc-6 && make
@@ -17,7 +17,7 @@ jobs:
   clang_4_0:
     working_directory: /Cranberries
     docker:
-      - image: enumack/buildcontainers
+      - image: enumack/docker_clang
     steps:
       - checkout
       - run: cmake -DCMAKE_CXX_COMPILER=clang++-4.0 && make
