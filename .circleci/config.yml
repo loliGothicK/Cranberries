@@ -3,7 +3,7 @@ jobs:
   gcc_6:
     working_directory: /Cranberries
     docker:
-      - image: enumhack/docker_gcc
+      - image: enumack/docker_gcc
     steps:
       - checkout
       - run: cmake -DCMAKE_CXX_COMPILER=gcc-6 && make
