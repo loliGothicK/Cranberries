@@ -3,10 +3,9 @@ jobs:
   gcc_6:
     working_directory: /Cranberries
     docker:
-      - image: enumack/docker_gcc
+      - image: purplekarrot/gcc-6
     steps:
       - checkout
-      - run: export CXX="/usr/bin/g++-6" CC="/usr/bin/gcc-6"
       - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
       - run: ./common_lib_tests
       - run: ./dual_number_lib_tests
@@ -18,10 +17,9 @@ jobs:
   clang_4_0:
     working_directory: /Cranberries
     docker:
-      - image: enumack/docker_clang
+      - image: purplekarrot/clang-4.0
     steps:
       - checkout
-      - run: export CXX="/usr/bin/clang++-4.0" CC="/usr/bin/clang-4.0"
       - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
       - run: ./common_lib_tests
       - run: ./dual_number_lib_tests
