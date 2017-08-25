@@ -1,15 +1,15 @@
 version: 2
-  jobs:
-    build:
-      dokcer:
+jobs:
+  build:
+    dokcer:
       - image: purplekarrot/clang-4.0
-      steps:
-        - checkout
-        - run: mkdir build
-        - run: cd build
-        - run: cmake -DCMAKE_CXX_COMPILER=$COMPILER .. && make
-        - run: ./common_lib_tests
-        - run: ./dual_number_lib_tests
-        - run: ./interval_lib_tests
-        - run: ./stream_lib_tests
-        - run: ./func_util_lib_tests
+    steps:
+      - checkout
+      - run: mkdir build
+      - run: cd build
+      - run: cmake -DCMAKE_CXX_COMPILER=$COMPILER .. && make
+      - run: ./common_lib_tests
+      - run: ./dual_number_lib_tests
+      - run: ./interval_lib_tests
+      - run: ./stream_lib_tests
+      - run: ./func_util_lib_tests
