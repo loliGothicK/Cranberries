@@ -72,6 +72,7 @@ workflows:
   version: 2
   build_and_test:
     jobs:
+      - gcc_5
       - gcc_6
       - clang_4_0
       - clang_3_9
