@@ -28,9 +28,9 @@ namespace RKF45Test
           dxdt[2] = x[0] * x[1] - b*x[2];            // dz/dt
           return dxdt;
         })
-          .set_integrate_range({ 0,25 })
+          .set_integrate_range(0.0L, 25.0L)
           .set_tolerance(1.0E-4L)
-          .set_step_size_range({ 0.001,0.5 });
+          .set_step_size_range(0.001L, 0.5L);
 
         solver.integrate(state0, [](auto t, state_type x) { });
     }
