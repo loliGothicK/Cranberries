@@ -48,6 +48,20 @@ jobs:
       # - run: ./func_util_lib_tests
       - run: ./rkf45_lib_tests
       - run: ./stopwatch_lib_tests
+  clang_5_0:
+    docker:
+      - image: enumack/buildcontainers:clang-5.0
+    steps:
+      - checkout
+      - run: echo "add_subdirectory(test)" >> ./CMakeLists.txt
+      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
+      - run: ./common_lib_tests
+      - run: ./dual_number_lib_tests
+      - run: ./interval_lib_tests
+      - run: ./stream_lib_tests
+      - run: ./func_util_lib_tests
+      - run: ./rkf45_lib_tests
+      - run: ./stopwatch_lib_tests
   clang_4_0:
     docker:
       - image: enumack/buildcontainers:clang-4.0
@@ -111,3 +125,4 @@ workflows:
       - clang_3_8
       - clang_3_9
       - clang_4_0
+      - clang_5_0
