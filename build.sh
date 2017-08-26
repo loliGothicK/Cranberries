@@ -66,4 +66,6 @@ if [ "$FLAG_TARGET" ]; then
   done
 fi
 
+mkdir build
+cd build
 cmake -DCMAKE_CXX_COMPILER=$CXX .. && make
