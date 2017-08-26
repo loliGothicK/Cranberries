@@ -36,9 +36,9 @@ int main()
     [](const auto t, const auto& y, const auto& z) {
     return -10.L*y - std::sqrt(40.L)*z;
   })
-    .set_integrate_range({ 0,25 })
+    .set_integrate_range( 0.0L,25.0L )
     .set_tolerance(8.0E-3L)
-    .set_step_size_range({ 1.0E-6,0.05 })
+    .set_step_size_range( 1.0E-6L,0.05L )
     .integrate(10.L, 0.L,
       [](auto t, auto state) {
   });
