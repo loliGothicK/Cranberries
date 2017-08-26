@@ -2,6 +2,8 @@ version: 2
 jobs:
   gcc_6:
     working_directory: /Cranberries
+    commands: 
+      - sh ./build.sh
     docker:
       - image: purplekarrot/gcc-6
     steps:
@@ -16,6 +18,8 @@ jobs:
       - run: ./stopwatch_lib_tests
   clang_4_0:
     working_directory: /Cranberries
+    commands: 
+      - sh ./build.sh
     docker:
       - image: purplekarrot/clang-4.0
     steps:
