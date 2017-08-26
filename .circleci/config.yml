@@ -3,7 +3,7 @@ jobs:
   gcc_7:
     working_directory: /Cranberries
     docker:
-      - image: purplekarrot/gcc-7
+      - image: enumack/buildcontainers:gcc-7
     steps:
       - checkout
       - run: echo "add_subdirectory(test)" >> ./CMakeLists.txt
@@ -18,7 +18,7 @@ jobs:
   gcc_6:
     working_directory: /Cranberries
     docker:
-      - image: purplekarrot/gcc-6
+      - image: enumack/buildcontainers:gcc-6
     steps:
       - checkout
       - run: echo "add_subdirectory(test)" >> ./CMakeLists.txt
@@ -32,7 +32,7 @@ jobs:
       - run: ./stopwatch_lib_tests
   gcc_5:
     docker:
-      - image: purplekarrot/gcc-5
+      - image: enumack/buildcontainers:gcc-5
     steps:
       - checkout
       - run: echo "add_subdirectory(test/common)" >> ./CMakeLists.txt
@@ -50,7 +50,7 @@ jobs:
       - run: ./stopwatch_lib_tests
   clang_4_0:
     docker:
-      - image: purplekarrot/clang-4.0
+      enumack/buildcontainers:clang-4.0
     steps:
       - checkout
       - run: echo "add_subdirectory(test)" >> ./CMakeLists.txt
@@ -64,7 +64,7 @@ jobs:
       - run: ./stopwatch_lib_tests
   clang_3_9:
     docker:
-      - image: purplekarrot/clang-3.9
+      - image: enumack/buildcontainers:clang-3.9
     steps:
       - checkout
       - run: echo "add_subdirectory(test/common)" >> ./CMakeLists.txt
