@@ -1,8 +1,7 @@
-execute_process(
-  COMMAND ls -F
-  COMMAND grep /
-  COMMAND sed -E "s/\(.*\)\//add_subdirectory\(\1\)/g"
-  COMMAND cat > tmp.cmake
-)
-
-include(tmp.cmake)
+add_subdirectory(common)
+add_subdirectory(dual_number)
+add_subdirectory(interval)
+add_subdirectory(rkf45)
+add_subdirectory(stopwatch)
+add_subdirectory(stream)
+add_subdirectory(func_util)
