@@ -88,5 +88,6 @@ workflows:
     jobs:
       - gcc_5
       - gcc_6
-      - clang_4_0
+      - gcc_7
       - clang_3_9
+      - clang_4_0
