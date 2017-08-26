@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.2)
 
 project(CranberriesLibrary)
 
@@ -11,4 +11,3 @@ set(CMAKE_CONFIGURATION_TYPES Debug Release)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR})
 
 enable_testing()
-add_subdirectory(test)
