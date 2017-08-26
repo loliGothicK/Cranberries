@@ -4,8 +4,8 @@
 
 # Build Status
 
-[![Build Status](https://travis-ci.org/LoliGothick/Cranberries.svg?branch=master)](https://travis-ci.org/LoliGothick/Cranberries) 
-Linux with GCC 6
+[![CircleCI](https://circleci.com/gh/LoliGothick/Cranberries/tree/master.svg?style=svg)](https://circleci.com/gh/LoliGothick/Cranberries/tree/master)
+Linux with GCC 5,6,7 Clang 3.8, 3.9, 4.0
 
 [![Build status](https://ci.appveyor.com/api/projects/status/bk0tjc41t7db0ome/branch/master?svg=true)](https://ci.appveyor.com/project/LoliGothick/cranberries/branch/master) 
 Windows with Visual Studio 2017 
