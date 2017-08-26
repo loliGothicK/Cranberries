@@ -51,22 +51,11 @@ namespace cranberries {
   public:
     RKF45ForDifferentialEquationOfFirstOrder(System f) noexcept : f{ f } {}
 
-    // init({ a, b, alpha, tol, h_min, h_max })
-    // a : minimum value of t
-    // b : maximum value of t
-    // tol : tolerance(allowable error)
-    // h_min : minimum step size
-    // h_max : maximum step size
-    auto& init(generate_tuple_t<long double,5> params) {
-      std::tie(a, b, tol, h_min, h_max) = params;
-      return *this;
-    }
-
     // set_integrate_range({ a, b })
     // a : minimum value of t
     // b : maximum value of t
-    auto& set_integrate_range(generate_tuple_t<long double, 2> params) {
-      std::tie(a, b) = params;
+    auto& set_integrate_range(long double _1, long double _2) {
+      a = _1, b = _2;
       return *this;
     }
 
@@ -80,8 +69,8 @@ namespace cranberries {
     // set_step_size_range({ h_min, h_max })
     // h_min : minimum step size
     // h_max : maximum step size
-    auto& set_step_size_range(generate_tuple_t<long double, 2> params) {
-      std::tie(h_min, h_max) = params;
+    auto& set_step_size_range(long double _1, long double _2) {
+      h_min = _1, h_max = _2;
       return *this;
     }
 
