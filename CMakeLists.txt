@@ -11,3 +11,4 @@ set(CMAKE_CONFIGURATION_TYPES Debug Release)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR})
 
 enable_testing()
+add_subdirectory(test)
