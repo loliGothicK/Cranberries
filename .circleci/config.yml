@@ -50,7 +50,7 @@ jobs:
       - run: ./stopwatch_lib_tests
   clang_4_0:
     docker:
-      enumack/buildcontainers:clang-4.0
+      - image: enumack/buildcontainers:clang-4.0
     steps:
       - checkout
       - run: echo "add_subdirectory(test)" >> ./CMakeLists.txt
