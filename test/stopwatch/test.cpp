@@ -2,7 +2,7 @@
 #include "../../cranberries/stopwatch.hpp"
 
 int main(){
-  cranberries::stopwatch timer();
+  auto timer = cranberries::stopwatch{};
   timer.start();
   timer.get_ticks();
   timer.is_started();

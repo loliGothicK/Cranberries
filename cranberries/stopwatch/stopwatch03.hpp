@@ -50,6 +50,6 @@ private:
 }
 #include "stopwatch.hpp"
 namespace cranberries {
-typedef basic_stopwatch<cranberries_magic::TimerBaseClock> stopwatch;
+using stopwatch = basic_stopwatch<cranberries_magic::TimerBaseClock>;
 }
 # endif
