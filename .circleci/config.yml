@@ -133,6 +133,25 @@ jobs:
       # - run: ./func_util_lib_tests
       - run: ./rkf45_lib_tests
       - run: ./stopwatch_lib_tests
+  clang_3_6:
+    docker:
+      - image: enumack/buildcontainers:clang-3.6
+    steps:
+      - checkout
+      - run: echo "add_subdirectory(test/common)" >> ./CMakeLists.txt
+      - run: echo "add_subdirectory(test/dual_number)" >> ./CMakeLists.txt
+      - run: echo "add_subdirectory(test/interval)" >> ./CMakeLists.txt
+      # - run: echo "add_subdirectory(test/stream)" >> ./CMakeLists.txt
+      - run: echo "add_subdirectory(test/rkf45)" >> ./CMakeLists.txt
+      - run: echo "add_subdirectory(test/stopwatch)" >> ./CMakeLists.txt
+      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
+      - run: ./common_lib_tests
+      - run: ./dual_number_lib_tests
+      - run: ./interval_lib_tests
+      # - run: ./stream_lib_tests
+      # - run: ./func_util_lib_tests
+      - run: ./rkf45_lib_tests
+      - run: ./stopwatch_lib_tests
 
 workflows:
   version: 2
