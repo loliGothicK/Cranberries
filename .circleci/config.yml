@@ -6,7 +6,7 @@ jobs:
       - image: enumack/buildcontainers:gcc-7
     steps:
       - checkout
-      - run: ls -F test | grep / | sed -E "s/(.*)\//test/add_subdirectory(\1)/g" >> ./CMakeLists.txt
+      - run: ls -F test | grep / | sed -E "s/(.*)\//test\/add_subdirectory(\1)/g" >> ./CMakeLists.txt
       - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
       - run: ./common_lib_tests
       - run: ./dual_number_lib_tests
