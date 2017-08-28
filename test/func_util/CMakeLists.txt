@@ -1,6 +1,6 @@
-message(STATUS "Building tests")
+message(STATUS "Building test")
 
-set(target func_util_lib_tests)
+set(target func_util-test)
 message(STATUS "Building library ${target}")
 
 set(sources

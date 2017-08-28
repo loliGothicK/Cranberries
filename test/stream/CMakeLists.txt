@@ -1,6 +1,6 @@
-message(STATUS "Building tests")
+message(STATUS "Building test")
 
-set(target stream_lib_tests)
+set(target stream-test)
 message(STATUS "Building library ${target}")
 
 set(sources

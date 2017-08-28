@@ -1,6 +1,6 @@
-message(STATUS "Building tests")
+message(STATUS "Building test")
 
-set(target dual_number_lib_tests)
+set(target dual_number-test)
 message(STATUS "Building library ${target}")
 
 set(sources

@@ -1,6 +1,6 @@
-message(STATUS "Building tests")
+message(STATUS "Building test")
 
-set(target rkf45_lib_tests)
+set(target rkf45-test)
 message(STATUS "Building library ${target}")
 
 set(sources

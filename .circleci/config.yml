@@ -6,30 +6,30 @@ jobs:
       - image: enumack/buildcontainers:gcc-7
     steps:
       - checkout
-      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_executable(\1-test test\/\1\/test.cpp)/g" >> ./CMakeLists.txt
       - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common_lib_tests
-      - run: ./dual_number_lib_tests
-      - run: ./interval_lib_tests
-      - run: ./stream_lib_tests
-      - run: ./func_util_lib_tests
-      - run: ./rkf45_lib_tests
-      - run: ./stopwatch_lib_tests
+      - run: ./common-test
+      - run: ./dual_number-test
+      - run: ./interval-test
+      - run: ./stream-test
+      - run: ./func_util-test
+      - run: ./rkf45-test
+      - run: ./stopwatch-test
   gcc_6:
     working_directory: /Cranberries
     docker:
       - image: enumack/buildcontainers:gcc-6
     steps:
       - checkout
-      - run: echo "add_subdirectory(test)" >> ./CMakeLists.txt
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
       - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common_lib_tests
-      - run: ./dual_number_lib_tests
-      - run: ./interval_lib_tests
-      - run: ./stream_lib_tests
-      - run: ./func_util_lib_tests
-      - run: ./rkf45_lib_tests
-      - run: ./stopwatch_lib_tests
+      - run: ./common-test
+      - run: ./dual_number-test
+      - run: ./interval-test
+      - run: ./stream-test
+      - run: ./func_util-test
+      - run: ./rkf45-test
+      - run: ./stopwatch-test
   gcc_5:
     docker:
       - image: enumack/buildcontainers:gcc-5
@@ -41,41 +41,41 @@ jobs:
       - run: echo "add_subdirectory(test/rkf45)" >> ./CMakeLists.txt
       - run: echo "add_subdirectory(test/stopwatch)" >> ./CMakeLists.txt
       - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common_lib_tests
-      - run: ./dual_number_lib_tests
-      - run: ./interval_lib_tests
-      # - run: ./stream_lib_tests
-      # - run: ./func_util_lib_tests
-      - run: ./rkf45_lib_tests
-      - run: ./stopwatch_lib_tests
+      - run: ./common-test
+      - run: ./dual_number-test
+      - run: ./interval-test
+      # - run: ./stream-test
+      # - run: ./func_util-test
+      - run: ./rkf45-test
+      - run: ./stopwatch-test
   clang_5_0:
     docker:
       - image: enumack/buildcontainers:clang-5.0
     steps:
       - checkout
-      - run: echo "add_subdirectory(test)" >> ./CMakeLists.txt
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
       - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common_lib_tests
-      - run: ./dual_number_lib_tests
-      - run: ./interval_lib_tests
-      - run: ./stream_lib_tests
-      - run: ./func_util_lib_tests
-      - run: ./rkf45_lib_tests
-      - run: ./stopwatch_lib_tests
+      - run: ./common-test
+      - run: ./dual_number-test
+      - run: ./interval-test
+      - run: ./stream-test
+      - run: ./func_util-test
+      - run: ./rkf45-test
+      - run: ./stopwatch-test
   clang_4_0:
     docker:
       - image: enumack/buildcontainers:clang-4.0
     steps:
       - checkout
-      - run: echo "add_subdirectory(test)" >> ./CMakeLists.txt
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
       - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common_lib_tests
-      - run: ./dual_number_lib_tests
-      - run: ./interval_lib_tests
-      - run: ./stream_lib_tests
-      - run: ./func_util_lib_tests
-      - run: ./rkf45_lib_tests
-      - run: ./stopwatch_lib_tests
+      - run: ./common-test
+      - run: ./dual_number-test
+      - run: ./interval-test
+      - run: ./stream-test
+      - run: ./func_util-test
+      - run: ./rkf45-test
+      - run: ./stopwatch-test
   clang_3_9:
     docker:
       - image: enumack/buildcontainers:clang-3.9
@@ -88,13 +88,13 @@ jobs:
       - run: echo "add_subdirectory(test/rkf45)" >> ./CMakeLists.txt
       - run: echo "add_subdirectory(test/stopwatch)" >> ./CMakeLists.txt
       - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common_lib_tests
-      - run: ./dual_number_lib_tests
-      - run: ./interval_lib_tests
-      - run: ./stream_lib_tests
-      # - run: ./func_util_lib_tests
-      - run: ./rkf45_lib_tests
-      - run: ./stopwatch_lib_tests
+      - run: ./common-test
+      - run: ./dual_number-test
+      - run: ./interval-test
+      - run: ./stream-test
+      # - run: ./func_util-test
+      - run: ./rkf45-test
+      - run: ./stopwatch-test
   clang_3_8:
     docker:
       - image: enumack/buildcontainers:clang-3.8
@@ -107,13 +107,13 @@ jobs:
       - run: echo "add_subdirectory(test/rkf45)" >> ./CMakeLists.txt
       - run: echo "add_subdirectory(test/stopwatch)" >> ./CMakeLists.txt
       - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common_lib_tests
-      - run: ./dual_number_lib_tests
-      - run: ./interval_lib_tests
-      - run: ./stream_lib_tests
-      # - run: ./func_util_lib_tests
-      - run: ./rkf45_lib_tests
-      - run: ./stopwatch_lib_tests
+      - run: ./common-test
+      - run: ./dual_number-test
+      - run: ./interval-test
+      - run: ./stream-test
+      # - run: ./func_util-test
+      - run: ./rkf45-test
+      - run: ./stopwatch-test
   clang_3_7:
     docker:
       - image: enumack/buildcontainers:clang-3.7
@@ -126,13 +126,13 @@ jobs:
       - run: echo "add_subdirectory(test/rkf45)" >> ./CMakeLists.txt
       - run: echo "add_subdirectory(test/stopwatch)" >> ./CMakeLists.txt
       - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common_lib_tests
-      - run: ./dual_number_lib_tests
-      - run: ./interval_lib_tests
-      # - run: ./stream_lib_tests
-      # - run: ./func_util_lib_tests
-      - run: ./rkf45_lib_tests
-      - run: ./stopwatch_lib_tests
+      - run: ./common-test
+      - run: ./dual_number-test
+      - run: ./interval-test
+      # - run: ./stream-test
+      # - run: ./func_util-test
+      - run: ./rkf45-test
+      - run: ./stopwatch-test
   clang_3_6:
     docker:
       - image: enumack/buildcontainers:clang-3.6
@@ -145,13 +145,13 @@ jobs:
       - run: echo "add_subdirectory(test/rkf45)" >> ./CMakeLists.txt
       - run: echo "add_subdirectory(test/stopwatch)" >> ./CMakeLists.txt
       - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common_lib_tests
-      - run: ./dual_number_lib_tests
-      - run: ./interval_lib_tests
-      # - run: ./stream_lib_tests
-      # - run: ./func_util_lib_tests
-      - run: ./rkf45_lib_tests
-      - run: ./stopwatch_lib_tests
+      - run: ./common-test
+      - run: ./dual_number-test
+      - run: ./interval-test
+      # - run: ./stream-test
+      # - run: ./func_util-test
+      - run: ./rkf45-test
+      - run: ./stopwatch-test
   clang_3_5:
     docker:
       - image: enumack/buildcontainers:clang-3.5
@@ -164,13 +164,13 @@ jobs:
       # - run: echo "add_subdirectory(test/rkf45)" >> ./CMakeLists.txt
       - run: echo "add_subdirectory(test/stopwatch)" >> ./CMakeLists.txt
       - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common_lib_tests
-      - run: ./dual_number_lib_tests
-      - run: ./interval_lib_tests
-      # - run: ./stream_lib_tests
-      # - run: ./func_util_lib_tests
-      # - run: ./rkf45_lib_tests
-      - run: ./stopwatch_lib_tests
+      - run: ./common-test
+      - run: ./dual_number-test
+      - run: ./interval-test
+      # - run: ./stream-test
+      # - run: ./func_util-test
+      # - run: ./rkf45-test
+      - run: ./stopwatch-test
 
 workflows:
   version: 2
