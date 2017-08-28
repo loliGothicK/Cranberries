@@ -6,15 +6,8 @@ jobs:
       - image: enumack/buildcontainers:gcc-7
     steps:
       - checkout
-      - run: ls -F test | grep / | sed -E "s/(.*)\//add_executable(\1-test test\/\1\/test.cpp)/g" >> ./CMakeLists.txt
-      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common-test
-      - run: ./dual_number-test
-      - run: ./interval-test
-      - run: ./stream-test
-      - run: ./func_util-test
-      - run: ./rkf45-test
-      - run: ./stopwatch-test
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
+      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make && ctest -L all
   gcc_6:
     working_directory: /Cranberries
     docker:
@@ -22,155 +15,63 @@ jobs:
     steps:
       - checkout
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
-      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common-test
-      - run: ./dual_number-test
-      - run: ./interval-test
-      - run: ./stream-test
-      - run: ./func_util-test
-      - run: ./rkf45-test
-      - run: ./stopwatch-test
+      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make && ctest -L all
   gcc_5:
     docker:
       - image: enumack/buildcontainers:gcc-5
     steps:
       - checkout
-      - run: echo "add_subdirectory(test/common)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/dual_number)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/interval)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/rkf45)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/stopwatch)" >> ./CMakeLists.txt
-      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common-test
-      - run: ./dual_number-test
-      - run: ./interval-test
-      # - run: ./stream-test
-      # - run: ./func_util-test
-      - run: ./rkf45-test
-      - run: ./stopwatch-test
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util)).*$" >> ./CMakeLists.txt
+      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make && ctest -L all
   clang_5_0:
     docker:
       - image: enumack/buildcontainers:clang-5.0
     steps:
       - checkout
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
-      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common-test
-      - run: ./dual_number-test
-      - run: ./interval-test
-      - run: ./stream-test
-      - run: ./func_util-test
-      - run: ./rkf45-test
-      - run: ./stopwatch-test
+      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make && ctest -L all
   clang_4_0:
     docker:
       - image: enumack/buildcontainers:clang-4.0
     steps:
       - checkout
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
-      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common-test
-      - run: ./dual_number-test
-      - run: ./interval-test
-      - run: ./stream-test
-      - run: ./func_util-test
-      - run: ./rkf45-test
-      - run: ./stopwatch-test
+      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make && ctest -L all
   clang_3_9:
     docker:
       - image: enumack/buildcontainers:clang-3.9
     steps:
       - checkout
-      - run: echo "add_subdirectory(test/common)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/dual_number)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/interval)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/stream)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/rkf45)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/stopwatch)" >> ./CMakeLists.txt
-      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common-test
-      - run: ./dual_number-test
-      - run: ./interval-test
-      - run: ./stream-test
-      # - run: ./func_util-test
-      - run: ./rkf45-test
-      - run: ./stopwatch-test
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*func_util).*$" >> ./CMakeLists.txt
+      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make && ctest -L all
   clang_3_8:
     docker:
       - image: enumack/buildcontainers:clang-3.8
     steps:
       - checkout
-      - run: echo "add_subdirectory(test/common)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/dual_number)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/interval)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/stream)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/rkf45)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/stopwatch)" >> ./CMakeLists.txt
-      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common-test
-      - run: ./dual_number-test
-      - run: ./interval-test
-      - run: ./stream-test
-      # - run: ./func_util-test
-      - run: ./rkf45-test
-      - run: ./stopwatch-test
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*func_util).*$" >> ./CMakeLists.txt
+      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make && ctest -L all
   clang_3_7:
     docker:
       - image: enumack/buildcontainers:clang-3.7
     steps:
       - checkout
-      - run: echo "add_subdirectory(test/common)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/dual_number)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/interval)" >> ./CMakeLists.txt
-      # - run: echo "add_subdirectory(test/stream)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/rkf45)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/stopwatch)" >> ./CMakeLists.txt
-      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common-test
-      - run: ./dual_number-test
-      - run: ./interval-test
-      # - run: ./stream-test
-      # - run: ./func_util-test
-      - run: ./rkf45-test
-      - run: ./stopwatch-test
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util)).*$" >> ./CMakeLists.txt
+      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make && ctest -L all
   clang_3_6:
     docker:
       - image: enumack/buildcontainers:clang-3.6
     steps:
       - checkout
-      - run: echo "add_subdirectory(test/common)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/dual_number)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/interval)" >> ./CMakeLists.txt
-      # - run: echo "add_subdirectory(test/stream)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/rkf45)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/stopwatch)" >> ./CMakeLists.txt
-      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common-test
-      - run: ./dual_number-test
-      - run: ./interval-test
-      # - run: ./stream-test
-      # - run: ./func_util-test
-      - run: ./rkf45-test
-      - run: ./stopwatch-test
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util)).*$" >> ./CMakeLists.txt
+      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make && ctest -L all
   clang_3_5:
     docker:
       - image: enumack/buildcontainers:clang-3.5
     steps:
       - checkout
-      - run: echo "add_subdirectory(test/common)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/dual_number)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/interval)" >> ./CMakeLists.txt
-      # - run: echo "add_subdirectory(test/stream)" >> ./CMakeLists.txt
-      # - run: echo "add_subdirectory(test/rkf45)" >> ./CMakeLists.txt
-      - run: echo "add_subdirectory(test/stopwatch)" >> ./CMakeLists.txt
-      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make
-      - run: ./common-test
-      - run: ./dual_number-test
-      - run: ./interval-test
-      # - run: ./stream-test
-      # - run: ./func_util-test
-      # - run: ./rkf45-test
-      - run: ./stopwatch-test
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util|rkf45)).*$" >> ./CMakeLists.txt
+      - run: cmake -DCMAKE_CXX_COMPILER=$CXX && make && ctest -L all
 
 workflows:
   version: 2
