@@ -613,11 +613,11 @@ namespace cranberries {
   // Radix sort
   template <
     class ForwardIterator,
-    enabler_t<std::is_integral<element_type_of_t<ForwardIterator>>::value> = nullptr
+    enabler_t<std::is_integral<std::decay_t<decltype(*std::declval<ForwardIterator>())>>::value> = nullptr
   >
   inline void ascending_radix_sort(ForwardIterator first, ForwardIterator last)
   {
-    size_t BIT = sizeof(element_type_of_t<ForwardIterator>) * 8;
+    size_t BIT = sizeof(std::decay_t<decltype(*std::declval<ForwardIterator>())>) * 8;
 
     // partition negative number to left
     auto mid = std::stable_partition(first, last, [](auto v) { return v < 0; });
@@ -635,11 +635,11 @@ namespace cranberries {
   // Radix sort
   template <
     class ForwardIterator,
-    enabler_t<std::is_integral<element_type_of_t<ForwardIterator>>::value> = nullptr
+    enabler_t<std::is_integral<std::decay_t<decltype(*std::declval<ForwardIterator>())>>::value> = nullptr
   >
   inline void descending_radix_sort(ForwardIterator first, ForwardIterator last)
   {
-    size_t BIT = sizeof(element_type_of_t<ForwardIterator>) * 8;
+    size_t BIT = sizeof(std::decay_t<decltype(*std::declval<ForwardIterator>())>) * 8;
 
     // partition negative number to left
     auto mid = std::stable_partition(first, last, [](auto v) { return !(v < 0); });
@@ -658,11 +658,11 @@ namespace cranberries {
   template <
     class ForwardIterator,
     class F,
-    enabler_t<std::is_integral<std::result_of_t<F(element_type_of_t<ForwardIterator>)>>::value> = nullptr
+    enabler_t<std::is_integral<std::decay_t<decltype(std::declval<F>()(*std::declval<ForwardIterator>()))>::value>> = nullptr
   >
   inline void ascending_radix_sort(ForwardIterator first, ForwardIterator last, F&& get_key)
   {
-    size_t BIT = sizeof(std::result_of_t<F(element_type_of_t<ForwardIterator>)>) * 8;
+    size_t BIT = sizeof(decltype(std::declval<F>()(*std::declval<ForwardIterator>()))) * 8;
 
     // partition negative number to left
     auto mid = std::stable_partition(first, last, [](auto v) { return v < 0; });
@@ -681,11 +681,11 @@ namespace cranberries {
   template <
     class ForwardIterator,
     class F,
-    enabler_t<std::is_integral<std::result_of_t<F(element_type_of_t<ForwardIterator>)>>::value> = nullptr
+    enabler_t<std::is_integral<std::decay_t<decltype(std::declval<F>()(*std::declval<ForwardIterator>()))>::value>> = nullptr
   >
   inline void descending_radix_sort(ForwardIterator first, ForwardIterator last, F&& get_key)
   {
-    size_t BIT = sizeof(std::result_of_t<F(element_type_of_t<ForwardIterator>)>) * 8;
+    size_t BIT = sizeof(decltype(std::declval<F>()(*std::declval<ForwardIterator>()))) * 8;
 
     // partition negative number to left
     auto mid = std::stable_partition(first, last, [](auto v) { return !(v < 0); });
@@ -703,14 +703,14 @@ namespace cranberries {
   // Radix sort
   template <
     class ForwardIterator,
-    enabler_t<!std::is_integral<element_type_of_t<ForwardIterator>>::value> = nullptr
+    enabler_t<!std::is_integral<std::decay_t<decltype(*std::declval<ForwardIterator>())>>::value> = nullptr
   >
   void ascending_radix_sort(ForwardIterator first, ForwardIterator last) = delete;
 
   // Radix sort
   template <
     class ForwardIterator,
-    enabler_t<!std::is_integral<element_type_of_t<ForwardIterator>>::value> = nullptr
+    enabler_t<!std::is_integral<std::decay_t<decltype(*std::declval<ForwardIterator>())>>::value> = nullptr
   >
   void descending_radix_sort(ForwardIterator first, ForwardIterator last) = delete;
 
