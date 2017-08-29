@@ -24,6 +24,9 @@ Thumbs.db
 *.dll
 *.lib
 *.sbr
+*.tlog
+*.idb
+
 /VisualStudio/.vs
 /VisualStudio/Debug
 /VisualStudio/Release
