@@ -25,3 +25,6 @@ Thumbs.db
 *.lib
 *.sbr
 /VisualStudio/.vs
+/VisualStudio/Debug
+/VisualStudio/Release
+/VisualStudio/x64

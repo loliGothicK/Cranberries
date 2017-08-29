@@ -29,7 +29,8 @@ namespace cranberries {
   template < template < class Ty, Ty... > class T,
              class Type,
              Type... Values >
-  struct is_value_pack<T<Type, Values...>> : std::true_type {};
+  struct
+    is_value_pack<T<Type, Values...>> : std::true_type {};
 
   template < class T >
   constexpr bool is_value_pack_v = is_type_pack<T>::value;
@@ -108,19 +109,18 @@ namespace cranberries {
   template < size_t I,
              class T >
   struct
-    expand
+    pack_expand
     : nested_type_class<T> {};
 
   template < size_t I,
              class... Types >
   struct
-    expand<I, type_pack<Types...>>
+    pack_expand<I, type_pack<Types...>>
     : nested_type_class<pack_element_t<I, type_pack<Types...>>> {};
 
   template < size_t I,
              class T >
-  using expand_t = typename expand<I, T>::type;
-
+  using pack_expand_t = typename pack_expand<I, T>::type;
 
 
   template < class >
@@ -782,6 +782,27 @@ namespace cranberries_magic {
   template < template < class > class Operand, class Pack >
   using pack_t2v_transform_t = typename pack_t2v_transform<Operand, Pack>::type;
 
+  template < template < class > class, class >
+  struct pack_all_match_if;
+
+  template < template < class > class Pred, template < class... > class tPack, class... Args >
+  struct pack_all_match_if<Pred,tPack<Args...>>
+    : conjunction<Pred<Args>...> {};
+
+  template < template < class > class, class >
+  struct pack_any_match_if;
+
+  template < template < class > class Pred, template < class... > class tPack, class... Args >
+  struct pack_any_match_if<Pred, tPack<Args...>>
+    : disjunction<Pred<Args>...> {};
+
+  template < template < class > class, class >
+  struct pack_none_match_if;
+
+  template < template < class > class Pred, template < class... > class tPack, class... Args >
+  struct pack_none_match_if<Pred, tPack<Args...>>
+    : negation<disjunction<Pred<Args>...>> {};
+
 
   template < class >
   struct
@@ -792,14 +813,12 @@ namespace cranberries_magic {
     pack_conjunction<vPack<T, Head, Tail...>>
     : std::conditional_t<Head,
                          pack_conjunction<vPack<T, Tail...>>,
-                         std::false_type>
-  {};
+                         std::false_type> {};
 
   template < class T, template < class, T... > class vPack, T Last >
   struct
     pack_conjunction<vPack<T, Last>>
-    : bool_constant<Last>
-  {};
+    : bool_constant<Last> {};
 
   template < class vPack >
   constexpr bool pack_conjunction_v = pack_conjunction<vPack>::value;
@@ -813,41 +832,62 @@ namespace cranberries_magic {
     pack_disjunction<vPack<T, Head, Tail...>>
     : std::conditional_t<Head,
                          std::true_type,
-                         pack_conjunction<vPack<T, Tail...>>>
-  {};
+                         pack_conjunction<vPack<T, Tail...>>> {};
 
   template < class T, template < class, T... > class vPack, T Last >
   struct
     pack_disjunction<vPack<T, Last>>
-    : bool_constant<Last>
-  {};
+    : bool_constant<Last> {};
 
   template < class vPack >
   constexpr bool pack_disjunction_v = pack_disjunction<vPack>::value;
 
 
 namespace cranberries_magic {
-  template<size_t, class, class, template < class... > class >
+  template< size_t, class, class, template < class... > class >
   struct pack_chunk_impl;
 
-  template<size_t N, template <class...>class tPack, class ...Chucnked, class ...RemainderTypes, template <class...>class NestPack>
-  struct pack_chunk_impl<N, tPack<Chucnked...>, tPack<RemainderTypes...>, NestPack>
-    : pack_chunk_impl<N, pack_cat_t<tPack<Chucnked...>, tPack<pack_sliced_l<N, NestPack<RemainderTypes...>>>>, pack_sliced_r<N, tPack<RemainderTypes...>>, NestPack >
-  {};
+  template< size_t N,
+            template <class...>class tPack,
+            class ...Chucnked,
+            class ...RemainderTypes,
+            template <class...>class NestPack >
+  struct
+    pack_chunk_impl<N,
+                    tPack<Chucnked...>,
+                    tPack<RemainderTypes...>,
+                    NestPack >
+    : pack_chunk_impl<N,
+                      pack_cat_t<tPack<Chucnked...>,
+                      tPack<pack_sliced_l<N, NestPack<RemainderTypes...>>>>,
+                      pack_sliced_r<N, tPack<RemainderTypes...>>,
+                      NestPack > {};
 
-  template<size_t N, template <class...>class tPack, class ...Chucnked, template <class...>class NestPack>
-  struct pack_chunk_impl<N, tPack<Chucnked...>, tPack<>, NestPack>
-  {
-    using type = tPack<Chucnked...>;
-  };
+  template< size_t N,
+            template <class...> class tPack,
+            class ...Chucnked,
+            template <class...> class NestPack >
+  struct
+    pack_chunk_impl<N,
+                    tPack<Chucnked...>,
+                    tPack<>,
+                    NestPack >
+    : nested_type_class<tPack<Chucnked...>> {};
 }
-  template < size_t N, class Pack, template < class... > class NestPack = pack_replace_all<Pack>::template type >
-  using pack_chunk = cranberries_magic::pack_chunk_impl< N, pack_clear_t<Pack>, pack_sliced_l < pack_size_v<Pack> - (pack_size_v<Pack>%N), Pack >, NestPack> ;
 
-  template< size_t N, class Pack, template < class... > class NestPack = pack_replace_all<Pack>::template type >
-  using pack_chunk_t = typename pack_chunk<N, Pack, NestPack>::type;
+  template < size_t N,
+             class Pack,
+             template < class... > class NestPack = pack_replace_all<Pack>::template type >
+  using
+    pack_chunk = cranberries_magic::pack_chunk_impl< N, pack_clear_t<Pack>, pack_sliced_l < pack_size_v<Pack> - (pack_size_v<Pack>%N), Pack >, NestPack> ;
 
+  template< size_t N,
+            class Pack,
+            template < class... > class NestPack = pack_replace_all<Pack>::template type >
+  using
+    pack_chunk_t = typename pack_chunk<N, Pack, NestPack>::type;
 
+namespace cranberries_magic {
   template < size_t, class, class, class, bool, template < class... > class >
   struct pack_adjacent_chunk_impl;
 
@@ -886,12 +926,12 @@ namespace cranberries_magic {
                              false,
                              NestPack>
     : nested_type_class<tPack<ChunkedTypes...>> {};
-
+}
   template < size_t N,
              class tPack,
              template < class... > class NestPack = pack_replace_all<tPack>::template type >
   using
-    pack_adjacent_chunk = pack_adjacent_chunk_impl<N,pack_clear_t<tPack>, tPack, make_swallow_t<N>, (N <= pack_size_v<tPack>), NestPack>;
+    pack_adjacent_chunk = cranberries_magic::pack_adjacent_chunk_impl<N,pack_clear_t<tPack>, tPack, make_swallow_t<N>, (N <= pack_size_v<tPack>), NestPack>;
 
   template < size_t N,
              class tPack,

@@ -52,9 +52,7 @@ namespace cranberries
   using is_same_if_t = std::enable_if_t<std::is_same<std::decay_t<T>,std::decay_t<U>>::value,IfType>;
 
   template < typename T >
-  struct remove_cvr {
-    using type = std::remove_cv_t<std::remove_reference_t<T>>;
-  };
+  using remove_cvr = std::remove_cv<std::remove_reference_t<T>>;
 
   template < typename T >
   using remove_cvr_t = typename remove_cvr<T>::type;
@@ -99,19 +97,19 @@ namespace cranberries
   template < template<class>class ...Preds >
   struct conjunctional {
     template < typename T >
-    using pred = conjunction<Preds<T>...>;
+    using apply = conjunction<Preds<T>...>;
   };
 
   template < template<class>class ...Preds >
   struct disjunctional {
     template < typename T >
-    using pred = disjunction<Preds<T>...>;
+    using apply = disjunction<Preds<T>...>;
   };
 
   template < template<class> class Pred >
   struct negational {
     template < typename T >
-    using pred = negation<Pred<T>>;
+    using apply = negation<Pred<T>>;
   };
 
   template<class...>
@@ -122,7 +120,7 @@ namespace cranberries
 
   template<class Head, class...Tail>
   struct max_sizeof <Head, Tail...>
-    : std::integral_constant<size_t,
+    : size_constant<
     (sizeof(Head) > max_sizeof<Tail...>::value) ? sizeof(Head) : max_sizeof<Tail...>::value
     >
   {};
@@ -134,7 +132,7 @@ namespace cranberries
 
   template<class Head, class...Tail>
   struct min_sizeof <Head, Tail...>
-    : std::integral_constant<size_t,
+    : size_constant<
     (sizeof(Head) > min_sizeof<Tail...>::value) ? sizeof(Head) : min_sizeof<Tail...>::value
     >
   {};
@@ -165,10 +163,10 @@ namespace cranberries
   constexpr bool none_match_v = none_match<T, Types...>::value;
 
   template < typename T, typename ...Types >
-  using all_same = all_match<T, Types...>;
+  using is_all_same = all_match<T, Types...>;
 
   template < typename T, typename ...Types >
-  constexpr bool all_same_v = all_match<T, Types...>::value;
+  constexpr bool is_all_same_v = all_match<T, Types...>::value;
 
   template < template<class> class Pred, class ...Types >
   struct all_match_if : conjunction<Pred<Types>...> {};
@@ -187,63 +185,6 @@ namespace cranberries
 
   template < template<class> class Pred, class ...Types >
   constexpr bool none_match_if_v = none_match_if<Pred, Types...>::value;
-
-  
-namespace cranberries_magic {
-  template < template<class...> class Pred, class T, class Tuple >
-  struct tuple_match_impl {
-    template < class U, class ...Types >
-    static constexpr auto x(std::tuple<Types...>)->Pred<U, Types...>;
-    
-    using type = decltype(x(std::declval<Tuple>()));
-  };
-  template < template<template<class>class, class...> class Match, template <class> class Pred, class Tuple >
-  struct tuple_match_if_impl {
-    template < template<class> class P, class ...Types >
-    static constexpr auto x(std::tuple<Types...>)->Match<Pred, Types...>;
-    
-    using type = decltype(x(std::declval<Tuple>()));
-  };
-}
-  template < typename T, typename Tuple >
-  using tuple_all_match = typename cranberries_magic::tuple_match_impl<all_match,T, Tuple>::type;
-
-  template < class Tuple >
-  using tuple_all_same = tuple_all_match<std::tuple_element_t<0, Tuple>, Tuple>;
-
-  template < typename T, typename Tuple >
-  using tuple_any_match = typename cranberries_magic::tuple_match_impl<any_match, T, Tuple>::type;
-
-  template < typename T, typename Tuple >
-  using tuple_none_match = typename cranberries_magic::tuple_match_impl<none_match, T, Tuple>::type;
-    
-  template < template<class> class Pred, typename Tuple >
-  using tuple_all_match_if = typename cranberries_magic::tuple_match_if_impl<all_match_if, Pred, Tuple>::type;
-
-  template < template<class> class Pred, typename Tuple >
-  using tuple_any_match_if = typename cranberries_magic::tuple_match_if_impl<any_match_if, Pred, Tuple>::type;
-
-  template < template<class> class Pred, typename Tuple >
-  using tuple_none_match_if = typename cranberries_magic::tuple_match_if_impl<none_match_if, Pred, Tuple>::type;
-
-  template < typename T, class Tuple >
-  constexpr bool tuple_all_match_v = tuple_all_match<T, Tuple>::value;
-
-  template < class Tuple >
-  constexpr bool tuple_all_same_v = tuple_all_same<Tuple>::value;
-
-  template < typename T, class Tuple >
-  constexpr bool tuple_any_match_v = tuple_any_match<T, Tuple>::value;
-  
-  template < typename T, class Tuple >
-  constexpr bool tuple_none_match_v = tuple_none_match<T, Tuple>::value;
-
-  template < template<class> class Pred, class Tuple >
-  constexpr bool tuple_all_match_if_v = tuple_all_match_if<Pred, Tuple>::value;
-  template < template<class> class Pred, class Tuple >
-  constexpr bool tuple_any_match_if_v = tuple_any_match_if<Pred, Tuple>::value;
-  template < template<class> class Pred, class Tuple >
-  constexpr bool tuple_none_match_if_v = tuple_none_match_if<Pred, Tuple>::value;
 
 
   template < typename T >
@@ -399,12 +340,6 @@ namespace cranberries_magic{
   >
   struct element_type_of<T, false, true>
   {
-    static_assert(
-      tuple_all_match<
-        std::tuple_element_t<0, remove_cvr_t<T>>, remove_cvr_t<T>
-      >::value,
-      "tuple"
-    );
     using type = typename std::tuple_element_t<0, remove_cvr_t<T>>;
   };
 

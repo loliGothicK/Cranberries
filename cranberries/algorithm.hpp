@@ -359,7 +359,7 @@ template <class BidirectionalIterator, class T, class Decrementer>
 template <class BidirectionalIterator>
   inline constexpr bool
   next_combination_counts(BidirectionalIterator first,
-    	                 BidirectionalIterator last)
+    	                    BidirectionalIterator last)
 {
     BidirectionalIterator current = last;
     while (current != first && *(--current) == 0) {
