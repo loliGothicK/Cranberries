@@ -658,7 +658,7 @@ namespace cranberries {
   template <
     class ForwardIterator,
     class F,
-    enabler_t<std::is_integral<std::decay_t<decltype(std::declval<F>()(*std::declval<ForwardIterator>()))>::value>> = nullptr
+    enabler_t<std::is_integral<std::decay_t<decltype(std::declval<F>()(*std::declval<ForwardIterator>()))>>::value> = nullptr
   >
   inline void ascending_radix_sort(ForwardIterator first, ForwardIterator last, F&& get_key)
   {
@@ -681,7 +681,7 @@ namespace cranberries {
   template <
     class ForwardIterator,
     class F,
-    enabler_t<std::is_integral<std::decay_t<decltype(std::declval<F>()(*std::declval<ForwardIterator>()))>::value>> = nullptr
+    enabler_t<std::is_integral<std::decay_t<decltype(std::declval<F>()(*std::declval<ForwardIterator>()))>>::value> = nullptr
   >
   inline void descending_radix_sort(ForwardIterator first, ForwardIterator last, F&& get_key)
   {
