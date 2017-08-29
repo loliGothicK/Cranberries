@@ -278,7 +278,13 @@ namespace CommonLibTest
         max_sizeof<int, long, int, double>::value == 8,
         "fail"
         );
-
+      static_assert(
+        std::is_same<
+          element_type_of_t<int*>,
+          int
+        >::value,
+        "fail"
+        );
 
     }
 

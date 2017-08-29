@@ -615,7 +615,7 @@ namespace cranberries {
     class ForwardIterator,
     enabler_t<std::is_integral<element_type_of_t<ForwardIterator>>::value> = nullptr
   >
-  inline constexpr void ascending_radix_sort(ForwardIterator first, ForwardIterator last)
+  inline void ascending_radix_sort(ForwardIterator first, ForwardIterator last)
   {
     size_t BIT = sizeof(element_type_of_t<ForwardIterator>) * 8;
 
@@ -637,7 +637,7 @@ namespace cranberries {
     class ForwardIterator,
     enabler_t<std::is_integral<element_type_of_t<ForwardIterator>>::value> = nullptr
   >
-  inline constexpr void descending_radix_sort(ForwardIterator first, ForwardIterator last)
+  inline void descending_radix_sort(ForwardIterator first, ForwardIterator last)
   {
     size_t BIT = sizeof(element_type_of_t<ForwardIterator>) * 8;
 
@@ -660,7 +660,7 @@ namespace cranberries {
     class F,
     enabler_t<std::is_integral<std::result_of_t<F(element_type_of_t<ForwardIterator>)>>::value> = nullptr
   >
-  inline constexpr void ascending_radix_sort(ForwardIterator first, ForwardIterator last, F&& get_key)
+  inline void ascending_radix_sort(ForwardIterator first, ForwardIterator last, F&& get_key)
   {
     size_t BIT = sizeof(std::result_of_t<F(element_type_of_t<ForwardIterator>)>) * 8;
 
@@ -683,7 +683,7 @@ namespace cranberries {
     class F,
     enabler_t<std::is_integral<std::result_of_t<F(element_type_of_t<ForwardIterator>)>>::value> = nullptr
   >
-  inline constexpr void descending_radix_sort(ForwardIterator first, ForwardIterator last, F&& get_key)
+  inline void descending_radix_sort(ForwardIterator first, ForwardIterator last, F&& get_key)
   {
     size_t BIT = sizeof(std::result_of_t<F(element_type_of_t<ForwardIterator>)>) * 8;
 
@@ -703,7 +703,6 @@ namespace cranberries {
   // Radix sort
   template <
     class ForwardIterator,
-    size_t BIT = sizeof(element_type_of_t<ForwardIterator>) * 8,
     enabler_t<!std::is_integral<element_type_of_t<ForwardIterator>>::value> = nullptr
   >
   void ascending_radix_sort(ForwardIterator first, ForwardIterator last) = delete;
@@ -711,7 +710,6 @@ namespace cranberries {
   // Radix sort
   template <
     class ForwardIterator,
-    size_t BIT = sizeof(element_type_of_t<ForwardIterator>) * 8,
     enabler_t<!std::is_integral<element_type_of_t<ForwardIterator>>::value> = nullptr
   >
   void descending_radix_sort(ForwardIterator first, ForwardIterator last) = delete;
