@@ -332,7 +332,7 @@ struct chunk<N, randomized<Times>> {
   >
   bind(Args&&... args) noexcept {
     static_assert(
-      all_same_v<std::decay_t<Args>...>,
+      is_all_same_v<std::decay_t<Args>...>,
       "Invaild arguments!"
     );
     static_assert(
