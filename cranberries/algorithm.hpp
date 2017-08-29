@@ -459,32 +459,33 @@ namespace cranberries {
     }
   };
 
-  template < sort_type, size_t, class F = cranberries_magic::defaulted_t >
+  template < sort_type, class F = cranberries_magic::defaulted_t >
   class radix_key;
 
   // Radix sort comparator for n-bit two's complement integers
-  template < size_t N >
-  class radix_key<sort_type::ascending, N>
+  template < >
+  class radix_key<sort_type::ascending>
   {
+    size_t BITS;
     size_t bit;
   public:
-    constexpr radix_key() noexcept
-      : bit{} {}
+    constexpr radix_key(size_t bits) noexcept
+      : BITS{bits}, bit{} {}
 
-    constexpr radix_key(size_t offset) noexcept
-      : bit(offset) {}
+    constexpr radix_key(size_t bits, size_t offset) noexcept
+      : BITS{bits}, bit(offset) {}
 
     template < typename T >
     constexpr bool operator()(T value) const // function call operator
     {
 
-      if (bit == N-1)
+      if (bit == BITS-1)
         return value < 0; // negative value to left partition
       else
         return !(value & (1 << bit)); // 0 bit to left partition
     }
     operator bool() {
-      return bit != N;
+      return bit != BITS;
     }
     void next() {
       ++bit;
@@ -498,28 +499,29 @@ namespace cranberries {
 
 
   // Radix sort comparator for n-bit two's complement integers
-  template < size_t N >
-  class radix_key<sort_type::descending, N>
+  template < >
+  class radix_key<sort_type::descending>
   {
+    size_t BITS;
     size_t bit;
   public:
-    constexpr radix_key() noexcept
-      : bit{} {}
+    constexpr radix_key(size_t bits) noexcept
+      : BITS{ bits }, bit{} {}
 
-    constexpr radix_key(size_t offset) noexcept
-      : bit(offset) {}
+    constexpr radix_key(size_t bits, size_t offset) noexcept
+      : BITS{ bits }, bit(offset) {}
 
     template < typename T >
     constexpr bool operator()(T value) const // function call operator
     {
       
-      if (bit == N-1)
+      if (bit == BITS-1)
         return !(value < 0); // negative value to left partition
       else
         return value & (1 << bit); // 0 bit to left partition
     }
     operator bool() {
-      return bit != N;
+      return bit != BITS;
     }
     void next() {
       ++bit;
@@ -530,25 +532,26 @@ namespace cranberries {
   };
 
   // Radix sort comparator for n-bit two's complement integers
-  template < size_t N, class F >
-  class radix_key<sort_type::ascending, N, F>
+  template < class F >
+  class radix_key<sort_type::ascending, F>
   {
+    size_t BITS;
     size_t bit;
     F get_key;
   public:
-    constexpr radix_key(size_t e, F f) noexcept
-      : bit{e}, get_key{f} {}
+    constexpr radix_key(size_t bits, size_t e, F f) noexcept
+      : BITS{bits}, bit{e}, get_key{f} {}
 
     template < typename T >
     constexpr bool operator()(T value) const // function call operator
     {      
-      if (bit == N - 1)
+      if (bit == BITS - 1)
         return get_key(value) < 0; // negative value to left partition
       else
         return !(get_key(value) & (1 << bit)); // 0 bit to left partition
     }
     operator bool() {
-      return bit != N;
+      return bit != BITS;
     }
     void next() {
       ++bit;
@@ -559,25 +562,26 @@ namespace cranberries {
   };
 
   // Radix sort comparator for n-bit two's complement integers
-  template < size_t N, class F >
-  class radix_key<sort_type::descending, N, F>
+  template < class F >
+  class radix_key<sort_type::descending, F>
   {
+    size_t BITS;
     size_t bit;
     F get_key;
   public:
-    constexpr radix_key(size_t e, F f) noexcept
-      : bit{ e }, get_key{ f } {}
+    constexpr radix_key(size_t bits, size_t e, F f) noexcept
+      : BITS{ bits }, bit{ e }, get_key{ f } {}
 
     template < typename T >
     constexpr bool operator()(T value) const // function call operator
     {
-      if (bit == N - 1)
+      if (bit == BITS - 1)
         return !(get_key(value) < 0); // negative value to left partition
       else
         return get_key(value) & (1 << bit); // 0 bit to left partition
     }
     operator bool() {
-      return bit != N;
+      return bit != BITS;
     }
     void next() {
       ++bit;
@@ -589,21 +593,19 @@ namespace cranberries {
 
 
 
-  template < size_t N >
-  radix_key<sort_type::ascending, N> make_ascending_radix_key(size_t e = 0) {
-    return { e };
+  radix_key<sort_type::ascending> make_ascending_radix_key(size_t bits, size_t e = 0) {
+    return { bits, e };
   }
-  template < size_t N >
-  radix_key<sort_type::descending, N> make_descending_radix_key(size_t e = 0) {
-    return { e };
+  radix_key<sort_type::descending> make_descending_radix_key(size_t bits, size_t e = 0) {
+    return { bits, e };
   }
-  template < size_t N, class F = default_get_key>
-  radix_key<sort_type::ascending, N, F> make_ascending_radix_get_key(size_t e = 0, F f = default_get_key{}) {
-    return { e, f };
+  template < class F = default_get_key >
+  radix_key<sort_type::ascending, F> make_ascending_radix_get_key(size_t bits, size_t e = 0, F f = default_get_key{}) {
+    return { bits, e, f };
   }
-  template < size_t N, class F = default_get_key>
-  radix_key<sort_type::descending, N, F> make_descending_radix_get_key(size_t e = 0, F f = default_get_key{}) {
-    return { e, f };
+  template < class F = default_get_key>
+  radix_key<sort_type::descending, F> make_descending_radix_get_key(size_t bits, size_t e = 0, F f = default_get_key{}) {
+    return { bits, e, f };
   }
 
 
@@ -611,15 +613,16 @@ namespace cranberries {
   // Radix sort
   template <
     class ForwardIterator,
-    size_t BIT = sizeof(element_type_of_t<ForwardIterator>) * 8,
     enabler_t<std::is_integral<element_type_of_t<ForwardIterator>>::value> = nullptr
   >
   inline constexpr void ascending_radix_sort(ForwardIterator first, ForwardIterator last)
   {
+    size_t BIT = sizeof(element_type_of_t<ForwardIterator>) * 8;
+
     // partition negative number to left
     auto mid = std::stable_partition(first, last, [](auto v) { return v < 0; });
 
-    auto radix_test = make_ascending_radix_key<BIT>();
+    auto radix_test = make_ascending_radix_key(BIT);
 
     // 
     for (; radix_test; radix_test.next())
@@ -632,15 +635,16 @@ namespace cranberries {
   // Radix sort
   template <
     class ForwardIterator,
-    size_t BIT = sizeof(element_type_of_t<ForwardIterator>) * 8,
     enabler_t<std::is_integral<element_type_of_t<ForwardIterator>>::value> = nullptr
   >
   inline constexpr void descending_radix_sort(ForwardIterator first, ForwardIterator last)
   {
+    size_t BIT = sizeof(element_type_of_t<ForwardIterator>) * 8;
+
     // partition negative number to left
     auto mid = std::stable_partition(first, last, [](auto v) { return !(v < 0); });
 
-    auto radix_test = make_descending_radix_key<BIT>();
+    auto radix_test = make_descending_radix_key(BIT);
 
     // 
     for (; radix_test; radix_test.next())
@@ -654,15 +658,16 @@ namespace cranberries {
   template <
     class ForwardIterator,
     class F,
-    size_t BIT = sizeof(std::result_of_t<F(element_type_of_t<ForwardIterator>)>) * 8,
     enabler_t<std::is_integral<std::result_of_t<F(element_type_of_t<ForwardIterator>)>>::value> = nullptr
   >
   inline constexpr void ascending_radix_sort(ForwardIterator first, ForwardIterator last, F&& get_key)
   {
+    size_t BIT = sizeof(std::result_of_t<F(element_type_of_t<ForwardIterator>)>) * 8;
+
     // partition negative number to left
     auto mid = std::stable_partition(first, last, [](auto v) { return v < 0; });
 
-    auto radix_test = make_ascending_radix_get_key<BIT>(0, std::move(get_key));
+    auto radix_test = make_ascending_radix_get_key(BIT, 0, std::move(get_key));
 
     // 
     for (; radix_test; radix_test.next())
@@ -676,15 +681,16 @@ namespace cranberries {
   template <
     class ForwardIterator,
     class F,
-    size_t BIT = sizeof(std::result_of_t<F(element_type_of_t<ForwardIterator>)>) * 8,
     enabler_t<std::is_integral<std::result_of_t<F(element_type_of_t<ForwardIterator>)>>::value> = nullptr
   >
   inline constexpr void descending_radix_sort(ForwardIterator first, ForwardIterator last, F&& get_key)
   {
+    size_t BIT = sizeof(std::result_of_t<F(element_type_of_t<ForwardIterator>)>) * 8;
+
     // partition negative number to left
     auto mid = std::stable_partition(first, last, [](auto v) { return !(v < 0); });
 
-    auto radix_test = make_descending_radix_get_key<BIT>(0, std::move(get_key));
+    auto radix_test = make_descending_radix_get_key(BIT, 0, std::move(get_key));
 
     // 
     for (; radix_test; radix_test.next())
