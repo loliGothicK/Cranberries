@@ -320,7 +320,8 @@ namespace cranberries_magic{
   template <
     typename T,
     bool A = std::is_array<remove_cvr_t<T>>::value,
-    bool B = is_tuple_v<remove_cvr_t<T>>
+    bool B = is_tuple_v<remove_cvr_t<T>>,
+    bool C = std::is_pointer<T>::value
   >
   struct element_type_of
   {
@@ -330,17 +331,23 @@ namespace cranberries_magic{
   template <
     typename T
   >
-  struct element_type_of<T, true, false>
+  struct element_type_of<T, true, false, false>
   {
     using type = std::remove_extent_t<remove_cvr_t<T>>;
   };
 
-  template <
-    typename T
-  >
-  struct element_type_of<T, false, true>
+  template < typename T >
+  struct
+    element_type_of<T, false, true, false>
   {
     using type = typename std::tuple_element_t<0, remove_cvr_t<T>>;
+  };
+
+  template < typename T >
+  struct
+    element_type_of<T, false, false, true>
+  {
+    using type = remove_cvr_t<std::remove_pointer_t<T>>;
   };
 
 
