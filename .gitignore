@@ -27,4 +27,5 @@ Thumbs.db
 /VisualStudio/.vs
 /VisualStudio/Debug
 /VisualStudio/Release
-/VisualStudio/x64
+/VisualStudio/x64/Debug
+/VisualStudio/x64/Release
