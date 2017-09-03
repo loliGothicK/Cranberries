@@ -278,7 +278,7 @@ namespace cranberries_magic {
   inline constexpr Overload<std::decay_t<F>...>
   make_overload(F&&... f)
   {
-    return {std::forward<F>(f)...};
+    return {};
   }
 
   struct protean_bool {
