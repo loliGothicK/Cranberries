@@ -264,23 +264,23 @@ namespace cranberries_magic {
     : size_constant< Head-size_t('0') > {};
 
 
-  template <class T, class... Ts>
-  struct Overload : T, Overload<Ts...> {
-    Overload() = default;
-    using T::operator();
-    using Overload<Ts...>::operator();
+  template <class F, class... Fs>
+  struct Overload : F, Overload<Fs...> {
+    Overload(F&& f, Fs&&... fs) : F( std::move(f) ), Overload<Fs...>( std::move(fs) ) {}
+    using F::operator();
+    using Overload<Fs...>::operator();
   };
 
-  template <class T> struct Overload<T> : T {
-    Overload() = default;
-    using T::operator();
+  template <class F> struct Overload<F> : F {
+    Overload(F&& f) : F( std::move(f) ) {}
+    using F::operator();
   };
 
   template <class... F>
   inline constexpr Overload<F...>
   make_overload(F&&... f)
   {
-    return {};
+    return { std::move(f)... };
   }
 
   struct protean_bool {
