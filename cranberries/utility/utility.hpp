@@ -266,11 +266,13 @@ namespace cranberries_magic {
 
   template <class T, class... Ts>
   struct Overload : T, Overload<Ts...> {
+    Overload() = default;
     using T::operator();
     using Overload<Ts...>::operator();
   };
 
   template <class T> struct Overload<T> : T {
+    Overload() = default;
     using T::operator();
   };
 
