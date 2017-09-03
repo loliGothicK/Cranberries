@@ -266,7 +266,7 @@ namespace cranberries_magic {
 
   template <class F, class... Fs>
   struct Overload : F, Overload<Fs...> {
-    Overload(F&& f, Fs&&... fs) : F( std::move(f) ), Overload<Fs...>( std::move(fs) ) {}
+    Overload(F&& f, Fs&&... fs) : F( std::move(f) ), Overload<Fs...>( std::move(fs)... ) {}
     using F::operator();
     using Overload<Fs...>::operator();
   };
