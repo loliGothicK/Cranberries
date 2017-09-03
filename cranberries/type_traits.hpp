@@ -362,7 +362,7 @@ namespace cranberries_magic {
   template <
     typename T,
     bool A = std::is_array<remove_cvr_t<T>>::value,
-    bool B = is_tuple_v<remove_cvr_t<T>>,
+    bool B = is_tuple<remove_cvr_t<T>>::value,
     bool C = std::is_pointer<T>::value
   >
   struct element_type_of
