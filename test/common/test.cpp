@@ -47,7 +47,7 @@ static_assert(
   "fail"
   );
 static_assert(
-  apply_result_v< bind_<std::is_same, int, x_>::expr, int >,
+  apply_result_v< bind_<std::is_same, int, x_<1>>::expr, int >,
   "fail"
   );
 static_assert(
@@ -197,19 +197,19 @@ static_assert(
   "fail"
   );
 static_assert(
- std::is_same<
- value_pack<int,0,1>,
- pack_sliced_l<2, value_pack<int, 0,1,2,3,4,5>>
- >::value,
- "fail"
- );
+  std::is_same<
+  value_pack<int,0,1>,
+  pack_sliced_l<2, value_pack<int, 0,1,2,3,4,5>>
+  >::value,
+  "fail"
+  );
 static_assert(
- std::is_same<
- pack_sliced_r<2, value_pack<int, 0,1,2,3,4,5>>,
- value_pack<int, 2,3,4,5>
- >::value,
- "fail"
- );
+  std::is_same<
+  pack_sliced_r<2, value_pack<int, 0,1,2,3,4,5>>,
+  value_pack<int, 2,3,4,5>
+  >::value,
+  "fail"
+  );
 static_assert(
   std::is_same<
   pack_remove_t<int,std::tuple<int,long,int,double>>,
@@ -268,6 +268,13 @@ static_assert(
   );
 static_assert(
   max_sizeof<int, long, int, double>::value == 8,
+  "fail"
+  );
+static_assert(
+  std::is_same<
+    element_type_of_t<int*>,
+    int
+  >::value,
   "fail"
   );
 
