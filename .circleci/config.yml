@@ -80,7 +80,7 @@ workflows:
       - gcc_5
       - gcc_6
       - gcc_7
-      - clang_3_5
+      # - clang_3_5
       - clang_3_6
       - clang_3_7
       - clang_3_8
