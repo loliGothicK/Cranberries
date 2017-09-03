@@ -277,6 +277,48 @@ namespace cranberries_magic{
   constexpr bool is_equality_comparable_v = is_equality_comparable<T>::value;
 
 
+namespace cranberries_magic {
+  template < class, class, class = void >
+  struct enable_adl_swap_with : std::false_type {};
+
+  template < class T, class U >
+  struct enable_adl_swap_with<T,U,
+    cranberries::void_t<decltype(swap(std::declval<T&>(), std::declval<U&>()))>>
+    : std::true_type {};
+
+  template < class, class, class = void >
+  struct enable_std_swap_with : std::false_type {};
+
+  template < class T, class U >
+  struct enable_std_swap_with<T, U,
+    cranberries::void_t<decltype(std::swap(std::declval<T&>(), std::declval<U&>()))>>
+    : std::true_type {};
+
+}
+
+  template < class T, class U >
+  struct is_swappable_with
+    : conjunction<cranberries_magic::enable_std_swap_with<T,U>, cranberries_magic::enable_adl_swap_with<T, U>> {};
+
+  template < class T >
+  struct is_swappable
+    : conjunction<cranberries_magic::enable_std_swap_with<T, T>, cranberries_magic::enable_adl_swap_with<T, T>> {};
+
+  template < class T, class U >
+  constexpr bool is_swappable_with_v = is_swappable_with<T, U>::value;
+
+  template < class T>
+  constexpr bool is_swappable_v = is_swappable<T>::value;
+
+  template < class, class = void >
+  struct is_dereferencable : std::false_type {};
+
+  template < class T >
+  struct is_dereferencable<T,
+    void_t<decltype(*std::declval<const T&>())>>
+    : std::true_type {};
+
+
   template < class, class = void >
   struct has_value_type : std::false_type
   {};

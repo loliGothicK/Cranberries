@@ -803,6 +803,45 @@ namespace cranberries_magic {
   struct pack_none_match_if<Pred, tPack<Args...>>
     : negation<disjunction<Pred<Args>...>> {};
 
+  template < template < class > class Pred, class tPack >
+  constexpr bool pack_all_match_if_v = pack_all_match_if<Pred, tPack>::value;
+
+  template < template < class > class Pred, class tPack >
+  constexpr bool pack_any_match_if_v = pack_any_match_if<Pred, tPack>::value;
+
+  template < template < class > class Pred, class tPack >
+  constexpr bool pack_none_match_if_v = pack_none_match_if<Pred, tPack>::value;
+
+  template < class, class >
+  struct pack_all_match;
+
+  template < class T, template < class... > class tPack, class... Args >
+  struct pack_all_match<T, tPack<Args...>>
+    : conjunction<std::is_same<T,Args>...> {};
+
+  template < class, class >
+  struct pack_any_match;
+
+  template < class T, template < class... > class tPack, class... Args >
+  struct pack_any_match<T, tPack<Args...>>
+    : disjunction<std::is_same<T, Args>...> {};
+
+  template < class, class >
+  struct pack_none_match;
+
+  template < class T, template < class... > class tPack, class... Args >
+  struct pack_none_match<T, tPack<Args...>>
+    : negation<disjunction<std::is_same<T,Args>...>> {};
+
+  template < class T, class tPack >
+  constexpr bool pack_all_match_v = pack_all_match<T, tPack>::value;
+
+  template < class T, class tPack >
+  constexpr bool pack_any_match_v = pack_any_match<T, tPack>::value;
+
+  template < class T, class tPack >
+  constexpr bool pack_none_match_v = pack_none_match<T, tPack>::value;
+
 
   template < class >
   struct

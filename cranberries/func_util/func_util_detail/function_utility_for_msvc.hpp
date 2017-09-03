@@ -5,7 +5,7 @@
  * http://creativecommons.org/publicdomain/zero/1.0/deed.ja
  */
 
- #ifndef CRANBERRIES_FUNCTION_UTILITY_FOR_MSVC_HPP
+#ifndef CRANBERRIES_FUNCTION_UTILITY_FOR_MSVC_HPP
 #define CRANBERRIES_FUNCTION_UTILITY_FOR_MSVC_HPP
 
 #include <type_traits>

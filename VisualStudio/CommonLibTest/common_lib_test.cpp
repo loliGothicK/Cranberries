@@ -23,12 +23,11 @@ struct G {
 
 namespace CommonLibTest
 {		
-	TEST_CLASS(CommonLibTest)
-	{
-	public:
-		
-		TEST_METHOD(CommonLibTestMethod)
-		{
+  TEST_CLASS(CommonLibTest)
+  {
+  public:
+    TEST_METHOD(CommonLibTestMethod)
+    {
       using namespace cranberries;
       static_assert(
         std::is_same<cranberries::generate_tuple_t<int&, 3>, std::tuple<int&, int&, int&>>::value,
@@ -55,7 +54,7 @@ namespace CommonLibTest
         "fail"
         );
       static_assert(
-        apply_result_v< bind_<std::is_same, int, x_>::expr, int >,
+        apply_result_v< bind_<std::is_same, int, x_<1>>::expr, int >,
         "fail"
         );
       static_assert(
@@ -288,5 +287,5 @@ namespace CommonLibTest
 
     }
 
-	};
+  };
 }

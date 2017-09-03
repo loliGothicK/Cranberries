@@ -16,12 +16,11 @@ namespace UnitTestforFuncUtil
     constexpr auto operator()(T a_, T b_) const noexcept { return a_ + b_; }
   };
 
-	TEST_CLASS(UnitTestforFuncUtil)
-	{
-	public:
-		
-		TEST_METHOD(FuncUtilTestMethod)
-		{
+  TEST_CLASS(UnitTestforFuncUtil)
+  {
+  public:
+    TEST_METHOD(FuncUtilTestMethod)
+    {
       auto println = [](auto&& head, auto&&... tail) {
         std::cout << head;
         (void)cranberries::Swallows{ (void(std::cout << " " << tail),0)... };
@@ -82,5 +81,5 @@ namespace UnitTestforFuncUtil
       println |= combination<>::bind(1, 2, 3);
     }
 
-	};
+  };
 }

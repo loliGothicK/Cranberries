@@ -263,6 +263,30 @@ namespace cranberries_magic {
   struct to_decimal<Head>
     : size_constant< Head-size_t('0') > {};
 
+
+  template <class T, class... Ts>
+  struct Overload : T, Overload<Ts...> {
+    using T::operator();
+    using Overload<Ts...>::operator();
+  };
+
+  template <class T> struct Overload<T> : T {
+    using T::operator();
+  };
+
+  template <class... F>
+  inline constexpr Overload<std::decay_t<F>...>
+  make_overload(F&&... f)
+  {
+    return {std::forward<F>(f)...};
+  }
+
+  struct protean_bool {
+    constexpr operator std::true_type() const { return{}; }
+    constexpr operator std::false_type() const { return{}; }
+  };
+
+  constexpr auto protean_bool_v = protean_bool{};
   
 } // ! - end namespace cranberries
 #endif

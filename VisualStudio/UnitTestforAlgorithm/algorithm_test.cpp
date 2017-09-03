@@ -7,20 +7,20 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTestforAlgorithm
-{		
-	TEST_CLASS(UnitTestforAlgorithm)
-	{
-	public:
-		TEST_METHOD(AlgorithmTestMethod)
-		{
+{
+  TEST_CLASS(UnitTestforAlgorithm)
+  {
+  public:
+    TEST_METHOD(AlgorithmTestMethod)
+    {
       {
-        std::array<int, 6> v{ { 4,5,1,2,3,6 } };
+        std::array<int, 6> v{{ 4,5,1,2,3,6 }};
 
         cranberries::descending_radix_sort(begin(v), end(v));
-        assert((v == std::array<int, 6>{ { 6, 5, 4, 3, 2, 1 }}));
+        assert((v == std::array<int, 6>{{ 6, 5, 4, 3, 2, 1 }}));
 
         cranberries::ascending_radix_sort(begin(v), end(v));
-        assert((v == std::array<int, 6>{ { 1, 2, 3, 4, 5, 6 }}));
+        assert((v == std::array<int, 6>{{ 1, 2, 3, 4, 5, 6 }}));
       }
       {
         std::array<int, 3> v{ { 1,2,3 } };
@@ -51,8 +51,6 @@ namespace UnitTestforAlgorithm
           assert( (v == expected[i++]) );
         } while (cranberries::next_combination(begin(v), begin(v) + 2, end(v)));
       }
-
     }
-
-	};
+  };
 }
