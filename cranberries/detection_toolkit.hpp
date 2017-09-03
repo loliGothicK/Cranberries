@@ -82,14 +82,21 @@ namespace cranberries_magic {
                                      std::is_copy_constructible<Iter>,
                                      std::is_copy_assignable<Iter>,
                                      std::is_destructible<Iter>,
-                                     is_dereferencable<Iter>>,IfType >;
+                                     is_dereferencable<Iter>,
+                                     is_swappable<Iter>,
+                                     true_t<typename std::iterator_traits<Iter>::difference_type>,
+                                     true_t<typename std::iterator_traits<Iter>::value_type>,
+                                     true_t<typename std::iterator_traits<Iter>::pointer>,
+                                     true_t<typename std::iterator_traits<Iter>::reference>,
+                                     true_t<typename std::iterator_traits<Iter>::iterator_category>>,
+                                    IfType >;
 
   template < class Iter, class IfType = std::nullptr_t >
   using input_iter_require
     = std::enable_if_t<conjunction_v<
         iter_require<Iter,std::true_type>,
-        std::is_same<bool, decltype(std::declval<const Iter&>() == std::declval<const Iter&>())>,
-        std::is_same<bool, decltype(std::declval<const Iter&>() != std::declval<const Iter&>())>>,
+        std::is_constructible<bool, decltype(std::declval<const Iter&>() == std::declval<const Iter&>())>,
+        std::is_constructible<bool, decltype(std::declval<const Iter&>() != std::declval<const Iter&>())>>,
       IfType >;
 
 
@@ -109,7 +116,7 @@ namespace cranberries_magic {
       IfType >;
 
   template < class Iter, class IfType = std::nullptr_t >
-  using bidrectional_iter_require
+  using bidirectional_iter_require
     = std::enable_if_t<conjunction_v<
         std::is_same<Iter, decltype(std::declval<Iter&>()--)>,
         std::is_same<Iter&, decltype(--std::declval<Iter&>())>,
@@ -123,37 +130,39 @@ namespace cranberries_magic {
         std::is_same<Iter, decltype(std::declval<const Iter&>()-2)>,
         std::is_same<Iter&, decltype(std::declval<Iter&>()+=2)>,
         std::is_same<Iter&, decltype(std::declval<Iter&>()-=2)>,
-        std::is_same<bool, decltype(std::declval<const Iter&>()<std::declval<const Iter&>())>,
-        std::is_same<bool, decltype(std::declval<const Iter&>()<=std::declval<const Iter&>())>,
-        std::is_same<bool, decltype(std::declval<const Iter&>()>std::declval<const Iter&>())>,
-        std::is_same<bool, decltype(std::declval<const Iter&>()>=std::declval<const Iter&>())>,
-        bidrectional_iter_require<Iter, std::true_type>>,
+        true_t<decltype(bool(std::declval<const Iter&>()<std::declval<const Iter&>()))>,
+        true_t<decltype(bool(std::declval<const Iter&>()<=std::declval<const Iter&>()))>,
+        true_t<decltype(bool(std::declval<const Iter&>()>std::declval<const Iter&>()))>,
+        true_t<decltype(bool(std::declval<const Iter&>()>=std::declval<const Iter&>()))>,
+        bidirectional_iter_require<Iter, std::true_type>>,
       IfType >;
 
   template < class T, class IfType = std::nullptr_t >
   using arithmetic4_require
     = std::enable_if_t<conjunction_v<
-        std::is_same<T, std::decay_t<decltype(std::declval<const T&>() + std::declval<const T&>())>>,
-        std::is_same<T, std::decay_t<decltype(std::declval<const T&>() - std::declval<const T&>())>>, 
-        std::is_same<T, std::decay_t<decltype(std::declval<const T&>() * std::declval<const T&>())>>, 
-        std::is_same<T, std::decay_t<decltype(std::declval<const T&>() / std::declval<const T&>())>>>,
+        std::is_convertible<T, std::decay_t<decltype(std::declval<const T&>() + std::declval<const T&>())>>,
+        std::is_convertible<T, std::decay_t<decltype(std::declval<const T&>() - std::declval<const T&>())>>,
+        std::is_convertible<T, std::decay_t<decltype(std::declval<const T&>() * std::declval<const T&>())>>,
+        std::is_convertible<T, std::decay_t<decltype(std::declval<const T&>() / std::declval<const T&>())>>>,
       IfType >;
 
+  // 振る舞いについては定義を信頼する
   template < class T, class IfType = std::nullptr_t >
-  using equality_comparable_require
+  using equality_require
     = std::enable_if_t<conjunction_v<
-        std::is_same<bool, decltype(std::declval<const T&>() == std::declval<const T&>())>,
-        std::is_same<bool, decltype(std::declval<const T&>() != std::declval<const T&>())>>,
+        true_t<decltype(bool(std::declval<const T&>() == std::declval<const T&>()))>,
+        true_t<decltype(bool(std::declval<const T&>() != std::declval<const T&>()))>>,
       IfType >;
 
+  // 振る舞いについては定義を信頼する
   template < class T, class IfType = std::nullptr_t >
-  using comparable_require
+  using equivalence_require
     = std::enable_if_t<conjunction_v<
-        equality_comparable_require<T,std::true_type>,
-        std::is_same<bool, decltype(std::declval<const T&>() < std::declval<const T&>())>,
-        std::is_same<bool, decltype(std::declval<const T&>() <= std::declval<const T&>())>,
-        std::is_same<bool, decltype(std::declval<const T&>() > std::declval<const T&>())>,
-        std::is_same<bool, decltype(std::declval<const T&>() >= std::declval<const T&>())>>,
+      equality_require<T,std::true_type>,
+        std::is_constructible<bool, decltype(std::declval<const T&>() < std::declval<const T&>())>,
+        std::is_constructible<bool, decltype(std::declval<const T&>() <= std::declval<const T&>())>,
+        std::is_constructible<bool, decltype(std::declval<const T&>() > std::declval<const T&>())>,
+        std::is_constructible<bool, decltype(std::declval<const T&>() >= std::declval<const T&>())>>,
       IfType >;
 
 }

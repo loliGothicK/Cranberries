@@ -46,11 +46,11 @@ namespace UnitTestforDetectionToolkit
         "failure"
         );
       static_assert(
-        is_satisfied_v<equality_comparable_require, int>,
+        is_satisfied_v<equality_require, int>,
         "failure"
         );
       static_assert(
-        is_satisfied_v<comparable_require, int>,
+        is_satisfied_v<equivalence_require, int>,
         "failure"
         );
 

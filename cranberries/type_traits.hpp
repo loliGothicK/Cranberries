@@ -60,6 +60,12 @@ namespace cranberries
   template < typename ...Dummy >
   using void_t = void;
 
+  template < typename... Dummy >
+  using true_t = std::true_type;
+
+  template < typename... Dummy >
+  using false_t = std::false_type;
+
   template <class T>
   struct is_reference_wrapper : std::false_type {};
   
@@ -276,33 +282,23 @@ namespace cranberries_magic{
   template < typename T >
   constexpr bool is_equality_comparable_v = is_equality_comparable<T>::value;
 
-
 namespace cranberries_magic {
-  template < class, class, class = void >
-  struct enable_adl_swap_with : std::false_type {};
-
-  template < class T, class U >
-  struct enable_adl_swap_with<T,U,
-    cranberries::void_t<decltype(swap(std::declval<T&>(), std::declval<U&>()))>>
-    : std::true_type {};
-
-  template < class, class, class = void >
-  struct enable_std_swap_with : std::false_type {};
-
-  template < class T, class U >
-  struct enable_std_swap_with<T, U,
-    cranberries::void_t<decltype(std::swap(std::declval<T&>(), std::declval<U&>()))>>
-    : std::true_type {};
-
+  struct is_swappable_with_impl {
+    template < class T, class U >
+    static void swap_check(T&& t, U&& u) { using std::swap; swap(t, u), swap(u, t); }
+    template < class T, class U >
+    static auto check(T& t, U& u) -> decltype(swap_check(t, u), std::true_type{});
+    template < class T, class U >
+    static auto check(...)->std::false_type;
+  };
 }
-
   template < class T, class U >
   struct is_swappable_with
-    : conjunction<cranberries_magic::enable_std_swap_with<T,U>, cranberries_magic::enable_adl_swap_with<T, U>> {};
+    : decltype(cranberries_magic::is_swappable_with_impl::check<T, U>(std::declval<T&>(), std::declval<U&>())) {};
 
   template < class T >
   struct is_swappable
-    : conjunction<cranberries_magic::enable_std_swap_with<T, T>, cranberries_magic::enable_adl_swap_with<T, T>> {};
+    : is_swappable_with<T, T> {};
 
   template < class T, class U >
   constexpr bool is_swappable_with_v = is_swappable_with<T, U>::value;
