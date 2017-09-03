@@ -277,7 +277,7 @@ namespace cranberries_magic {
   };
 
   template <class... F>
-  inline constexpr Overload<std::decay_t<F>...>
+  inline constexpr Overload<F...>
   make_overload(F&&... f)
   {
     return {};
