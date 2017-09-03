@@ -32,6 +32,8 @@ namespace cranberries
   struct nested_type_class {
     using type = T;
   };
+
+  template < class T > class identity : nested_type_class<T> {};
   
   template < class T >
   using get_type = typename T::type;

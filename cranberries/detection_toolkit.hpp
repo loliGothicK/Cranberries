@@ -7,30 +7,6 @@
 
 namespace cranberries {
 namespace cranberries_magic {
-#define CRANBERRIES_HAS_TYPE(TYPE, XXX) \
-  bool(false \
-  ? cranberries::make_overload( \
-    [](auto x)->decltype(std::declval<typename decltype(x)::XXX>(), std::true_type{}) {return{}; }, \
-    [](...)->std::false_type {return{}; } \
-  )(std::declval<TYPE>()) \
-    : cranberries::protean_bool_v)
-
-#define CRANBERRIES_HAS_FIELD(TYPE, XXX) \
-  bool(false \
-  ? cranberries::make_overload( \
-    [](auto x)->decltype(decltype(x)::XXX, std::true_type{}) {return{}; }, \
-    [](...)->std::false_type {return{}; } \
-  )(std::declval<TYPE>()) \
-    : cranberries::protean_bool_v)
-
-#define CRANBERRIES_HAS_NONTYPE(TYPE, XXX) \
-  bool(false \
-  ? cranberries::make_overload( \
-    [](auto x)->decltype(&decltype(x)::XXX, std::true_type{}) {return{}; }, \
-    [](...)->std::false_type {return{}; } \
-  )(std::declval<TYPE>()) \
-    : cranberries::protean_bool_v)
-
 
 
   template < class Default
