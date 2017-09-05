@@ -30,7 +30,7 @@ class Take
 
     auto get() { return *iter; }
     bool next() { return ++iter, --n_ < 0; }
-    bool is_end() { return n_ <= 0 || iter == cranberries::back_magic::begin(range_); }
+    bool is_end() { return n_ <= 0 || iter == cranberries::back_magic::end(range_); }
   };
 public:
   using sentinel = sentinel_impl;

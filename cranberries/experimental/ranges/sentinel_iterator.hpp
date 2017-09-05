@@ -68,7 +68,7 @@ public:
   auto operator++(int) { return make_finally([&]() { sentinel->next(); }), deep_copy(*this); }
 
   // Sentinel invoke
-  bool is_end() { return sentinel->is_end(); }
+  bool is_end() const { return sentinel->is_end(); }
 
 private:
   // Iteration state
