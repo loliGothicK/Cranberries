@@ -14,19 +14,22 @@ namespace UnitTestforSentinelRanges
     {
       using namespace cranberries::experimental::ranges;
 
-      for (auto const& e
-        : create::generate_canonical() | lazy::take(4))
-      {
-        std::cout << e << " ";
-      }
+      create::generate_canonical()
+        | lazy::take(4)
+        | action::write_line();
 
-      std::cout << std::endl;
+      create::range(1, 10)
+        | lazy::take(4)
+        | action::write_line();
 
-      std::vector<std::string> v{ "vector", "adapting", "test", "dummy" };
+      create::iterate(1, [](auto v) { return v * 2; })
+        | lazy::take(5)
+        | action::write_line();
+
+      std::vector<std::string> v{ "a", "b", "c", "dummy" };
 
       v | lazy::take(3)
         | action::write_line();
-
     }
 
   };

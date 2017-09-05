@@ -1,0 +1,49 @@
+#ifndef CRANBERRIES_RANGES_SENTINEL_RANGES_ITERATE_HPP
+#define CRANBERRIES_RANGES_SENTINEL_RANGES_ITERATE_HPP
+#include "../ranges_tag.hpp"
+#include "../sentinel_iterator.hpp"
+
+
+namespace cranberries {
+namespace experimental {
+namespace ranges {
+
+
+template < class ValueType, class Advance >
+class Iterate
+  : private tag::sentinel_range_tag
+{
+  class sentinel_impl {
+    ValueType value;
+    Advance advance;
+  public:
+    using value_type = ValueType;
+    sentinel_impl(ValueType _1, Advance _2) : value{ _1 }, advance{ _2 } {}
+    sentinel_impl(const sentinel_impl&) = default;
+    auto get() { return value; }
+    std::false_type next() { value = advance(value); return {}; }
+    std::false_type is_end() { return {}; }
+  };
+public:
+  using sentinel = sentinel_impl;
+  using iterator = sentinel_iterator<sentinel>;
+  using value_type = ValueType;
+
+  Iterate(value_type _1, Advance _2) : init{ _1 }, f{ _2 } {}
+
+  iterator begin() { return { std::make_unique<sentinel>(init, f) }; }
+  Sentinel end() { return {}; }
+private:
+  value_type init;
+  Advance f;
+};
+
+namespace create {
+  template < typename ValueType, class F >
+  Iterate<ValueType,std::decay_t<F>> iterate(ValueType init, F&& f) { return {init, std::forward<F>(f)}; }
+}
+
+
+
+}}}
+#endif // !CRANBERRIES_RANGES_SENTINEL_RANGES_GENERATE_CANONICAL_HPP
