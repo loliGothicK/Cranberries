@@ -11,6 +11,10 @@ namespace cranberries {
 namespace experimental {
 namespace ranges {
 
+enum class sentinel_flag {
+  on,off
+};
+
 template < class Sentinel >
 class sentinel_iterator
   : private tag::sentinel_iterator_tag
@@ -25,11 +29,12 @@ public:
 
   // Constructor for Sentinel Range
   sentinel_iterator(std::unique_ptr<Sentinel>&& ptr)
-    : sentinel{ std::move(ptr) } {}
+    : sentinel{ std::move(ptr) }, is_sentinel{ sentinel_flag::off } {}
 
 
   // Disable to default construct
-  sentinel_iterator() = delete;
+  sentinel_iterator()
+    : sentinel{ nullptr }, is_sentinel{ sentinel_flag::on } {};
 
   // Copy constructor/Copy assignment operator
   /*[Note: Copy constructor makes deep-copied sentinel_iterator.
@@ -70,38 +75,22 @@ public:
   // Sentinel invoke
   bool is_end() const { return sentinel->is_end(); }
 
+  bool operator==(const sentinel_iterator& iter) const {
+    return is_sentinel == sentinel_flag::on ? iter.is_end() : this->is_end();
+  }
+  bool operator!=(const sentinel_iterator& iter) const {
+    return is_sentinel == sentinel_flag::on ? !iter.is_end() : !this->is_end();
+  }
+
 private:
   // Iteration state
   /*[Note: This is implementation of Sentinel Iterator.
     It manages iteration, access and end-point checking.
   -end note]*/
   std::unique_ptr<Sentinel> sentinel;
+
+  sentinel_flag is_sentinel;
 };
-
-// end(Sentinel Range) must return this class
-struct Sentinel {};
-
-
-// Equatity compare operators
-template < class SentinelIterator >
-bool operator== (SentinelIterator&& iter, Sentinel) {
-  return iter.is_end();
-}
-
-template < class SentinelIterator >
-bool operator!= (SentinelIterator&& iter, Sentinel) {
-  return !iter.is_end();
-}
-
-template < class SentinelIterator >
-bool operator== (Sentinel, SentinelIterator&& iter) {
-  return iter.is_end();
-}
-
-template < class SentinelIterator >
-bool operator!= (Sentinel, SentinelIterator&& iter) {
-  return !iter.is_end();
-}
 
 
 }}}

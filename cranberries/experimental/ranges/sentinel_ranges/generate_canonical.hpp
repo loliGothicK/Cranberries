@@ -32,7 +32,7 @@ public:
   using value_type = RealType;
 
   iterator begin() { return { std::make_unique<sentinel>() }; }
-  Sentinel end() { return {}; }
+  iterator end() { return {}; }
 };
 
 namespace create {

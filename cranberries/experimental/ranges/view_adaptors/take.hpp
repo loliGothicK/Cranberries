@@ -41,7 +41,7 @@ public:
     , n(n) {}
 
   iterator begin() { return { std::make_unique<sentinel>(range, n) }; }
-  Sentinel end() { return {}; }
+  iterator end() { return {}; }
 };
 
 class TakeProxy

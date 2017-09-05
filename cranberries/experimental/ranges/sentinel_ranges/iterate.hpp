@@ -32,7 +32,7 @@ public:
   Iterate(value_type _1, Advance _2) : init{ _1 }, f{ _2 } {}
 
   iterator begin() { return { std::make_unique<sentinel>(init, f) }; }
-  Sentinel end() { return {}; }
+  iterator end() { return {}; }
 private:
   value_type init;
   Advance f;

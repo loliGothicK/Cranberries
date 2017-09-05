@@ -32,7 +32,7 @@ public:
   Range(value_type _1, value_type _2) : init{ _1 }, bound{ _2 } {}
 
   iterator begin() { return { std::make_unique<sentinel>(init, bound) }; }
-  Sentinel end() { return {}; }
+  iterator end() { return {}; }
 private:
   value_type init;
   value_type bound;
