@@ -65,7 +65,7 @@ namespace cranberries_magic {
                                      true_t<typename std::iterator_traits<Iter>::pointer>,
                                      true_t<typename std::iterator_traits<Iter>::reference>,
                                      true_t<typename std::iterator_traits<Iter>::iterator_category>>,
-                                    IfType >;
+                                   IfType >;
 
   template < class Iter, class IfType = std::nullptr_t >
   using input_iter_require

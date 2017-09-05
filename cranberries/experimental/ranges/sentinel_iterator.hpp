@@ -1,0 +1,108 @@
+#ifndef CRANBERRIES_RANGES_SENTINEL_ITERATOR_HPP
+#define CRANBERRIES_RANGES_SENTINEL_ITERATOR_HPP
+#include "ranges_tag.hpp"
+#include <memory>
+#include <utility>
+#include <type_traits>
+#include "../../utility/utility.hpp"
+#include "../../type_traits.hpp"
+
+namespace cranberries {
+namespace experimental {
+namespace ranges {
+
+template < class Sentinel >
+class sentinel_iterator
+  : private tag::sentinel_iterator_tag
+{
+public:
+  // For std::iterator_traits<sentinel_iterator>
+  using value_type = typename Sentinel::value_type;
+  using difference_type = int;
+  using pointer = std::nullptr_t; // disable to pointer
+  using reference = value_type&;
+  using iterator_category = std::output_iterator_tag;
+
+  // Constructor for Sentinel Range
+  sentinel_iterator(std::unique_ptr<Sentinel>&& ptr)
+    : sentinel{ std::move(ptr) } {}
+
+
+  // Disable to default construct
+  sentinel_iterator() = delete;
+
+  // Copy constructor/Copy assignment operator
+  /*[Note: Copy constructor makes deep-copied sentinel_iterator.
+    It meens copying current state of sentinel.
+    - end note ]*/
+  sentinel_iterator(const sentinel_iterator& iter)
+    : sentinel{ std::unique_ptr<Sentinel>(new Sentinel(*(iter.sentinel))) } {}
+  
+  sentinel_iterator& operator=(const sentinel_iterator& rhs) { return deep_copy(rhs); }
+
+
+  // Move constructor/Move assignment operator
+  sentinel_iterator& operator=(sentinel_iterator&&) = default;
+  sentinel_iterator(sentinel_iterator&&) = default;
+  
+  // Destructor
+  ~sentinel_iterator() = default;
+
+  // For iterator requirements
+  void swap(sentinel_iterator& iter) & { std::swap(sentinel, iter.sentinel); }
+  void swap(sentinel_iterator&& iter) & { std::swap(sentinel, iter.sentinel); }
+
+  // copy construct/ copy asignment implementation
+  sentinel_iterator deep_copy(const sentinel_iterator& iter) & {
+    this->swap(sentinel_iterator{ iter });
+    return *this;
+  }
+
+  // Dereferene 
+  decltype(auto) get() const { return sentinel->get(); }
+  decltype(auto) operator*() const { return sentinel->get(); }
+
+  // Increment
+  bool next() { return sentinel->next(); }
+  decltype(auto) operator++() { return sentinel->next(), *this; }
+  auto operator++(int) { return make_finally([&]() { sentinel->next(); }), deep_copy(*this); }
+
+  // Sentinel invoke
+  bool is_end() { return sentinel->is_end(); }
+
+private:
+  // Iteration state
+  /*[Note: This is implementation of Sentinel Iterator.
+    It manages iteration, access and end-point checking.
+  -end note]*/
+  std::unique_ptr<Sentinel> sentinel;
+};
+
+// end(Sentinel Range) must return this class
+struct Sentinel {};
+
+
+// Equatity compare operators
+template < class SentinelIterator >
+bool operator== (SentinelIterator&& iter, Sentinel) {
+  return iter.is_end();
+}
+
+template < class SentinelIterator >
+bool operator!= (SentinelIterator&& iter, Sentinel) {
+  return !iter.is_end();
+}
+
+template < class SentinelIterator >
+bool operator== (Sentinel, SentinelIterator&& iter) {
+  return iter.is_end();
+}
+
+template < class SentinelIterator >
+bool operator!= (Sentinel, SentinelIterator&& iter) {
+  return !iter.is_end();
+}
+
+
+}}}
+#endif

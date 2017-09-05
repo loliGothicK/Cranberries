@@ -10,6 +10,7 @@
 
 #include <utility>
 #include <type_traits>
+#include <iterator>
 #include "../type_traits.hpp"
 
 
@@ -26,6 +27,21 @@ namespace cranberries
   {
     return N;
   }
+
+  template < class Range >
+  constexpr decltype(auto) begin(Range&& range)
+  {
+    using std::begin;
+    return begin(std::forward<Range>(range));
+  }
+
+  template < class Range >
+  constexpr decltype(auto) end(Range&& range)
+  {
+    using std::end;
+    return end(std::forward<Range>(range));
+  }
+
 
   template < class , class = void >
   struct enable_get : std::false_type{};
@@ -288,7 +304,18 @@ namespace cranberries_magic {
     constexpr operator std::false_type() const { return{}; }
   };
 
-  constexpr auto protean_bool_v = protean_bool{};
+namespace cranberries_magic {
+  template < class T, class Tuple, size_t... I >
+  T construct_from_tuple_impl(Tuple&& t, std::index_sequence<I...>) {
+    return { std::get<I>(t)... };
+  }
+}
+
+  template < class T, class Tuple >
+  T construct_from_tuple(Tuple&& t) {
+    return cranberries_magic::construct_from_tuple_impl(std::forward<Tuple>(t));
+  }
+
   
 } // ! - end namespace cranberries
 #endif

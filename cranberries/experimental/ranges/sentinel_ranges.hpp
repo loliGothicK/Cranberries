@@ -1,0 +1,6 @@
+#ifndef CRANBERRIES_RANGES_SENTINEL_RANGES_HPP
+#define CRANBERRIES_RANGES_SENTINEL_RANGES_HPP
+
+#include "sentinel_ranges/generate_canonical.hpp"
+
+#endif // !CRANBERRIES_RANGES_SENTINEL_RANGES_HPP
