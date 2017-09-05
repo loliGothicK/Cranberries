@@ -26,11 +26,11 @@ class Take
     sentinel_impl(Range range, long long int n)
       : range_{ range }
       , n_(n)
-      , iter{ cranberries::begin(range_) } {}
+      , iter{ cranberries::back_magic::begin(range_) } {}
 
     auto get() { return *iter; }
     bool next() { return ++iter, --n_ < 0; }
-    bool is_end() { return n_ <= 0 || iter == cranberries::end(range_); }
+    bool is_end() { return n_ <= 0 || iter == cranberries::back_magic::begin(range_); }
   };
 public:
   using sentinel = sentinel_impl;

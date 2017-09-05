@@ -28,6 +28,7 @@ namespace cranberries
     return N;
   }
 
+namespace back_magic {
   template < class Range >
   constexpr decltype(auto) begin(Range&& range)
   {
@@ -41,7 +42,7 @@ namespace cranberries
     using std::end;
     return end(std::forward<Range>(range));
   }
-
+}
 
   template < class , class = void >
   struct enable_get : std::false_type{};
