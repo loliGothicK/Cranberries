@@ -26,5 +26,5 @@ int main()
   v | lazy::take(3)
     | action::write_line();
 
-  return exit_status1 && exit_status2 ? EXIT_SUCCESS : EXIT_FAILURE;
+  return EXIT_SUCCESS;
 }
