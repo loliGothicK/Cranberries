@@ -8,4 +8,5 @@ set(sources
 )
 
 add_executable(${target} ${sources})
-add_test(all "${EXECUTABLE_OUTPUT_PATH}/${target}")
+add_test(stream "${EXECUTABLE_OUTPUT_PATH}/${target}")
+set_tests_properties(stream PROPERTIES LABELS "all;stream")
