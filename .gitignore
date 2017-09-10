@@ -26,10 +26,9 @@ Thumbs.db
 *.sbr
 *.tlog
 *.idb
-
-/VisualStudio/CranberriesLibrary/CranberriesLibrary.cpp
-/VisualStudio/.vs
-/VisualStudio/Debug
-/VisualStudio/Release
-/VisualStudio/x64/Debug
-/VisualStudio/x64/Release
+/VisualStudio/.vs/
+/VisualStudio/Debug/
+/VisualStudio/Release/
+/VisualStudio/x64/Debug/
+/VisualStudio/x64/Release/
+VisualStudio/CranberriesLibrary/CranberriesLibrary.cpp
