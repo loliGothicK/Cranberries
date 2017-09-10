@@ -12,7 +12,7 @@ namespace experimental {
 namespace ranges {
 
 enum class sentinel_flag {
-  on,off
+  on, off
 };
 
 template < class Sentinel >
@@ -57,7 +57,7 @@ public:
   void swap(sentinel_iterator& iter) & { std::swap(sentinel, iter.sentinel); }
   void swap(sentinel_iterator&& iter) & { std::swap(sentinel, iter.sentinel); }
 
-  // copy construct/ copy asignment implementation
+  // copy construct/copy asignment implementation
   sentinel_iterator deep_copy(const sentinel_iterator& iter) & {
     this->swap(sentinel_iterator{ iter });
     return *this;
@@ -76,10 +76,14 @@ public:
   bool is_end() const { return sentinel->is_end(); }
 
   bool operator==(const sentinel_iterator& iter) const {
-    return is_sentinel == sentinel_flag::on ? iter.is_end() : this->is_end();
+    return is_sentinel == sentinel_flag::off ?
+      iter.is_sentinel == sentinel_flag::off ? false : this->is_end()
+      : iter.is_end();
   }
   bool operator!=(const sentinel_iterator& iter) const {
-    return is_sentinel == sentinel_flag::on ? !iter.is_end() : !this->is_end();
+    return is_sentinel == sentinel_flag::off ?
+      iter.is_sentinel == sentinel_flag::off ? true : !this->is_end()
+      : !iter.is_end();
   }
 
 private:

@@ -1,4 +1,4 @@
-﻿#include "../../cranberries/algorithm.hpp"
+#include "../../cranberries/algorithm.hpp"
 #include <vector>
 #include <array>
 #include <cassert>

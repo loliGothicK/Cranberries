@@ -8,12 +8,11 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTestforStopwatch
 {		
-	TEST_CLASS(UnitTest1)
-	{
-	public:
-		
-		TEST_METHOD(StopwatchTestMethod)
-		{
+  TEST_CLASS(UnitTest1)
+  {
+  public: 
+    TEST_METHOD(StopwatchTestMethod)
+    {
       auto timer = cranberries::stopwatch{};
       timer.start();
       timer.get_ticks();
@@ -21,7 +20,7 @@ namespace UnitTestforStopwatch
       timer.lap();
       timer.stop();
       timer.clear();
-		}
+    }
 
-	};
+  };
 }

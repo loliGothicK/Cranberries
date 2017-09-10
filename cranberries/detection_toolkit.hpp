@@ -134,12 +134,28 @@ namespace cranberries_magic {
   template < class T, class IfType = std::nullptr_t >
   using equivalence_require
     = std::enable_if_t<conjunction_v<
-      equality_require<T,std::true_type>,
+        equality_require<T,std::true_type>,
         std::is_constructible<bool, decltype(std::declval<const T&>() < std::declval<const T&>())>,
         std::is_constructible<bool, decltype(std::declval<const T&>() <= std::declval<const T&>())>,
         std::is_constructible<bool, decltype(std::declval<const T&>() > std::declval<const T&>())>,
         std::is_constructible<bool, decltype(std::declval<const T&>() >= std::declval<const T&>())>>,
       IfType >;
+
+  template < class Range, class IfType = std::nullptr_t >
+  using range_require
+    = std::enable_if_t<conjunction_v<
+        std::is_same<decltype(std::begin(std::declval<Range&>())), decltype(std::end(std::declval<Range&>()))>,
+        //std::is_same<decltype(std::begin(std::declval<const Range&>())), decltype(std::end(std::declval<const Range&>()))>,
+        std::is_convertible<decltype(*(++std::begin(std::declval<Range&>()))), typename std::decay_t<Range>::value_type>>,
+      IfType>;
+
+  template < class Range, class IfType = std::nullptr_t >
+  using reversable_range_require
+    = std::enable_if_t<conjunction_v<
+      std::is_same<decltype(std::rbegin(std::declval<Range&>())), decltype(std::rend(std::declval<Range&>()))>,
+      //std::is_same<decltype(std::begin(std::declval<const Range&>())), decltype(std::end(std::declval<const Range&>()))>,
+      std::is_convertible<decltype(*(++std::rbegin(std::declval<Range&>()))), typename std::decay_t<Range>::value_type>>,
+    IfType>;
 
 }
 

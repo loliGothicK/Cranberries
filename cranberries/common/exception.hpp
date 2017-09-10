@@ -1,4 +1,4 @@
-﻿/**
+/**
  * API for Git.io
  *
  * These codes are licensed under CC0.

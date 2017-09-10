@@ -45,8 +45,8 @@ try{
     auto tmp = interval<>{};
     tmp += {};
     tmp -= {};
-    tmp *= {1};
-    tmp /= {1, 1};
+    tmp *= {1.};
+    tmp /= {1., 1.};
     tmp + tmp;
     tmp + interval<>{};
     interval<>{} +tmp;

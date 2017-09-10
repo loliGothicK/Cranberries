@@ -20,7 +20,7 @@ class Iterate
     using value_type = ValueType;
     sentinel_impl(ValueType _1, Advance _2) : value{ _1 }, advance{ _2 } {}
     sentinel_impl(const sentinel_impl&) = default;
-    auto get() { return value; }
+    auto get() const { return value; }
     std::false_type next() { value = advance(value); return {}; }
     std::false_type is_end() { return {}; }
   };
@@ -31,8 +31,9 @@ public:
 
   Iterate(value_type _1, Advance _2) : init{ _1 }, f{ _2 } {}
 
-  iterator begin() { return { std::make_unique<sentinel>(init, f) }; }
-  iterator end() { return {}; }
+  iterator begin() const { return { std::make_unique<sentinel>(init, f) }; }
+  iterator end() const { return {}; }
+  size_t size() const { return -1; }
 private:
   value_type init;
   Advance f;

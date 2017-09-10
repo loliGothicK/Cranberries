@@ -1,6 +1,6 @@
 message(STATUS "Building test")
 
-set(target sentinel-test)
+set(target ranges-test)
 message(STATUS "Building library ${target}")
 
 set(sources

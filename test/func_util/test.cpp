@@ -34,33 +34,18 @@ int main() {
     std::cout << std::endl;
   };
 
-  // ----- 関数の合成 ----- //
-
-  // composite = add2 ○ twice ○ minus2
   constexpr auto composite = composition(add2, twice, minus2);
-  // composite(x) <=> add2(twice(minus2(3)))
   static_assert( composite(3) == 4, "");
 
     
-  // ----- 関数のカリー化 ----- //
-
-  // その1 : 遅延評価のカリー化 cranberries::curry
-
-  // 可変長引数関数のカリー化
   constexpr auto curried_sum = cranberries::curried<Sum>{};
   
-  // 最後に引数なしでoperator()を呼ばないと評価されない
   static_assert(curried_sum(1)(2)(3)(4)(5)() == 15, "");
-  // 一度に複数の引数を渡せるようにもした(カリー化とはいったい...)
   static_assert(curried_sum(1, 2, 3)(4)(5)() == 15, "");
 
-  // その2 : 決め打ち評価のカリー化 cranberries::curry_<N>
-  
-  // 引数を固定したカリー化, N個目の引数が適用されると自動で戻り値が返ってくる
   constexpr int value = cranberries::curry_<4>(Sum{})(1)(2)(3)(4);
   static_assert(value==10, "");
-  // 関数ポインタから自動で引数の数を推論できる
-    static_assert(cranberries::curry_(test)(0)(0)(0)==5, "");
+  static_assert(cranberries::curry_(test)(0)(0)(0)==5, "");
   using namespace cranberries::func_util;
 
   std::cout << "all apply" << "\n";

@@ -42,6 +42,20 @@ namespace back_magic {
     using std::end;
     return end(std::forward<Range>(range));
   }
+
+  template < class Range >
+  constexpr decltype(auto) rbegin(Range&& range)
+  {
+    using std::rbegin;
+    return rbegin(std::forward<Range>(range));
+  }
+
+  template < class Range >
+  constexpr decltype(auto) rend(Range&& range)
+  {
+    using std::rend;
+    return rend(std::forward<Range>(range));
+  }
 }
 
   template < class , class = void >
