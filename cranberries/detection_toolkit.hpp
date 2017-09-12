@@ -34,22 +34,12 @@ namespace cranberries_magic {
   template < template < class... > class Require, class... Args >
   constexpr bool is_satisfied_v = is_satisfied<Require, Args...>::value;
 
-  template < template <class> class... Requires >
-  struct requires;
+  template < class Default, template < class... > class Requirements, class... Ts >
+  struct concept_require
+    : nested_type_class<std::enable_if_t<is_satisfied_v<Requirements, Ts...>,Default>> {};
 
-  template < class, class, class = std::nullptr_t >
-  struct concept_require;
-
-  template < class T, template < class > class ...Requirements >
-  struct concept_require<T, requires<Requirements...>>
-    : nested_type_class<std::enable_if_t<conjunctional<Requirements...>::template apply<T>::value, std::nullptr_t>> {};
-
-  template < class T, template < class > class ...Requirements, class IfType >
-  struct concept_require<T, requires<Requirements...>, IfType>
-    : nested_type_class<std::enable_if_t<conjunctional<Requirements...>::template apply<T>::value, IfType>> {};
-
-  template < class T, class Req, class IfType = std::nullptr_t >
-  using concept_require_t = typename concept_require<T, Req, IfType>::type;
+  template < class Default, template < class... > class Req, class... Ts >
+  using satisfied_if_t = typename concept_require<Default, Req, Ts...>::type;
 
   template < class Iter, class IfType = std::nullptr_t >
   using iter_require

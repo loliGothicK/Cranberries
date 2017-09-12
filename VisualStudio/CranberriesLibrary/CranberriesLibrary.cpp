@@ -1,11 +1,31 @@
 #include <iostream>
 #include <cranberries/experimental/ranges.hpp>
+#include <cranberries/unit_test/unit_test.hpp>
+#include <cranberries/func_util.hpp>
+#include <initializer_list>
 #include <chrono>
 
 int main() {
   using namespace cranberries::experimental::ranges;
   using clock = std::chrono::high_resolution_clock;
   using cranberries::make_finally;
+  using namespace cranberries::func_util;
+
+  auto println = [](auto&& head, auto&&... tail) {
+    std::cout << head;
+    (void)std::initializer_list<int>{ (void(std::cout << " " << tail),0)... };
+    std::cout << std::endl;
+  };
+
+  auto are_equal
+    = [](auto a, auto b) -> cranberries::expected<bool> {
+    if (a == b) return true;
+    else return cranberries::make_unexpected("not equal");
+  };
+
+  println <<= are_equal(1, 2)
+    .map_or(1, [](auto v) { return v; })
+    .value();
 
   auto p = [](std::string s) {std::cout << "\n" << s << "\n"; };
 
