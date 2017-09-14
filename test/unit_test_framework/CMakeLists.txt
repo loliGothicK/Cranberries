@@ -1,0 +1,12 @@
+message(STATUS "Building test")
+
+set(target unit_test_framework-test)
+message(STATUS "Building library ${target}")
+
+set(sources
+	test.cpp
+)
+
+add_executable(${target} ${sources})
+add_test(stream "${EXECUTABLE_OUTPUT_PATH}/${target}")
+set_tests_properties(stream PROPERTIES LABELS "all;unit_test_framework")

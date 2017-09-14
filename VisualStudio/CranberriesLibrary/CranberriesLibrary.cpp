@@ -10,22 +10,21 @@ int main() {
   using clock = std::chrono::high_resolution_clock;
   using cranberries::make_finally;
   using namespace cranberries::func_util;
+  using namespace cranberries::unit_test_framework;
 
-  auto println = [](auto&& head, auto&&... tail) {
-    std::cout << head;
-    (void)std::initializer_list<int>{ (void(std::cout << " " << tail),0)... };
-    std::cout << std::endl;
-  };
+  unit_test{"Unit Test Example"}
+    << assert::are_equal([] { std::this_thread::sleep_for(std::chrono::seconds(3)); return 2; }, 2)
+    << assert::are_equal([] { std::this_thread::sleep_for(std::chrono::seconds(1)); return 2; }, 2)
+    << assert::permutation_execute<2>([](auto a, auto b) { return a + b; },
+      assert::test_skip,
+      1, 2, 3, 4, 5)
+    << assert::are_equal([] { return 100; }, 100)
+    << assert::range_equal([] { return std::array<int, 4>{ {1, 2, 3, 4}}; }, 1, 2, 3)
+    << assert::excact_throw<std::runtime_error>([] { throw std::runtime_error{ "error!" }; })
+    ;
+  getchar();
+  return 0;
 
-  auto are_equal
-    = [](auto a, auto b) -> cranberries::expected<bool> {
-    if (a == b) return true;
-    else return cranberries::make_unexpected("not equal");
-  };
-
-  println <<= are_equal(1, 2)
-    .map_or(1, [](auto v) { return v; })
-    .value();
 
   auto p = [](std::string s) {std::cout << "\n" << s << "\n"; };
 

@@ -9,6 +9,7 @@
 #define CRANBERRIES_FUNC_UTIL_CURRY_HPP
 
 #include "../utility/utility.hpp"
+#include "../detection_toolkit.hpp"
 
 namespace cranberries {
     
@@ -144,7 +145,7 @@ namespace cranberries {
   { 
     return curry_<sizeof...(Args)>( make_bind_expr(f) );
   }
-    
+  
 } // ! end namespace cranberries
 
 #endif
