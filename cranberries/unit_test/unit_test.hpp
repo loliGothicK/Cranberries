@@ -342,7 +342,7 @@ namespace unit_test_framework {
       PermutationExe(Expr expr, Require require, Tuple t)
         : expr_{ expr }
         , require_{ require }
-        , sample_{ t }
+        , sample_( t )
       {}
 
       template < size_t... I >
@@ -373,7 +373,7 @@ namespace unit_test_framework {
     public:
       CombinationExe(Expr expr, Sample t)
         : expr_{ expr }
-        , sample_{ t }
+        , sample_( t )
       {}
 
       template < size_t... I >
@@ -437,7 +437,7 @@ namespace unit_test_framework {
     public:
       RangeEqual(Expr expr, Expected expect)
         : expr_{ expr }
-        , expect_{ expect }
+        , expect_( expect )
         , result_{}
       {}
 
