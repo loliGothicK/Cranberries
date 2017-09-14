@@ -11,6 +11,7 @@
 #include <utility>
 #include <type_traits>
 #include <iterator>
+#include <vector>
 #include "../type_traits.hpp"
 
 
@@ -355,7 +356,7 @@ namespace cranberries_magic {
       result.emplace_back(zipped());
     }
     return result;
-  };
+  }
 }
   
   template < class... Ranges >
