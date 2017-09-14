@@ -1,7 +1,7 @@
 #include <iostream>
 #include <initializer_list>
 #include <chrono>
-#include "../github/Cranberries/cranberries/unit_test/unit_test.hpp"
+#include "../../cranberries/unit_test/unit_test.hpp"
 
 
 int main() {
