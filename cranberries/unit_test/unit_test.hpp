@@ -10,10 +10,8 @@
 #include <chrono>
 #include <numeric>
 #include "../algorithm.hpp"
-#include "../optinal.hpp"
 #include "../type_traits.hpp"
 #include "../utility/utility.hpp"
-#include "../detection_toolkit.hpp"
 #ifdef _WIN32
 #include <Windows.h>
 #endif
@@ -72,62 +70,6 @@ namespace cranberries {
 #endif
   };
 
-  template < class T, class E > class expected;
-
-  template < class E >
-  struct unexpected {
-    E error;
-    template < class T >
-    operator expected<T, E>() { return { *this }; }
-  };
-
-  template < class E >
-  unexpected<std::decay_t<E>> make_unexpected(E&& e) { return { std::forward<E>(e) }; }
-
-  template < class T, class E = std::string >
-  class expected {
-    optional<T> opt_;
-    E error_;
-  public:
-    expected() = default;
-    expected(const T& value) : opt_{ value }, error_{} {}
-    template < class Err, enabler_t<std::is_constructible<E,Err>::value> = nullptr >
-    expected(const unexpected<Err>& e) : opt_{ nullopt }, error_{ e.error } {}
-    expected(const expected&) = default;
-    expected(expected&&) = default;
-    expected& operator=(const expected&) = default;
-    expected& operator=(expected&&) = default;
-
-    T value() const { return opt_ ? *opt_ : throw error_; }
-    T value_or(const T& v = T{}) const { return opt_.value_or(v); }
-    E error() const { return error_; }
-    bool valid() const { return opt_; }
-
-    template < class F >
-    expected<std::result_of_t<F(T)>, E> map(F&& f) const {
-      if (opt_) return std::forward<F>(f)(*opt_);
-      else return make_unexpected(error_);
-    }
-    template < class F >
-    expected<std::result_of_t<F(T)>, E> map_or(const std::result_of_t<F(T)>& v, F&& f) const {
-      return opt_ ? std::forward<F>(f)(*opt_) : v;
-    }
-    template < class F, class G >
-    expected<std::common_type_t<std::result_of_t<F(E)>, std::result_of_t<G(T)>>, E>
-    map_or_else(F&& f, G&& g) const {
-      if (opt_) return std::forward<G>(g)(*opt_);
-      else return std::forward<F>(f)(error_);
-    }
-    template < class U >
-    expected<std::decay_t<U>, E> and_if(U&& v) const {
-      if (opt_) return v; else return make_unexpected(error_);
-    }
-    template < class F >
-    decltype(auto) then(F&& f) const {
-      return std::forward<F>(f)(*this);
-    }
-
-  };
 
 namespace unit_test_framework {
 
@@ -154,50 +96,13 @@ namespace unit_test_framework {
   }
 
 
-  class TestResult {
-    std::string label_;
-    double time_;
-    expected<test_status, std::string> result_;
-  public:
-    TestResult() = default;
-    TestResult(std::string label, double time, expected<test_status, std::string> result)
-      : label_{ label }
-      , time_{ time }
-      , result_{ result }
-    {}
-    auto time() { return time_; }
-    test_status log(std::ostream& os) const {
-      return result_.map_or_else(
-        [&](std::string error) {
-          ConsoleTestColor::Red();
-          os << label_ << ": ... fail! " << time_ << "[ms]\n" << error << "\n";
-          ConsoleTestColor::Reset();
-          return test_status::failed;
-        },
-        [&] (test_status status){
-          if (status == test_status::passed) {
-            ConsoleTestColor::Green();
-            os << label_ << ": ... passed. " << time_ << "[ms]\n";
-            ConsoleTestColor::Reset();
-            return test_status::passed;
-          }
-          else
-          {
-            ConsoleTestColor::Yellow();
-            os << label_ << ": ... skipped. " << time_ << "[ms]\n";
-            ConsoleTestColor::Reset();
-            return test_status::skipped;
-          }
-        }
-      ).value();
-    }
-
-  };
 
   template < class F >
   class TestMethod {
     F f_;
     std::string label_;
+    std::chrono::duration<double, std::milli> elapsed_;
+    test_status status_;
   public:
     TestMethod(F f) : f_{ std::move(f) }, label_{} {}
 
@@ -209,19 +114,34 @@ namespace unit_test_framework {
       label_ = std::string{"#"} + std::to_string(index) + label_;
       return *this;
     }
-    TestResult operator()() {
+    void exe() {
       auto first = std::chrono::high_resolution_clock::now();
-      test_status status = static_cast<test_status>(f_());
+      status_ = static_cast<test_status>(f_());
       auto last = std::chrono::high_resolution_clock::now();
-      std::chrono::duration<double, std::milli> elapsed = last - first;
-      return {
-        label_,
-        elapsed.count(),
-        [&]() ->expected<test_status, std::string> {
-        if (static_cast<bool>(status)) return status;
-        else return make_unexpected(f_.info());
-      }() };
+      elapsed_ = last - first;
     }
+    void print(std::ostream& logger) {
+      switch (status_)
+      {
+      case test_status::failed:
+        ConsoleTestColor::Red();
+        logger << label_ << ": => fail! " << elapsed_.count() << "[ms]\n" << f_.info() << "\n";
+        ConsoleTestColor::Reset();
+        break;
+      case test_status::passed:
+        ConsoleTestColor::Green();
+        logger << label_ << ": => passed. " << elapsed_.count() << "[ms]\n";
+        ConsoleTestColor::Reset();
+        break;
+      case test_status::skipped:
+        ConsoleTestColor::Yellow();
+        logger << label_ << ": => skipped. " << elapsed_.count() << "[ms]\n";
+        ConsoleTestColor::Reset();
+        break;
+      }
+    }
+
+    auto status() { return status_; }
   };
 
   template < class F >
@@ -230,38 +150,51 @@ namespace unit_test_framework {
   }
 
   
-  class unit_test {
-    std::ostream& logger;
-    std::string name;
-    decltype(std::chrono::high_resolution_clock::now()) start;
+  class UnitTestContainer {
+    // members
+    std::ostream& logger; // for output
+    std::string name; // unit test label
+    decltype(std::chrono::high_resolution_clock::now()) start; // time point of first push
 
-    std::once_flag once;
-    std::vector<std::future<TestResult>> methods{};
-    size_t index{};
-    size_t passed{};
-    size_t failed{};
-    size_t skipped{};
+    std::once_flag once; // flag for initialize time point first push
+    std::mutex mtx_; // for lock the ostream at logging
+    std::vector<std::future<test_status>> methods{}; // future container
+    size_t index{}; // for labeling n-th push
+
   public:
-    unit_test(std::ostream& os = std::cout, std::string name = "Unit Test")
+    // The following four are valid constructor calls.
+    // default logger is std::cout and default label is "Unit Test"
+
+    // UnitTestContainer( logger, "label" )
+    // UnitTestContainer( logger ) <=> UnitTestContainer( logger, "Unit Test" )
+    // UnitTestContainer( "label" ) <=> UnitTestContainer( std::cout, "label" )
+    // UnitTestContainer( ) <=> UnitTestContainer( std::cout, "Unit Test" )
+
+    // constructor [ logger, label ]
+    UnitTestContainer(std::ostream& os = std::cout, std::string name = "Unit Test")
       : logger{ os }
       , name{ name }
     {
-      ConsoleTestColor::Blue();
-      logger << name << " Start...\n";
-      ConsoleTestColor::Reset();
+      logger << "\n" << name << " Start...\n";
     }
-
-    unit_test(std::string name = "Unit Test", std::ostream& os = std::cout)
-      : unit_test{ os, name }
+    // constructor [ label, logger ]
+    UnitTestContainer(std::string name = "Unit Test", std::ostream& os = std::cout)
+      : UnitTestContainer{ os, name }
     {}
 
 
-    ~unit_test() {
+    // destructor
+    // Collect and output test summary when test container destruct
+    ~UnitTestContainer() {
+      // test status conters
+      size_t passed{};
+      size_t failed{};
+      size_t skipped{};
 
+      // test status count
+      // future::get call here
       for (auto&& method : methods) {
-        auto result_ = method.get();
-        test_status status = result_.log(logger);
-        switch (status)
+        switch (method.get())
         {
         case test_status::failed:
           ++failed;
@@ -274,39 +207,64 @@ namespace unit_test_framework {
           break;
         }
       }
+      // Calculate the elapsed real time for the test
       std::chrono::duration<double, std::milli> total_ = std::chrono::high_resolution_clock::now() - start;
+
+      // Green or Red
       if(failed == 0){
         ConsoleTestColor::Green();
         logger << "Test Status: Grean.\n";
       }
       else if (failed == 1){
+        logger << "Test Status:";
         ConsoleTestColor::Red();
-        logger << "Test Status: Red: 1 error generated.\n";
+        logger << "Red";
+        ConsoleTestColor::Reset();
+        logger << " [1 error generated]\n";
       }
       else{
+        logger << "Test Status: ";
         ConsoleTestColor::Red();
-        logger << "Test Status: Red: " << failed << " errors generated.\n";
+        logger << "Red";
+        ConsoleTestColor::Reset();
+        logger << " [" << failed << " errors generated]\n";
       }
-      ConsoleTestColor::Blue();
-      logger << "Total Tests: " << index 
-             << " | Passed: "   << passed
-             << " | Failed: "   << failed
-             << " | Skipped: "  << skipped << std::endl;
+
+      // Test Summry Infomations
+      logger << "Total Tests: " << index << " | ";
+      ConsoleTestColor::Green();
+      logger << "Passed: " << passed;
+      ConsoleTestColor::Reset();
+      logger << " | ";
+      ConsoleTestColor::Red();
+      logger << "Failed: " << failed;
+      ConsoleTestColor::Reset();
+      logger << " | ";
+      ConsoleTestColor::Yellow();
+      logger << "Skipped: " << skipped << std::endl;
+      ConsoleTestColor::Reset();
         [&](auto&& os) {
         (total_.count() < 1000
           ? (os << total_.count() << " [ms]")
           : (os << total_.count() /1000 << " [sec]")
-          )<< std::endl;
-      }(logger << name << " End : Total Tests Execute Time = " << std::fixed << std::setprecision(5));
-      
-      ConsoleTestColor::Reset();
+          )<< "\n" << std::endl;
+      }(logger << name << " End : Total Real Time = " << std::fixed << std::setprecision(5));
     }
 
     
+    // operator for pushing test method
+    // Test method is executed in parallel as soon as pushing
     template < class F >
     auto& operator<<(TestMethod<F> f) {
       std::call_once(once, [&] {start = std::chrono::high_resolution_clock::now(); });
-      methods.emplace_back(std::async(std::launch::async, f.index(++index)));
+
+      methods.emplace_back(std::async(std::launch::async, // !explicit specified async
+        [&, f = std::move(f.index(++index))]() mutable->test_status {
+          f.exe();
+          std::lock_guard<std::mutex> lock(mtx_);
+          f.print(logger)
+          return f.status();
+      }));
       return *this;
     }
     
@@ -362,7 +320,7 @@ namespace unit_test_framework {
       }
 
       std::string info() {
-        return std::string{ "Not satisfied requirements." };
+        return std::string{ "Info> Not satisfied requirements." };
       }
     };
 
@@ -408,7 +366,7 @@ namespace unit_test_framework {
         return (result_ = expr_()) == expect_;
       }
       std::string info() {
-        return std::string{ "=> Assertion failure: " }
+        return std::string{ "Info> Assertion failure: " }
           +"'" + std::to_string(expect_) + "'"
           + " expected but "
           + "'" + std::to_string(result_) + "'"
@@ -453,7 +411,7 @@ namespace unit_test_framework {
         return exit_status;
       }
       std::string info() {
-        return std::string{ "=> Assertion failure: " }
+        return std::string{ "Info> Assertion failure: " }
           +"'" + range2string(expect_) + "'"
           + " expected but "
           + "'" + range2string(result_) + "'"
@@ -484,7 +442,7 @@ namespace unit_test_framework {
         return false;
       }
       std::string info() {
-        return std::string{ "=> Assertion failure: " } +msg_;
+        return std::string{ "Info> Assertion failure: " } + msg_;
       }
     };
 
