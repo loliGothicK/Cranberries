@@ -262,7 +262,7 @@ namespace unit_test_framework {
         [&, f = std::move(f.index(++index))]() mutable->test_status {
           f.exe();
           std::lock_guard<std::mutex> lock(mtx_);
-          f.print(logger)
+          f.print(logger);
           return f.status();
       }));
       return *this;
@@ -367,7 +367,7 @@ namespace unit_test_framework {
       }
       std::string info() {
         return std::string{ "Info> Assertion failure: " }
-          +"'" + std::to_string(expect_) + "'"
+          + "'" + std::to_string(expect_) + "'"
           + " expected but "
           + "'" + std::to_string(result_) + "'"
           + " actual.";
