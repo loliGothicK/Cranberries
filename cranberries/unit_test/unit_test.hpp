@@ -241,14 +241,12 @@ namespace unit_test_framework {
       ConsoleTestColor::Reset();
       logger << " | ";
       ConsoleTestColor::Yellow();
-      logger << "Skipped: " << skipped << std::endl;
+      logger << "Skipped: " << skipped;
       ConsoleTestColor::Reset();
-        [&](auto&& os) {
-        (total_.count() < 1000
-          ? (os << total_.count() << " [ms]")
-          : (os << total_.count() /1000 << " [sec]")
-          )<< "\n" << std::endl;
-      }(logger << name << " End : Total Real Time = " << std::fixed << std::setprecision(5));
+      logger << " |\n" << name << " End : Total Real Time = " << std::fixed << std::setprecision(5);
+      (total_.count() < 1000
+        ? (logger << total_.count() << " [ms]")
+        : (logger << total_.count() / 1000 << " [sec]")) << "\n" << std::endl;
     }
 
     
