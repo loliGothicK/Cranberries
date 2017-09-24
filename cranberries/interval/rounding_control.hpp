@@ -11,26 +11,6 @@
 #include "interval.hpp"
 #include "../common/macros.hpp"
 
-#ifdef CRANBERRIES_INTERVAL_DEBUG_MODE
-#define CRANBERRIES_MAKE_INTERVAL(TYPE, LOW_EXPR, UP_EXPR) [&]{\
-  DOWNWARD_POLICY;\
-  auto lower_p_cranberries_unique_0000 = LOW_EXPR;\
-  UPWARD_POLICY;\
-  auto upper_p_cranberries_unique_0000 = UP_EXPR;\
-  return  upper_p_cranberries_unique_0000 < lower_p_cranberries_unique_0000\
-    ? throw cranberries::invalid_argument( "invalid_argument", __FILE__, __FUNCTION__, __LINE__, "up < low" )\
-    : interval<TYPE>(lower_p_cranberries_unique_0000,upper_p_cranberries_unique_0000);\
-}()
-#else
-#define CRANBERRIES_MAKE_INTERVAL(TYPE, LOW_EXPR, UP_EXPR) [&]{\
-  DOWNWARD_POLICY;\
-  auto lower_p_cranberries_unique_0000 = LOW_EXPR;\
-  UPWARD_POLICY;\
-  auto upper_p_cranberries_unique_0000 = UP_EXPR;\
-  return interval<TYPE>(lower_p_cranberries_unique_0000,upper_p_cranberries_unique_0000);\
-}()
-#endif
-
 /*
 workaround for MSVC below
 [ Note : Before Visual Studio 2017, FE_DOWNWARD and FE_UPWARD are reverse defined in MSVC. - end note]
@@ -43,8 +23,20 @@ workaround for MSVC below
 #define DOWNWARD_POLICY std::fesetround(FE_DOWNWARD)
 #endif
 
-
 namespace cranberries {
+template < class L, class U, typename T = std::common_type_t<std::result_of_t<L()>, std::result_of_t<U()>> >
+constexpr auto
+make_interval(L&& low, U&& up)
+  -> interval<T>
+{
+  DOWNWARD_POLICY;
+  T lower = low();
+  UPWARD_POLICY;
+  T upper = up();
+  return { lower, upper };
+}
+
+
 namespace cranberries_magic {
   template < typename T >
   inline

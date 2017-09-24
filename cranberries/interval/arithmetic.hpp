@@ -77,7 +77,7 @@ namespace cranberries {
   inline constexpr auto interval<T>::inverse() const
   {
     return CRANBERRIES_OVERFLOW_ERROR_THROW_CONDITIONAL( lower() <= 0.0 && 0.0 <= upper() )
-      : CRANBERRIES_MAKE_INTERVAL( T, 1.0 / upper(), 1.0 / lower() );
+      : make_interval([&] {return 1.0 / upper(); }, [&] {return 1.0 / lower(); });
   }
 
 
