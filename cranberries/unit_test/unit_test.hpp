@@ -9,10 +9,10 @@
 #include <thread>
 #include <chrono>
 #include <numeric>
-#include "../experimental/expected.hpp"
 #include "../algorithm.hpp"
 #include "../type_traits.hpp"
 #include "../utility/utility.hpp"
+#include "../experimental/ranges/view_adaptors/zip_with.hpp"
 #ifdef _WIN32
 #include <Windows.h>
 #endif
@@ -73,9 +73,9 @@ namespace cranberries {
 
 
 namespace unit_test_framework {
-
+namespace detail_ {
   class test_method_tag {};
-
+}
   enum class test_status : unsigned {
     failed = 0,
     passed = 1,
@@ -113,6 +113,10 @@ namespace unit_test_framework {
     test_result_t(std::string msg)
       : status_{ test_status::failed }, what_{ msg }
     {}
+    test_result_t(const char* msg)
+      : status_{ test_status::failed }, what_{ msg }
+    {}
+
 
     test_result_t() : test_result_t{ test_status::skipped } {}
     test_result_t(test_result_t const&) = default;
@@ -124,7 +128,7 @@ namespace unit_test_framework {
     test_status status() const { return status_; }
     std::string what() const { return what_; }
   };
-
+namespace detail_{
   template < class F >
   class TestMethod {
     F f_;
@@ -173,12 +177,12 @@ namespace unit_test_framework {
 
 
 
-  template < class F, enabler_t<!std::is_base_of<test_method_tag, std::decay_t<F>>::value> = nullptr >
+  template < class F, enabler_t<!std::is_base_of<detail_::test_method_tag, std::decay_t<F>>::value> = nullptr >
   TestMethod<F> make_test_method(F&& f) {
     return { std::forward<F>(f), "test method" };
   }
 
-  template < class F, enabler_t<std::is_base_of<test_method_tag, std::decay_t<F>>::value> =nullptr >
+  template < class F, enabler_t<std::is_base_of<detail_::test_method_tag, std::decay_t<F>>::value> =nullptr >
   TestMethod<F> make_test_method(F&& f) {
     return { std::forward<F>(f), std::decay_t<F>::label() };
   }
@@ -188,7 +192,7 @@ namespace unit_test_framework {
   TestMethod<F> make_test_method(F&& f, std::string label) {
     return { std::forward<F>(f), label };
   }
-
+}
 
   
   class UnitTestContainer {
@@ -298,10 +302,9 @@ namespace unit_test_framework {
       std::call_once(once, [&] {start = std::chrono::high_resolution_clock::now(); });
 
       methods.emplace_back(std::async(std::launch::async, // !explicit specified async
-        [&, f = make_test_method(std::move(f)).index(++index)]() mutable -> test_status {
+        [&, f = detail_::make_test_method(std::move(f)).index(++index)]() mutable -> test_status {
           f.exe();
-          std::lock_guard<std::mutex> lock(mtx_);
-          f.print(logger);
+          auto_lock(mtx_), f.print(logger);
           return f.status();
       }));
       return *this;
@@ -315,8 +318,7 @@ namespace unit_test_framework {
       methods.emplace_back(std::async(std::launch::async, // !explicit specified async
         [&, f = make_test_method(std::move(f), label).index(++index)]() mutable->test_status {
         f.exe();
-        std::lock_guard<std::mutex> lock(mtx_);
-        f.print(logger);
+        auto_lock(mtx_), f.print(logger);
         return f.status();
       }));
       return *this;
@@ -325,245 +327,245 @@ namespace unit_test_framework {
     
   };
 
-  namespace test_method_detail {
+namespace detail_ {
 
-    template < class Expr, class Generator >
-    class ScrambleExe
-      : private test_method_tag
-    {
-      Expr expr_;
-      Generator generator_;
-      size_t times_;
-    public:
-      ScrambleExe(Expr expr, Generator gen, size_t n)
-        : expr_{ expr }
-        , generator_{ gen }
-        , times_{ n }
-      {}
-
-      test_result_t operator()() {
-        for (size_t i{}; i < times_; ++i)
-          cranberries::apply(expr_, generator_());
-        return test_status::passed;
-      }
-
-      static std::string label() { return "scramble execute"; }
-    };
-
-    template < size_t N, class Expr, class Require, class Tuple >
-    class PermutationExe
-      : private test_method_tag
-    {
-      Expr expr_;
-      Require require_;
-      Tuple sample_;
-    public:
-      PermutationExe(Expr expr, Require require, Tuple t)
-        : expr_{ expr }
-        , require_{ require }
-        , sample_( t )
-      {}
-
-      template < size_t... I >
-      test_result_t execute(std::index_sequence<I...>) {
-        std::vector<size_t> indices(std::tuple_size<std::decay_t<Tuple>>::value);
-        std::iota(std::begin(indices), std::end(indices), 0);
-        test_status exit_status = test_status::passed;
-        do
-        {
-          exit_status &= require_(expr_(sample_[indices[I]]...));
-        } while (cranberries::next_partial_permutation(indices.begin(), indices.begin() + N, indices.end()));
-        if (!exit_status) return std::string{ "Info> Not satisfied requirements." };
-        else return exit_status; 
-      }
-
-      test_result_t operator()() {
-        return execute(std::make_index_sequence<N>{});
-      }
-
-      static std::string label() { return "permutation execute"; }
-    };
-
-    template < size_t N, class Expr, class Sample >
-    class CombinationExe
-      : private test_method_tag
-    {
-      Expr expr_;
-      Sample sample_;
-    public:
-      CombinationExe(Expr expr, Sample t)
-        : expr_{ expr }
-        , sample_( t )
-      {}
-
-      template < size_t... I >
-      test_result_t execute(std::index_sequence<I...>) {
-        std::vector<size_t> indices(std::tuple_size<std::decay_t<Sample>>::value);
-        std::iota(std::begin(indices), std::end(indices), 0);
-        do
-        {
-          expr_(sample_[indices[I]]...);
-        } while (cranberries::next_combination(indices.begin(), indices.begin() + N, indices.end()));
-        return test_status::passed;
-      }
-
-      test_result_t operator()() {
-        return execute(std::make_index_sequence<N>{});
-      }
-
-      static std::string label() { return "combination execute"; }
-    };
-
-    template < class Expr, class Expected >
-    class AreEqual
-      : private test_method_tag
-    {
-      Expr expr_;
-      Expected expect_;
-      std::result_of_t<Expr()> result_;
-    public:
-      AreEqual(Expr expr, Expected expect)
-        : expr_{ expr }
-        , expect_{ expect }
-        , result_{}
-      {}
-
-      test_result_t operator()() {
-        if((result_ = expr_()) == expect_) return test_status::passed;
-        else return info();
-      }
-
-      std::string info() {
-        return std::string{ "Info> Assertion failure: " }
-          + "'" + std::to_string(expect_) + "'"
-          + " expected but "
-          + "'" + std::to_string(result_) + "'"
-          + " actual.";
-      }
-
-      static std::string label() { return "are equal"; }
-    };
-
-    template < class Expr, class Expected >
-    class RangeEqual
-      : private test_method_tag
-    {
-      Expr expr_;
-      Expected expect_;
-      std::result_of_t<Expr()> result_;
-
-      template < class Range >
-      static std::string range2string(Range&& range) {
-        using std::to_string;
-        std::string str{ "[" };
-        using std::begin; using std::end;
-        auto iter = begin(range);
-        str += to_string(*iter);
-        ++iter;
-        for (; iter != end(range); ++iter) str += std::string(",") += to_string(*iter);
-        return str + "]";
-      }
-
-    public:
-      RangeEqual(Expr expr, Expected expect)
-        : expr_{ expr }
-        , expect_( expect )
-        , result_{}
-      {}
-
-
-      test_result_t operator()() {
-        using std::begin; using std::end;
-        test_status exit_status = test_status::passed;
-        result_ = expr_();
-        if (cranberries::size(result_) != cranberries::size(expect_)) return info();
-        for (auto&& e : cranberries::zip(result_, expect_)) {
-          exit_status &= std::get<0>(e) == std::get<1>(e);
-        }
-        if(!exit_status) return info();
-        else return exit_status;
-      }
-      std::string info() {
-        return std::string{ "Info> Assertion failure: " }
-          +"'" + range2string(expect_) + "'"
-          + " expected but "
-          + "'" + range2string(result_) + "'"
-          + " actual.";
-      }
-
-      static std::string label() { return "range equal"; }
-    };
-
-    template < class Expr, class Except >
-    class ExactThrow
-      : private test_method_tag
-    {
-      Expr expr_;
-      std::string msg_{ "Info> Assertion failure: " };
-    public:
-      ExactThrow(Expr expr)
-        : expr_{ expr }
-      {}
-
-      test_result_t operator()() try {
-        expr_();      
-        return msg_ + "no exception had thworn.";
-      }
-      catch (const Except& e) {
-        return test_status::passed;
-      }
-      catch (const std::exception& e) {
-        msg_ += "unexpected exception had thrown: see below.\n";
-        msg_ += e.what();
-        return msg_;
-      }
-      catch (...) {
-        return std::string{ "unhandled exception had thrown\n" };
-      }
-
-      static std::string label() { return "exact throw"; }
-    };    
-
-  }
-
-  namespace assert
+  template < class Expr, class Generator >
+  class ScrambleExe
+    : private detail_::test_method_tag
   {
-    test_status test_skip(...) { return test_status::skipped; }
+    Expr expr_;
+    Generator generator_;
+    size_t times_;
+  public:
+    ScrambleExe(Expr expr, Generator gen, size_t n)
+      : expr_{ expr }
+      , generator_{ gen }
+      , times_{ n }
+    {}
 
-    template < class Expr, class Expected >
-    static test_method_detail::AreEqual<Expr, Expected>
-      are_equal(Expr&& expr, Expected expect)
-    {
-      return { std::forward<Expr>(expr), expect };
+    test_result_t operator()() {
+      for (size_t i{}; i < times_; ++i)
+        cranberries::apply(expr_, generator_());
+      return test_status::passed;
     }
 
+    static std::string label() { return "scramble execute"; }
+  };
 
-    template < class Expr, class... Expected >
-    static auto
-      range_equal(Expr&& expr, const Expected&... expect)
-      -> test_method_detail::RangeEqual<Expr, decltype(make_array(std::declval<const Expected&>()...))>
-    {
-      return { std::forward<Expr>(expr), make_array(expect...) };
+  template < size_t N, class Expr, class Require, class Tuple >
+  class PermutationExe
+    : private detail_::test_method_tag
+  {
+    Expr expr_;
+    Require require_;
+    Tuple sample_;
+  public:
+    PermutationExe(Expr expr, Require require, Tuple t)
+      : expr_{ expr }
+      , require_{ require }
+      , sample_( t )
+    {}
+
+    template < size_t... I >
+    test_result_t execute(std::index_sequence<I...>) {
+      std::vector<size_t> indices(std::tuple_size<std::decay_t<Tuple>>::value);
+      std::iota(std::begin(indices), std::end(indices), 0);
+      test_status exit_status = test_status::passed;
+      do
+      {
+        exit_status &= require_(expr_(sample_[indices[I]]...));
+      } while (cranberries::next_partial_permutation(indices.begin(), indices.begin() + N, indices.end()));
+      if (!exit_status) return std::string{ "Info> Not satisfied requirements." };
+      else return exit_status; 
     }
 
-
-    template < class Except, class Expr >
-    static test_method_detail::ExactThrow<Expr, Except>
-      excact_throw(Expr&& expr)
-    {
-      return { std::forward<Expr>(expr) };
+    test_result_t operator()() {
+      return execute(std::make_index_sequence<N>{});
     }
 
-    template < size_t N, class F, class Require, class... Samples >
-    static auto
-      permutation_execute(F&& target, Require&& req, Samples&&... samples)
-      -> test_method_detail::PermutationExe<N, F, Require, decltype(make_array(std::forward<Samples>(samples)...))>
-    {
-      return { std::forward<F>(target), std::forward<Require>(req), make_array(std::forward<Samples>(samples)...) };
+    static std::string label() { return "permutation execute"; }
+  };
+
+  template < size_t N, class Expr, class Sample >
+  class CombinationExe
+    : private detail_::test_method_tag
+  {
+    Expr expr_;
+    Sample sample_;
+  public:
+    CombinationExe(Expr expr, Sample t)
+      : expr_{ expr }
+      , sample_( t )
+    {}
+
+    template < size_t... I >
+    test_result_t execute(std::index_sequence<I...>) {
+      std::vector<size_t> indices(std::tuple_size<std::decay_t<Sample>>::value);
+      std::iota(std::begin(indices), std::end(indices), 0);
+      do
+      {
+        expr_(sample_[indices[I]]...);
+      } while (cranberries::next_combination(indices.begin(), indices.begin() + N, indices.end()));
+      return test_status::passed;
     }
 
+    test_result_t operator()() {
+      return execute(std::make_index_sequence<N>{});
+    }
 
+    static std::string label() { return "combination execute"; }
+  };
+
+  template < class Expr, class Expected >
+  class AreEqual
+    : private detail_::test_method_tag
+  {
+    Expr expr_;
+    Expected expect_;
+    std::result_of_t<Expr()> result_;
+  public:
+    AreEqual(Expr expr, Expected expect)
+      : expr_{ expr }
+      , expect_{ expect }
+      , result_{}
+    {}
+
+    test_result_t operator()() {
+      if((result_ = expr_()) == expect_) return test_status::passed;
+      else return info();
+    }
+
+    std::string info() {
+      return std::string{ "Info> Assertion failure: " }
+        + "'" + std::to_string(expect_) + "'"
+        + " expected but "
+        + "'" + std::to_string(result_) + "'"
+        + " actual.";
+    }
+
+    static std::string label() { return "are equal"; }
+  };
+
+  template < class Expr, class Expected >
+  class RangeEqual
+    : private detail_::test_method_tag
+  {
+    Expr expr_;
+    Expected expect_;
+    std::result_of_t<Expr()> result_;
+
+    template < class Range >
+    static std::string range2string(Range&& range) {
+      using std::to_string;
+      std::string str{ "[" };
+      using std::begin; using std::end;
+      auto iter = begin(range);
+      str += to_string(*iter);
+      ++iter;
+      for (; iter != end(range); ++iter) str += std::string(",") += to_string(*iter);
+      return str + "]";
+    }
+
+  public:
+    RangeEqual(Expr expr, Expected expect)
+      : expr_{ expr }
+      , expect_( expect )
+      , result_{}
+    {}
+
+
+    test_result_t operator()() {
+      using std::begin; using std::end;
+      test_status exit_status = test_status::passed;
+      result_ = expr_();
+      if (cranberries::size(result_) != cranberries::size(expect_)) return info();
+      for (auto&& e : cranberries::experimental::ranges::view::make_zipped(result_, expect_)) {
+        exit_status &= std::get<0>(e) == std::get<1>(e);
+      }
+      if(!exit_status) return info();
+      else return exit_status;
+    }
+    std::string info() {
+      return std::string{ "Info> Assertion failure: " }
+        +"'" + range2string(expect_) + "'"
+        + " expected but "
+        + "'" + range2string(result_) + "'"
+        + " actual.";
+    }
+
+    static std::string label() { return "range equal"; }
+  };
+
+  template < class Expr, class Except >
+  class ExactThrow
+    : private detail_::test_method_tag
+  {
+    Expr expr_;
+    std::string msg_{ "Info> Assertion failure: " };
+  public:
+    ExactThrow(Expr expr)
+      : expr_{ expr }
+    {}
+
+    test_result_t operator()() try {
+      expr_();      
+      return msg_ + "no exception had thworn.";
+    }
+    catch (const Except&) {
+      return test_status::passed;
+    }
+    catch (const std::exception& e) {
+      msg_ += "unexpected exception had thrown: see below.\n";
+      msg_ += e.what();
+      return msg_;
+    }
+    catch (...) {
+      return std::string{ "unhandled exception had thrown\n" };
+    }
+
+    static std::string label() { return "exact throw"; }
+  };    
+
+}
+
+namespace assert
+{
+  test_status test_skip(...) { return test_status::skipped; }
+
+  template < class Expr, class Expected >
+  static detail_::AreEqual<Expr, Expected>
+    are_equal(Expr&& expr, Expected expect)
+  {
+    return { std::forward<Expr>(expr), expect };
   }
+
+
+  template < class Expr, class... Expected >
+  static auto
+    range_equal(Expr&& expr, const Expected&... expect)
+    -> detail_::RangeEqual<Expr, decltype(make_array(std::declval<const Expected&>()...))>
+  {
+    return { std::forward<Expr>(expr), make_array(expect...) };
+  }
+
+
+  template < class Except, class Expr >
+  static detail_::ExactThrow<Expr, Except>
+    excact_throw(Expr&& expr)
+  {
+    return { std::forward<Expr>(expr) };
+  }
+
+  template < size_t N, class F, class Require, class... Samples >
+  static auto
+    permutation_execute(F&& target, Require&& req, Samples&&... samples)
+    -> detail_::PermutationExe<N, F, Require, decltype(make_array(std::forward<Samples>(samples)...))>
+  {
+    return { std::forward<F>(target), std::forward<Require>(req), make_array(std::forward<Samples>(samples)...) };
+  }
+
+
+}
 
 }}
 #endif

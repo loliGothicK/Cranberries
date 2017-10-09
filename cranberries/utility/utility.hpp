@@ -12,8 +12,10 @@
 #include <type_traits>
 #include <iterator>
 #include <vector>
+#include <iostream>
+#include <mutex>
 #include "../type_traits.hpp"
-
+#include "../experimental/ranges/sentinel_iterator.hpp"
 
 namespace cranberries
 {
@@ -333,35 +335,14 @@ namespace cranberries_magic {
   }
 
 namespace cranberries_magic {
-  template < size_t... I, class... Ranges >
-  auto zip_impl(std::index_sequence<I...>, Ranges&& ... ranges){
-    std::tuple<typename std::decay_t<Ranges>::iterator...> iters_{ std::begin(ranges)... };
-    std::tuple<typename std::decay_t<Ranges>::iterator...> ends_{ std::end(ranges)... };
-    using swallow = std::initializer_list<int>;
 
-    auto is_end = [&] {
-      bool _ = false;
-      (void)swallow {(void(_ = _ || std::get<I>(iters_) == std::get<I>(ends_)),0)...};
-      return _;
-    };
 
-    auto next = [&] {
-      (void)swallow {(void(++std::get<I>(iters_)),0)...};
-    };
 
-    auto zipped = [&] { return std::make_tuple( *std::get<I>(iters_)... ); };
-
-    std::vector<std::tuple<typename std::decay_t<Ranges>::value_type...>> result{};
-    for (; !is_end(); next()) {
-      result.emplace_back(zipped());
-    }
-    return result;
-  }
 }
   
-  template < class... Ranges >
-  decltype(auto) zip(Ranges&&... ranges) {
-    return cranberries_magic::zip_impl(std::index_sequence_for<Ranges...>{}, std::forward<Ranges>(ranges)...);
+
+  std::unique_lock<std::mutex> auto_lock(std::mutex& mtx_) {
+    return std::unique_lock<std::mutex>(mtx_);
   }
 } // ! - end namespace cranberries
 #endif

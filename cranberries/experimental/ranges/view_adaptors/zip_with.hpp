@@ -81,5 +81,65 @@ namespace view {
   ZipWithProxy<RightRange> zip_with(RightRange&& range) { return { range }; }
 }
 
+template <class, class...>
+class ZippedRange;
+
+template < size_t... I, class... Ranges >
+class ZippedRange<std::index_sequence<I...>, Ranges...> {
+
+  class forward_sentinel {
+    std::tuple<typename std::decay_t<Ranges>::iterator...> iters_;
+    std::tuple<typename std::decay_t<Ranges>::iterator...> ends_;
+    using swallow = std::initializer_list<int>;
+  public:
+    using value_type = std::tuple<typename std::decay_t<Ranges>::value_type...>;
+
+    template < class... Rs >
+    forward_sentinel(Rs&&... ranges)
+      : iters_{ std::begin(ranges)... }
+      , ends_{ std::end(ranges)... }
+    {}
+
+    bool is_end() {
+      bool _ = false;
+      (void)swallow {
+        (void(_ = _ || std::get<I>(iters_) == std::get<I>(ends_)), 0)...
+      };
+      return _;
+    }
+    void next() {
+      (void)swallow {
+      (void(++std::get<I>(iters_)), 0)...
+    };
+    }
+    auto get() { return std::forward_as_tuple(*std::get<I>(iters_)...); }
+  };
+public:
+  using value_type = std::tuple<typename std::decay_t<Ranges>::value_type...>;
+  using iterator = sentinel_iterator<forward_sentinel>;
+
+  ZippedRange(Ranges... ranges)
+    : ranges_{ std::forward_as_tuple(std::forward<Ranges>(ranges)...) }
+  {}
+
+  iterator begin() const {
+    return { std::make_unique<forward_sentinel>(std::get<I>(ranges_)...) };
+  }
+
+  iterator end() const { return {}; }
+
+private:
+  std::tuple<Ranges...> ranges_;
+};
+
+namespace view {
+  template < class... Ranges >
+  ZippedRange<std::index_sequence_for<Ranges...>, Ranges...>
+    make_zipped(Ranges&&... ranges)
+  {
+    return { std::forward<Ranges>(ranges)... };
+  }
+}
+
 }}}
 #endif
