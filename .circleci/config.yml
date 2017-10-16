@@ -1,5 +1,12 @@
 version: 2
 jobs:
+  gtest:
+    working_directory: /Cranberries/gtest
+    docker:
+      - image: enumack/buildcontainers:gtest-clang-5.0
+    steps:
+      - checkout
+      - run: make test && ./bin/gtest
   gcc_7:
     working_directory: /Cranberries
     docker:
@@ -77,6 +84,7 @@ workflows:
   version: 2
   build_and_test:
     jobs:
+      - gtest
       - gcc_5
       - gcc_6
       - gcc_7
