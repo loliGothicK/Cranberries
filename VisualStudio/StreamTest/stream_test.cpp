@@ -10,12 +10,12 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace StreamTest
 {		
-	TEST_CLASS(StreamTest)
-	{
-	public:
-		
-		TEST_METHOD(StreamTestMethod)
-		{
+  TEST_CLASS(StreamTest)
+  {
+  public:
+    
+    TEST_METHOD(StreamTestMethod)
+    {
         using namespace cranberries;
         using namespace cranberries::streams;
 
@@ -328,5 +328,5 @@ namespace StreamTest
         }
     }
 
-	};
+  };
 }

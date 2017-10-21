@@ -1,16 +1,9 @@
 version: 2
 jobs:
-  gtest:
-    working_directory: /Cranberries/gtest
-    docker:
-      - image: enumack/buildcontainers:gtest-clang-5.0
-    steps:
-      - checkout
-      - run: make test && ./bin/gtest
-  gcc_7:
+  gcc_7_1:
     working_directory: /Cranberries
     docker:
-      - image: enumack/buildcontainers:gcc-7
+      - image: enumack/buildcontainers:gcc-7.1
     steps:
       - checkout
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
@@ -84,10 +77,9 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - gtest
       - gcc_5
       - gcc_6
-      - gcc_7
+      - gcc_7_1
       # - clang_3_5 out of support
       - clang_3_6
       - clang_3_7

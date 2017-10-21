@@ -331,15 +331,17 @@ namespace cranberries_magic {
 
   template < class T, class Tuple >
   T construct_from_tuple(Tuple&& t) {
-    return cranberries_magic::construct_from_tuple_impl(std::forward<Tuple>(t));
+    return cranberries_magic::construct_from_tuple_impl<T>(std::forward<Tuple>(t), std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>{});
   }
 
-namespace cranberries_magic {
-
-
-
-}
-  
+  template < class Range, class F >
+  auto index_for_each(Range&& range, F&& f)
+    noexcept(noexcept(is_nothrow_callable_v<std::decay_t<F>(size_t, typename std::decay_t<Range>::value_type)>))
+    -> std::enable_if_t<is_callable_v<std::decay_t<F>(size_t, typename std::decay_t<Range>::value_type)>>
+  {
+    size_t idx{};
+    for (auto&& e : range) f(idx, e);
+  }
 
   std::unique_lock<std::mutex> auto_lock(std::mutex& mtx_) {
     return std::unique_lock<std::mutex>(mtx_);

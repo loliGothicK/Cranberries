@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CranberriesLibrary", "CranberriesLibrary\CranberriesLibrary.vcxproj", "{843AE6D2-010E-4923-9309-FBF36B33E3D1}"
 EndProject
@@ -24,6 +24,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestforDetectionToolkit", "UnitTestforDetectionToolkit\UnitTestforDetectionToolkit.vcxproj", "{8CBFB543-3497-4BE9-A3F2-05B277B260D3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestforSentinelRanges", "UnitTestforSentinelRanges\UnitTestforSentinelRanges.vcxproj", "{5C131C57-62F1-4E7C-B466-2DB098000A1B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestforUtility", "UnitTestforUtility\UnitTestforUtility.vcxproj", "{F62DADF6-2E28-4E77-9179-344EBE4A6ED9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -121,6 +123,14 @@ Global
 		{5C131C57-62F1-4E7C-B466-2DB098000A1B}.Release|x64.Build.0 = Release|x64
 		{5C131C57-62F1-4E7C-B466-2DB098000A1B}.Release|x86.ActiveCfg = Release|Win32
 		{5C131C57-62F1-4E7C-B466-2DB098000A1B}.Release|x86.Build.0 = Release|Win32
+		{F62DADF6-2E28-4E77-9179-344EBE4A6ED9}.Debug|x64.ActiveCfg = Debug|x64
+		{F62DADF6-2E28-4E77-9179-344EBE4A6ED9}.Debug|x64.Build.0 = Debug|x64
+		{F62DADF6-2E28-4E77-9179-344EBE4A6ED9}.Debug|x86.ActiveCfg = Debug|Win32
+		{F62DADF6-2E28-4E77-9179-344EBE4A6ED9}.Debug|x86.Build.0 = Debug|Win32
+		{F62DADF6-2E28-4E77-9179-344EBE4A6ED9}.Release|x64.ActiveCfg = Release|x64
+		{F62DADF6-2E28-4E77-9179-344EBE4A6ED9}.Release|x64.Build.0 = Release|x64
+		{F62DADF6-2E28-4E77-9179-344EBE4A6ED9}.Release|x86.ActiveCfg = Release|Win32
+		{F62DADF6-2E28-4E77-9179-344EBE4A6ED9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
