@@ -6,21 +6,92 @@ jobs:
       - image: enumack/buildcontainers:gcc-7.1
     steps:
       - checkout
+      - run: g++ -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
       - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
-  gcc_6:
+  gcc_7_2:
     working_directory: /Cranberries
     docker:
-      - image: enumack/buildcontainers:gcc-6
+      - image: enumack/buildcontainers:gcc-7.2
     steps:
       - checkout
+      - run: g++ -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
       - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
-  gcc_5:
+  gcc_6_1:
+    working_directory: /Cranberries
     docker:
-      - image: enumack/buildcontainers:gcc-5
+      - image: enumack/buildcontainers:gcc-6.1
     steps:
       - checkout
+      - run: g++ -dumpversion
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+  gcc_6_2:
+    working_directory: /Cranberries
+    docker:
+      - image: enumack/buildcontainers:gcc-6.2
+    steps:
+      - checkout
+      - run: g++ -dumpversion
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+  gcc_6_3:
+    working_directory: /Cranberries
+    docker:
+      - image: enumack/buildcontainers:gcc-6.3
+    steps:
+      - checkout
+      - run: g++ -dumpversion
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+  gcc_6_4:
+    working_directory: /Cranberries
+    docker:
+      - image: enumack/buildcontainers:gcc-6.4
+    steps:
+      - checkout
+      - run: g++ -dumpversion
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+  gcc_5_1:
+    docker:
+      - image: enumack/buildcontainers:gcc-5.1
+    steps:
+      - checkout
+      - run: g++ -dumpversion
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util)).*$" >> ./CMakeLists.txt
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+  gcc_5_2:
+    docker:
+      - image: enumack/buildcontainers:gcc-5.2
+    steps:
+      - checkout
+      - run: g++ -dumpversion
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util)).*$" >> ./CMakeLists.txt
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+  gcc_5_3:
+    docker:
+      - image: enumack/buildcontainers:gcc-5.3
+    steps:
+      - checkout
+      - run: g++ -dumpversion
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util)).*$" >> ./CMakeLists.txt
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+  gcc_5_4:
+    docker:
+      - image: enumack/buildcontainers:gcc-5.4
+    steps:
+      - checkout
+      - run: g++ -dumpversion
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util)).*$" >> ./CMakeLists.txt
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+  gcc_5_5:
+    docker:
+      - image: enumack/buildcontainers:gcc-5.5
+    steps:
+      - checkout
+      - run: g++ -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util)).*$" >> ./CMakeLists.txt
       - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
   clang_5_0:
@@ -28,6 +99,7 @@ jobs:
       - image: enumack/buildcontainers:clang-5.0
     steps:
       - checkout
+      - run: clang++ -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
       - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
   clang_4_0:
@@ -35,6 +107,7 @@ jobs:
       - image: enumack/buildcontainers:clang-4.0
     steps:
       - checkout
+      - run: clang++ -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
       - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
   clang_3_9:
@@ -42,6 +115,7 @@ jobs:
       - image: enumack/buildcontainers:clang-3.9
     steps:
       - checkout
+      - run: clang++ -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*func_util).*$" >> ./CMakeLists.txt
       - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
   clang_3_8:
@@ -49,6 +123,7 @@ jobs:
       - image: enumack/buildcontainers:clang-3.8
     steps:
       - checkout
+      - run: clang++ -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*func_util).*$" >> ./CMakeLists.txt
       - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
   clang_3_7:
@@ -56,6 +131,7 @@ jobs:
       - image: enumack/buildcontainers:clang-3.7
     steps:
       - checkout
+      - run: clang++ -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util)).*$" >> ./CMakeLists.txt
       - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
   clang_3_6:
@@ -63,23 +139,33 @@ jobs:
       - image: enumack/buildcontainers:clang-3.6
     steps:
       - checkout
+      - run: clang++ -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util)).*$" >> ./CMakeLists.txt
       - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
-  clang_3_5:
-    docker:
-      - image: enumack/buildcontainers:clang-3.5
-    steps:
-      - checkout
-      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util|rkf45)).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+  # clang_3_5:
+  #   docker:
+  #     - image: enumack/buildcontainers:clang-3.5
+  #   steps:
+  #     - checkout
+  #     - run: clang++ -dumpversion
+  #     - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util|rkf45)).*$" >> ./CMakeLists.txt
+  #     - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
 
 workflows:
   version: 2
   build_and_test:
     jobs:
-      - gcc_5
-      - gcc_6
+      - gcc_5_1
+      - gcc_5_2
+      - gcc_5_3
+      - gcc_5_4
+      - gcc_5_5
+      - gcc_6_1
+      - gcc_6_2
+      - gcc_6_3
+      - gcc_6_4 
       - gcc_7_1
+      - gcc_7_2
       # - clang_3_5 out of support
       - clang_3_6
       - clang_3_7
