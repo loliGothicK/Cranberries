@@ -71,7 +71,7 @@ class ZipWithProxy
 public:
   ZipWithProxy(RightRange range) : right_range{ range } {}
   template < class LeftRange >
-  ZipWith<LeftRange, RightRange> adapt_to(LeftRange&& range) {
+  ZipWith<LeftRange, RightRange> operator()(LeftRange&& range) {
     return { std::forward<LeftRange>(range), right_range };
   }
 };

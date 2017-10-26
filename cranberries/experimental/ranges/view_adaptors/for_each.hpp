@@ -75,7 +75,7 @@ class ForEachProxy
 public:
   ForEachProxy(F f) : f{ f } {}
   template < class Range >
-  ForEach<Range,F> adapt_to(Range&& range) {
+  ForEach<Range,F> operator()(Range&& range) {
     return { std::forward<Range>(range), std::forward<F>(f) };
   }
 };

@@ -62,7 +62,7 @@ public:
   TakeWhileProxy(F f) : f{ f } {}
   template < class Range,
              enabler_t< is_callable_v<F(typename std::decay_t<Range>::value_type),bool>> = nullptr >
-  TakeWhile<Range,F> adapt_to(Range&& range) {
+  TakeWhile<Range,F> operator()(Range&& range) {
     return { std::forward<Range>(range), f };
   }
 };

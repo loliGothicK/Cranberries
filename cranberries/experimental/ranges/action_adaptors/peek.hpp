@@ -18,16 +18,25 @@ class Peek
   F f;
 public:
   Peek(F f) : f{ f } {}
+
   template < class Range >
-  decltype(auto) adapt_to(Range&& range) {
+  decltype(auto) operator()(Range&& range) {
     for (const auto& e : range) f(e);
     return std::forward<Range>(range);
   }
 };
 
+
+
 namespace action {
-  template < typename F >
+  template < class F >
   Peek<F> peek(F&& f) { return { std::forward<F>(f) }; }
+
+  template < class Range, class Func >
+  decltype(auto) peek(Range&& range, Func&& func) {
+    for (const auto& e : range) func(e);
+    return std::forward<Range>(range);
+  }
 }
 
 }}}

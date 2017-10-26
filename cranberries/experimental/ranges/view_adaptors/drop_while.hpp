@@ -63,7 +63,7 @@ public:
   DropWhileProxy(F f) : f{ f } {}
   template < class Range,
              enabler_t< is_callable_v<F(typename std::decay_t<Range>::value_type),bool>> = nullptr >
-  DropWhile<Range,F> adapt_to(Range&& range) {
+  DropWhile<Range,F> operator()(Range&& range) {
     return { std::forward<Range>(range), f };
   }
 };

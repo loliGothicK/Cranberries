@@ -77,7 +77,7 @@ class ReverseProxy
 public:
   ReverseProxy() = default;
   template < class Range, reversable_range_require<Range> = nullptr >
-  Reverse<Range> adapt_to(Range&& range) {
+  Reverse<Range> operator()(Range&& range) {
     return { std::forward<Range>(range) };
   }
 };

@@ -94,7 +94,7 @@ class ConcatProxy
 public:
   ConcatProxy(RightRange range) : right_range{ range } {}
   template < class LeftRange >
-  Concat<LeftRange, RightRange> adapt_to(LeftRange&& range) {
+  Concat<LeftRange, RightRange> operator()(LeftRange&& range) {
     return { std::forward<LeftRange>(range), right_range };
   }
 };
@@ -102,6 +102,8 @@ public:
 namespace view {
   template < class RightRange >
   ConcatProxy<RightRange> concat(RightRange&& range) { return { range }; }
+
+  auto concat() { return [](auto&& range) { concat(std::forward<decltype(range)>(range)); }; }
 }
 
 }}}

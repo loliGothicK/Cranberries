@@ -61,7 +61,7 @@ class DropProxy
 public:
   DropProxy(size_t n) : n{ n } {}
   template < class Range >
-  Drop<Range> adapt_to(Range&& range) {
+  Drop<Range> operator()(Range&& range) {
     return { std::forward<Range>(range), n };
   }
 };

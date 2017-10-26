@@ -10,35 +10,30 @@ namespace cranberries {
 namespace experimental {
 namespace ranges {
 
-template < class Ostream = std::ostream > 
 class WriteLine
   : private tag::adaptor_tag
   , private tag::action_tag
 {
-  Ostream& os;
+  std::ostream& os;
 public:
   WriteLine() : os(std::cout) {}
-  WriteLine(Ostream& os) : os(os) {}
+  WriteLine(std::ostream& os) : os(os) {}
 
   template < class SentinelRange >
   decltype(auto)
-    apply(SentinelRange&& range) {
+    operator()(SentinelRange&& range) {
     auto iter = std::begin(range);
-    std::cout << *iter; ++iter;
+    os << *iter; ++iter;
     for (; iter != std::end(range); ++iter)
-      std::cout << " " << *iter;
-    std::cout << std::endl;
+      os << " " << *iter;
+    os << std::endl;
     return std::forward<SentinelRange>(range);
   }
 };
 
 namespace action {
-  template < class Ostream = std::ostream >
-  WriteLine<std::decay_t<Ostream>>
-  write_line(Ostream&& os) { return {std::forward<Ostream>(os)}; }
-
-  WriteLine<> write_line() { return {}; }
-
+  WriteLine write_line(std::ostream& os = std::cout)
+  { return {os}; }
 }
 
 }}}

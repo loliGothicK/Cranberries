@@ -60,6 +60,8 @@ private:
 namespace view {
   template < typename Range >
   Cyclic<Range> cyclic(Range range) { return {std::forward<Range>(range)}; }
+
+  auto cyclic() { return [](auto&& range) { cyclic(std::forward<decltype(range)>(range)); }; }
 }
 
 

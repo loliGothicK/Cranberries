@@ -77,13 +77,10 @@ private:
   Range range;
 };
 
-class DistinctProxy
-  : private tag::adaptor_proxy_tag
+struct DistinctProxy
 {
-public:
-  DistinctProxy() = default;
   template < class Range >
-  Distinct<Range> adapt_to(Range&& range) {
+  Distinct<Range> operator()(Range&& range) {
     return { std::forward<Range>(range) };
   }
 };

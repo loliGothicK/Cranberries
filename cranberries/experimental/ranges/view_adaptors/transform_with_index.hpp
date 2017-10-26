@@ -67,7 +67,7 @@ class TransformWithIndexProxy
 public:
   TransformWithIndexProxy(F f, size_t init) : f{ f }, init{ init } {}
   template < class Range >
-  TransformWithIndex<Range,F> adapt_to(Range&& range) {
+  TransformWithIndex<Range,F> operator()(Range&& range) {
     return { std::forward<Range>(range), std::forward<F>(f), init };
   }
 };

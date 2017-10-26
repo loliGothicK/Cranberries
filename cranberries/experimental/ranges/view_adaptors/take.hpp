@@ -58,7 +58,7 @@ class TakeProxy
 public:
   TakeProxy(size_t n) : n{ n } {}
   template < class Range >
-  Take<Range> adapt_to(Range&& range) {
+  Take<Range> operator()(Range&& range) {
     return { std::forward<Range>(range), n };
   }
 };

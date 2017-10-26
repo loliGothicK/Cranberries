@@ -74,7 +74,7 @@ public:
   ChunkProxy() = default;
 
   template < class Range >
-  Chunk<N, Range> adapt_to(Range&& range) {
+  Chunk<N, Range> operator()(Range&& range) {
     return { std::forward<Range>(range) };
   }
 };

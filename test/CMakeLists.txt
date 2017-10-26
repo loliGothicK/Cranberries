@@ -1,7 +1,0 @@
-add_subdirectory(common)
-add_subdirectory(dual_number)
-add_subdirectory(interval)
-add_subdirectory(rkf45)
-add_subdirectory(stopwatch)
-add_subdirectory(stream)
-add_subdirectory(func_util)

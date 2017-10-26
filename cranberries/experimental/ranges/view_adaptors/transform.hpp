@@ -76,7 +76,7 @@ class TransformProxy
 public:
   TransformProxy(F f) : f{ f } {}
   template < class Range >
-  Transform<Range,F> adapt_to(Range&& range) {
+  Transform<Range,F> operator()(Range&& range) {
     return { std::forward<Range>(range), std::forward<F>(f) };
   }
 };
