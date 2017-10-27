@@ -12,5 +12,6 @@
 #include "view_adaptors/take_while.hpp"
 #include "view_adaptors/drop.hpp"
 #include "view_adaptors/drop_while.hpp"
+#include "view_adaptors/indexed.hpp"
 
 #endif // !CRANBERRIES_RANGES_SENTINEL_RANGES_HPP
