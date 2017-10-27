@@ -380,7 +380,7 @@ namespace cranberries_magic {
   struct
     element_type_of<T, false, true, false>
   {
-    using type = typename std::tuple_element_t<0, remove_cvr_t<T>>;
+    using type = typename std::tuple_element<0, remove_cvr_t<T>>::type;
   };
 
   template < typename T >

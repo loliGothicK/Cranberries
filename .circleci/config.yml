@@ -182,7 +182,7 @@ jobs:
       - run: $CXX -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util)).*$" >> ./CMakeLists.txt
       - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS=-stdlib=libc++ && make && ctest --no-label-summary --parallel 4
-  clang_3_6_1:
+  clang_3_6_2:
     docker:
       - image: enumack/buildcontainers:clang-3.6.2
     steps:
