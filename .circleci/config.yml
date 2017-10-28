@@ -101,7 +101,7 @@ jobs:
       - checkout
       - run: $CXX -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS=-stdlib=libc++ && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
   clang_4_0_0:
     docker:
       - image: enumack/buildcontainers:clang-4.0.0
@@ -109,7 +109,7 @@ jobs:
       - checkout
       - run: $CXX -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS=-stdlib=libc++ && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
   clang_4_0_1:
     docker:
       - image: enumack/buildcontainers:clang-4.0.1
@@ -117,7 +117,7 @@ jobs:
       - checkout
       - run: $CXX -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS=-stdlib=libc++ && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
   clang_3_9_0:
     docker:
       - image: enumack/buildcontainers:clang-3.9.0
@@ -125,7 +125,7 @@ jobs:
       - checkout
       - run: $CXX -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*func_util).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS=-stdlib=libc++ && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
   clang_3_9_1:
     docker:
       - image: enumack/buildcontainers:clang-3.9.1
@@ -133,7 +133,7 @@ jobs:
       - checkout
       - run: $CXX -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*func_util).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS=-stdlib=libc++ && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
   clang_3_8_0:
     docker:
       - image: enumack/buildcontainers:clang-3.8.0
@@ -141,7 +141,7 @@ jobs:
       - checkout
       - run: $CXX -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*func_util).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS=-stdlib=libc++ && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
   clang_3_8_1:
     docker:
       - image: enumack/buildcontainers:clang-3.8.1
@@ -149,7 +149,7 @@ jobs:
       - checkout
       - run: $CXX -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*func_util).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS=-stdlib=libc++ && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
   clang_3_7_0:
     docker:
       - image: enumack/buildcontainers:clang-3.7.0
@@ -157,7 +157,7 @@ jobs:
       - checkout
       - run: $CXX -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util)).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS=-stdlib=libc++ && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
   clang_3_7_1:
     docker:
       - image: enumack/buildcontainers:clang-3.7.1
@@ -165,7 +165,7 @@ jobs:
       - checkout
       - run: $CXX -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util)).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS=-stdlib=libc++ && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
   clang_3_6_0:
     docker:
       - image: enumack/buildcontainers:clang-3.6.0
@@ -173,7 +173,7 @@ jobs:
       - checkout
       - run: $CXX -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util)).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS=-stdlib=libc++ && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
   clang_3_6_1:
     docker:
       - image: enumack/buildcontainers:clang-3.6.1
@@ -181,7 +181,7 @@ jobs:
       - checkout
       - run: $CXX -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util)).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS=-stdlib=libc++ && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
   clang_3_6_2:
     docker:
       - image: enumack/buildcontainers:clang-3.6.2
@@ -189,7 +189,7 @@ jobs:
       - checkout
       - run: $CXX -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util)).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS=-stdlib=libc++ && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
   # clang_3_5:
   #   docker:
   #     - image: enumack/buildcontainers:clang-3.5
