@@ -14,34 +14,9 @@ int main() {
   using namespace cranberries::unit_test_framework;
   using std::this_thread::sleep_for;
 
-  UnitTestContainer{"Unit Test Example"}
-    .push( assert::are_equal(
-      [] { sleep_for(std::chrono::seconds(3)); return 2; },
-      2))
-    .push( assert::are_equal(
-      [] { sleep_for(std::chrono::seconds(1)); return 2; },
-      2))
-    .push( assert::permutation_execute<2>(
-      [](auto a, auto b) { return a + b; },
-      assert::test_skip,
-      1, 2, 3, 4, 5))
-    .push( assert::are_equal(
-      [] { return 100; },
-      100))
-    .push( assert::range_equal(
-      [] { return std::array<int, 4>{ {1, 2, 3, 4}}; },
-      1, 2, 3))
-    .push( assert::excact_throw<std::runtime_error>(
-      [] { throw std::runtime_error{ "error!" }; }))
-    .push( []()->test_result_t {
-        bool b=true;
-        for (auto e : create::repeat(1) | view::take(4)) b &= (e == 1);
-        if (b) return test_status::passed;
-        else return "not equal!";
-      })
-    ;
-  getchar();
-  return 0;
+  create::range(1, 10)
+    | view::filter([](int i) { return i % 2 == 0; })
+    | action::write_line();
 
 
   auto p = [](std::string s) {std::cout << "\n" << s << "\n"; };
