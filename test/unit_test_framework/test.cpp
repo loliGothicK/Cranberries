@@ -1,6 +1,7 @@
 #include <iostream>
 #include <initializer_list>
 #include <chrono>
+#include <array>
 #include "../../cranberries/unit_test/unit_test.hpp"
 
 
