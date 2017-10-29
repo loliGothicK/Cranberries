@@ -190,19 +190,12 @@ jobs:
       - run: $CXX -dumpversion
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util)).*$" >> ./CMakeLists.txt
       - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
-  # clang_3_5:
-  #   docker:
-  #     - image: enumack/buildcontainers:clang-3.5
-  #   steps:
-  #     - checkout
-  #     - run: $CXX -dumpversion
-  #     - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(stream|func_util|rkf45)).*$" >> ./CMakeLists.txt
-  #     - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
 
 workflows:
   version: 2
   build_and_test:
     jobs:
+      # GCC
       - gcc_5_1
       - gcc_5_2
       - gcc_5_3
@@ -214,7 +207,7 @@ workflows:
       - gcc_6_4 
       - gcc_7_1
       - gcc_7_2
-      # - clang_3_5 out of support
+      # Clang
       - clang_3_6_0
       - clang_3_6_1
       - clang_3_6_2
