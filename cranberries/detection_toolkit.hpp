@@ -23,7 +23,7 @@ namespace cranberries_magic {
 					 , class... Args >
 	struct detector<Default, void_t<Require<Args...>>, Require, Args...> {
 		using type = Require<Args...>;
-		static constexpr bool value = false;
+		static constexpr bool value = true;
 	};
 
 }
