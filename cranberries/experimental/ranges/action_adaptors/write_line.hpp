@@ -11,29 +11,29 @@ namespace experimental {
 namespace ranges {
 
 class WriteLine
-  : private tag::adaptor_tag
-  , private tag::action_tag
+	: private tag::adaptor_tag
+	, private tag::action_tag
 {
-  std::ostream& os;
+	std::ostream& os;
 public:
-  WriteLine() : os(std::cout) {}
-  WriteLine(std::ostream& os) : os(os) {}
+	WriteLine() : os(std::cout) {}
+	WriteLine(std::ostream& os) : os(os) {}
 
-  template < class SentinelRange >
-  decltype(auto)
-    operator()(SentinelRange&& range) {
-    auto iter = std::begin(range);
-    os << *iter; ++iter;
-    for (; iter != std::end(range); ++iter)
-      os << " " << *iter;
-    os << std::endl;
-    return std::forward<SentinelRange>(range);
-  }
+	template < class SentinelRange >
+	decltype(auto)
+		operator()(SentinelRange&& range) {
+		auto iter = std::begin(range);
+		os << *iter; ++iter;
+		for (; iter != std::end(range); ++iter)
+			os << " " << *iter;
+		os << std::endl;
+		return std::forward<SentinelRange>(range);
+	}
 };
 
 namespace action {
-  WriteLine write_line(std::ostream& os = std::cout)
-  { return {os}; }
+	WriteLine write_line(std::ostream& os = std::cout)
+	{ return {os}; }
 }
 
 }}}

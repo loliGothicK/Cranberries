@@ -84,10 +84,10 @@ namespace cranberries_magic {
 
 
   template < class F, class... Args >
-  struct bind_friendly_no_throw_callable : bool_constant<is_nothrow_callable<F(Args...), return_any>::value> {};
+  struct bind_friendly_nothrow_callable : bool_constant<is_nothrow_callable<F(Args...), return_any>::value> {};
 
   template < class F, class... Args >
-  struct bind_friendly_no_throw_callable<F,type_pack<Args...>> : bool_constant<is_nothrow_callable<F(Args...), return_any>::value> {};
+  struct bind_friendly_nothrow_callable<F,type_pack<Args...>> : bool_constant<is_nothrow_callable<F(Args...), return_any>::value> {};
 
 }
 #endif // !CRANBERRIES_MATA_BIND_HPP
