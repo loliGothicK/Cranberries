@@ -22,13 +22,17 @@ int main() {
 	};
 	using namespace cranberries::func_util;
 
-	std::cout << cranberries::zeller(2017, 11, 13) << std::endl;
+	cranberries::zeller("2017/11/14") | println;
 
-	create::range(1, 10)
+	create::range(1, 3)
+		<= view::transform([](auto d) { return cranberries::zeller(2017, 11, d); })
+		<= action::write_line();
+
+	println |=
+		create::range(1, 10)
 		<= view::filter([](int i) { return i % 2 == 0; })
 		<= view::shuffle()
-		<= action::foldl([](auto _1, auto _2) { return _1 + _2; })
-		| println;
+		<= action::deconstruct<5>();
 
 
 	auto p = [](std::string s) {std::cout << "\n" << s << "\n"; };

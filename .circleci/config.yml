@@ -97,6 +97,9 @@ jobs:
   clang_5_0_0:
     docker:
       - image: enumack/buildcontainers:clang-5.0
+    environment:
+      - CC: /usr/local/bin/clang
+      - CXX: /usr/local/bin/clang++
     steps:
       - checkout
       - run: $CXX -dumpversion

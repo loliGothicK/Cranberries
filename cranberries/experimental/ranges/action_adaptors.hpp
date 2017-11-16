@@ -9,6 +9,7 @@
 #include "action_adaptors/any.hpp"
 #include "action_adaptors/fold.hpp"
 #include "action_adaptors/sum.hpp"
+#include "action_adaptors/deconstruct.hpp"
 //#include "action_adaptors/"
 
 #endif // !CRANBERRIES_RANGES_SENTINEL_RANGES_HPP

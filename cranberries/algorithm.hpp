@@ -11,6 +11,7 @@
 #include <iterator>
 #include <cstdint>
 #include <algorithm>
+#include <regex>
 #include "type_traits.hpp"
 #include "utility/utility.hpp"
 #include "common/defaulted_type.hpp"
@@ -18,43 +19,54 @@
 
 namespace cranberries {
 
-	enum class day {
-		sat,
-		sun,
-		mon,
+	enum class week_day {
+		mon = 1,
 		tue,
 		wed,
 		thu,
 		fri,
+		sat,
+		sun,
 	};
 
-	std::ostream& operator<<(std::ostream& os, day d) {
+	std::ostream& operator<<(std::ostream& os, week_day d) {
 		switch (d)
 		{
-		case cranberries::day::sat:
+		case cranberries::week_day::sat:
 			return os << "Sat";
-		case cranberries::day::sun:
+		case cranberries::week_day::sun:
 			return os << "Sun";
-		case cranberries::day::mon:
+		case cranberries::week_day::mon:
 			return os << "Mon";
-		case cranberries::day::tue:
+		case cranberries::week_day::tue:
 			return os << "Tue";
-		case cranberries::day::wed:
+		case cranberries::week_day::wed:
 			return os << "Wed";
-		case cranberries::day::thu:
+		case cranberries::week_day::thu:
 			return os << "Thu";
-		case cranberries::day::fri:
+		case cranberries::week_day::fri:
 			return os << "Fri";
 		}
 	}
 
-	day zeller(size_t y, size_t m, size_t d) {
-		auto C = y / 100;
+	week_day zeller(size_t y, size_t m, size_t d) {
+		if (m < 3) m += 12,y--;
 		auto Y = y % 100;
-		auto F = int(d) + (26 * (int(m) + 1) / 10) + int(Y) + (int(Y) / 4) + 5 * C + (C / 4);
-		auto X = (F % 7) + 1;
-		return static_cast<day>(X);
+		auto C = y / 100;
+		auto ganma = 5 * C + C / 4;
+		auto F = d + (26 * (m + 1)) / 10 + Y + Y / 4 + ganma + 5;
+		return static_cast<week_day>((F % 7) + 1);
 	}
+
+	week_day zeller(std::string yyyymmdd) {
+		std::regex re{ "/|-" };
+		auto iter = std::sregex_token_iterator{ yyyymmdd.begin(), yyyymmdd.end(), re, -1 };
+		auto y = std::stoi(*iter++);
+		auto m = std::stoi(*iter++);
+		auto d = std::stoi(*iter);
+		return zeller(y, m, d);
+	}
+
 
 namespace cranberries_magic {
 
