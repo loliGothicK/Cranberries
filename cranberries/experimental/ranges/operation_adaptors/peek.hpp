@@ -4,7 +4,6 @@
 #include "../sentinel_iterator.hpp"
 #include "../../../utility/utility.hpp"
 #include <type_traits>
-#include <memory>
 
 namespace cranberries {
 namespace experimental {
@@ -28,7 +27,7 @@ public:
 
 
 
-namespace action {
+namespace operation {
   template < class F >
   Peek<F> peek(F&& f) { return { std::forward<F>(f) }; }
 

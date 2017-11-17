@@ -37,17 +37,17 @@ int main() {
 
   p("[ cyclic(range) => reverse => take => reverse ]");
   view::cyclic(create::range(1, 5)) // [1,2,3,4,1,2,4,1,...]
-    <= operation::reverse()             // [4,3,2,1,4,3,2,1,...]
+    <= action::reverse()             // [4,3,2,1,4,3,2,1,...]
     <= view::take(5)                 // [4,3,2,1,4]
-    <= operation::reverse()             // [4,1,2,3,4]
+    <= action::reverse()             // [4,1,2,3,4]
     <= operation::write_line();
 
   p("[ cyclic(range) => take => concat(range) => distinct => reverse ]");
   view::cyclic(create::range(1, 5))    // [1,2,3,4,1,2,4,1,...]
     <= view::take(7)                    // [1,2,3,4,1,2,3]
     <= view::concat(create::range(1,6)) // [1,2,3,4,1,2,3,1,2,3,4,5]
-    <= operation::distinct()               // [1,2,3,4,5]
-    <= operation::reverse()                // [5,4,3,2,1]
+    <= action::distinct()               // [1,2,3,4,5]
+    <= action::reverse()                // [5,4,3,2,1]
     <= operation::write_line();
 
   p("[ range => zip_with ]");
