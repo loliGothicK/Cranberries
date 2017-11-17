@@ -38,7 +38,7 @@ public:
 	}
 };
 
-namespace action {
+namespace operation {
 	template < size_t N >
 	Deconstruct<N> deconstruct()
 		{ return {}; }

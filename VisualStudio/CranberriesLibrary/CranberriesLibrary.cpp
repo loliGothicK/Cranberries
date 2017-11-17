@@ -28,11 +28,11 @@ int main() {
 		<= view::transform([](auto d) { return cranberries::zeller(2017, 11, d); })
 		<= action::write_line();
 
-	println |=
-		create::range(1, 10)
+	create::range(1, 10)
 		<= view::filter([](int i) { return i % 2 == 0; })
 		<= view::shuffle()
-		<= action::deconstruct<5>();
+		<= operation::deconstruct<5>()
+		| println;
 
 
 	auto p = [](std::string s) {std::cout << "\n" << s << "\n"; };
