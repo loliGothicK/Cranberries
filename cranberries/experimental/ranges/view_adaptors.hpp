@@ -15,6 +15,5 @@
 #include "view_adaptors/indexed.hpp"
 #include "view_adaptors/filter.hpp"
 #include "view_adaptors/shuffle.hpp"
-#include "action_adaptors/converter.hpp"
 
 #endif // !CRANBERRIES_RANGES_SENTINEL_RANGES_HPP

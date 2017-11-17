@@ -29,7 +29,7 @@ public:
 
 
 
-namespace view {
+namespace operation {
 	template < template < class, class > class Target >
 	Converter<Target> convert() noexcept { return {}; }
 }
