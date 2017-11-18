@@ -85,7 +85,7 @@ int main() {
 	p("[ range -> zip_with ]");
 	create::range(1, 4)
 		<= view::zip_with(std::vector<std::string>{"one", "two", "three"})
-		<= action::peek([](auto tup) { std::cout << "[" << std::get<0>(tup) << "," << std::get<1>(tup) << "] "; });
+		<= operation::peek([](auto tup) { std::cout << "[" << std::get<0>(tup) << "," << std::get<1>(tup) << "] "; });
 	std::cout << std::endl;
 
 	p("[ range -> take_while -> drop ]");
