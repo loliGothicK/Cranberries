@@ -15,17 +15,17 @@ namespace UnitTestforUtility
     TEST_METHOD(UtilityTestMethod)
     {
       using namespace cranberries;
-      index_for_each(
-        construct_from_tuple<std::vector<int>>(std::make_tuple(1, 2, 3, 4)),
-        [](int i, auto e) noexcept {
-        assert(i == e);
+      index_for_each(0,
+        construct_from_tuple<std::vector<int>>(std::make_tuple(0, 1, 2, 3)),
+        [](size_t i, size_t e) {
+        if (i != e) throw "fail: line 21";
       });
       auto overload = make_overload(
         [](int a) { return "int"; },
         [](double a) { return "double"; }
       );
-      assert(overload(1) == "double");
-      assert(overload(1.0) == "double");
+      if (overload(1) != "int") throw "fail: line 27";
+      if (overload(1.0) != "double") throw "fail: line 28";
     }
 
   };
