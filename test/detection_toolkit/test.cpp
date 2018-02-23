@@ -1,4 +1,4 @@
-#include "../../cranberries/detection_toolkit.hpp"
+#include "../../cranberries/common/concepts.hpp"
 #include <vector>
 
 
@@ -12,23 +12,7 @@ static_assert(
   "failure"
   );
 static_assert(
-  is_satisfied_v<random_accsess_iter_require, typename std::vector<int>::iterator>,
-  "failure"
-  );
-static_assert(
-  is_satisfied_v<random_accsess_iter_require, int*>,
-  "failure"
-  );
-static_assert(
-  is_satisfied_v<arithmetic4_require, int>,
-  "failure"
-  );
-static_assert(
-  is_satisfied_v<equality_require, int>,
-  "failure"
-  );
-static_assert(
-  is_satisfied_v<equivalence_require, int>,
+  concepts::required_v<std::vector<int>, concepts::iterable>,
   "failure"
   );
 
