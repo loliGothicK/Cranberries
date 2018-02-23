@@ -49,6 +49,26 @@ namespace cranberries {
 		}
 	}
 
+	std::string to_string(week_day d) {
+		switch (d)
+		{
+		case cranberries::week_day::sat:
+			return "Sat";
+		case cranberries::week_day::sun:
+			return "Sun";
+		case cranberries::week_day::mon:
+			return "Mon";
+		case cranberries::week_day::tue:
+			return "Tue";
+		case cranberries::week_day::wed:
+			return "Wed";
+		case cranberries::week_day::thu:
+			return "Thu";
+		case cranberries::week_day::fri:
+			return "Fri";
+		}
+	}
+
 	week_day zeller(size_t y, size_t m, size_t d) {
 		if (m < 3) m += 12,y--;
 		auto Y = y % 100;

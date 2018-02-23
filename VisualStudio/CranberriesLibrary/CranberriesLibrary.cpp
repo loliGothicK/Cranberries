@@ -1,109 +1,179 @@
 #include <iostream>
-#include <cranberries/unit_test/unit_test.hpp>
-#include <cranberries/experimental/ranges.hpp>
 #include <cranberries/func_util.hpp>
-#include <initializer_list>
-#include <chrono>
-#include <algorithm>
+#include <cranberries/span.hpp>
+#include <list>
+#include <cranberries/common/macros.hpp>
+// cranberries::traversal
+#include <cranberries/traversals/all.hpp>
+#include <cranberries/functional/lambda.hpp>
+#include <cranberries/traversals/comprehension/list_comprehension.hpp>
+
 
 int main() {
-	using namespace cranberries::experimental::ranges;
-	using clock = std::chrono::high_resolution_clock;
-	using cranberries::make_finally;
-	using std::this_thread::sleep_for;
-	std::cout << std::boolalpha;
 
-	auto println = [](auto&& head, auto&&... tail) -> void {
-		std::cout << head;
-		(void)std::initializer_list<int>{
-			(void(std::cout << " " << tail), 0)...
-		};
-		std::cout << std::endl;
-	};
-	using namespace cranberries::func_util;
+	{
+		namespace create = cranberries::experimental::traversals::create;
+		namespace view = cranberries::experimental::traversals::view;
+		namespace operation = cranberries::experimental::traversals::operation;
+		namespace collect = cranberries::experimental::traversals::collect;
 
-	cranberries::zeller("2017/11/14") | println;
+		using cranberries::placeholders::_;
+		using cranberries::literals::placeholder_literals::operator"" _;
 
-	create::range(1, 3)
-		<= view::transform([](auto d) { return cranberries::zeller(2017, 11, d); })
-		<= operation::write_line();
+		std::cout << "lambda tests\n";
 
-	create::range(1, 10)
-		<= view::filter([](int i) { return i % 2 == 0; })
-		<= view::shuffle()
-		<= operation::deconstruct<5>()
-		| println;
+		(1_ + 2_ | create::irange(1, 5) <= view::filter(_%2==0) & create::irange(1, 5))
+			<= operation::write_line();
+
+		getchar();
+		return 0;
+
+#pragma region CREATE_MODULE
+		create::irange(1, 5)
+			<= operation::write_line();
+
+		create::semi_irange(1, 5)
+			<= operation::write_line();
+
+		create::generate([] { return 5; })
+			<= view::take(5)
+			<= operation::write_line();
+
+		create::iterate( 1, [](auto i) { return i*5; } )
+			<= view::take(5)
+			<= operation::write_line();
+
+		create::generate_canonical()
+			<= view::take(5)
+			<= operation::write_line();
+
+		create::repeat(1)
+			<= view::take(5)
+			<= operation::write_line();
+
+		create::random()
+			<= view::take(5)
+			<= operation::write_line();
+
+		create::uniform_distribution(1, 5)
+			<= view::take(5)
+			<= operation::write_line();
+
+		create::uniform_distribution(0.0, 1.0)
+			<= view::take(5)
+			<= operation::write_line();
+
+#pragma endregion
+
+#pragma region VIEW_MODULE
+#pragma region view::chunk
+
+		//{
+		//	auto chunked
+		//		= create::irange(1, 5)
+		//		<= view::chunk(2);
+
+		//	for (auto&& span : chunked) {
+		//		for (auto&& elem : span)	std::cout << elem << " ";
+		//		std::cout << "\n";
+		//	}
+		//}
+#pragma endregion
+#pragma region view::concat
+		{
+			create::irange(1, 3)
+				<= view::concat(create::irange(1, 3))
+				<= operation::write_line();
+		}
+#pragma endregion
+#pragma region view::take
+		{
+			create::repeat(1)
+				<= view::take(5)
+				<= operation::write_line();
+		}
+#pragma endregion
+#pragma region view::cyclic
+		create::irange(1, 3)
+			<= view::cyclic()
+			<= view::take(8)
+			<= operation::write_line();
+#pragma endregion
+#pragma region view::map
+			create::irange(1, 4)
+				<= view::map(_ * 2)
+				<= operation::write_line();
+#pragma endregion
+#pragma region view::index_map
+		create::irange(1,5)
+			<= view::index_map(1_*2_)
+			<= operation::write_line();
+#pragma endregion
+#pragma region view::rev
+		create::irange(1, 5)
+			<= view::rev
+			<= operation::write_line();
+#pragma endregion
+#pragma region view::zip_with
+		create::irange(1, 4)
+			<= view::zip_with(create::irange(1, 3))
+			<= operation::write_line();
+#pragma endregion
+#pragma region view::take_while
+		create::irange(1, 10)
+			<= view::take_while(_ < 5)
+			<= operation::write_line();
+#pragma endregion
+#pragma region view::drop
+		create::irange(1, 9)
+			<= view::drop(5)
+			<= operation::write_line();
+#pragma endregion
+#pragma region view::drop_while
+		create::irange(1,10)
+			<= view::drop_while(_ < 5)
+			<= operation::write_line();
+#pragma endregion
+#pragma region view::filter
+		create::irange(1,10)
+			<= view::filter(_%2==0)
+			<= operation::write_line();
+#pragma endregion
+#pragma region view::replace
+		create::irange(1, 10)
+			<= view::replace(10, 0)
+			<= operation::write_line();
+
+		create::irange(1, 10)
+			<= view::replace_if(_%2==0, 0)
+			<= operation::write_line();
+#pragma endregion
+#pragma region view::distinct
+		create::irange(1,5)
+			<= view::concat(create::irange(3, 8))
+			<= view::distinct
+			<= operation::write_line();
+#pragma endregion
+		create::uniform_distribution(1, 9)
+			<= view::take(10)
+			<= view::sort()
+			<= operation::write_line();
+
+		create::irange(1, 9)
+			<= view::shuffle
+			<= operation::write_line();
+
+		create::irange(1, 5)
+			<= view::indexed()
+			<= operation::write_line();
+
+#pragma endregion
 
 
-	auto p = [](std::string s) {std::cout << "\n" << s << "\n"; };
 
-	create::range(1, 5) // [1,5)
-		<= operation::convert<std::vector>()
-		<= operation::write_line();
+	}
 
-	// Fibonacci numbers
-	p("[ iterate -> take ] // Fibonacci numbers");
-	create::iterate(1, [prev = 0](int v)mutable{
-		return make_finally([&] {prev = v; }), prev + v;
-	})
-		<= view::take(7)                 // [1,1,2,3,5,8,13]
-		<= operation::write_line();
 
-	p("[ generate -> transform -> take ] // tick");
-	create::generate([lap = clock::now()]()mutable->std::chrono::duration<double, std::milli>{
-		auto tmp = clock::now();
-		return make_finally([&] {lap = tmp; }), tmp - lap;
-	})
-		<= view::transform([](auto duration) { return std::to_string(duration.count()) + "[ms]"; })
-		<= view::take(7)
-		<= operation::write_line();
-
-	p("[ range ]");
-	create::range(1, 5)               // [1,5) = [1,2,3,4]
-		<= operation::write_line();
-
-	p("[ cyclic -> take ]");
-	view::cyclic(create::range(1, 5)) // [1,2,3,4,1,2,4,1,...]
-		<= view::take(5)                 // [1,2,3,4,1]
-		<= operation::write_line();
-
-	p("[ cyclic(range) -> reverse -> take -> reverse ]");
-	view::cyclic(create::range(1, 5)) // [1,2,3,4,1,2,4,1,...]
-		<= action::reverse()             // [4,3,2,1,4,3,2,1,...]
-		<= view::take(5)                 // [4,3,2,1,4]
-		<= action::reverse()             // [4,1,2,3,4]
-		<= operation::write_line();
-
-	p("[ cyclic(range) -> take -> concat(range) -> distinct -> reverse ]");
-	view::cyclic(create::range(1, 5))    // [1,2,3,4,1,2,4,1,...]
-		<= view::take(7)                    // [1,2,3,4,1,2,3]
-		<= view::concat(create::range(1, 6)) // [1,2,3,4,1,2,3,1,2,3,4,5]
-		<= action::distinct()               // [1,2,3,4,5]
-		<= action::reverse()                // [5,4,3,2,1]
-		<= operation::write_line();
-
-	p("[ range -> zip_with ]");
-	create::range(1, 4)
-		<= view::zip_with(std::vector<std::string>{"one", "two", "three"})
-		<= operation::peek([](auto tup) { std::cout << "[" << std::get<0>(tup) << "," << std::get<1>(tup) << "] "; });
-	std::cout << std::endl;
-
-	p("[ range -> take_while -> drop ]");
-	create::range(1, 20)                            // [1,2,3,...,19]
-		<= view::take_while([](auto i) {return i < 8; }) // [1,2,3,4,5,6,7]
-		<= view::drop(4)                               // [5,6,7]
-		<= operation::write_line();
-
-	p("[ range -> take_while -> drop_while ]");
-	create::range(1, 20)                            // [1,2,3,...,19]
-		<= view::take_while([](auto i) {return i < 8; }) // [1,2,3,4,5,6,7]
-		<= view::drop_while([](auto i) {return i < 5; }) // [5,6,7]
-		<= operation::write_line();
-
-	p("[ range -> transform_with_index ]");
-	create::range(1, 6)
-		<= view::transform_with_index([](size_t i, auto e) { return e*i; })
-		<= operation::write_line();
 
 
 	getchar();

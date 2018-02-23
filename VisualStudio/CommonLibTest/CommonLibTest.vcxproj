@@ -23,7 +23,7 @@
     <ProjectGuid>{DF3895BC-743D-45BF-B732-63B0066DE87E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CommonLibTest</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <ProjectSubType>NativeUnitTestProject</ProjectSubType>
     <ProjectName>UnitTestforCommonLib</ProjectName>
   </PropertyGroup>

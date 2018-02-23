@@ -23,7 +23,7 @@
     <ProjectGuid>{8426B4A8-4991-4617-920D-26962004EC03}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>IntervalTest</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <ProjectSubType>NativeUnitTestProject</ProjectSubType>
     <ProjectName>UnitTestforInterval</ProjectName>
   </PropertyGroup>

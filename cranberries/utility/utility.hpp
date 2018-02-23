@@ -13,25 +13,93 @@
 #include <iterator>
 #include <vector>
 #include <iostream>
+#include <initializer_list>
 #include <mutex>
 #include "../type_traits.hpp"
-#include "../experimental/ranges/sentinel_iterator.hpp"
 
 namespace cranberries
 {
 	template <class C>
-	inline constexpr auto size( const C& c ) -> decltype(c.size())
+	constexpr auto data(C& c) -> decltype(c.data())
+	{
+		return c.data();
+	}
+
+	template <class C>
+	constexpr auto data(const C& c) -> decltype(c.data())
+	{
+		return c.data();
+	}
+
+	template <class T, std::size_t N>
+	constexpr T* data(T(&array)[N]) noexcept
+	{
+		return array.data();
+	}
+
+	template <class E>
+	constexpr const E* data(std::initializer_list<E> il) noexcept
+	{
+		return std::begin(il);
+	}
+
+	template <class C>
+	inline constexpr auto size( C&& c ) -> decltype(c.size())
 	{
 		return c.size();
 	}
 
-	template <class T, std::size_t N>
-	inline constexpr std::size_t size( const T(&)[N] ) noexcept
+	template <class T, size_t N>
+	inline constexpr size_t size( const T(&)[N] ) noexcept
 	{
 		return N;
 	}
 
+	template <class T, size_t N>
+	inline constexpr size_t size(std::array<T,N> const&) noexcept
+	{
+		return N;
+	}
+
+
 namespace back_magic {
+
+	template < class T, class U,
+		std::enable_if_t<conjunction_v<
+			is_tuple<T>, is_tuple<U>
+		>, std::nullptr_t> = nullptr >
+	constexpr auto make_tuple_cat(T t, U u)
+	{
+		return std::tuple_cat(t, u);
+	}
+
+	template < class T, class U,
+		std::enable_if_t<conjunction_v<
+			is_tuple<T>, negation<is_tuple<U>>
+		>, std::nullptr_t> = nullptr >
+	constexpr auto make_tuple_cat(T t, U u)
+	{
+		return std::tuple_cat(t, std::make_tuple(u));
+	}
+
+	template < class T, class U,
+		std::enable_if_t<conjunction_v<
+			negation<is_tuple<T>>, is_tuple<U>
+		>, std::nullptr_t> = nullptr >
+	constexpr auto make_tuple_cat(T t, U u)
+	{
+		return std::tuple_cat(std::make_tuple(t), u);
+	}
+
+	template < class T, class U,
+		std::enable_if_t<conjunction_v<
+			negation<is_tuple<T>>, negation<is_tuple<U>>
+		>, std::nullptr_t> = nullptr >
+	constexpr auto make_tuple_cat(T t, U u)
+	{
+		return std::make_tuple(t, u);
+	}
+
 	template < class Range >
 	constexpr decltype(auto) begin(Range&& range)
 	{
@@ -47,6 +115,20 @@ namespace back_magic {
 	}
 
 	template < class Range >
+	constexpr decltype(auto) cbegin(Range&& range)
+	{
+		using std::cbegin;
+		return cbegin(std::forward<Range>(range));
+	}
+
+	template < class Range >
+	constexpr decltype(auto) cend(Range&& range)
+	{
+		using std::cend;
+		return cend(std::forward<Range>(range));
+	}
+
+	template < class Range >
 	constexpr decltype(auto) rbegin(Range&& range)
 	{
 		using std::rbegin;
@@ -59,6 +141,34 @@ namespace back_magic {
 		using std::rend;
 		return rend(std::forward<Range>(range));
 	}
+
+	template < class Range >
+	constexpr decltype(auto) crbegin(Range&& range)
+	{
+		using std::crbegin;
+		return crbegin(std::forward<Range>(range));
+	}
+
+	template < class Range >
+	constexpr decltype(auto) crend(Range&& range)
+	{
+		using std::crend;
+		return crend(std::forward<Range>(range));
+	}
+
+
+	template < class T >
+	constexpr decltype(auto) size(T&& x) {
+		using ::cranberries::size;
+		return size(x);
+	}
+
+	template < class T >
+	constexpr decltype(auto) data(T&& x) {
+		using ::cranberries::data;
+		return data(std::forward<T>(x));
+	}
+
 }
 
 	template < class , class = void >
@@ -135,94 +245,19 @@ namespace cranberries_magic
 	};
 
 	template <class F>
-	inline constexpr fix_result<std::decay_t<F>> make_fix(F &&f) noexcept
+	constexpr fix_result<std::decay_t<F>> fix(F&&f) noexcept
 	{
 		return { std::forward<F>(f) };
 	}
 	
-namespace cranberries_magic {
- 
-	template <class Base, class T, class Derived, class... Args>
-	inline auto INVOKE(T Base::*pmf, Derived&& ref, Args&&... args)
-			noexcept(noexcept((std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...)))
-	 -> std::enable_if_t<std::is_function<T>::value &&
-											 std::is_base_of<Base, std::decay_t<Derived>>::value,
-			decltype((std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...))>
-	{
-				return (std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...);
-	}
- 
-	template <class Base, class T, class RefWrap, class... Args>
-	inline auto INVOKE(T Base::*pmf, RefWrap&& ref, Args&&... args)
-			noexcept(noexcept((ref.get().*pmf)(std::forward<Args>(args)...)))
-	 -> std::enable_if_t<std::is_function<T>::value &&
-											 is_reference_wrapper_v<std::decay_t<RefWrap>>,
-			decltype((ref.get().*pmf)(std::forward<Args>(args)...))>
- 
-	{
-				return (ref.get().*pmf)(std::forward<Args>(args)...);
-	}
- 
-	template <class Base, class T, class Pointer, class... Args>
-	inline auto INVOKE(T Base::*pmf, Pointer&& ptr, Args&&... args)
-			noexcept(noexcept(((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...)))
-	 -> std::enable_if_t<std::is_function<T>::value &&
-											 !is_reference_wrapper_v<std::decay_t<Pointer>> &&
-											 !std::is_base_of<Base, std::decay_t<Pointer>>::value,
-			decltype(((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...))>
-	{
-				return ((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...);
-	}
- 
-	template <class Base, class T, class Derived>
-	inline auto INVOKE(T Base::*pmd, Derived&& ref)
-			noexcept(noexcept(std::forward<Derived>(ref).*pmd))
-	 -> std::enable_if_t<!std::is_function<T>::value &&
-											 std::is_base_of<Base, std::decay_t<Derived>>::value,
-			decltype(std::forward<Derived>(ref).*pmd)>
-	{
-				return std::forward<Derived>(ref).*pmd;
-	}
- 
-	template <class Base, class T, class RefWrap>
-	inline auto INVOKE(T Base::*pmd, RefWrap&& ref)
-			noexcept(noexcept(ref.get().*pmd))
-	 -> std::enable_if_t<!std::is_function<T>::value &&
-											 is_reference_wrapper_v<std::decay_t<RefWrap>>,
-			decltype(ref.get().*pmd)>
-	{
-				return ref.get().*pmd;
-	}
- 
-	template <class Base, class T, class Pointer>
-	inline auto INVOKE(T Base::*pmd, Pointer&& ptr)
-			noexcept(noexcept((*std::forward<Pointer>(ptr)).*pmd))
-	 -> std::enable_if_t<!std::is_function<T>::value &&
-											 !is_reference_wrapper_v<std::decay_t<Pointer>> &&
-											 !std::is_base_of<Base, std::decay_t<Pointer>>::value,
-			decltype((*std::forward<Pointer>(ptr)).*pmd)>
-	{
-				return (*std::forward<Pointer>(ptr)).*pmd;
-	}
- 
-	template <class F, class... Args>
-	inline auto INVOKE(F&& f, Args&&... args)
-			noexcept(noexcept(std::forward<F>(f)(std::forward<Args>(args)...)))
-	 -> std::enable_if_t<!std::is_member_pointer<std::decay_t<F>>::value,
-			decltype(std::forward<F>(f)(std::forward<Args>(args)...))>
-	{
-				return std::forward<F>(f)(std::forward<Args>(args)...);
-	}
-
-} // ! namespace cranberries_magic
  
 	template< class F, class... ArgTypes >
-	inline auto invoke(F&& f, ArgTypes&&... args)
+	constexpr auto invoke(F&& f, ArgTypes&&... args)
 			// exception specification for QoI
-			noexcept(noexcept(cranberries_magic::INVOKE(std::forward<F>(f), std::forward<ArgTypes>(args)...)))
-	 -> decltype(cranberries_magic::INVOKE(std::forward<F>(f), std::forward<ArgTypes>(args)...))
+			noexcept(noexcept(_detail::INVOKE(std::forward<F>(f), std::forward<ArgTypes>(args)...)))
+	 -> decltype(_detail::INVOKE(std::forward<F>(f), std::forward<ArgTypes>(args)...))
 	{
-			return cranberries_magic::INVOKE(std::forward<F>(f), std::forward<ArgTypes>(args)...);
+			return _detail::INVOKE(std::forward<F>(f), std::forward<ArgTypes>(args)...);
 	}
 
 namespace cranberries_magic {
@@ -243,7 +278,36 @@ namespace cranberries_magic {
 					std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>{});
 	}
 
+	template < class Tuple, std::size_t... I >
+	inline constexpr decltype(auto) tuple_print_impl(std::ostream& os, Tuple&& t, std::index_sequence<I...>)
+	{
+		return [&](auto&& head, auto&&... tail) {
+			os << "(" << head;
+			(void)std::initializer_list<int>{
+				(void(os << "," << tail), 0)...
+			};
+			os << ")";
+		}( std::get<I>(std::forward<Tuple>(t))...);
+	}
 
+	template < class Tuple >
+	decltype(auto) tuple_print(Tuple&& t, std::ostream& os = std::cout) {
+		return tuple_print_impl(os, std::forward<Tuple>(t),
+			std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>{});
+	}
+
+	struct PrintLine {
+		template < class Head, class... Tail >
+		void operator()(Head&& head, Tail&&... tail) {
+			std::cout << head;
+			using swallow = std::initializer_list<int>;
+			(void)swallow {
+				(void(std::cout << " " << tail), 0)...
+			};
+		}
+	};
+
+	static constexpr PrintLine println{};
 
 	template <
 		typename Range,
@@ -283,15 +347,15 @@ namespace cranberries_magic {
 	}
 
 	template < size_t B, size_t E >
-	struct Exp_ : size_constant<B*Exp_<B,E-1>::value> {};
+	struct Exponent_ : size_constant<B*Exponent_<B,E-1>::value> {};
 	
 	template < size_t B >
-	struct Exp_<B,1> : size_constant<B> {};
+	struct Exponent_<B,1> : size_constant<B> {};
 	
 	
 	template < size_t Head, size_t... Digits >
 	struct to_decimal
-		: size_constant< (Head-size_t('0'))*Exp_<10, sizeof...(Digits)>::value + to_decimal<Digits...>::value > {};
+		: size_constant< (Head-size_t('0'))*Exponent_<10, sizeof...(Digits)>::value + to_decimal<Digits...>::value > {};
 	
 	template < size_t Head >
 	struct to_decimal<Head>
@@ -340,13 +404,13 @@ namespace cranberries_magic {
 
 namespace cranberries_magic {
 	template < class T, class Tuple, size_t... I >
-	T construct_from_tuple_impl(Tuple&& t, std::index_sequence<I...>) {
-		return { std::get<I>(t)... };
+	constexpr T construct_from_tuple_impl(Tuple&& t, std::index_sequence<I...>) {
+		return T{ std::get<I>(t)... };
 	}
 }
 
 	template < class T, class Tuple >
-	T construct_from_tuple(Tuple&& t) {
+	constexpr T construct_from_tuple(Tuple&& t) {
 		return cranberries_magic::construct_from_tuple_impl<T>(std::forward<Tuple>(t), std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>{});
 	}
 
@@ -369,8 +433,25 @@ namespace cranberries_magic {
 		for (auto&& e : range) f(idx++, e);
 	}
 
+	template < class F, class... Args >
+	decltype(auto) repeat(size_t n, F&& f, Args&&... args) {
+		for (size_t i{}; i < n; ++i) std::forward<F>(f)(std::forward<Args>(args)...);
+	}
+
 	std::unique_lock<std::mutex> auto_lock(std::mutex& mtx_) {
 		return std::unique_lock<std::mutex>(mtx_);
 	}
+
+	template < class, class, class = void >
+	struct is_apply_callable : std::false_type {};
+
+	template < class F, class Tuple >
+	struct is_apply_callable<F,Tuple, cranberries::void_t<
+			decltype(::cranberries::apply( std::declval<F>(), std::declval<Tuple>() ))
+		>> : std::true_type {};
+
+	template < class F, class Tuple >
+	constexpr bool is_apply_callable_v = is_apply_callable<F, Tuple>::value;
+
 } // ! - end namespace cranberries
 #endif

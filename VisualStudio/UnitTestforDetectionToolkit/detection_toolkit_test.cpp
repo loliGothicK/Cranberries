@@ -21,28 +21,6 @@ namespace UnitTestforDetectionToolkit
         "failure"
         );
 
-      static_assert(
-        is_satisfied_v<random_accsess_iter_require, typename std::vector<int>::iterator>,
-        "failure"
-        );
-      static_assert(
-        is_satisfied_v<random_accsess_iter_require, int*>,
-        "failure"
-        );
-      static_assert(
-        is_satisfied_v<arithmetic4_require, int>,
-        "failure"
-        );
-      static_assert(
-        is_satisfied_v<equality_require, int>,
-        "failure"
-        );
-      static_assert(
-        is_satisfied_v<equivalence_require, int>,
-        "failure"
-        );
-
-
     }
 
   };

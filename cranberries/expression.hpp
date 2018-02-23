@@ -28,7 +28,7 @@ namespace expressions {
   // for Expression Template.
   // This class bind value.
   // Applying eval() for Expression Template evaluation chain.
-  template < typename T >
+  template < typename size_t N >
   struct ValWrapper_ : public expr_base
   {
     T value;

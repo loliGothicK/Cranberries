@@ -23,7 +23,7 @@
     <ProjectGuid>{E8748E8E-D96C-455A-BB74-9DFF9A727F76}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>DualNumberTest</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <ProjectSubType>NativeUnitTestProject</ProjectSubType>
     <ProjectName>UnitTestforDualNumber</ProjectName>
   </PropertyGroup>

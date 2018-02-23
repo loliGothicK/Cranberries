@@ -22,10 +22,10 @@
 #include "../../algorithm.hpp"
 #include "../../meta_bind.hpp"
 
-namespace cranberries{
+namespace cranberries {
 namespace func_util {
+namespace cranberries_magic {
 
-namespace cranberries_magic{
 	template < class Range, size_t... I >
 	constexpr decltype(auto) make_tuple_from_impl(Range&& range, std::index_sequence<I...>){
 		return std::forward_as_tuple(std::get<I>(std::forward<Range>(range))...);
@@ -117,8 +117,6 @@ constexpr decltype(auto) operator |= (F&& f, Tuple&& tup) {
 
 namespace cranberries_magic {
 
-
-
 	template < size_t N, class... Args >
 	struct chunk_each_proxy {
 		const std::tuple<Args...> tup;
@@ -130,7 +128,6 @@ namespace cranberries_magic {
 		{
 			return f(std::get<I*N + Indices>(t)...);
 		}
-
 
 		template < class F, size_t... I >
 		constexpr
