@@ -20,13 +20,13 @@ namespace traversals{
 		return _detail::make_comprehension_generator(std::forward<Traversal2>(rhs), std::forward<Traversal1>(lhs));
 	}
 
-	template < class Traversal, class Pred,
-		concepts::concept_required<Traversal, concepts::iterable> = nullptr,
-		enabler_t<is_callable_v<Pred(typename std::decay_t<Traversal>::value_type)>, bool> = nullptr>
-	decltype(auto) operator== (Traversal&& trv, Pred&& pred)
-	{
-		return ::cranberries::traversals::view::filter(std::forward<Pred>(pred))(std::forward<Traversal>(trv));
-	}
+	//template < class Traversal, class Pred,
+	//	concepts::concept_required<Traversal, concepts::iterable> = nullptr,
+	//	enabler_t<is_callable_v<Pred(typename std::decay_t<Traversal>::value_type)>, bool> = nullptr>
+	//decltype(auto) operator== (Traversal&& trv, Pred&& pred)
+	//{
+	//	return ::cranberries::traversals::view::filter(std::forward<Pred>(pred))(std::forward<Traversal>(trv));
+	//}
 
 }}
 

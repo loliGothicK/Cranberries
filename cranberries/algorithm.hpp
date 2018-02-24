@@ -784,7 +784,15 @@ namespace cranberries {
 	>
 	void descending_radix_sort(ForwardIterator first, ForwardIterator last) = delete;
 
-
-} // ! namespace cranberries
+	template < typename T, typename... Tail >
+	constexpr T _max(T&& head, Tail&&... tail) {
+		remove_cvr_t<T> result = head;
+		using swallow = std::initializer_list<int>;
+		(void)swallow {
+			(void(result = result < tail ? tail : result), 0)...
+		};
+		return result;
+	}
+} // ! namespace crandberries
 
 #endif
