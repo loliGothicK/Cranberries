@@ -120,7 +120,7 @@ jobs:
     steps:
       - checkout
       - run: $CXX -v
-      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*traversal).*$" >> ./CMakeLists.txt
       - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
   clang_4_0_1:
     docker:
@@ -128,7 +128,7 @@ jobs:
     steps:
       - checkout
       - run: $CXX -v
-      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*traversal).*$" >> ./CMakeLists.txt
       - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
   clang_3_9_0:
     docker:
@@ -219,7 +219,7 @@ workflows:
       - gcc_6_4 
       - gcc_7_1
       - gcc_7_2
-      - gcc_7_3
+      # - gcc_7_3
       # Clang
       - clang_3_6_0
       - clang_3_6_1
