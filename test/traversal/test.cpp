@@ -131,6 +131,6 @@ try{
 
 }
 catch (cranberries::runtime_error const& e) {
-  cout << e.what() << endl;
+  std::cout << e.what() << std::endl;
   return 0;
 }
