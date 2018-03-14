@@ -103,6 +103,17 @@ jobs:
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(traversal|func_util)).*$" >> ./CMakeLists.txt
       - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+  clang_6_0_0:
+    docker:
+      - image: enumack/buildcontainers:clang-5.0
+    environment:
+      - CC: /usr/local/bin/clang
+      - CXX: /usr/local/bin/clang++
+    steps:
+      - checkout
+      - run: $CXX -v
+      - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
   clang_5_0_0:
     docker:
       - image: enumack/buildcontainers:clang-5.0
@@ -219,7 +230,8 @@ workflows:
       - gcc_6_4 
       - gcc_7_1
       - gcc_7_2
-      # - gcc_7_3
+      - gcc_7_3
+      - gcc_7_3
       # Clang
       - clang_3_6_0
       - clang_3_6_1
@@ -233,3 +245,4 @@ workflows:
       - clang_4_0_0
       - clang_4_0_1
       - clang_5_0_0
+      - clang_6_0_0
