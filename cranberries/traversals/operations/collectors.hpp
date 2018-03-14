@@ -428,7 +428,7 @@ public:
 
 	template < class ResultTuple, class Tuple, size_t... Indices >
 	static void decompose(ResultTuple& result, Tuple& tup, std::index_sequence<Indices...>) {
-		Swallows{ assign<Indices>(result, tup)... };
+		SwallowsNest{ assign<Indices>(result, tup)... };
 	}
 
 	template < class Traversable >

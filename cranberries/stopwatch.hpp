@@ -29,4 +29,6 @@
 #endif
 
 #undef CRANBERRIES_NOEXCEPT
+#undef CRANBERRIES_NULLPTR
+
 # endif

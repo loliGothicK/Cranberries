@@ -182,9 +182,8 @@ namespace back_magic {
 	template < class T >
 	constexpr bool enable_get_v = enable_get<T>::value;  
 	
-	struct Swallows {
-		template < class ... Dummy >
-		constexpr Swallows(Dummy&&...) noexcept {}
+	struct SwallowsNest {
+		constexpr SwallowsNest(...) noexcept {}
 	};
 
 namespace cranberries_magic

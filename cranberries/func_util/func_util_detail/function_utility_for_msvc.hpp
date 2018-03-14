@@ -143,7 +143,7 @@ namespace cranberries_magic {
 				pack_chunk_t<N, type_pack<Args...>>
 				>>)
 		{
-			(void)Swallows {
+			(void)SwallowsNest {
 				(void(invoke<I>(std::forward<F>(f), tup, std::make_index_sequence<N>{})), 0)...
 			};
 		}
@@ -234,7 +234,7 @@ namespace cranberries_magic {
 		template < class F, size_t... I, size_t... Loop >
 		constexpr
 		std::enable_if_t<
-			std::is_void<std::result_of_t<F(std::tuple_element_t<I,std::array<T,ElemSize>>...)>>::value
+			std::is_void<::cranberries::invoke_result_t<F, std::tuple_element_t<I,std::array<T,ElemSize>>...>>::value
 		>
 		apply(F&& f, std::index_sequence<I...>, std::index_sequence<Loop...>) {
 			using swallow = std::initializer_list<size_t>;
@@ -244,8 +244,8 @@ namespace cranberries_magic {
 		template < class F, size_t... I, size_t... Loop >
 		constexpr
 		std::enable_if_t<
-			!std::is_void<std::result_of_t<F(std::tuple_element_t<I,std::array<T,ElemSize>>...)>>::value,
-			generate_tuple_t<std::result_of_t<F(std::tuple_element_t<I,std::array<T,ElemSize>>...)>, Times
+			!std::is_void<::cranberries::invoke_result_t<F, std::tuple_element_t<I,std::array<T,ElemSize>>...>>::value,
+			generate_tuple_t<::cranberries::invoke_result_t<F, std::tuple_element_t<I,std::array<T,ElemSize>>...>, Times
 			>
 		>
 		apply(F&& f, std::index_sequence<I...>, std::index_sequence<Loop...>) {
@@ -266,7 +266,7 @@ namespace cranberries_magic {
 			>::value
 		>
 		apply(F&& f, swallow_t<I...>,swallow_t<Loop...>) {
-				(void)Swallows{(void( f(arr[I]...) ), cranberries::next_partial_permutation( begin(arr), begin(arr)+R, end(arr) ), Loop)...};
+				(void)SwallowsNest{(void( f(arr[I]...) ), cranberries::next_partial_permutation( begin(arr), begin(arr)+R, end(arr) ), Loop)...};
 		}
 
 		template < class F, size_t Dummy, size_t... I, size_t... Loop >
@@ -299,7 +299,7 @@ namespace cranberries_magic {
 		>
 		apply(F&& f, swallow_t<I...>,swallow_t<Loop...>)
 		{
-				(void)Swallows{(void( f(arr[I]...) ), cranberries::next_combination( begin(arr), begin(arr)+R, end(arr) ), Loop)...};
+				(void)SwallowsNest{(void( f(arr[I]...) ), cranberries::next_combination( begin(arr), begin(arr)+R, end(arr) ), Loop)...};
 		}
 
 		template < class F, size_t Dummy, size_t... I, size_t... Loop >

@@ -1,5 +1,5 @@
-#ifndef CRANBERRIES_RANGES_ACTION_ADAPTORS_WRITELINE_HPP
-#define CRANBERRIES_RANGES_ACTION_ADAPTORS_WRITELINE_HPP
+#ifndef CRANBERRIES_RANGES_OPERATIONS_FOR_EACH_HPP
+#define CRANBERRIES_RANGES_OPERATIONS_FOR_EACH_HPP
 #include "../detail/tags.hpp"
 #include "../detail/sentinel_iterator.hpp"
 #include "../../utility/utility.hpp"
@@ -10,24 +10,25 @@ namespace cranberries {
 inline namespace experimental {
 namespace traversals {
 
+template < class F >
 class WriteLine
 	: private tag::adaptor_tag
 	, private tag::action_tag
 {
-	std::ostream& os;
+	F f;
 public:
-	WriteLine() : os(std::cout) {}
-	WriteLine(std::ostream& os) : os(os) {}
+	template < class _F >
+	WriteLine(_F&& _f) noexcept : f{ std::forward<_F>(_f) } {}
 
 	template < class Traversable >
 	using requires
 		= typename concepts::iterable::template requires<Traversable>;
 
 
-	template < class SentinelRange,
-		std::enable_if_t<!is_tuple_v<typename SentinelRange::value_type>, std::nullptr_t> = nullptr >
+	template < class Traversable,
+		std::enable_if_t<!is_tuple_v<typename remove_cvr_t<Traversable>::value_type>, std::nullptr_t> = nullptr >
 	decltype(auto)
-		operator()(SentinelRange const& traversal) {
+		operator()(Traversable&& traversal) {
 		using std::begin;
 		using std::end;
 
@@ -36,13 +37,13 @@ public:
 		for (; iter != end(traversal); ++iter)
 			os << " " << *iter;
 		os << std::endl;
-		return traversal;
+		return std::forward<Traversable>(traversal);
 	}
 
-	template < class SentinelRange,
-		std::enable_if_t<is_tuple_v<typename SentinelRange::value_type>, std::nullptr_t> = nullptr >
+	template < class Traversable,
+		std::enable_if_t<is_tuple_v<typename remove_cvr_t<Traversable>::value_type>, std::nullptr_t> = nullptr >
 	decltype(auto)
-		operator()(SentinelRange const& traversal) {
+		operator()(Traversable&& traversal) {
 
 		auto printf_ = [](auto&& head, auto&&... tail) -> void {
 			std::cout << "[" << head;
@@ -59,14 +60,14 @@ public:
 			cranberries::apply(printf_, *iter);
 		}
 		os << std::endl;
-		return traversal;
+		return std::forward<Traversable>(traversal);
 	}
 
 };
 
 namespace operation {
-	WriteLine write_line(std::ostream& os = std::cout)
-	{ return {os}; }
+	inline WriteLine write_line(std::ostream& os = std::cout) noexcept
+	{ return WriteLine{os}; }
 }
 
 }}}

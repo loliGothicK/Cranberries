@@ -218,7 +218,7 @@ namespace cranberries {
 
 	template < size_t I, class Tuple, size_t... Id, class... Tail >
 	auto expand_(Tuple&& result, placeholder_sequence<Id...>, Tail&&... tail) {
-		return expand_<I/*TODO*/>(
+		return expand_<I>(
 			std::tuple_cat(
 				std::forward<Tuple>(result),
 				std::make_tuple(placeholder_t<Id...>{})),
