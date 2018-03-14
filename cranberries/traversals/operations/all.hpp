@@ -10,6 +10,7 @@
 #include "./convert.hpp"
 #include "./collectors.hpp"
 #include "./find.hpp"
+#include "./for_each.hpp"
 
 
 #endif // !CRANBERRIES_RANGES_SENTINEL_RANGES_HPP

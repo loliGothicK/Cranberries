@@ -190,7 +190,7 @@ namespace cranberries {
 
   //  stop/destroy stopwatch, print message if activity was set in ctor
   template <typename T> inline basic_stopwatch<T>::~basic_stopwatch() CRANBERRIES_NOEXCEPT {
-		if (static_cast<bool>(mode_)) if (is_started()) activity_ ? stop() : stop( CRANBERRIES_NULLPTR );
+		if (static_cast<bool>(mode_)) if (is_started()) stop();
   }
 
   //   predicate: return true if the stopwatch is running
@@ -236,7 +236,6 @@ namespace cranberries {
 
 			// Basic Info
 			log_ << "\t";
-			if (event_name && event_name[0])
 				(activity_ ? log_ << activity_ : log_)
 				<< ": " << BaseTimer::get_lap(lap_) << "," << std::endl;
 			
