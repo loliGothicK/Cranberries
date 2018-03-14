@@ -30,7 +30,7 @@ int main() {
 
   auto println = [](auto&& head, auto&&... tail) {
     std::cout << head;
-    (void)cranberries::Swallows{ (void(std::cout << " " << tail),0)... };
+    (void)cranberries::SwallowsNest{ (void(std::cout << " " << tail),0)... };
     std::cout << std::endl;
   };
 
