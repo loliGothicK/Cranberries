@@ -11,9 +11,9 @@
 namespace cranberries {
 namespace cranberries_magic {
 
-  // Defaluted Tag
-  struct defaulted_t {};
+// Defaluted Tag
+struct defaulted_t {};
 
-} // ! namespace cranberries_magic
-} // ! namespace cranberries
+}  // namespace cranberries_magic
+}  // namespace cranberries
 #endif
