@@ -9,15 +9,15 @@
 #define CRANBERRIES_STOPWATCH_HPP
 
 #if defined(_MSC_VER)
-#if _MSC_VER < 1800
+#   if _MSC_VER < 1800 
 #define CRANBERRIES_NOEXCEPT throw
 #define CRANBERRIES_NULLPTR NULL
 #include "./stopwatch/stopwatch03.hpp"
-#else
+#   else
 #define CRANBERRIES_NOEXCEPT noexcept
 #define CRANBERRIES_NULLPTR nullptr
 #include "./stopwatch/stopwatch11.hpp"
-#endif
+#   endif
 #elif __cplusplus <= 199711L
 #define CRANBERRIES_NOEXCEPT throw
 #define CRANBERRIES_NULLPTR NULL
@@ -31,4 +31,4 @@
 #undef CRANBERRIES_NOEXCEPT
 #undef CRANBERRIES_NULLPTR
 
-#endif
+# endif

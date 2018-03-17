@@ -5,7 +5,7 @@
 #else
 #define CRANBERRIES_CXX11_CONSTEXPR
 #define CRANBERRIES_CXX14_CONSTEXPR
-#endif  // _MSC_VER >= 1900
+#endif // _MSC_VER >= 1900
 #else
 #if __cplusplus < 201103L
 #define CRANBERRIES_CXX11_CONSTEXPR
@@ -17,7 +17,7 @@
 #define CRANBERRIES_CXX11_CONSTEXPR constexpr
 #define CRANBERRIES_CXX14_CONSTEXPR constexpr
 #endif
-#endif  // _MSC_VER
+#endif // _MSC_VER
 
 #ifdef _MSC_VER
 #if _MSC_VER < 1900
@@ -25,10 +25,10 @@
 #define NO_CONSTEXPR_STD_MOVE_IF_NOEXCEPT
 #define NO_CONSTEXPR_STD_FORWARD
 #endif
-#else  // _MSC_VER
+#else // _MSC_VER
 #if __cplusplus < 201402L
 #define NO_CONSTEXPR_STD_MOVE
 #define NO_CONSTEXPR_STD_MOVE_IF_NOEXCEPT
 #define NO_CONSTEXPR_STD_FORWARD
 #endif
-#endif  // _MSC_VER
+#endif // _MSC_VER

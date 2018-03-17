@@ -16,38 +16,31 @@
 #undef max
 namespace cranberries {
 
-	template < class T, class = void >
-	struct is_expr: std::false_type {};
+	class expr_base {};
 
-	template < class T >
-	struct is_expr<T, cranberries::void_t<typename remove_cvr_t<T>::is_expression>> : std::true_type {};
+	template < typename T >
+	constexpr bool is_expr_v = std::is_base_of<expr_base, T>::value;
 
-	template < class T >
-	constexpr bool is_expr_v = is_expr<T>::value;
-
-	template < class T >
-	using is_expression = cranberries::disjunction<std::is_bind_expression<T>, is_expr<T>, cranberries::is_bind_expression<T>>;
+	template < typename T >
+	struct is_expr {
+		static constexpr bool value = is_expr_v<T>;
+	};
 
 	// for Expression Template.
 	// This class bind value.
 	// Applying eval() for Expression Template evaluation chain.
 	template < typename T >
-	struct ValWrapper_
+	struct ValWrapper_ : public expr_base
 	{
-		using is_expression = std::nullptr_t;
-
 		T value;
-
-		ValWrapper_(T v) : value{ v } {}
+		constexpr ValWrapper_(T v) noexcept : value{ v } {}
 		constexpr decltype(auto) eval(...) const noexcept { return value; }
 	};
 
 
 	template < size_t N >
-	struct ValWrapper_<placeholder_t<N>>
+	struct ValWrapper_<placeholder_t<N>> : public expr_base
 	{
-		using is_expression = std::nullptr_t;
-
 		constexpr ValWrapper_(placeholder_t<N>) {}
 		template < class Tuple >
 		constexpr decltype(auto) eval(Tuple&& t) const noexcept { return std::get<N>(std::forward<Tuple>(t)); }
@@ -78,24 +71,25 @@ namespace cranberries {
 	struct _index<placeholder_t<I>>: size_constant<I> {};
 
 	template < class T >
-	struct _index<T, std::enable_if_t<is_expr_v<remove_cvr_t<T>> && !is_placeholder_v<remove_cvr_t<T>>>>: size_constant<remove_cvr_t<T>::value> {};
+	struct _index<T, std::enable_if_t<is_expr_v<remove_cvr_t<T>>>>: size_constant<remove_cvr_t<T>::value> {};
 
 	template < class T >
 	constexpr size_t _index_v = _index<T>::value;
 
 	template < class Func, class... Args >
 	class LambdaExpression
-		: public pack_max<size_pack<_index_v<Args>...>>
+		: expr_base
+		, public pack_max<size_pack<_index_v<Args>...>>
 	{
+	private:
 		template < class Accept, class Tuple, size_t... I >
 		static constexpr auto calc(Accept&& ac, Tuple&& t, std::index_sequence<I...>) {
 			return Func::apply((std::get<I>(std::forward<Tuple>(t)).eval( std::forward<Accept>(ac) ))...);
 		}
 		std::tuple<expr_bind_t<Args>...> args;
 	public:
-		using is_expression = std::nullptr_t;
-
 		constexpr LambdaExpression(expr_bind_t<Args>... a) : args{ a... } {}
+
 		constexpr LambdaExpression(const LambdaExpression&) = default;
 		constexpr LambdaExpression& operator=(const LambdaExpression&) = default;
 		constexpr LambdaExpression(LambdaExpression&&) = default;
@@ -108,7 +102,7 @@ namespace cranberries {
 
 		template < class... AcceptArgs >
 		constexpr auto operator()(AcceptArgs&&... ac) const {
-			return calc(std::forward_as_tuple(std::forward<AcceptArgs>(ac)...), args, std::index_sequence_for<Args...>{});
+			return calc(std::forward_as_tuple(*this, std::forward<AcceptArgs>(ac)...), args, std::index_sequence_for<Args...>{});
 		}
 	};
 namespace lambda_operations {
@@ -1073,92 +1067,73 @@ namespace lambda_operations {
 		return ::cranberries::div_(std::forward<T>(t), std::forward<U>(u));
 	}
 
+	//template < class T, class U, enabler_t<!std::is_base_of<tuple_expr_tag, T>::value> = nullptr,
+	//	std::enable_if_t<disjunction_v<
+	//		is_expr<std::decay_t<T>>, is_placeholder<std::decay_t<T>>,
+	//		is_expr<std::decay_t<U>>, is_placeholder<std::decay_t<U>>>, std::nullptr_t> = nullptr >
+	//	constexpr auto operator, (T&& t, U&& u) {
+	//	return ::cranberries::tuple_(std::forward<T>(t), std::forward<U>(u));
+	//}
 
-
-namespace magic_arts {
-
-	template < class... Elem >
-	struct TupleDecomposerProxy {
-		std::tuple<Elem...> elements;
+namespace lambda_operations {
+	template < class B >
+	class If_ {
+		B b_;
 		template < class T >
-		constexpr TupleDecomposerProxy<Elem..., T>
-			operator, (T&& t) {
-			return TupleDecomposerProxy<Elem..., T>{{ cranberries::back_magic::make_tuple_cat(std::move(elements), std::forward<T>(t)) }};
+		struct Then_ {
+			struct {
+				B b_;
+				T then_;
+				template < class _T >
+				constexpr auto operator[](_T&& else_) && {
+					return construct_lambda_from_tuple<lambda_operations::IfThenElse>(
+						std::forward_as_tuple(std::move(b_), std::move(then_), std::forward<_T>(else_))
+						);
+				}
+				constexpr auto operator[](const placeholder_t<0>&) && {
+					return construct_lambda_from_tuple<lambda_operations::IfThenElse>(
+						std::forward_as_tuple(std::move(b_), std::move(then_), placeholder_t<pack_max_v<size_pack<_index_v<B>, _index_v<T>>>+1>{})
+						);
+				}
+			} else_;
+			decltype(auto) operator->() && { return std::move(else_); }
+			template < class _B, class _Then >
+			constexpr Then_(_B&& _b, _Then&& _then)
+				: else_{ std::forward<_B>(_b), std::forward<_Then>(_then) }
+			{}
+			constexpr Then_(Then_&&) = default;
+		};
+	public:
+		template < class _B > constexpr If_(_B&& _b) : b_{ std::forward<_B>(_b) } {}
+		template < class T >
+		constexpr auto operator[](T&& then) && {
+			return Then_<T>{ std::move(b_), std::forward<T>(then) };
 		}
-	};
-
-	template < class... Elem >
-	struct TupleMatchrProxy {
-		std::tuple<Elem...> elements;
-	};
-
-	template < class >
-	class is_ret : std::false_type {};
-
-	template < >
-	class is_ret<placeholder_t<0>> : std::false_type {};
-
-	template < size_t N >
-	class is_ret<placeholder_t<N>> : std::true_type {};
-
-	template < class, class >
-	struct ret_seq_for;
-
-	template < class Pack, size_t... I >
-	struct ret_seq_for<Pack, std::index_sequence<I...>> {
-		template < size_t N >
-		using rip = std::conditional_t< std::is_same<pack_element_t<N, Pack>, placeholder_t<0>>::value, size_constant<0>, placeholder_t<N>>;
-		using type
-			= pack_t2v_transform_t<
-					bind_1st<_index>::expr,
-					pack_remove_t<
-						size_constant<0>,
-						type_pack< rip<I>... >
-					>
-				>;
-	};
-
-
-	template < size_t, class >
-	struct TupleDecompose_;
-	
-	template < size_t N, size_t... Indices >
-	struct TupleDecompose_<N, size_pack<Indices...>> {
-		using is_expression = std::nullptr_t;
-		template < class Tuple >
-		constexpr auto operator()(Tuple&& tup) const {
-			static_assert( std::tuple_size<remove_cvr_t<Tuple>>::value == N, "tuple size mismatch" );
-			return std::make_tuple( std::get<Indices>(tup)... );
+		constexpr auto operator[](const placeholder_t<0>&) && {
+			return Then_<placeholder_t<_index_v<B>+1>>{ std::move(b_), placeholder_t<_index_v<B>+1>{} };
 		}
-	};
 
-	template < class... Elem >
-	auto IntoDecompose(TupleDecomposerProxy<Elem...>) {
-		return TupleDecompose_< sizeof...(Elem), typename ret_seq_for< TupleDecomposerProxy<remove_cvr_t<Elem>...>, std::index_sequence_for<Elem...> >::type >{};
+	};
+} // ! namespace lambda_operations
+
+	template < class  B >
+	constexpr auto _if(B&& b) {
+		return lambda_operations::If_<B>{ std::forward<B>(b) };
 	}
 
+	constexpr auto _if(const placeholder_t<0>& b) {
+		return lambda_operations::If_<placeholder_t<1>>{ placeholder_t<1>{} };
+	}
 
-	//template < class, size_t = 0, class = size_pack<>, class = size_pack<> >
-	//struct decompose_split;
-
-	//template < class Head, size_t I, class... Tail, size_t... Ret, size_t... Match >
-	//struct decompose_split<std::tuple<Head, Tail...>, I, size_pack<Ret...>, size_pack<Match...>>
-	//	: std::conditional_t<is_ret<Head>::value,
-	//		decompose_split<std::tuple<Tail...>, I+1, size_pack<Ret..., I>, size_pack<Match...>>,
-	//			std::conditional_t<std::is_same<remove_cvr_t<Head>, placeholder_t<0>>::value,
-	//			decompose_split<std::tuple<Tail...>, I + 1, size_pack<Ret...>, size_pack<Match...>>,
-	//				decompose_split<std::tuple<Tail...>, I + 1, size_pack<Ret...>, size_pack<Match..., I>>
-	//	>>
-	//{};
-
+namespace lambda_operations {
+	template < size_t... Indices >
+	struct TupleDecompose {
+		template < class Tuple >
+		auto operator()(Tuple&& tup) {
+			std::make_tuple( std::get<Indices>(std::forward<Tuple>(tup))...);
+		}
+	};
 }
-
-template < class T, class U,
-	enabler_t<is_placeholder_v<remove_cvr_t<T>> && is_placeholder_v<remove_cvr_t<U>>> = nullptr >
-constexpr auto operator, (T&& t, U&& u) {
-	return magic_arts::TupleDecomposerProxy<remove_cvr_t<T>, remove_cvr_t<U>>{ {std::forward<T>(t), std::forward<U>(u)}};
-}
-
 
 } // ! namespace cranberries
 

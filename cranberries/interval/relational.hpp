@@ -8,10 +8,12 @@
 #ifndef CRANBRIIES_INTERVAL_LIB_RELATIONAL_HPP
 #define CRANBRIIES_INTERVAL_LIB_RELATIONAL_HPP
 
-#include <type_traits>
 #include <utility>
+#include <type_traits>
 #include "interval.hpp"
 
-namespace cranberries {}  // namespace cranberries
+namespace cranberries {
+
+} // ! cranberries
 
 #endif
