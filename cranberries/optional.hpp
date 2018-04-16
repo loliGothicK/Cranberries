@@ -849,7 +849,7 @@ namespace cranberries {
 		return bool(opt);
 	}
 	template <typename T>
-	CRANBERRIES_CXX11_CONSTEXPR bool operator<(const optional<T> &opt, nullopt_t) noexcept{
+	CRANBERRIES_CXX11_CONSTEXPR bool operator<(const optional<T> &, nullopt_t) noexcept{
 		return false;
 	}
 	template <typename T>
@@ -861,7 +861,7 @@ namespace cranberries {
 		return !opt;
 	}
 	template <typename T>
-	CRANBERRIES_CXX11_CONSTEXPR bool operator<=(nullopt_t, const optional<T> &opt) noexcept{
+	CRANBERRIES_CXX11_CONSTEXPR bool operator<=(nullopt_t, const optional<T> &) noexcept{
 		return true;
 	}
 	template <typename T>
@@ -869,11 +869,11 @@ namespace cranberries {
 		return bool(opt);
 	}
 	template <typename T>
-	CRANBERRIES_CXX11_CONSTEXPR bool operator>(nullopt_t, const optional<T> &opt) noexcept{
+	CRANBERRIES_CXX11_CONSTEXPR bool operator>(nullopt_t, const optional<T> &) noexcept{
 		return false;
 	}
 	template <typename T>
-	CRANBERRIES_CXX11_CONSTEXPR bool operator>=(const optional<T> &opt, nullopt_t) noexcept{
+	CRANBERRIES_CXX11_CONSTEXPR bool operator>=(const optional<T> &, nullopt_t) noexcept{
 		return true;
 	}
 	template <typename T>
