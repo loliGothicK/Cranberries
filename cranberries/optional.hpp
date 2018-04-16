@@ -668,7 +668,6 @@ namespace cranberries {
 		template <typename F,
 			enabler_t<::cranberries::is_callable_v<F(const T&)>> = nullptr >
 			CRANBERRIES_CXX11_CONSTEXPR auto map(F &&f) const
-			-> optional<::cranberries::invoke_result_t< F, const T& >>
 		{
 			using result_opt = optional<::cranberries::invoke_result_t< F, const T& >>;
 			return hasvalue ? result_opt{ f(storage.holder.get_ref()) } : result_opt{ nullopt };
@@ -676,21 +675,23 @@ namespace cranberries {
 
 		// ====================== map_or ======================
 		template <typename F, typename U,
-			enabler_t<std::is_convertible<decltype(f(std::declval<const T&>())), U>::value> = nullptr >
+			enabler_t<std::is_convertible<::cranberries::invoke_result_t<F, const T&>, U>::value> = nullptr >
 		CRANBERRIES_CXX11_CONSTEXPR auto map_or(F &&f, U&& u) const
-			-> optional<decltype(f(std::declval<const T&>()))>
 		{
-			using result_opt = optional<decltype(f(std::declval<const T&>()))>;
+			using result_opt = optional<::cranberries::invoke_result_t<F, const T&>>;
 			return hasvalue ? result_opt{ f(storage.holder.get_ref()) } : result_opt{ u };
 		}
 
 		// ====================== map_or_else ======================
 		template <typename F, typename DefaultFn,
-			enabler_t<std::is_convertible<decltype(f(std::declval<const T&>())), decltype(std::declval<DefaultFn>()())>::value> = nullptr >
+			enabler_t<std::is_convertible<
+				::cranberries::invoke_result_t<F, const T&>,
+				::cranberries::invoke_result_t<DefaultFn>
+			>::value
+		> = nullptr >
 		CRANBERRIES_CXX11_CONSTEXPR auto map_or_else(F &&f, DefaultFn&& default_fn) const
-			-> optional<decltype(f(std::declval<const T&>()))>
 		{
-			using result_opt = optional<decltype(f(std::declval<const T&>()))>;
+			using result_opt = ::cranberries::invoke_result_t<F, const T&>;
 			return hasvalue ? result_opt{ f(storage.holder.get_ref()) } : result_opt{ default_fn() };
 		}
 
@@ -704,9 +705,9 @@ namespace cranberries {
 		// ====================== and_then ======================
 		template < typename F, enabler_t<::cranberries::is_callable_v<F(T), T>> = nullptr >
 		CRANBERRIES_CXX11_CONSTEXPR auto and_then(F &&f) const
-			-> optional<decltype(f(std::declval<const T&>()))>
+			-> optional<::cranberries::invoke_result_t<F, const T&>>
 		{
-			using result_opt = optional<decltype(f(std::declval<const T&>()))>;
+			using result_opt = optional<::cranberries::invoke_result_t<F, const T&>>;
 			return hasvalue ? result_opt{ f(storage.holder.get_ref()) } : result_opt{ nullopt };
 		}
 
