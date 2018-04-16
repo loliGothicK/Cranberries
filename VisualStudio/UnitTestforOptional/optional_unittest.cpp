@@ -62,7 +62,6 @@ namespace UnitTestforOptional
 						.labeled("or_:valid & nullopt")
 /* 18 */ % unit::assertion::are_equal(optional<int>{2}.or_(optional<int>{2}), 2)
 						.labeled("or_:valid & valid")
-
 					| unit::collect;
 #pragma endregion
 
