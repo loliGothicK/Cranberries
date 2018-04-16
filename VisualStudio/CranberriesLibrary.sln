@@ -25,6 +25,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestforSentinelRanges",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestforUtility", "UnitTestforUtility\UnitTestforUtility.vcxproj", "{F62DADF6-2E28-4E77-9179-344EBE4A6ED9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestforOptional", "UnitTestforOptional\UnitTestforOptional.vcxproj", "{AD0D03E6-D5FD-4352-99A2-A19CAE7127DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -121,6 +123,14 @@ Global
 		{F62DADF6-2E28-4E77-9179-344EBE4A6ED9}.Release|x64.Build.0 = Release|x64
 		{F62DADF6-2E28-4E77-9179-344EBE4A6ED9}.Release|x86.ActiveCfg = Release|Win32
 		{F62DADF6-2E28-4E77-9179-344EBE4A6ED9}.Release|x86.Build.0 = Release|Win32
+		{AD0D03E6-D5FD-4352-99A2-A19CAE7127DC}.Debug|x64.ActiveCfg = Debug|x64
+		{AD0D03E6-D5FD-4352-99A2-A19CAE7127DC}.Debug|x64.Build.0 = Debug|x64
+		{AD0D03E6-D5FD-4352-99A2-A19CAE7127DC}.Debug|x86.ActiveCfg = Debug|Win32
+		{AD0D03E6-D5FD-4352-99A2-A19CAE7127DC}.Debug|x86.Build.0 = Debug|Win32
+		{AD0D03E6-D5FD-4352-99A2-A19CAE7127DC}.Release|x64.ActiveCfg = Release|x64
+		{AD0D03E6-D5FD-4352-99A2-A19CAE7127DC}.Release|x64.Build.0 = Release|x64
+		{AD0D03E6-D5FD-4352-99A2-A19CAE7127DC}.Release|x86.ActiveCfg = Release|Win32
+		{AD0D03E6-D5FD-4352-99A2-A19CAE7127DC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

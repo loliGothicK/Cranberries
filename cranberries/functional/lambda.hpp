@@ -250,6 +250,14 @@ namespace lambda_operations {
 		}
 	};
 
+	struct  Not_
+	{
+		template <typename T>
+		static constexpr auto apply(T&& t)
+		{
+			return !std::forward<T>(t);
+		}
+	};
 
 	struct  BitAnd_
 	{
@@ -703,6 +711,12 @@ namespace lambda_operations {
 		return construct_lambda<lambda_operations::NE_>(_check(std::forward<L>(lhs), std::forward<R>(rhs)));
 	}
 
+	template <class T>
+	constexpr auto  not_(T&& t) noexcept
+	{
+		return construct_lambda<lambda_operations::Not_>(_check(std::forward<T>(t)));
+	}
+
 	template <class L, class R >
 	constexpr auto  bitand_(L&& lhs, R&& rhs) noexcept
 	{
@@ -1036,6 +1050,12 @@ namespace lambda_operations {
 		is_expr<std::decay_t<U>>, is_placeholder<std::decay_t<U>>>, std::nullptr_t> = nullptr >
 	constexpr auto operator && (T&& t, U&& u) {
 		return ::cranberries::and_(std::forward<T>(t), std::forward<U>(u));
+	}
+
+	template < class T,
+		std::enable_if_t<is_expr_v<std::decay_t<T>>, std::nullptr_t> = nullptr >
+	constexpr auto operator ! (T&& t) {
+		return ::cranberries::not_(std::forward<T>(t));
 	}
 
 	template < class T, class U, std::enable_if_t<disjunction_v<

@@ -641,7 +641,7 @@ namespace cranberries {
 			return hasvalue? std::move(storage.holder).get_ref(): static_cast<T>(std::forward<U>(default_value));
 		}
 
-		// ====================== cranberries extenssions ======================
+		// ====================== cranberries extensions ======================
 
 		// ====================== value_or_else ======================
 		template <typename F,
@@ -666,31 +666,32 @@ namespace cranberries {
 
 		// ====================== map ======================
 		template <typename F,
-			enabler_t<::cranberries::is_callable_v<F(), T>> = nullptr >
-		CRANBERRIES_CXX11_CONSTEXPR auto map(F &&f) const
-			-> optional<decltype(f(std::declval<const T&>()))>
+			enabler_t<::cranberries::is_callable_v<F(const T&)>> = nullptr >
+			CRANBERRIES_CXX11_CONSTEXPR auto map(F &&f) const
 		{
-			using result_opt = optional<decltype(f(std::declval<const T&>()))>;
+			using result_opt = optional<::cranberries::invoke_result_t< F, const T& >>;
 			return hasvalue ? result_opt{ f(storage.holder.get_ref()) } : result_opt{ nullopt };
 		}
 
 		// ====================== map_or ======================
 		template <typename F, typename U,
-			enabler_t<std::is_convertible<decltype(f(std::declval<const T&>())), U>::value> = nullptr >
+			enabler_t<std::is_convertible<::cranberries::invoke_result_t<F, const T&>, U>::value> = nullptr >
 		CRANBERRIES_CXX11_CONSTEXPR auto map_or(F &&f, U&& u) const
-			-> optional<decltype(f(std::declval<const T&>()))>
 		{
-			using result_opt = optional<decltype(f(std::declval<const T&>()))>;
+			using result_opt = optional<::cranberries::invoke_result_t<F, const T&>>;
 			return hasvalue ? result_opt{ f(storage.holder.get_ref()) } : result_opt{ u };
 		}
 
 		// ====================== map_or_else ======================
 		template <typename F, typename DefaultFn,
-			enabler_t<std::is_convertible<decltype(f(std::declval<const T&>())), decltype(std::declval<DefaultFn>()())>::value> = nullptr >
+			enabler_t<std::is_convertible<
+				::cranberries::invoke_result_t<F, const T&>,
+				::cranberries::invoke_result_t<DefaultFn>
+			>::value
+		> = nullptr >
 		CRANBERRIES_CXX11_CONSTEXPR auto map_or_else(F &&f, DefaultFn&& default_fn) const
-			-> optional<decltype(f(std::declval<const T&>()))>
 		{
-			using result_opt = optional<decltype(f(std::declval<const T&>()))>;
+			using result_opt = ::cranberries::invoke_result_t<F, const T&>;
 			return hasvalue ? result_opt{ f(storage.holder.get_ref()) } : result_opt{ default_fn() };
 		}
 
@@ -704,9 +705,9 @@ namespace cranberries {
 		// ====================== and_then ======================
 		template < typename F, enabler_t<::cranberries::is_callable_v<F(T), T>> = nullptr >
 		CRANBERRIES_CXX11_CONSTEXPR auto and_then(F &&f) const
-			-> optional<decltype(f(std::declval<const T&>()))>
+			-> optional<::cranberries::invoke_result_t<F, const T&>>
 		{
-			using result_opt = optional<decltype(f(std::declval<const T&>()))>;
+			using result_opt = optional<::cranberries::invoke_result_t<F, const T&>>;
 			return hasvalue ? result_opt{ f(storage.holder.get_ref()) } : result_opt{ nullopt };
 		}
 
@@ -780,6 +781,12 @@ namespace cranberries {
 			hasvalue = true;
 			return static_cast<optional &>(*this).get_value();
 		}
+
+		friend std::ostream& operator<<(std::ostream& os, const optional& opt) {
+			if (opt.hasvalue) return os << opt.storage.holder.get_ref();
+			else return os << "(nullopt)";
+		}
+
 	private:
 		// actually, it might not matter whether this method has SFINAE restriction on it or not.
 		template <typename Dummy = T, 
@@ -842,7 +849,7 @@ namespace cranberries {
 		return bool(opt);
 	}
 	template <typename T>
-	CRANBERRIES_CXX11_CONSTEXPR bool operator<(const optional<T> &opt, nullopt_t) noexcept{
+	CRANBERRIES_CXX11_CONSTEXPR bool operator<(const optional<T> &, nullopt_t) noexcept{
 		return false;
 	}
 	template <typename T>
@@ -854,7 +861,7 @@ namespace cranberries {
 		return !opt;
 	}
 	template <typename T>
-	CRANBERRIES_CXX11_CONSTEXPR bool operator<=(nullopt_t, const optional<T> &opt) noexcept{
+	CRANBERRIES_CXX11_CONSTEXPR bool operator<=(nullopt_t, const optional<T> &) noexcept{
 		return true;
 	}
 	template <typename T>
@@ -862,11 +869,11 @@ namespace cranberries {
 		return bool(opt);
 	}
 	template <typename T>
-	CRANBERRIES_CXX11_CONSTEXPR bool operator>(nullopt_t, const optional<T> &opt) noexcept{
+	CRANBERRIES_CXX11_CONSTEXPR bool operator>(nullopt_t, const optional<T> &) noexcept{
 		return false;
 	}
 	template <typename T>
-	CRANBERRIES_CXX11_CONSTEXPR bool operator>=(const optional<T> &opt, nullopt_t) noexcept{
+	CRANBERRIES_CXX11_CONSTEXPR bool operator>=(const optional<T> &, nullopt_t) noexcept{
 		return true;
 	}
 	template <typename T>
