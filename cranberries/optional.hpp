@@ -666,11 +666,11 @@ namespace cranberries {
 
 		// ====================== map ======================
 		template <typename F,
-			enabler_t<::cranberries::is_callable_v<F(), T>> = nullptr >
-		CRANBERRIES_CXX11_CONSTEXPR auto map(F &&f) const
-			-> optional<decltype(f(std::declval<const T&>()))>
+			enabler_t<::cranberries::is_callable_v<F(const T&)>> = nullptr >
+			CRANBERRIES_CXX11_CONSTEXPR auto map(F &&f) const
+			-> optional<::cranberries::invoke_result_t< F, const T& >>
 		{
-			using result_opt = optional<decltype(f(std::declval<const T&>()))>;
+			using result_opt = optional<::cranberries::invoke_result_t< F, const T& >>;
 			return hasvalue ? result_opt{ f(storage.holder.get_ref()) } : result_opt{ nullopt };
 		}
 
@@ -780,6 +780,12 @@ namespace cranberries {
 			hasvalue = true;
 			return static_cast<optional &>(*this).get_value();
 		}
+
+		friend std::ostream& operator<<(std::ostream& os, const optional& opt) {
+			if (opt.hasvalue) return os << opt.storage.holder.get_ref();
+			else return os << "(nullopt)";
+		}
+
 	private:
 		// actually, it might not matter whether this method has SFINAE restriction on it or not.
 		template <typename Dummy = T, 

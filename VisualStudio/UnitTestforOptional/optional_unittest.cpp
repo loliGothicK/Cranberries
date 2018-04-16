@@ -27,7 +27,7 @@ namespace UnitTestforOptional
 #pragma region create_tests
 				unit::make_unit_test_container(unit::make_logger(fuck_ms), "create tests")
 					% unit::assertion::are_equal(optional<int>{}.value_or_else([] { return 1; }), 1)
-					% unit::assertion::are_equal(optional<int>{2}.value_or_else([] { return 1; }), 1)
+					% unit::assertion::are_equal(optional<int>{2}.value_or_else([] { return 1; }), 2)
 					% unit::assertion::are_equal(optional<int>{2}.map([](auto a) { return a * 2; }), 4)
 					% unit::assertion::are_equal(optional<int>{}.map([](auto a){ return a*2.; }), nullopt)
 					| unit::collect;
