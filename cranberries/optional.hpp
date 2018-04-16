@@ -641,7 +641,7 @@ namespace cranberries {
 			return hasvalue? std::move(storage.holder).get_ref(): static_cast<T>(std::forward<U>(default_value));
 		}
 
-		// ====================== cranberries extenssions ======================
+		// ====================== cranberries extensions ======================
 
 		// ====================== value_or_else ======================
 		template <typename F,
