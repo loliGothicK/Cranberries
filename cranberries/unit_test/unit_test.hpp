@@ -133,6 +133,11 @@ namespace detail_ {
 		else return test_status::passed;
 	}
 
+	test_status operator ^ (test_status a, test_status b) {
+		return static_cast<test_status>(static_cast<unsigned>(a) ^ static_cast<unsigned>(b) & 1);
+	}
+
+
 	test_status& operator &= (test_status& a, test_status b) {
 		return a = a&b;
 	}
@@ -363,7 +368,7 @@ namespace detail_{
 			// Green or Red
 			if(failed == 0){
 				ConsoleTestColor::Green();
-				logger << "Test Status: Grean.\n";
+				logger << "Test Status: Green.\n";
 			}
 			else if (failed == 1){
 				logger << "Test Status:";
