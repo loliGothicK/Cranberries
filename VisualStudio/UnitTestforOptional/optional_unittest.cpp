@@ -16,6 +16,7 @@ namespace UnitTestforOptional
 			namespace unit = cranberries::unit_test_framework;
 			using cranberries::optional;
 			using cranberries::nullopt;
+			using cranberries::in_place;
 
 			auto fuck_ms = [](auto&& val) {
 				std::ostringstream ss;
@@ -24,6 +25,22 @@ namespace UnitTestforOptional
 			};
 
 			try {
+
+#pragma region basic_tests
+				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional basic tests")
+					% unit::assertion::excact_throw<cranberries::bad_optional_access>([] { optional<int>{}.value(); })
+						.labeled( "bad access" )
+					% unit::assertion::are_equal(*optional<int>{1}, 1)
+						.labeled( "force access" )
+					% unit::assertion::are_equal(optional<std::pair<int,int>>{in_place, 1,1}->first, 1)
+						.labeled( "member to pointer" )
+					% unit::assertion::are_equal(cranberries::make_optional(1), 1)
+						.labeled( "make_optional" )
+					% unit::assertion::are_equal(cranberries::some(1), 1)
+						.labeled( "some extention" )
+					| unit::collect;
+#pragma endregion
+
 #pragma region opt_extention_tests
 				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional extention tests")
 /* 01 */	% unit::assertion::are_equal(optional<int>{}.value_or(1), 1)

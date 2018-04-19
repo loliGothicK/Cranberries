@@ -746,13 +746,13 @@ namespace detail_ {
 
 namespace assertion
 {
-	test_status test_skip(...) { return test_status::skipped; }
+	static test_status test_skip(...) { return test_status::skipped; }
 
 	template < class Value >
-	static detail_::AreEqual<Value, Value>
-		are_equal(Value&& actual, std::add_const_t<Value> expect)
+	static detail_::AreEqual<const Value&, const Value&>
+		are_equal(const Value& actual, std::add_lvalue_reference_t<std::add_const_t<Value>> expect)
 	{
-		return { std::forward<Value>(actual), expect };
+		return { actual, expect };
 	}
 
 
