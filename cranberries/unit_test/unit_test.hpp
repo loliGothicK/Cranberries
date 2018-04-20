@@ -23,6 +23,18 @@
 
 namespace cranberries {
 
+	namespace printable_extensons {
+		template < class ...Ts >
+		std::ostream& operator<<(std::ostream& ss, std::tuple<Ts...> const& tup) {
+			cranberries::apply([&](const auto & head, const auto&... tail) {
+				ss << "(" << head;
+				(void)cranberries::SwallowsNest{ (void(ss << "," << tail), 0)... };
+				ss << ")";
+			}, tup);
+			return ss;
+		}
+	}
+
 	struct ConsoleTestColor {
 #ifndef _WIN32
 		static void Red() {
@@ -619,6 +631,7 @@ namespace detail_ {
 		}
 
 		std::string info() {
+			using printable_extensons::operator<<;
 			std::stringstream ss{ "Info> Assertion failure: " };
 				ss << "'" << expect_ << "'"
 				<< " expected but "
@@ -748,11 +761,11 @@ namespace assertion
 {
 	static test_status test_skip(...) { return test_status::skipped; }
 
-	template < class Value >
-	static detail_::AreEqual<const Value&, const Value&>
-		are_equal(const Value& actual, std::add_lvalue_reference_t<std::add_const_t<Value>> expect)
+	template < class A, class E, enabler_t<cranberries::is_equality_comparable_to_v<A, E>> = nullptr>
+	static auto
+		are_equal(A&& actual, E&& expect)
 	{
-		return { actual, expect };
+		return detail_::AreEqual<A, E>{ std::forward<A>(actual), std::forward<E>(expect) };
 	}
 
 
