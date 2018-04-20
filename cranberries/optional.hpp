@@ -954,6 +954,9 @@ namespace cranberries {
 		return make_optional(std::forward<T>(value));
 	}
 
+	template < class T >
+	optional<T> nil = optional<T>{};
+
 	// ====================== std::swap ======================
 	template <typename T, 
 		typename std::enable_if<std::is_move_constructible<T>::value && ::cranberries::is_swappable<T>::value>::type * = nullptr>
