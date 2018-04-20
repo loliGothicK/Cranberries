@@ -56,6 +56,10 @@ namespace cranberries {
 	struct nullopt_t{};
 	constexpr static nullopt_t nullopt{};
 
+	std::ostream& operator<<(std::ostream& os, nullopt_t) {
+		return os << "(nullopt)";
+	}
+
 	struct in_place_t{
 		explicit in_place_t() = default;
 	};
