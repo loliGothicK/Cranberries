@@ -230,15 +230,18 @@ namespace concepts {
 	using ordered
 		= minimal_equivalence_requirements;
 
+	namespace _evil {
+		using std::begin;
+		using std::end;
+		template < class T >
+		using Begin = iterator_requirements::requires<decltype(begin(std::declval<T&>()))>;
+		template < class T >
+		using End = regular_type::requires<decltype(end(std::declval<T&>()))>;
+	}
 
 	struct iterable {
 		template < class T >
-		using Begin = iterator_requirements::requires<decltype(back_magic::begin(std::declval<T&>()))>;
-		template < class T >
-		using End = regular_type::requires<decltype(back_magic::end(std::declval<T&>()))>;
-
-		template < class T >
-		using requires = required<T, concept_<Begin>, concept_<End>>;
+		using requires = required<T, concept_<_evil::Begin>, concept_<_evil::End>>;
 	};
 
 
