@@ -17,6 +17,8 @@ namespace UnitTestforOptional
 			using cranberries::optional;
 			using cranberries::nullopt;
 			using cranberries::in_place;
+			using cranberries::some;
+			using cranberries::nil;
 
 			auto fuck_ms = [](auto&& val) {
 				std::ostringstream ss;
@@ -29,17 +31,128 @@ namespace UnitTestforOptional
 #pragma region basic_tests
 				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional basic tests")
 					% unit::assertion::excact_throw<cranberries::bad_optional_access>([] { optional<int>{}.value(); })
-						.labeled( "bad access" )
+					.labeled("bad access")
 					% unit::assertion::are_equal(*optional<int>{1}, 1)
-						.labeled( "force access" )
-					% unit::assertion::are_equal(optional<std::pair<int,int>>{in_place, 1,1}->first, 1)
-						.labeled( "member to pointer" )
+					.labeled("force access")
+					% unit::assertion::are_equal(optional<std::pair<int, int>>{in_place, 1, 1}->first, 1)
+					.labeled("member to pointer")
+					% unit::assertion::are_equal(nil<std::tuple<int, int, int>>.emplace(1, 2, 3), std::make_tuple(1, 2, 3))
+					.labeled("emplace")
 					% unit::assertion::are_equal(cranberries::make_optional(1), 1)
-						.labeled( "make_optional" )
-					% unit::assertion::are_equal(cranberries::some(1), 1)
-						.labeled( "some extention" )
+					.labeled("make_optional")
+					% unit::assertion::are_equal(some(1), 1)
+					.labeled("some extention")
+					% unit::assertion::are_equal([]{ auto opt = some(1); opt.reset(); return opt; }(), nullopt)
+						.labeled("reset")
+					% unit::assertion::are_equal(some(1).has_value(), true)
+						.labeled("has_value( some )")
+					% unit::assertion::are_equal(nil<int>.has_value(), false)
+						.labeled("has_value( nil )")
 					| unit::collect;
 #pragma endregion
+
+#pragma region equal_tests
+				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional operator== tests")
+					% unit::assertion::are_equal(some(1) == 1, true)
+						.labeled("opt(has value) == val")
+					% unit::assertion::are_equal(nil<int> == 1, false)
+						.labeled("opt(null) == val")
+					% unit::assertion::are_equal(nil<int> == nil<int>, true)
+						.labeled("opt(null) == opt(null)")
+					% unit::assertion::are_equal(nil<int> == some(1), false)
+						.labeled("opt(null) == opt(has value)")
+					% unit::assertion::are_equal(some(1) == nil<int>, false)
+						.labeled("opt(has value) == opt(null)")
+					% unit::assertion::are_equal(some(1) == some(1), true)
+						.labeled("opt(has value) == opt(has value)")
+					| unit::collect;
+#pragma endregion
+
+#pragma region not_equal_tests
+				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional operator!= tests")
+					% unit::assertion::are_equal(some(1) != 1, false)
+						.labeled("opt(has value) != val")
+					% unit::assertion::are_equal(nil<int> != 1, true)
+						.labeled("opt(null) != val")
+					% unit::assertion::are_equal(nil<int> != nil<int>, false)
+						.labeled("opt(null) != opt(null)")
+					% unit::assertion::are_equal(nil<int> != some(1), true)
+						.labeled("opt(null) != opt(has value)")
+					% unit::assertion::are_equal(some(1) != nil<int>, true)
+						.labeled("opt(has value) != opt(null)")
+					% unit::assertion::are_equal(some(1) != some(1), false)
+						.labeled("opt(has value) != opt(has value)")
+					| unit::collect;
+#pragma endregion
+
+#pragma region less_than_tests
+				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional operator< tests")
+					% unit::assertion::are_equal(some(1) < 2, true)
+						.labeled("opt(has value) < val")
+					% unit::assertion::are_equal(nil<int> < 1, true)
+						.labeled("opt(null) < val")
+					% unit::assertion::are_equal(nil<int> < nil<int>, false)
+						.labeled("opt(null) < opt(null)")
+					% unit::assertion::are_equal(nil<int> < some(1), true)
+						.labeled("opt(null) < opt(has value)")
+					% unit::assertion::are_equal(some(1) < nil<int>, false)
+						.labeled("opt(has value) < opt(null)")
+					% unit::assertion::are_equal(some(1) < some(2), true)
+						.labeled("opt(has value) < opt(has value)")
+					| unit::collect;
+#pragma endregion
+
+#pragma region less_than_or_equal_tests
+				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional operator<= tests")
+					% unit::assertion::are_equal(some(1) <= 2, true)
+						.labeled("opt(has value) <= val")
+					% unit::assertion::are_equal(nil<int> <= 1, true)
+						.labeled("opt(null) <= val")
+					% unit::assertion::are_equal(nil<int> <= nil<int>, true)
+						.labeled("opt(null) <= opt(null)")
+					% unit::assertion::are_equal(nil<int> <= some(1), true)
+						.labeled("opt(null) <= opt(has value)")
+					% unit::assertion::are_equal(some(1) <= nil<int>, false)
+						.labeled("opt(has value) <= opt(null)")
+					% unit::assertion::are_equal(some(1) <= some(1), true)
+						.labeled("opt(has value) <= opt(has value)")
+					| unit::collect;
+#pragma endregion
+
+#pragma region greater_than_tests
+				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional operator> tests")
+					% unit::assertion::are_equal(some(1) > 2, false)
+						.labeled("opt(has value) > val")
+					% unit::assertion::are_equal(nil<int> > 1, false)
+						.labeled("opt(null) > val")
+					% unit::assertion::are_equal(nil<int> > nil<int>, false)
+						.labeled("opt(null) > opt(null)")
+					% unit::assertion::are_equal(nil<int> > some(1), false)
+						.labeled("opt(null) > opt(has value)")
+					% unit::assertion::are_equal(some(1) > nil<int>, true)
+						.labeled("opt(has value) > opt(null)")
+					% unit::assertion::are_equal(some(1) > some(2), false)
+						.labeled("opt(has value) > opt(has value)")
+					| unit::collect;
+#pragma endregion
+
+#pragma region greater_than_or_equal_tests
+				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional operator>= tests")
+					% unit::assertion::are_equal(some(3) >= 2, true)
+						.labeled("opt(has value) >= val")
+					% unit::assertion::are_equal(nil<int> >= 1, false)
+						.labeled("opt(null) >= val")
+					% unit::assertion::are_equal(nil<int> >= nil<int>, true)
+						.labeled("opt(null) >= opt(null)")
+					% unit::assertion::are_equal(nil<int> >= some(1), false)
+						.labeled("opt(null) >= opt(has value)")
+					% unit::assertion::are_equal(some(1) >= nil<int>, true)
+						.labeled("opt(has value) >= opt(null)")
+					% unit::assertion::are_equal(some(1) >= some(1), true)
+						.labeled("opt(has value) >= opt(has value)")
+					| unit::collect;
+#pragma endregion
+
 
 #pragma region opt_extention_tests
 				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional extention tests")
