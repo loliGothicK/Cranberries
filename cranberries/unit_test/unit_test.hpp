@@ -754,6 +754,32 @@ namespace detail_ {
 		static std::string label() { return "range match"; }
 	};
 
+	template < bool B >
+	class AssertBool
+		: private detail_::test_method_tag
+		, public enable_labeled<AssertBool<B>>
+	{
+		bool expect_;
+	public:
+		AssertBool(bool a)
+			: expect_{ a }
+		{}
+
+		test_result_t operator()() {
+			if (B ==  expect_) return test_status::passed;
+			else return
+				std::string{ "Info> Assertion failure: expect " }
+				+(B ? std::string{ "true" } : std::string{ "false" })
+				+ "but "
+				+ (!B ? std::string{ "true" } : std::string{ "false" })
+				+ " returned.";
+		}
+
+		static std::string label() {
+			return std::string{ "assert " } + (B ? std::string{ "true" } : std::string{ "false" });
+		}
+	};
+
 
 }
 
@@ -801,6 +827,20 @@ namespace assertion
 	{
 		return { std::forward<F>(target), std::forward<Require>(req), make_array(std::forward<Samples>(samples)...) };
 	}
+
+	static detail_::AssertBool<true>
+		is_true(bool actual)
+	{
+		return { actual };
+	}
+
+	static detail_::AssertBool<false>
+		is_false(bool actual)
+	{
+		return { actual };
+	}
+
+
 
 
 }
