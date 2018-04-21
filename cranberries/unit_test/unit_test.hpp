@@ -840,6 +840,41 @@ namespace detail_ {
 		}
 	};
 
+	template < class FloatType >
+	class AreEqualFloatingPoints
+		: private detail_::test_method_tag
+		, public enable_labeled<AreEqualFloatingPoints<FloatType>>
+	{
+		FloatType actual_, expected_, eps_;
+	public:
+		AreEqualFloatingPoints(FloatType actual, FloatType expected, FloatType eps)
+			: actual_{ actual }
+			, expected_{ expected }
+			, eps_{ eps }
+		{}
+
+		test_result_t operator()() {
+			if (expected_ - eps_ <= actual_
+				&& actual_ <= expected_ + eps_
+			) return test_status::passed;
+			else return [&] {
+				std::stringstream ss;
+				ss
+					<< "Info> Assertion failure: expect "
+					<< expected_
+					<< " eps["
+					<< eps_
+					<< "] but "
+					<< actual_
+					<< " returned.";
+				return ss.str();
+			}();
+		}
+
+		static std::string label() {
+			return "are equal floating points";
+		}
+	};
 
 }
 
@@ -900,6 +935,12 @@ namespace assertion
 		return { actual };
 	}
 
+	template < class FloatType >
+	static detail_::AreEqualFloatingPoints< FloatType >
+		are_equal_doubles(FloatType actual, std::pair<FloatType, FloatType> expected)
+	{
+		return { actual, expected.first, expected.second };
+	}
 
 
 
