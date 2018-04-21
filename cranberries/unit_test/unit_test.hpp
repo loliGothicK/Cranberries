@@ -12,6 +12,7 @@
 #include <sstream>
 #include <utility>
 #include <tuple>
+#include <string>
 #include <initializer_list>
 #include "../algorithm.hpp"
 #include "../common/concepts.hpp"
@@ -612,6 +613,34 @@ namespace detail_ {
 		static std::string label() { return "combination execute"; }
 	};
 
+	namespace infomation {
+		using namespace printable_extensons;
+
+		template < class, class, class = void >
+		struct AreEqualInfo {
+			static std::string invoke(...) {
+				return "Info> Assertion failure: in are equal.";
+			}
+		};
+
+		template < class A, class E >
+		struct AreEqualInfo<A,E,
+			::cranberries::void_t<decltype(
+				std::declval<std::stringstream&>() << std::declval<const A&>(),
+				std::declval<std::stringstream&>() << std::declval<const E&>())>>
+		{
+			static std::string invoke(const A& a, const E& e) {
+				using printable_extensons::operator<<;
+				std::stringstream ss{ "Info> Assertion failure: " };
+				ss << "'" << a << "'"
+					<< " expected but "
+					<< "'" << e << "'"
+					<< " actual.";
+				return ss.str();
+			}
+		};
+	}
+
 	template < class Actual, class Expected >
 	class AreEqual
 		: private detail_::test_method_tag
@@ -627,21 +656,39 @@ namespace detail_ {
 
 		test_result_t operator()() {
 			if(actual_ == expect_) return test_status::passed;
-			else return info();
-		}
-
-		std::string info() {
-			using printable_extensons::operator<<;
-			std::stringstream ss{ "Info> Assertion failure: " };
-				ss << "'" << expect_ << "'"
-				<< " expected but "
-				<< "'" << actual_ << "'"
-				<< " actual.";
-			return ss.str();
+			else return infomation::AreEqualInfo<Actual, Expected>::invoke(actual_, expect_);
 		}
 
 		static std::string label() { return "are equal"; }
 	};
+
+	namespace infomation {
+		using namespace printable_extensons;
+
+		template < class, class = void >
+		struct RangeEqualInfo {
+			static std::string invoke(...) {
+				return "Info> Assertion failure: in range equal.";
+			}
+		};
+
+		template < class Range >
+		struct RangeEqualInfo<Range,
+			::cranberries::void_t<decltype(
+				std::declval<std::stringstream&>() << std::declval<typename std::decay_t<Range>::value_type>())>>
+		{
+			template < class T1, class T2 >
+			static std::string invoke(T1&& range_, T2&& expect_) {
+				using printable_extensons::operator<<;
+				return std::string{ "Info> Assertion failure: " }
+					+"'" + info_::to_string(std::forward<T2>(expect_)) + "'"
+					+ " expected but "
+					+ "'" + info_::to_string(std::forward<T1>(range_)) + "'"
+					+ " actual.";
+			}
+		};
+	}
+
 
 	template < class Range >
 	class RangeEqual
@@ -674,14 +721,7 @@ namespace detail_ {
 			}
 			return !(iter_1 != last_1 || iter_2 != last_2)
 				? test_result_t{ test_status::passed }
-				: test_result_t{ info() };
-		}
-		std::string info() {
-			return std::string{ "Info> Assertion failure: " }
-				+"'" + info_::to_string(expect_) + "'"
-				+ " expected but "
-				+ "'" + info_::to_string(range_) + "'"
-				+ " actual.";
+				: test_result_t{ infomation::RangeEqualInfo<Range>::invoke(range_, expect_) };
 		}
 
 		static std::string label() { return "range equal"; }
@@ -718,6 +758,31 @@ namespace detail_ {
 		static std::string label() { return "exact throw"; }
 	};
 
+	namespace infomation {
+		using namespace printable_extensons;
+
+		template < class, class = void >
+		struct RangeMatchInfo {
+			static std::string invoke(std::size_t i, ...) {
+				return std::string{ "Info> Assertion failure: in range match with " } +i + "-th element.";
+			}
+		};
+
+		template < class Range >
+		struct RangeMatchInfo<Range,
+			::cranberries::void_t<decltype(
+				std::declval<std::stringstream&>() << std::declval<typename std::decay_t<Range>::value_type>())>>
+		{
+			static std::string invoke(std::size_t i, const typename std::decay_t<Range>::value_type& e) {
+				using printable_extensons::operator<<;
+				std::stringstream ss;
+				ss << "Info> Assertion failure: match return false at '" << i << "-th element'[" << e << "].";
+				return ss.str();
+			}
+		};
+	}
+
+
 	template < class Range, class Pred >
 	class RangeMatch
 		: private detail_::test_method_tag
@@ -740,15 +805,10 @@ namespace detail_ {
 			int nth = 1;
 			for (auto&& e : range_) {
 				exit_status &= pred_(e);
-				if (!exit_status) return info(nth, e);
+				if (!exit_status) return infomation::RangeMatchInfo<Range>::invoke(nth, e);
 				nth++;
 			}
 			return exit_status;
-		}
-		std::string info(int i, typename std::decay_t<Range>::value_type e) {
-			std::stringstream ss;
-			ss << "Info> Assertion failure: match return false at '" << i << "-th element'[" << e << "].";
-			return ss.str();
 		}
 
 		static std::string label() { return "range match"; }
