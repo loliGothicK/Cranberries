@@ -164,7 +164,7 @@ namespace UnitTestforOptional
 						.labeled( "value_or_else:nullopt" )
 /* 04 */	% unit::assertion::are_equal(optional<int>{2}.value_or_else([] { return 1; }), 2)
 						.labeled("value_or_else:valid")
-/* 05 */	% unit::assertion::are_equal(optional<int>{2}.map([](auto a) { return a * 2; }), 4)
+/* 05 */	% unit::assertion::are_equal_doubles(optional<int>{2}.map([](auto a) { return a * 1.5; }).value(), {3.0, 0.1E-6})
 						.labeled("map:valid")
 /* 06 */	% unit::assertion::are_equal(optional<int>{}.map([](auto a) { return a * 2.; }), nullopt)
 						.labeled("map:nullopt")
