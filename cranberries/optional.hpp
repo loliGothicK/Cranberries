@@ -719,7 +719,7 @@ namespace cranberries {
 		// ====================== or_ ======================
 		CRANBERRIES_CXX11_CONSTEXPR optional or_(const optional& x) const
 		{
-			return hasvalue ? storage.holder.get_ref() : x ? x.value() : optional{ nullopt };
+			return hasvalue ? *this : x ? x : optional{};
 		}
 
 		// ====================== or_else ======================

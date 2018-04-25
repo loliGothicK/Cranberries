@@ -186,11 +186,11 @@ namespace UnitTestforOptional
 						.labeled("and_then:nullopt")
 /* 15 */	% unit::assertion::are_equal(optional<int>{2}.and_then([](auto a) { return a * 2; }), 4)
 						.labeled("and_then:valid")
-/* 16 */ % unit::assertion::are_equal(optional<int>{}.or_(optional<int>{2}), 2)
+/* 16 */ % unit::assertion::are_equal(optional<int>{}.or_(optional<int>{2}), some(2))
 						.labeled("or_:nullopt & valid")
-/* 17 */ % unit::assertion::are_equal(optional<int>{2}.or_(optional<int>{}), 2)
+/* 17 */ % unit::assertion::are_equal(optional<int>{2}.or_(optional<int>{}), some(2))
 						.labeled("or_:valid & nullopt")
-/* 18 */ % unit::assertion::are_equal(optional<int>{2}.or_(optional<int>{2}), 2)
+/* 18 */ % unit::assertion::are_equal(optional<int>{2}.or_(optional<int>{2}), some(2))
 						.labeled("or_:valid & valid")
 					| unit::collect;
 #pragma endregion
