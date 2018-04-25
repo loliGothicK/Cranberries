@@ -264,8 +264,8 @@ class TestMethod
     auto last = std::chrono::high_resolution_clock::now();
     elapsed_ = last - first;
   }
-  template <class F>
-  void print(logger<F>& logger)
+  template <class F_>
+  void print(logger<F_>& logger)
   {
     switch (result_.status()) {
       case test_status::failed:
@@ -711,7 +711,7 @@ class RangeEqual
     auto last_2 = end(expect_);
     for (; iter_1 != last_1 && iter_2 != last_2; ++iter_1, ++iter_2)
     {
-      if (*iter_1 != *iter_2) return info();
+      if (*iter_1 != *iter_2) return infomation::RangeEqualInfo<Range>::invoke(range_, expect_)
     }
     return !(iter_1 != last_1 || iter_2 != last_2)
                ? test_result_t{test_status::passed}
@@ -776,7 +776,7 @@ struct RangeMatchInfo<Range,
   {
     using printable_extensons::operator<<;
     std::stringstream ss;
-    ss << "Info> Assertion failure: match return false at '" << i
+    ss << "Info> Assertion failure: match return false at '" << std::to_string(i)
        << "-th element'[" << e << "].";
     return ss.str();
   }
@@ -866,8 +866,10 @@ class AreEqualFloatingPoints
 };
 
 template <class A, class E, class Pred>
-class AssertRelational : private detail_::test_method_tag,
-                         public enable_labeled<AssertRelational<A, E, Pred>> {
+class AssertRelational
+	: private detail_::test_method_tag
+	, public enable_labeled<AssertRelational<A, E, Pred>>
+{
   A actual_;
   E expected_;
   Pred pred_;
@@ -887,6 +889,8 @@ class AssertRelational : private detail_::test_method_tag,
     else
       return "Info> Assertion failure: relational not satisfied";
   }
+
+	static std::string label() { return "assert relational"; }
 };
 }  // namespace detail_
 

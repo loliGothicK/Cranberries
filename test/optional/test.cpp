@@ -87,7 +87,7 @@ unit::make_unit_test_container(unit::default_logger, "optional operator<= tests"
     .labeled("opt(null) <= opt(has value)")
   % unit::assertion::is_false(some(1) <= nil<int>)
     .labeled("opt(has value) <= opt(null)")
-  % unit::assertion::less_equal(some(1) <= some(1))
+  % unit::assertion::less_equal(some(1), some(1))
     .labeled("opt(has value) <= opt(has value)")
   | unit::collect;
 
