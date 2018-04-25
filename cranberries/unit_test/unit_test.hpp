@@ -617,10 +617,10 @@ struct AreEqualInfo {
 template <class A, class E>
 struct AreEqualInfo<A, E,
     ::cranberries::void_t<decltype(
-        std::declval<std::stringstream&>() << std::declval<const A&>(),
-        std::declval<std::stringstream&>() << std::declval<const E&>())>>
+        std::declval<std::stringstream&>() << std::declval<A>(),
+        std::declval<std::stringstream&>() << std::declval<E>())>>
 {
-  static std::string invoke(const A& a, const E& e)
+  static std::string invoke(A a, E e)
   {
     using printable_extensons::operator<<;
     std::stringstream ss{"Info> Assertion failure: "};
@@ -642,14 +642,14 @@ class AreEqual
   Expected expect_;
 
  public:
-  AreEqual(Actual actual, Expected expect) : actual_{actual}, expect_{expect} {}
+  AreEqual(Actual&& actual, Expected&& expect) : actual_{actual}, expect_{expect} {}
 
   test_result_t operator()()
   {
     if (actual_ == expect_)
       return test_status::passed;
     else
-      return infomation::AreEqualInfo<Actual, Expected>::invoke(actual_, expect_);
+      return infomation::AreEqualInfo<Actual, Expected>::invoke(std::forward<Actual>(actual_), std::forward<Expected>(expect_));
   }
 
   static std::string label() { return "are equal"; }
