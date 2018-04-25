@@ -711,7 +711,7 @@ class RangeEqual
     auto last_2 = end(expect_);
     for (; iter_1 != last_1 && iter_2 != last_2; ++iter_1, ++iter_2)
     {
-      if (*iter_1 != *iter_2) return infomation::RangeEqualInfo<Range>::invoke(range_, expect_)
+			if (*iter_1 != *iter_2) return infomation::RangeEqualInfo<Range>::invoke(range_, expect_);
     }
     return !(iter_1 != last_1 || iter_2 != last_2)
                ? test_result_t{test_status::passed}
@@ -763,7 +763,7 @@ struct RangeMatchInfo
 {
   static std::string invoke(std::size_t i, ...)
   {
-    return std::string{"Info> Assertion failure: in range match with "} + i + "-th element.";
+    return std::string{"Info> Assertion failure: in range match with "} + std::to_string(i) + "-th element.";
   }
 };
 
