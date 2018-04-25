@@ -712,11 +712,11 @@ class RangeEqual
     auto last_2 = end(expect_);
     for (; iter_1 != last_1 && iter_2 != last_2; ++iter_1, ++iter_2)
     {
-			if (*iter_1 != *iter_2) return infomation::RangeEqualInfo<Range>::invoke(range_, expect_);
+			if (*iter_1 != *iter_2) return infomation::RangeEqualInfo<Range>::invoke(std::forward<Range>(range_), expect_);
     }
     return !(iter_1 != last_1 || iter_2 != last_2)
                ? test_result_t{test_status::passed}
-               : test_result_t{infomation::RangeEqualInfo<Range>::invoke(range_, expect_)};
+               : test_result_t{infomation::RangeEqualInfo<Range>::invoke(std::forward<Range>(range_), expect_)};
   }
 
   static std::string label() { return "range equal"; }
