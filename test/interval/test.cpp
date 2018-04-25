@@ -1,6 +1,7 @@
 #define CRANBERRIES_INTERVAL_DEBUG_MODE
 #include "../../cranberries/interval.hpp"
 #include "../../cranberries/utility.hpp"
+#include "../../cranberries/unit_test/unit_test.hpp"
 #include <iostream>
 #include <cassert>
 #include <vector>
@@ -12,19 +13,11 @@ using cranberries::interval;
 using cranberries::hull;
 using cranberries::compare::less;
 using cranberries::compare::OrderPolocy;
+namespace unit = cranberries::unit_test_framework;
 
 int main()
 try{
-  // target version
-  cout << ">> Target Version" << endl;
-  cout << ">> Stable : " << cranberries::interval_version::stable << endl;
-  cout << ">> Latest : " << cranberries::interval_version::latest << endl;
   cout << std::boolalpha << std::setprecision( std::numeric_limits<long double>::digits10 + 1 );
-  // ctor
-  interval<>{};
-  interval<char>{}, interval<signed char>{}, interval<short>{}, interval<short int>{}, interval<signed short>{}, interval<signed short int>{}, interval<int>{}, interval<signed>{}, interval<signed int>{}, interval<long>{}, interval<long int>{}, interval<signed long>{}, interval<signed long int>{}, interval<long long>{}, interval<long long int>{}, interval<signed long long>{}, interval<signed long long int>{}, interval<float>{}, interval<double>{}, interval<long double>{}, interval<std::int8_t>{}, interval<std::int16_t>{}, interval<std::int32_t>{}, interval<std::int64_t>{}, interval<std::int_least8_t>{}, interval<std::int_least16_t>{}, interval<std::int_least32_t>{}, interval<std::int_least64_t>{}, interval<std::int_fast8_t>{}, interval<std::int_fast16_t>{}, interval<std::int_fast32_t>{}, interval<std::int_fast64_t>{};
-  interval<char>{0}, interval<signed char>{0}, interval<short>{0}, interval<short int>{0}, interval<signed short>{0}, interval<signed short int>{0}, interval<int>{0}, interval<signed>{0}, interval<signed int>{0}, interval<long>{0}, interval<long int>{0}, interval<signed long>{0}, interval<signed long int>{0}, interval<long long>{0}, interval<long long int>{0}, interval<signed long long>{0}, interval<signed long long int>{0}, interval<float>{0}, interval<double>{0}, interval<long double>{0}, interval<std::int8_t>{0}, interval<std::int16_t>{0}, interval<std::int32_t>{0}, interval<std::int64_t>{0}, interval<std::int_least8_t>{0}, interval<std::int_least16_t>{0}, interval<std::int_least32_t>{0}, interval<std::int_least64_t>{0}, interval<std::int_fast8_t>{0}, interval<std::int_fast16_t>{0}, interval<std::int_fast32_t>{0}, interval<std::int_fast64_t>{0};
-  interval<char>{0, 0}, interval<signed char>{0, 0}, interval<short>{0, 0}, interval<short int>{0, 0}, interval<signed short>{0, 0}, interval<signed short int>{0, 0}, interval<int>{0, 0}, interval<signed>{0, 0}, interval<signed int>{0, 0}, interval<long>{0, 0}, interval<long int>{0, 0}, interval<signed long>{0, 0}, interval<signed long int>{0, 0}, interval<long long>{0, 0}, interval<long long int>{0, 0}, interval<signed long long>{0, 0}, interval<signed long long int>{0, 0}, interval<float>{0, 0}, interval<double>{0, 0}, interval<long double>{0, 0}, interval<std::int8_t>{0, 0}, interval<std::int16_t>{0, 0}, interval<std::int32_t>{0, 0}, interval<std::int64_t>{0, 0}, interval<std::int_least8_t>{0, 0}, interval<std::int_least16_t>{0, 0}, interval<std::int_least32_t>{0, 0}, interval<std::int_least64_t>{0, 0}, interval<std::int_fast8_t>{0, 0}, interval<std::int_fast16_t>{0, 0}, interval<std::int_fast32_t>{0, 0}, interval<std::int_fast64_t>{0, 0};
 
   const auto t = interval<>{ 1.1,1.2 };
   interval<>{t};
@@ -34,46 +27,43 @@ try{
   auto y = hull( 3, 5 );
   auto z = hull( -1.0, 1.0 );
 
-  cout << ">> Constructor Complete!" << endl;
+  unit::make_unit_test_container(unit::default_logger, "arithmetic tests")
+    % unit::assertion::are_equal( x - x, interval<>{} )
+    % unit::assertion::are_equal( z * z, pow( z, 2 ) )
+    % unit::assertion::are_equal( x / x, interval<>{1} )
+    % unit::assertion::are_equal( hull(1,1) + hull(1,2), hull(2,3) )
+    % unit::assertion::are_equal( hull(3,4) - hull(1,2), hull(1,3) )
+    % unit::assertion::are_equal( hull(1,2) * hull(1,2), hull(1,4) )
+    % unit::assertion::are_equal( hull(-1,2) * hull(1,2), hull(-2,4) )
+    % unit::assertion::are_equal( hull(-1,-2) * hull(1,2), hull(-4,-1) )
+    % unit::assertion::are_equal( hull(1,2) * hull(-1,2), hull(-2,4) )
+    % unit::assertion::are_equal( hull(1,2) * hull(-1,-2), hull(-4,-1) )
+    % unit::assertion::are_equal( hull(-1,2) * hull(-1,2), hull(-2,4) )
+    % unit::assertion::are_equal( hull(-3,2) * hull(-2,1), hull(-4,6) )
+    | unit::collect;
 
-  x + x;
-  assert( x - x == interval<>{} );
-  assert( z * z == pow( z, 2 ) );
-  assert( x / x == interval<>{1} );
+  unit::make_unit_test_container(unit::default_logger, "compound assignment tests")
+    % unit::assertion::are_equal( x -= x, interval<>{} )
+    % unit::assertion::are_equal( z *= z, pow( z, 2 ) )
+    % unit::assertion::are_equal( x /= x, interval<>{1} )
+    | unit::collect;
 
-  {
-    auto tmp = interval<>{};
-    tmp += {};
-    tmp -= {};
-    tmp *= {1.};
-    tmp /= {1., 1.};
-    tmp + tmp;
-    tmp + interval<>{};
-    interval<>{} +tmp;
-    tmp + 2;
-    2 + tmp;
-    tmp + typename decltype(tmp)::value_type{};
-    typename decltype(tmp)::value_type{} +tmp;
-    interval<>{-1, 1}*interval<>{-1, 1};
-  }
 
-  cout << ">> Four Arithmetic Operator Complete!" << endl;
-
-  const interval<double> a{ 1,3 }, b{ 3,4 }, c{ 5,6 }, d{ 6,7 };
-  vector<interval<double>> vec{ a,b,c,d };
-  std::sort( vec.begin(), vec.end(), less<OrderPolocy::Weak>() );
-  // assert( std::is_sorted( vec.begin(), vec.end() ) );
-
-  cout << ">> Sort Complete!" << endl;
-
-  a < b;
-  a > b;
-  a <= b;
-  a >= b;
-  a == b;
-  a != b;
-
-  cout << ">> Comparison Complete!" << endl;
+  unit::make_unit_test_container(unit::default_logger, "comparison tests")
+    % unit::assertion::less( hull(0,4), hull(0,3) )
+    % unit::assertion::less( hull(2,4), hull(0,3) )
+    % unit::assertion::less_or_equal( hull(1,2), hull(1,2) )
+    % unit::assertion::less_or_equal( hull(0,4), hull(0,3) )
+    % unit::assertion::greater( hull(1,2), hull(0,3) )
+    % unit::assertion::greater( hull(0,4), hull(0,3) )
+    % unit::assertion::greater( hull(-1,2), hull(0,3) )
+    % unit::assertion::greater_or_equal( hull(1,2), hull(1,2) )
+    % unit::assertion::greater_or_equal( hull(0,1), hull(0,3) )
+    % unit::assertion::are_equal( hull(0,1), hull(0,1) )
+    % unit::assertion::is_false( hull(1,2) == hull(0,3) )
+    % unit::assertion::is_false( hull(1,2) != hull(1,2) )
+    % unit::assertion::is_true( hull(1,2) != hull(0,3) )
+    | unit::collect;
 
   fma( z, 2.0, 2.0 );
   /*  torigonometric functions  */
@@ -144,15 +134,6 @@ try{
   min( interval<>{}, interval<>{}, interval<>{}, interval<>{} );
 
   cout << ">> Math Functions Complete!" << endl;
-
-  {
-    // interval<> hoge{};
-    // auto f = [](interval<> const& a) { return a - 1; };
-    // auto expr = cranberries::make_delegate([&] {return max(sin(a) - b, a * max(a, b, c, sin(a))) + min(pow(c, 2), erf(d) / a); });
-    // hoge = expr();
-    // hoge = f(expr());
-    // expr();
-  }
 
   cout << ">> Expression Complete!" << endl;
   try

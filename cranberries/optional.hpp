@@ -56,6 +56,10 @@ namespace cranberries {
 	struct nullopt_t{};
 	constexpr static nullopt_t nullopt{};
 
+	std::ostream& operator<<(std::ostream& os, nullopt_t) {
+		return os << "(nullopt)";
+	}
+
 	struct in_place_t{
 		explicit in_place_t() = default;
 	};
@@ -715,7 +719,7 @@ namespace cranberries {
 		// ====================== or_ ======================
 		CRANBERRIES_CXX11_CONSTEXPR optional or_(const optional& x) const
 		{
-			return hasvalue ? storage.holder.get_ref(): (x ? x.value(): nullopt);
+			return hasvalue ? storage.holder.get_ref() : x ? x.value() : optional{ nullopt };
 		}
 
 		// ====================== or_else ======================
@@ -949,6 +953,9 @@ namespace cranberries {
 	CRANBERRIES_CXX11_CONSTEXPR optional<remove_cvr_t<T>> some(T&& value) {
 		return make_optional(std::forward<T>(value));
 	}
+
+	template < class T >
+	optional<T> nil = optional<T>{};
 
 	// ====================== std::swap ======================
 	template <typename T, 

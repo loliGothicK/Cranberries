@@ -1,35 +1,16 @@
-#include "stdafx.h"
-#include "CppUnitTest.h"
-#include "../../cranberries/optional.hpp"
+﻿#include <iostream>
 #include "../../cranberries/unit_test/unit_test.hpp"
+#include "../../cranberries/optional.hpp"
+int main()
+try{
+    namespace unit = cranberries::unit_test_framework;
+    using cranberries::optional;
+    using cranberries::nullopt;
+    using cranberries::in_place;
+    using cranberries::some;
+    using cranberries::nil;
 
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
-namespace UnitTestforOptional
-{		
-	TEST_CLASS(OptionalUnitTest)
-	{
-	public:
-		
-		TEST_METHOD(OptionalTestMethod)
-		{
-			namespace unit = cranberries::unit_test_framework;
-			using cranberries::optional;
-			using cranberries::nullopt;
-			using cranberries::in_place;
-			using cranberries::some;
-			using cranberries::nil;
-
-			auto fuck_ms = [](auto&& val) {
-				std::ostringstream ss;
-				ss << val;
-				Logger::WriteMessage(ss.str().c_str());
-			};
-
-			try {
-
-#pragma region basic_tests
-				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional basic tests")
+				unit::make_unit_test_container(unit::default_logger, "optional basic tests")
 					% unit::assertion::excact_throw<cranberries::bad_optional_access>([] { optional<int>{}.value(); })
 					.labeled("bad access")
 					% unit::assertion::are_equal(*optional<int>{1}, 1)
@@ -49,10 +30,8 @@ namespace UnitTestforOptional
 					% unit::assertion::are_equal(nil<int>.has_value(), false)
 						.labeled("has_value( nil )")
 					| unit::collect;
-#pragma endregion
 
-#pragma region equal_tests
-				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional operator== tests")
+				unit::make_unit_test_container(unit::default_logger, "optional operator== tests")
 					% unit::assertion::are_equal(some(1) == 1, true)
 						.labeled("opt(has value) == val")
 					% unit::assertion::are_equal(nil<int> == 1, false)
@@ -66,10 +45,8 @@ namespace UnitTestforOptional
 					% unit::assertion::are_equal(some(1) == some(1), true)
 						.labeled("opt(has value) == opt(has value)")
 					| unit::collect;
-#pragma endregion
 
-#pragma region not_equal_tests
-				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional operator!= tests")
+				unit::make_unit_test_container(unit::default_logger, "optional operator!= tests")
 					% unit::assertion::are_equal(some(1) != 1, false)
 						.labeled("opt(has value) != val")
 					% unit::assertion::are_equal(nil<int> != 1, true)
@@ -83,10 +60,8 @@ namespace UnitTestforOptional
 					% unit::assertion::are_equal(some(1) != some(1), false)
 						.labeled("opt(has value) != opt(has value)")
 					| unit::collect;
-#pragma endregion
 
-#pragma region less_than_tests
-				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional operator< tests")
+				unit::make_unit_test_container(unit::default_logger, "optional operator< tests")
 					% unit::assertion::are_equal(some(1) < 2, true)
 						.labeled("opt(has value) < val")
 					% unit::assertion::are_equal(nil<int> < 1, true)
@@ -100,10 +75,8 @@ namespace UnitTestforOptional
 					% unit::assertion::are_equal(some(1) < some(2), true)
 						.labeled("opt(has value) < opt(has value)")
 					| unit::collect;
-#pragma endregion
 
-#pragma region less_than_or_equal_tests
-				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional operator<= tests")
+				unit::make_unit_test_container(unit::default_logger, "optional operator<= tests")
 					% unit::assertion::are_equal(some(1) <= 2, true)
 						.labeled("opt(has value) <= val")
 					% unit::assertion::are_equal(nil<int> <= 1, true)
@@ -117,10 +90,8 @@ namespace UnitTestforOptional
 					% unit::assertion::are_equal(some(1) <= some(1), true)
 						.labeled("opt(has value) <= opt(has value)")
 					| unit::collect;
-#pragma endregion
 
-#pragma region greater_than_tests
-				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional operator> tests")
+				unit::make_unit_test_container(unit::default_logger, "optional operator> tests")
 					% unit::assertion::are_equal(some(1) > 2, false)
 						.labeled("opt(has value) > val")
 					% unit::assertion::are_equal(nil<int> > 1, false)
@@ -134,10 +105,8 @@ namespace UnitTestforOptional
 					% unit::assertion::are_equal(some(1) > some(2), false)
 						.labeled("opt(has value) > opt(has value)")
 					| unit::collect;
-#pragma endregion
 
-#pragma region greater_than_or_equal_tests
-				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional operator>= tests")
+				unit::make_unit_test_container(unit::default_logger, "optional operator>= tests")
 					% unit::assertion::are_equal(some(3) >= 2, true)
 						.labeled("opt(has value) >= val")
 					% unit::assertion::are_equal(nil<int> >= 1, false)
@@ -151,11 +120,8 @@ namespace UnitTestforOptional
 					% unit::assertion::are_equal(some(1) >= some(1), true)
 						.labeled("opt(has value) >= opt(has value)")
 					| unit::collect;
-#pragma endregion
 
-
-#pragma region opt_extention_tests
-				unit::make_unit_test_container(unit::make_logger(fuck_ms), "optional extention tests")
+				unit::make_unit_test_container(unit::default_logger, "optional extention tests")
 /* 01 */	% unit::assertion::are_equal(optional<int>{}.value_or(1), 1)
 						.labeled("value_or:nullopt")
 /* 02 */	% unit::assertion::are_equal(optional<int>{2}.value_or(1), 2)
@@ -164,7 +130,7 @@ namespace UnitTestforOptional
 						.labeled( "value_or_else:nullopt" )
 /* 04 */	% unit::assertion::are_equal(optional<int>{2}.value_or_else([] { return 1; }), 2)
 						.labeled("value_or_else:valid")
-/* 05 */	% unit::assertion::are_equal_doubles(optional<int>{2}.map([](auto a) { return a * 1.5; }).value(), {3.0, 0.1E-6})
+/* 05 */	% unit::assertion::are_equal(optional<int>{2}.map([](auto a) { return a * 2; }), 4)
 						.labeled("map:valid")
 /* 06 */	% unit::assertion::are_equal(optional<int>{}.map([](auto a) { return a * 2.; }), nullopt)
 						.labeled("map:nullopt")
@@ -192,19 +158,14 @@ namespace UnitTestforOptional
 						.labeled("or_:valid & nullopt")
 /* 18 */ % unit::assertion::are_equal(optional<int>{2}.or_(optional<int>{2}), 2)
 						.labeled("or_:valid & valid")
-					| unit::collect;
-#pragma endregion
+         | unit::collect;
 
-			}
-			catch (unit::detail_::assert_except const&) {
-				Assert::Fail(L"Test Failed");
-			}
-			catch (...) {
-				Assert::Fail(L"Unhandled exception throw");
-			}
-
-
-		}
-
-	};
+}
+catch (unit::detail_::assert_except const&) {
+  std::cout << "Test Failed\n";
+  return EXIT_FAILURE;
+}
+catch (...) {
+  std::cout << "Unhandled exception";
+  return EXIT_FAILURE;
 }
