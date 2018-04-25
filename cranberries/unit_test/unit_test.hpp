@@ -608,7 +608,8 @@ using namespace printable_extensons;
 
 template <class, class, class = void>
 struct AreEqualInfo {
-  static std::string invoke(...)
+	template < class ...Dummy >
+  static std::string invoke(Dummy&&...)
   {
     return "Info> Assertion failure: in are equal.";
   }
