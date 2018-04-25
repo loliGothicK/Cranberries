@@ -101,9 +101,9 @@ private:
 		void next() override final { view_->next(); }
 		bool is_end() const override final { return view_->is_end(); }
 	};
-protected:
-	virtual std::unique_ptr<polymorphic_view<value_type>> fwd() const override final {
-		return std::make_unique<_view>(traversal->fwd(), f);
+
+	std::unique_ptr<polymorphic_view<value_type>> fwd() const {
+		return std::make_unique<_view>(view_get::fwd(traversal), f);
 	}
 public:
 	auto begin() const { return iterator{ this->fwd() }; }

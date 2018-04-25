@@ -1,4 +1,8 @@
 ﻿#include <iostream>
+#include <vector>
+#include <locale> 
+#include <list>
+#include <sstream>
 #include "../../cranberries/traversals/all.hpp"
 #include "../../cranberries/functional/lambda.hpp"
 #include "../../cranberries/traversals/comprehension/list_comprehension.hpp"

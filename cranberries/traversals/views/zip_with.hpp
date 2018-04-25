@@ -122,7 +122,7 @@ public:
 
 	template < class... Traversals_ >
 	Zipped(Traversals_&&... traversals)
-		: traversals_{ std::forward_as_tuple(std::forward<Traversals_>(traversals)...) }
+		: traversals_( std::forward_as_tuple(std::forward<Traversals_>(traversals)...) )
 	{}
 	Zipped(Zipped const&) = delete;
 	Zipped& operator=(Zipped const&) = delete;
