@@ -1,9 +1,9 @@
 ﻿#include <iostream>
 #include "../../cranberries/unit_test/unit_test.hpp"
 #include "../../cranberries/optional.hpp"
+namespace unit = cranberries::unit_test_framework;
 int main()
 try{
-namespace unit = cranberries::unit_test_framework;
 using cranberries::optional;
 using cranberries::nullopt;
 using cranberries::in_place;
@@ -77,17 +77,17 @@ unit::make_unit_test_container(unit::default_logger, "optional operator< tests")
   | unit::collect;
 
 unit::make_unit_test_container(unit::default_logger, "optional operator<= tests")
-  % unit::assertion::less_or_equal(some(1), 2)
+  % unit::assertion::less_equal(some(1), 2)
     .labeled("opt(has value) <= val")
-  % unit::assertion::less_or_equal(nil<int>, 1)
+  % unit::assertion::less_equal(nil<int>, 1)
     .labeled("opt(null) <= val")
-  % unit::assertion::less_or_equal(nil<int>, nil<int>)
+  % unit::assertion::less_equal(nil<int>, nil<int>)
     .labeled("opt(null) <= opt(null)")
-  % unit::assertion::less_or_equal(nil<int>, some(1))
+  % unit::assertion::less_equal(nil<int>, some(1))
     .labeled("opt(null) <= opt(has value)")
   % unit::assertion::is_false(some(1) <= nil<int>)
     .labeled("opt(has value) <= opt(null)")
-  % unit::assertion::less_or_equal(some(1) <= some(1))
+  % unit::assertion::less_equal(some(1) <= some(1))
     .labeled("opt(has value) <= opt(has value)")
   | unit::collect;
 
@@ -107,17 +107,17 @@ unit::make_unit_test_container(unit::default_logger, "optional operator> tests")
   | unit::collect;
 
 unit::make_unit_test_container(unit::default_logger, "optional operator>= tests")
-  % unit::assertion::greater_or_equal(some(3), 2)
+  % unit::assertion::greater_equal(some(3), 2)
     .labeled("opt(has value) >= val")
-  % unit::assertion::greater_or_equal(nil<int>, 1)
+  % unit::assertion::greater_equal(nil<int>, 1)
     .labeled("opt(null) >= val")
-  % unit::assertion::greater_or_equal(nil<int>, nil<int>)
+  % unit::assertion::greater_equal(nil<int>, nil<int>)
     .labeled("opt(null) >= opt(null)")
   % unit::assertion::is_false(nil<int> >= some(1))
     .labeled("opt(null) >= opt(has value)")
-  % unit::assertion::greater_or_equal(some(1), nil<int>)
+  % unit::assertion::greater_equal(some(1), nil<int>)
     .labeled("opt(has value) >= opt(null)")
-  % unit::assertion::greater_or_equal(some(1), some(1))
+  % unit::assertion::greater_equal(some(1), some(1))
     .labeled("opt(has value) >= opt(has value)")
   | unit::collect;
 
