@@ -104,7 +104,7 @@ namespace UnitTestforTraversables
 						, { 1,0,3,1,0,3,1,0,3 })
 						.labeled("view::replace_if test")
 					% unit::assertion::range_equal(
-						create::of({ 1,2,3,4,5 }) <= view::rev
+						create::of(std::vector<int>{ 1,2,3,4,5 }) <= view::rev
 						, { 5,4,3,2,1 })
 						.labeled("view::reverse test")
 					% unit::assertion::are_equal(

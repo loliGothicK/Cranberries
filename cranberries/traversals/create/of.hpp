@@ -10,8 +10,55 @@ namespace cranberries {
 inline namespace experimental {
 namespace traversals {
 
-template < class Range, class = void >
-class RangeWrapper
+template < class Range, bool = concepts::required_v<Range, concepts::reverse_iterable> >
+class RangeWrapper;
+
+template < class Range >
+class RangeWrapper<Range, false>
+	: private tag::sentinel_traversal_tag
+	, public forward_traversal
+{
+	friend struct view_get;
+public:
+	using value_type = typename remove_cvr_t<Range>::value_type;
+	using iterator = sentinel_iterator<value_type>;
+	using finite_ = std::nullptr_t;
+	using immutable_ = std::nullptr_t;
+
+	explicit RangeWrapper(Range traversal) : traversal(traversal) {}
+private:
+	class forward_view final : public polymorphic_view<value_type>
+	{
+		typename remove_cvr_t<Range>::const_iterator iter;
+		typename remove_cvr_t<Range>::const_iterator last;
+	public:
+		template < class Iterator >
+		forward_view(Iterator first, Iterator last)
+			: iter{ first }
+			, last{ last }
+		{}
+		forward_view(const forward_view&) = default;
+
+		virtual value_type get() const override final { return *iter; }
+		virtual void next() override final { ++iter; }
+		virtual bool is_end() const override final { return iter == last; }
+	};
+
+	std::unique_ptr<polymorphic_view<value_type>> fwd() const {
+		return std::make_unique<forward_view>(
+			::cranberries::back_magic::cbegin(traversal),
+			::cranberries::back_magic::cend(traversal)
+			);
+	}
+public:
+	iterator begin() { return { this->fwd() }; }
+	iterator end() { return {}; }
+private:
+	Range traversal;
+};
+
+template < class Range >
+class RangeWrapper<Range, true>
 	: private tag::sentinel_traversal_tag
 	, public reversable_traversal
 {
@@ -23,12 +70,12 @@ public:
 	using finite_ = std::nullptr_t;
 	using immutable_ = std::nullptr_t;
 
-	explicit RangeWrapper(Range traversal): traversal( traversal ) {}
+	explicit RangeWrapper(Range traversal) : traversal(traversal) {}
 private:
 	class forward_view final : public polymorphic_view<value_type>
 	{
-		decltype(::cranberries::back_magic::cbegin(std::declval<const Range&>())) iter;
-		decltype(::cranberries::back_magic::cend(std::declval<const Range&>())) last;
+		decltype(::cranberries::back_magic::cbegin(std::declval<Range>())) iter;
+		decltype(::cranberries::back_magic::cend(std::declval<Range>())) last;
 	public:
 		template < class Iterator >
 		forward_view(Iterator first, Iterator last)
@@ -43,8 +90,8 @@ private:
 	};
 	class reverse_view final : public polymorphic_view<value_type>
 	{
-		decltype(::cranberries::back_magic::crbegin(std::declval<const Range&>())) iter;
-		decltype(::cranberries::back_magic::crend(std::declval<const Range&>())) last;
+		decltype(::cranberries::back_magic::crbegin(std::declval<Range>())) iter;
+		decltype(::cranberries::back_magic::crend(std::declval<Range>())) last;
 	public:
 		template < class Iterator >
 		reverse_view(Iterator first, Iterator last)
@@ -75,50 +122,6 @@ public:
 	iterator end() { return {}; }
 	iterator rbegin() { return { this->rev() }; }
 	iterator rend() { return {}; }
-private:
-	Range traversal;
-};
-
-template < class Range >
-class RangeWrapper<Range, void_t<decltype(back_magic::crbegin(std::declval<Range>()))>>
-	: private tag::sentinel_traversal_tag
-	, public forward_traversal
-{
-	friend struct view_get;
-public:
-	using value_type = typename remove_cvr_t<Range>::value_type;
-	using iterator = sentinel_iterator<value_type>;
-	using finite_ = std::nullptr_t;
-	using immutable_ = std::nullptr_t;
-
-	explicit RangeWrapper(Range traversal): traversal(traversal) {}
-private:
-	class forward_view final : public polymorphic_view<value_type>
-	{
-		typename remove_cvr_t<Range>::const_iterator iter;
-		typename remove_cvr_t<Range>::const_iterator last;
-	public:
-		template < class Iterator >
-		forward_view(Iterator first, Iterator last)
-			: iter{ first }
-			, last{ last }
-		{}
-		forward_view(const forward_view&) = default;
-
-		virtual value_type get() const override final { return *iter; }
-		virtual void next() override final { ++iter; }
-		virtual bool is_end() const override final { return iter == last; }
-	};
-
-	std::unique_ptr<polymorphic_view<value_type>> fwd() const {
-		return std::make_unique<forward_view>(
-			::cranberries::back_magic::cbegin(traversal),
-			::cranberries::back_magic::cend(traversal)
-			);
-	}
-public:
-	iterator begin() { return { this->fwd() }; }
-	iterator end() { return {}; }
 private:
 	Range traversal;
 };
