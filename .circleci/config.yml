@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4 --output-on-failure
   gcc_7_2:
     working_directory: /Cranberries
     docker:
@@ -17,7 +17,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4 --output-on-failure
   gcc_7_3:
     working_directory: /Cranberries
     docker:
@@ -26,7 +26,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4 --output-on-failure
   gcc_6_1:
     working_directory: /Cranberries
     docker:
@@ -35,7 +35,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4 --output-on-failure
   gcc_6_2:
     working_directory: /Cranberries
     docker:
@@ -44,7 +44,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4 --output-on-failure
   gcc_6_3:
     working_directory: /Cranberries
     docker:
@@ -53,7 +53,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4 --output-on-failure
   gcc_6_4:
     working_directory: /Cranberries
     docker:
@@ -62,7 +62,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4 --output-on-failure
   gcc_5_1:
     docker:
       - image: enumack/buildcontainers:gcc-5.1
@@ -70,7 +70,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(traversal|func_util)).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4 --output-on-failure
   gcc_5_2:
     docker:
       - image: enumack/buildcontainers:gcc-5.2
@@ -78,7 +78,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(traversal|func_util)).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4 --output-on-failure
   gcc_5_3:
     docker:
       - image: enumack/buildcontainers:gcc-5.3
@@ -86,7 +86,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(traversal|func_util)).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4 --output-on-failure
   gcc_5_4:
     docker:
       - image: enumack/buildcontainers:gcc-5.4
@@ -94,7 +94,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(traversal|func_util)).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4 --output-on-failure
   gcc_5_5:
     docker:
       - image: enumack/buildcontainers:gcc-5.5
@@ -102,7 +102,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(traversal|func_util)).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX && make && ctest --no-label-summary --parallel 4 --output-on-failure
   clang_6_0_0:
     docker:
       - image: enumack/buildcontainers:clang-5.0
@@ -113,7 +113,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4 --output-on-failure
   clang_5_0_0:
     docker:
       - image: enumack/buildcontainers:clang-5.0
@@ -124,7 +124,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4 --output-on-failure
   clang_4_0_0:
     docker:
       - image: enumack/buildcontainers:clang-4.0.0
@@ -132,7 +132,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*traversal).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4 --output-on-failure
   clang_4_0_1:
     docker:
       - image: enumack/buildcontainers:clang-4.0.1
@@ -140,7 +140,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*traversal).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4 --output-on-failure
   clang_3_9_0:
     docker:
       - image: enumack/buildcontainers:clang-3.9.0
@@ -148,7 +148,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*func_util).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4 --output-on-failure
   clang_3_9_1:
     docker:
       - image: enumack/buildcontainers:clang-3.9.1
@@ -156,7 +156,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*func_util).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4 --output-on-failure
   clang_3_8_0:
     docker:
       - image: enumack/buildcontainers:clang-3.8.0
@@ -164,7 +164,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*func_util).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4 --output-on-failure
   clang_3_8_1:
     docker:
       - image: enumack/buildcontainers:clang-3.8.1
@@ -172,7 +172,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*func_util).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4 --output-on-failure
   clang_3_7_0:
     docker:
       - image: enumack/buildcontainers:clang-3.7.0
@@ -180,7 +180,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(traversal|func_util)).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4 --output-on-failure
   clang_3_7_1:
     docker:
       - image: enumack/buildcontainers:clang-3.7.1
@@ -188,7 +188,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(traversal|func_util)).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4 --output-on-failure
   clang_3_6_0:
     docker:
       - image: enumack/buildcontainers:clang-3.6.0
@@ -196,7 +196,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(traversal|func_util)).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4 --output-on-failure
   clang_3_6_1:
     docker:
       - image: enumack/buildcontainers:clang-3.6.1
@@ -204,7 +204,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(traversal|func_util)).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4 --output-on-failure
   clang_3_6_2:
     docker:
       - image: enumack/buildcontainers:clang-3.6.2
@@ -212,7 +212,7 @@ jobs:
       - checkout
       - run: $CXX -v
       - run: ls -F test | grep / | sed -E "s/(.*)\//add_subdirectory(test\/\1)/g" | grep -P "^(?!.*(traversal|func_util)).*$" >> ./CMakeLists.txt
-      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4
+      - run: cmake . -DCMAKE_CXX_COMPILER=$CXX -DCMAKE_CXX_FLAGS="-stdlib=libc++ -lc++abi" && make && ctest --no-label-summary --parallel 4 --output-on-failure
 
 workflows:
   version: 2
