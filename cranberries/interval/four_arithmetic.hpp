@@ -28,12 +28,12 @@ namespace cranberries {
   template < typename L, typename R, typename T = std::common_type_t<L, R> >
   inline constexpr interval<T> operator-(interval<L> const& x, interval<R> const& y)
   {
-    return make_interval([&]{ return x.lower() - x.upper(); },[&]{ return  y.upper() - y.lower();});
+    return make_interval([&]{ return x.lower() - y.upper(); },[&]{ return  x.upper() - y.lower();});
   }
   template < typename T >
   inline constexpr interval<T> operator-(interval<T> const& x, interval<T> const& y)
   {
-    return &x == &y ? interval<T>{} : make_interval([&]{ return x.lower() - x.upper(); },[&]{ return  y.upper() - y.lower();});
+    return &x == &y ? interval<T>{} : make_interval([&]{ return x.lower() - y.upper(); },[&]{ return  x.upper() - y.lower();});
   }
   template < typename L, typename R, typename T = std::common_type_t<L, R> >
   inline constexpr interval<T> operator*(interval<L> const& x, interval<R> const& y)
