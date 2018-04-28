@@ -623,14 +623,27 @@ namespace cranberries {
   template < typename T >
   inline constexpr T&& interval<T>::lower() && noexcept
   {
-    return lower_;
+    return std::move(lower_);
   }
 
   template < typename T >
   inline constexpr T&& interval<T>::upper() && noexcept
   {
-    return upper_;
+    return std::move(upper_);
   }
+
+	template < typename T >
+	inline constexpr const T&& interval<T>::lower() const && noexcept
+	{
+		return std::move(lower_);
+	}
+
+	template < typename T >
+	inline constexpr const T&& interval<T>::upper() const && noexcept
+	{
+		return std::move(upper_);
+	}
+
 
   template < typename T >
   inline constexpr void interval<T>::swap( interval<T>& x ) noexcept
