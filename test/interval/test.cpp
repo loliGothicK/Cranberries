@@ -49,7 +49,7 @@ try{
     % unit::assertion::are_equal_doubles( (interval<>(-1,2) * interval<>(-1,2)).upper(), { 4.0, 1.0E-5 } )
     % unit::assertion::are_equal_doubles( (interval<>(-3,2) * interval<>(-2,1)).lower(), { -4.0, 1.0E-5 } )
     % unit::assertion::are_equal_doubles( (interval<>(-3,2) * interval<>(-2,1)).upper(), { 6.0, 1.0E-5 } )
-    % unit::assertion::excact_throw<cranberries::overflow_error>([]{ interval<>{} / interval{-1,1}; })
+    % unit::assertion::excact_throw<cranberries::overflow_error>([]{ interval<>{} / interval<>{-1,1}; })
     | unit::collect;
 
   unit::make_unit_test_container(unit::default_logger, "compound assignment tests")
