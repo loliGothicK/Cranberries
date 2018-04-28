@@ -14,7 +14,7 @@
 namespace cranberries {
   template < typename T, typename U >
   inline bool operator<(interval<T> const& a, interval<U> const& b) noexcept {
-    return weak_less(b, a);
+    return weak_less(a, b);
   }
   template < typename T >
   inline bool operator<(interval<T> const& a, typename interval<T>::value_type const& b) noexcept {
@@ -26,7 +26,7 @@ namespace cranberries {
   }
   template < typename T, typename U >
   inline bool operator<=(interval<T> const& a, interval<U> const& b) noexcept {
-    return weak_less_or_equal(b, a);
+    return weak_less_or_equal(a, b);
   }
   template < typename T >
   inline bool operator<=(interval<T> const& a, typename interval<T>::value_type const& b) noexcept {
@@ -38,7 +38,7 @@ namespace cranberries {
   }
   template < typename T, typename U >
   inline bool operator>(interval<T> const& a, interval<U> const& b) noexcept {
-    return weak_greater(b, a);
+    return weak_greater(a, b);
   }
   template < typename T >
   inline bool operator>(interval<T> const& a, typename interval<T>::value_type const& b) noexcept {
@@ -50,7 +50,7 @@ namespace cranberries {
   }
   template < typename T, typename U >
   inline bool operator>=(interval<T> const& a, interval<U> const& b) noexcept {
-    return weak_greater_or_equal(b, a);
+    return weak_greater_or_equal(a, b);
   }
   template < typename T >
   inline bool operator>=(interval<T> const& a, typename interval<T>::value_type const& b) noexcept {
@@ -62,7 +62,7 @@ namespace cranberries {
   }
   template < typename T, typename U >
   inline bool operator==(interval<T> const& a, interval<U> const& b) noexcept {
-    return weak_equal(b, a);
+    return weak_equal(a, b);
   }
   template < typename T >
   inline bool operator==(interval<T> const& a, typename interval<T>::value_type const& b) noexcept {
@@ -74,7 +74,7 @@ namespace cranberries {
   }
   template < typename T, typename U >
   inline bool operator!=(interval<T> const& a, interval<U> const& b) noexcept {
-    return !weak_equal(b, a);
+    return !weak_equal(a, b);
   }
   template < typename T >
   inline bool operator!=(interval<T> const& a, typename interval<T>::value_type const& b) noexcept {
