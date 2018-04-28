@@ -30,13 +30,13 @@ namespace cranberries {
     constexpr interval( std::pair<T, T> p ) : interval{ p.first, p.second } {}
 
     /*  copy ctor  */
-    constexpr interval( interval const& ) noexcept;
+    interval( interval const& ) = default;
     /*  move ctor  */
-    constexpr interval( interval&& ) noexcept;
+    interval( interval&& ) = default;
     /*  Copy Assignment Op  */
-    constexpr interval& operator=( interval const& ) noexcept;
+    interval& operator=( interval const& ) = default;
     /*  Move assignment Op  */
-    constexpr interval& operator=( interval&& ) noexcept;
+    interval& operator=( interval&& ) = default;
 
     /*  increment/decrement Op  */
     constexpr auto& operator ++() noexcept;
@@ -138,39 +138,6 @@ namespace cranberries {
   }
 
 
-  /*  Move Ctor  */
-
-  template < typename T >
-  inline constexpr interval<T>::interval( interval&& x ) noexcept
-    : lower_{ std::move(x.lower_) }, upper_{ std::move(x.upper_) }
-  {}
-
-  /*  Copy Ctor  */
-
-  template < typename T >
-  inline constexpr interval<T>::interval( interval const& x ) noexcept
-    : lower_{ x.lower_ }, upper_{ x.upper_ }
-  {}
-
-  /*  Copy Assignment Op  */
-
-  template < typename T >
-  inline constexpr interval<T>& interval<T>::operator=( interval const& x ) noexcept
-  {
-    lower_ = x.lower_;
-    upper_ = x.upper_;
-    return *this;
-  }
-
-  /*  Move Assignment Op  */
-
-  template < typename T >
-  inline constexpr interval<T>& interval<T>::operator=( interval&& x ) noexcept
-  {
-    lower_ = std::move(x.lower_);
-    upper_ = std::move(x.upper_);
-    return *this;
-  }
 
 
   /*
