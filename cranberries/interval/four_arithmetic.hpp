@@ -191,15 +191,15 @@ namespace cranberries {
   template < typename T, typename R >
   inline constexpr interval<T>& operator/=(interval<T>& x, interval<R> const& y)
   {
-    CRANBERRIES_RANGE_ERROR_THROW_IF(y.lower() <= interval_constants::zero<R> && interval_constants::zero<R> <= y.upper());
-    return operator*=(x, make_interval([&]{ return interval_constants::one<R> / y.upper(); },[&]{ return  interval_constants::one<R> / y.lower(); }));
+    CRANBERRIES_RANGE_ERROR_THROW_IF(y.lower() <= 0.0 && 0.0 <= y.upper());
+		return x *= y.inverse();
   }
   template < typename T >
   inline constexpr interval<T>& operator/=(interval<T>& x, interval<T> const& y)
   {
-    CRANBERRIES_RANGE_ERROR_THROW_IF(y.lower() <= interval_constants::zero<T> && interval_constants::zero<T> <= y.upper());
+		CRANBERRIES_RANGE_ERROR_THROW_IF(y.lower() <= 0.0 && 0.0 <= y.upper());
     if (&x == &y) return x = interval<T>(1, 1);
-    return operator*=(x, make_interval([&]{ return interval_constants::one<T> / y.upper(); },[&]{ return  interval_constants::one<T> / y.lower(); }));
+		return x *= y.inverse();
   }
   template < typename T >
   inline constexpr interval<T> operator-(typename interval<T>::value_type const& x, interval<T> const& y)

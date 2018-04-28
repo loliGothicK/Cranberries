@@ -23,7 +23,7 @@ try{
   interval<>{t};
   interval<>{interval<>{}};
   interval<> s = { 1.0, 1.0 };
-  interval<> x{ 1,1.1 };
+  interval<> x{ 1.0, 1.1 };
   auto y = interval<>( 3, 5 );
   auto z = interval<>( -1.0, 1.0 );
 
