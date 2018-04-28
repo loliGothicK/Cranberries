@@ -66,8 +66,6 @@ namespace cranberries {
     constexpr T upper() const& noexcept;
     constexpr T& lower() & noexcept;
     constexpr T& upper() & noexcept;
-    constexpr T lower() const&& = delete;
-    constexpr T upper() const&& = delete;
 		constexpr T&& lower() && noexcept;
 		constexpr T&& upper() && noexcept;
 		constexpr const T&& lower() const && noexcept;
