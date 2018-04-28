@@ -7,7 +7,7 @@
 
 #ifndef CRANBERRIES_ALGORITHM_HPP
 #define CRANBERRIES_ALGORITHM_HPP
-#define _GLIBCXX_USE_C99 1
+
 #include <iterator>
 #include <cstdint>
 #include <algorithm>

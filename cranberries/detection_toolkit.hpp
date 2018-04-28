@@ -1,6 +1,5 @@
 #ifndef CRANBERRIES_DETECTION_TOOLKIT_HPP
 #define CRANBERRIES_DETECTION_TOOLKIT_HPP
-#define _GLIBCXX_USE_C99 1
 #include <type_traits>
 #include <utility>
 #include "type_traits.hpp"

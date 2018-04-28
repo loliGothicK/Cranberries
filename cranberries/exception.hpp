@@ -1,24 +1,8 @@
-/**
- * API for Git.io
- *
- * These codes are licensed under CC0.
- * http://creativecommons.org/publicdomain/zero/1.0/deed.ja
- */
-
 #ifndef CRANBERRIES_EXCEPTION_HPP
 #define CRANBERRIES_EXCEPTION_HPP
 #include <exception>
 #include <stdexcept>
 #include <string>
-
-#define CRANBERRIES_FULL_FUNCSIG
-#ifndef CRANBERRIES_FULL_FUNCSIG
-#define CRANBERRIES_FUNCTION __FUNCTION__
-#elif _MSC_VER
-#define CRANBERRIES_FUNCTION __FUNCSIG__
-#else
-#define CRANBERRIES_FUNCTION __PRETTY_FUNCTION__
-#endif
 
 #define CRANBERRIES_RUNTIME_ERROR_THROW_IF( COND ) if( COND ){ throw cranberries::runtime_error("runtime_error", __FILE__, __FUNCTION__, __LINE__, #COND ); }
 #define CRANBERRIES_RUNTIME_ERROR_THROW_ELSE_IF( COND ) else if( COND ){ throw cranberries::runtime_error("runtime_error", __FILE__, __FUNCTION__, __LINE__, #COND ); }

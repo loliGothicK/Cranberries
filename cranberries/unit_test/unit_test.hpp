@@ -1,6 +1,5 @@
 #ifndef CRANBERRIES_UNIT_TEST_HPP
 #define CRANBERRIES_UNIT_TEST_HPP
-#define _GLIBCXX_USE_C99 1
 #include <chrono>
 #include <future>
 #include <initializer_list>
