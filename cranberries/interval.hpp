@@ -7,7 +7,7 @@
 
 #ifndef CRANBERRIES_INTERVAL_HPP
 #define CRANBERRIES_INTERVAL_HPP
-
+#define _GLIBCXX_USE_C99 1
 #include <cstdint>
 #include <limits>
 #include <cmath>

@@ -1,6 +1,6 @@
 #ifndef CRANBERRIES_OPTIONAL_HPP
 #define CRANBERRIES_OPTIONAL_HPP
-
+#define _GLIBCXX_USE_C99 1
 #include "./common/definition.hpp"
 #include <type_traits>
 #include <exception>

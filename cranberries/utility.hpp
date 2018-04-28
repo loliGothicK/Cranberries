@@ -7,7 +7,7 @@
 
 #ifndef CRANBERRIES_UTILITY_HPP
 #define CRANBERRIES_UTILITY_HPP
-
+#define _GLIBCXX_USE_C99 1
 #include "utility/utility.hpp"
 #include "utility/byte_swap.hpp"
 #include "utility/reverse_index_sequence.hpp"

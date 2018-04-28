@@ -16,6 +16,7 @@
 #   else
 #define CRANBERRIES_NOEXCEPT noexcept
 #define CRANBERRIES_NULLPTR nullptr
+#define _GLIBCXX_USE_C99 1
 #include "./stopwatch/stopwatch11.hpp"
 #   endif
 #elif __cplusplus <= 199711L
