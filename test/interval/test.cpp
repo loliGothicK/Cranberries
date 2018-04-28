@@ -35,7 +35,7 @@ try{
     % unit::assertion::are_equal( interval<>(3,4) - interval<>(1,2), interval<>(1,3) )
     % unit::assertion::are_equal( interval<>(1,2) * interval<>(1,2), interval<>(1,4) )
     % unit::assertion::are_equal( interval<>(-1,2) * interval<>(1,2), interval<>(-2,4) )
-    % unit::assertion::are_equal( interval<>(-1,-2) * interval<>(1,2), interval<>(-4,-1) )
+    % unit::assertion::are_equal( interval<>(-2,-1) * interval<>(1,2), interval<>(-4,-1) )
     % unit::assertion::are_equal( interval<>(1,2) * interval<>(-1,2), interval<>(-2,4) )
     % unit::assertion::are_equal( interval<>(1,2) * interval<>(-1,-2), interval<>(-4,-1) )
     % unit::assertion::are_equal( interval<>(-1,2) * interval<>(-1,2), interval<>(-2,4) )
@@ -146,7 +146,15 @@ try{
   }
 
 }
+catch (unit::detail_::assert_except const&) {
+  std::cout << "Test Failed\n";
+  return EXIT_FAILURE;
+}
 catch (cranberries::runtime_error const& e) {
   cout << e.what() << endl;
-  return 0;
+  return EXIT_FAILURE;
+}
+catch (...) {
+  std::cout << "Unhandled exception";
+  return EXIT_FAILURE;
 }

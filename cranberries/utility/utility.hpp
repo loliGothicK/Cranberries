@@ -361,39 +361,38 @@ namespace cranberries_magic {
 		: size_constant< Head-size_t('0') > {};
 
 
-	template<typename ...Args>
+	template<typename ...>
 	struct overload;
-
 
 	template<typename T>
 	struct overload<T> : T {
 		using T::operator();
 
-		template<typename TT>
-		overload(TT&& t) : T(std::forward<TT>(t)) {}
+		template<typename X>
+		overload(X&& t) : T(std::forward<X>(t)) {}
 	};
-
 
 	template<typename T, typename U, typename ...Args>
 	struct overload<T, U, Args...>
 		: T
-		, overload<U, Args...> {
+		, overload<U, Args...>
+	{
 
 		using T::operator();
 		using overload<U, Args...>::operator ();
 
-		template<typename TT, typename... TArgs>
-		overload(TT&& t, TArgs&&... args)
-			: T(std::forward<TT>(t))
+		template<typename X, typename... TArgs>
+		overload(X&& t, TArgs&&... args)
+			: T(std::forward<X>(t))
 			, overload<U, Args...>(std::forward<TArgs>(args)...) {}
 
 	};
 
 
-	template<typename... Funcs>
-	overload<typename std::decay<Funcs>::type...>
-		make_overload(Funcs&&... funcs) {
-		return { std::forward<Funcs>(funcs)... };
+	template<typename... Fs>
+	overload<Fs>
+		make_overload(Fs&&... funcs) {
+		return { std::forward<Fs>(funcs)... };
 	}
 
 	struct protean_bool {
