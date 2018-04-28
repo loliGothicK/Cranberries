@@ -390,8 +390,8 @@ namespace cranberries_magic {
 
 
 	template<typename... Fs>
-	overload<Fs>
-		make_overload(Fs&&... funcs) {
+	inline overload<std::decay_t<Fs>...>
+	make_overload(Fs&&... funcs) {
 		return { std::forward<Fs>(funcs)... };
 	}
 
