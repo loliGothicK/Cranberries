@@ -53,9 +53,9 @@ try{
     | unit::collect;
 
   unit::make_unit_test_container(unit::default_logger, "compound assignment tests")
-    % unit::assertion::are_equal( x -= x, interval<>{} )
+    % unit::assertion::are_equal( [x_ = interval<>{ 1, 2 }]{ return x_-=x_; }(), interval<>{} )
     % unit::assertion::are_equal( z *= z, pow( z, 2 ) )
-    % unit::assertion::are_equal( x /= x, interval<>{1} )
+    % unit::assertion::are_equal( [x_ = interval<>{ 1, 2 }]{ return x_/=x_; }(), interval<>{1, 1} )
     | unit::collect;
 
 
