@@ -68,8 +68,10 @@ namespace cranberries {
     constexpr T& upper() & noexcept;
     constexpr T lower() const&& = delete;
     constexpr T upper() const&& = delete;
-    constexpr T&& lower() && noexcept;
-    constexpr T&& upper() && noexcept;
+		constexpr T&& lower() && noexcept;
+		constexpr T&& upper() && noexcept;
+		constexpr const T&& lower() const && noexcept;
+		constexpr const T&& upper() const && noexcept;
 
     constexpr void swap( interval& x ) noexcept;
 
