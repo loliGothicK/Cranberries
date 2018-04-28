@@ -343,7 +343,7 @@ class UnitTestContainer
   // UnitTestContainer( ) <=> UnitTestContainer( std::cout, "Unit Test" )
 
   // constructor [ logger, label ]
-  UnitTestContainer(LOGGER_ lg, std::string name) : logger{lg}, name{name}
+  UnitTestContainer(LOGGER_ lg, std::string name) : logger(lg), name(name)
   {
     logger << "\n" << name << " Start...\n";
   }
@@ -450,8 +450,7 @@ class UnitTestContainer
   template <class F, enabler_t<is_callable_v<F(), test_result_t>> = nullptr>
   decltype(auto) operator%(F&& f) &&
   {
-    std::call_once(once,
-                   [&] { start = std::chrono::high_resolution_clock::now(); });
+    std::call_once(once, [&] { start = std::chrono::high_resolution_clock::now(); });
 
     methods.emplace_back(std::async(std::launch::async, // !explicit specified async
 				[&, f = detail_::make_test_method(std::move(f)).index(++index)]() mutable->test_status {
@@ -464,7 +463,7 @@ class UnitTestContainer
 
   // operator for pushing test method with test method label
   template <class F, enabler_t<is_callable_v<F(), test_result_t>> = nullptr>
-  decltype(auto) operator%(detail_::labeled_method<F>&& lm) &
+  decltype(auto) operator%(detail_::labeled_method<F> lm) &
   {
     std::call_once(once, [&] { start = std::chrono::high_resolution_clock::now(); });
 
@@ -480,7 +479,7 @@ class UnitTestContainer
 
   // operator for pushing test method with test method label
   template <class F, enabler_t<is_callable_v<F(), test_result_t>> = nullptr>
-  decltype(auto) operator%(detail_::labeled_method<F>&& lm) &&
+  decltype(auto) operator%(detail_::labeled_method<F> lm) &&
   {
     std::call_once(once, [&] { start = std::chrono::high_resolution_clock::now(); });
 
@@ -896,7 +895,8 @@ class AssertRelational
 }  // namespace detail_
 
 namespace assertion {
-static test_status test_skip(...) { return test_status::skipped; }
+template < class ...Dummy >
+static test_status test_skip(Dummy&&...) { return test_status::skipped; }
 
 template <class A, class E,
   enabler_t<cranberries::is_equality_comparable_to_v<A, E>> = nullptr>
