@@ -607,96 +607,284 @@ namespace cranberries_magic{
 
 namespace _detail {
  
-	template <class Base, class T, class Derived, class... Args>
+	template <class R, class Base, class T, class Derived, class... Args>
 	constexpr auto INVOKE(T Base::*pmf, Derived&& ref, Args&&... args)
-			noexcept(noexcept((std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...)))
-	 -> std::enable_if_t<std::is_function<T>::value &&
-											 std::is_base_of<Base, std::decay_t<Derived>>::value,
-			decltype((std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...))>
+		noexcept(noexcept((std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...)))
+		-> std::enable_if_t<std::is_function<T>::value &&
+											  std::is_base_of<Base, std::decay_t<Derived>>::value &&
+												!std::is_void<remove_cvr_t<R>>::value,R>
 	{
-				return (std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...);
+		return (std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...);
+	}
+
+	template <class R, class Base, class T, class Derived, class... Args>
+	constexpr auto INVOKE(T Base::*pmf, Derived&& ref, Args&&... args)
+		noexcept(noexcept((std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...)))
+		-> std::enable_if_t<std::is_function<T>::value &&
+											  std::is_base_of<Base, std::decay_t<Derived>>::value &&
+												std::is_void<remove_cvr_t<R>>::value>
+	{
+		return static_cast<void>((std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...));
 	}
  
-	template <class Base, class T, class RefWrap, class... Args>
+	template <class R, class Base, class T, class RefWrap, class... Args>
 	constexpr auto INVOKE(T Base::*pmf, RefWrap&& ref, Args&&... args)
-			noexcept(noexcept((ref.get().*pmf)(std::forward<Args>(args)...)))
-	 -> std::enable_if_t<std::is_function<T>::value &&
-											 is_reference_wrapper_v<std::decay_t<RefWrap>>,
-			decltype((ref.get().*pmf)(std::forward<Args>(args)...))>
+		noexcept(noexcept((ref.get().*pmf)(std::forward<Args>(args)...)))
+		-> std::enable_if_t<std::is_function<T>::value &&
+											 is_reference_wrapper_v<std::decay_t<RefWrap>> &&
+											 !std::is_void<remove_cvr_t<R>>::value,R>
  
 	{
-				return (ref.get().*pmf)(std::forward<Args>(args)...);
+		return (ref.get().*pmf)(std::forward<Args>(args)...);
+	}
+
+	template <class R, class Base, class T, class RefWrap, class... Args>
+	constexpr auto INVOKE(T Base::*pmf, RefWrap&& ref, Args&&... args)
+		noexcept(noexcept((ref.get().*pmf)(std::forward<Args>(args)...)))
+		-> std::enable_if_t<std::is_function<T>::value &&
+											 is_reference_wrapper_v<std::decay_t<RefWrap>> &&
+											 std::is_void<remove_cvr_t<R>>::value>
+ 
+	{
+		return static_cast<void>((ref.get().*pmf)(std::forward<Args>(args)...));
 	}
  
-	template <class Base, class T, class Pointer, class... Args>
+	template <class R, class Base, class T, class Pointer, class... Args>
 	constexpr auto INVOKE(T Base::*pmf, Pointer&& ptr, Args&&... args)
-			noexcept(noexcept(((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...)))
-	 -> std::enable_if_t<std::is_function<T>::value &&
+		noexcept(noexcept(((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...)))
+		-> std::enable_if_t<std::is_function<T>::value &&
 											 !is_reference_wrapper_v<std::decay_t<Pointer>> &&
-											 !std::is_base_of<Base, std::decay_t<Pointer>>::value,
-			decltype(((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...))>
+											 !std::is_base_of<Base, std::decay_t<Pointer>>::value &&
+											 !std::is_void<remove_cvr_t<R>>::value,R>
 	{
-				return ((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...);
+		return ((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...);
 	}
+
+	template <class R, class Base, class T, class Pointer, class... Args>
+	constexpr auto INVOKE(T Base::*pmf, Pointer&& ptr, Args&&... args)
+		noexcept(noexcept(((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...)))
+		-> std::enable_if_t<std::is_function<T>::value &&
+											 !is_reference_wrapper_v<std::decay_t<Pointer>> &&
+											 !std::is_base_of<Base, std::decay_t<Pointer>>::value &&
+											 std::is_void<remove_cvr_t<R>>::value>
+	{
+		return static_cast<void>(((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...));
+	}
+
  
-	template <class Base, class T, class Derived>
+	template <class R, class Base, class T, class Derived>
 	constexpr auto INVOKE(T Base::*pmd, Derived&& ref)
-			noexcept(noexcept(std::forward<Derived>(ref).*pmd))
-	 -> std::enable_if_t<!std::is_function<T>::value &&
-											 std::is_base_of<Base, std::decay_t<Derived>>::value,
-			decltype(std::forward<Derived>(ref).*pmd)>
+		noexcept(noexcept(std::forward<Derived>(ref).*pmd))
+		-> std::enable_if_t<!std::is_function<T>::value &&
+											 std::is_base_of<Base, std::decay_t<Derived>>::value &&
+											 !std::is_void<remove_cvr_t<R>>::value,R>
 	{
-				return std::forward<Derived>(ref).*pmd;
+		return std::forward<Derived>(ref).*pmd;
+	}
+
+	template <class R, class Base, class T, class Derived>
+	constexpr auto INVOKE(T Base::*pmd, Derived&& ref)
+		noexcept(noexcept(std::forward<Derived>(ref).*pmd))
+		-> std::enable_if_t<!std::is_function<T>::value &&
+											  std::is_base_of<Base, std::decay_t<Derived>>::value &&
+											  std::is_void<remove_cvr_t<R>>::value>
+	{
+		return static_cast<void>(std::forward<Derived>(ref).*pmd);
 	}
  
-	template <class Base, class T, class RefWrap>
+	template <class R, class Base, class T, class RefWrap>
 	constexpr auto INVOKE(T Base::*pmd, RefWrap&& ref)
-			noexcept(noexcept(ref.get().*pmd))
-	 -> std::enable_if_t<!std::is_function<T>::value &&
-											 is_reference_wrapper_v<std::decay_t<RefWrap>>,
-			decltype(ref.get().*pmd)>
+		noexcept(noexcept(ref.get().*pmd))
+		-> std::enable_if_t<!std::is_function<T>::value &&
+											  is_reference_wrapper_v<std::decay_t<RefWrap>> &&
+											  !std::is_void<remove_cvr_t<R>>::value,R>
 	{
-				return ref.get().*pmd;
+		return ref.get().*pmd;
 	}
+
+	template <class R, class Base, class T, class RefWrap>
+	constexpr auto INVOKE(T Base::*pmd, RefWrap&& ref)
+		noexcept(noexcept(ref.get().*pmd))
+	-> std::enable_if_t<!std::is_function<T>::value &&
+											is_reference_wrapper_v<std::decay_t<RefWrap>> &&
+											std::is_void<remove_cvr_t<R>>::value>
+	{
+		return static_cast<void>(ref.get().*pmd);
+	}
+
  
-	template <class Base, class T, class Pointer>
+	template <class R, class Base, class T, class Pointer>
 	constexpr auto INVOKE(T Base::*pmd, Pointer&& ptr)
 			noexcept(noexcept((*std::forward<Pointer>(ptr)).*pmd))
 	 -> std::enable_if_t<!std::is_function<T>::value &&
 											 !is_reference_wrapper_v<std::decay_t<Pointer>> &&
-											 !std::is_base_of<Base, std::decay_t<Pointer>>::value,
-			decltype((*std::forward<Pointer>(ptr)).*pmd)>
+											 !std::is_base_of<Base, std::decay_t<Pointer>>::value &&
+											 !std::is_void<remove_cvr_t<R>>::value,R>
 	{
-				return (*std::forward<Pointer>(ptr)).*pmd;
-	}
- 
-	template <class F, class... Args>
-	constexpr auto INVOKE(F&& f, Args&&... args)
-			noexcept(noexcept(std::forward<F>(f)(std::forward<Args>(args)...)))
-	 -> std::enable_if_t<!std::is_member_pointer<std::decay_t<F>>::value,
-			decltype(std::forward<F>(f)(std::forward<Args>(args)...))>
-	{
-				return std::forward<F>(f)(std::forward<Args>(args)...);
+		return (*std::forward<Pointer>(ptr)).*pmd;
 	}
 
+	template <class R, class Base, class T, class Pointer>
+	constexpr auto INVOKE(T Base::*pmd, Pointer&& ptr)
+			noexcept(noexcept((*std::forward<Pointer>(ptr)).*pmd))
+	 -> std::enable_if_t<!std::is_function<T>::value &&
+											 !is_reference_wrapper_v<std::decay_t<Pointer>> &&
+											 !std::is_base_of<Base, std::decay_t<Pointer>>::value &&
+											 std::is_void<remove_cvr_t<R>>::value>
+	{
+		return static_cast<void>((*std::forward<Pointer>(ptr)).*pmd);
+	}
+
+ 
+	template <class R, class F, class... Args>
+	constexpr auto INVOKE(F&& f, Args&&... args)
+			noexcept(noexcept(std::forward<F>(f)(std::forward<Args>(args)...)))
+	 -> std::enable_if_t<
+            !std::is_member_pointer<std::decay_t<F>>::value &&
+            !std::is_void<remove_cvr_t<R>>::value,
+        R>
+	{
+		return std::forward<F>(f)(std::forward<Args>(args)...);
+	}
+
+	template <class R, class F, class... Args>
+	constexpr auto INVOKE(F&& f, Args&&... args)
+		noexcept(noexcept(std::forward<F>(f)(std::forward<Args>(args)...)))
+	 -> std::enable_if_t<
+            !std::is_member_pointer<std::decay_t<F>>::value &&
+            std::is_void<remove_cvr_t<R>>::value
+        >
+	{
+		return static_cast<void>(std::forward<F>(f)(std::forward<Args>(args)...));
+	}
+
+	template <class Base, class T, class Derived, class... Args>
+	constexpr auto INVOKE(T Base::*pmf, Derived&& ref, Args&&... args)
+		noexcept(noexcept((std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...)))
+		-> std::enable_if_t<std::is_function<T>::value &&
+		std::is_base_of<Base, std::decay_t<Derived>>::value,
+		decltype((std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...))>
+	{
+		return (std::forward<Derived>(ref).*pmf)(std::forward<Args>(args)...);
+	}
+
+	template <class Base, class T, class RefWrap, class... Args>
+	constexpr auto INVOKE(T Base::*pmf, RefWrap&& ref, Args&&... args)
+		noexcept(noexcept((ref.get().*pmf)(std::forward<Args>(args)...)))
+		-> std::enable_if_t<std::is_function<T>::value &&
+		is_reference_wrapper_v<std::decay_t<RefWrap>>,
+		decltype((ref.get().*pmf)(std::forward<Args>(args)...))>
+
+	{
+		return (ref.get().*pmf)(std::forward<Args>(args)...);
+	}
+
+	template <class Base, class T, class Pointer, class... Args>
+	constexpr auto INVOKE(T Base::*pmf, Pointer&& ptr, Args&&... args)
+		noexcept(noexcept(((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...)))
+		-> std::enable_if_t<std::is_function<T>::value &&
+		!is_reference_wrapper_v<std::decay_t<Pointer>> &&
+		!std::is_base_of<Base, std::decay_t<Pointer>>::value,
+		decltype(((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...))>
+	{
+		return ((*std::forward<Pointer>(ptr)).*pmf)(std::forward<Args>(args)...);
+	}
+
+	template <class Base, class T, class Derived>
+	constexpr auto INVOKE(T Base::*pmd, Derived&& ref)
+		noexcept(noexcept(std::forward<Derived>(ref).*pmd))
+		-> std::enable_if_t<!std::is_function<T>::value &&
+		std::is_base_of<Base, std::decay_t<Derived>>::value,
+		decltype(std::forward<Derived>(ref).*pmd)>
+	{
+		return std::forward<Derived>(ref).*pmd;
+	}
+
+	template <class Base, class T, class RefWrap>
+	constexpr auto INVOKE(T Base::*pmd, RefWrap&& ref)
+		noexcept(noexcept(ref.get().*pmd))
+		-> std::enable_if_t<!std::is_function<T>::value &&
+		is_reference_wrapper_v<std::decay_t<RefWrap>>,
+		decltype(ref.get().*pmd)>
+	{
+		return ref.get().*pmd;
+	}
+
+	template <class Base, class T, class Pointer>
+	constexpr auto INVOKE(T Base::*pmd, Pointer&& ptr)
+		noexcept(noexcept((*std::forward<Pointer>(ptr)).*pmd))
+		-> std::enable_if_t<!std::is_function<T>::value &&
+		!is_reference_wrapper_v<std::decay_t<Pointer>> &&
+		!std::is_base_of<Base, std::decay_t<Pointer>>::value,
+		decltype((*std::forward<Pointer>(ptr)).*pmd)>
+	{
+		return (*std::forward<Pointer>(ptr)).*pmd;
+	}
+
+	template <class F, class... Args>
+	constexpr auto INVOKE(F&& f, Args&&... args)
+		noexcept(noexcept(std::forward<F>(f)(std::forward<Args>(args)...)))
+		-> std::enable_if_t<!std::is_member_pointer<std::decay_t<F>>::value,
+		decltype(std::forward<F>(f)(std::forward<Args>(args)...))>
+	{
+		return std::forward<F>(f)(std::forward<Args>(args)...);
+	}
 } // ! namespace _detail
 
 
 	namespace _detail {
-		template <typename AlwaysVoid, typename, typename...>
-		struct invoke_result { };
-		template <typename F, typename...Args>
-		struct invoke_result<decltype(void(_detail::INVOKE(std::declval<F>(), std::declval<Args>()...))), F, Args...>
+		template <typename AlwaysVoid, typename, typename, typename...>
+		struct invoke_traits : std::false_type {};
+
+		template <typename R, typename Fn, typename...ArgTypes>
+		struct invoke_traits<decltype(void(_detail::INVOKE<R>(std::declval<Fn>(), std::declval<ArgTypes>()...))), R, Fn, ArgTypes...>
+			: std::true_type
 		{
-			using type = decltype(_detail::INVOKE(std::declval<F>(), std::declval<Args>()...));
+			static constexpr bool is_nothrow_v = noexcept((_detail::INVOKE<R>(std::declval<Fn>(), std::declval<ArgTypes>()...)));
 		};
+
 	} // namespace _detail
 
-	template <class F, class... ArgTypes>
-	struct invoke_result : _detail::invoke_result<void, F, ArgTypes...> {};
+	template <class Fn, class... ArgTypes>
+	struct invoke_result {
+		using type = decltype(_detail::INVOKE( std::declval<Fn>(), std::declval<ArgTypes>()... ));
+	};
 
-	template <class F, class... ArgTypes>
-	using invoke_result_t = typename invoke_result<F, ArgTypes...>::type;
+	template <class Fn, class... ArgTypes>
+	using invoke_result_t = typename invoke_result<Fn, ArgTypes...>::type;
+
+	template <class Fn, class... ArgTypes>
+	struct is_invocable {
+		static constexpr bool value = _detail::invoke_traits<void, void, Fn, ArgTypes...>::value;
+	};
+
+	template <class Fn, class... ArgTypes>
+	constexpr bool is_invocable_v = is_invocable<Fn, ArgTypes...>::value;
+
+	template <class Fn, class... ArgTypes>
+	struct is_nothrow_invocable {
+		static constexpr bool value = _detail::invoke_traits<void, void, Fn, ArgTypes...>::is_nothrow_v;
+	};
+
+	template <class Fn, class... ArgTypes>
+	constexpr bool is_nothrow_invocable_v = is_nothrow_invocable<Fn, ArgTypes...>::value;
+
+	template <class R, class Fn, class... ArgTypes>
+	struct is_invocable_r {
+		static constexpr bool value = _detail::invoke_traits<void, R, Fn, ArgTypes...>::value;
+	};
+
+	template <class R, class Fn, class... ArgTypes>
+	constexpr bool is_invocable_r_v = is_invocable_r<R, Fn, ArgTypes...>::value;
+
+	template <class R, class Fn, class... ArgTypes>
+	struct is_nothrow_invocable_r {
+		static constexpr bool value = _detail::invoke_traits<void, R, Fn, ArgTypes...>::is_nothrow_v;
+	};
+
+	template <class R, class Fn, class... ArgTypes>
+	constexpr bool is_nothrow_invocable_r_v = is_nothrow_invocable_r<R, Fn, ArgTypes...>::value;
+
 }
 
 #endif // !CRANBERRIES_TYPE_TRAITS_HPP
