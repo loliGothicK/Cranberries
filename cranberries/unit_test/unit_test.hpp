@@ -297,6 +297,20 @@ struct labeled_method
   std::string label_;
 };
 
+template < class F >
+inline auto lebeled(F&& f, const char* label) {
+	return labeled_method<F>{ std::forward<F>(f), label };
+}
+
+template <class>
+struct is_labeled_method : std::false_type {};
+
+template <class F>
+struct is_labeled_method<labeled_method<F>> : std::true_type {};
+
+template <class F>
+constexpr bool is_labeled_method_v = is_labeled_method<F>::value;
+
 template <class F,
   enabler_t<
     !std::is_base_of<detail_::test_method_tag,std::decay_t<F>>::value
@@ -431,8 +445,8 @@ class UnitTestContainer
 
   // operator for pushing test method
   // Test method is executed in parallel as soon as pushing
-  template <class F, enabler_t<is_callable_v<F(), test_result_t>> = nullptr>
-  decltype(auto) operator%(F&& f) &
+	template <class F, enabler_t<is_invocable_r_v<test_status, remove_cvr_t<F>>> = nullptr>
+	decltype(auto) operator%(F&& f)
   {
     std::call_once(once, [&] { start = std::chrono::high_resolution_clock::now(); });
 
@@ -445,46 +459,14 @@ class UnitTestContainer
     return *this;
   }
 
-  // operator for pushing test method
-  // Test method is executed in parallel as soon as pushing
-  template <class F, enabler_t<is_callable_v<F(), test_result_t>> = nullptr>
-  decltype(auto) operator%(F&& f) &&
-  {
-    std::call_once(once, [&] { start = std::chrono::high_resolution_clock::now(); });
-
-    methods.emplace_back(std::async(std::launch::async, // !explicit specified async
-				[&, f = detail_::make_test_method(std::move(f)).index(++index)]() mutable->test_status {
-				f.exe();
-				auto_lock(mtx_), f.print(logger);
-				return f.status();
-			}));
-    return std::move(*this);
-  }
-
   // operator for pushing test method with test method label
-  template <class F, enabler_t<is_callable_v<F(), test_result_t>> = nullptr>
-  decltype(auto) operator%(detail_::labeled_method<F> lm) &
+	template <class F, enabler_t < detail_::is_labeled_method_v<remove_cvr_t<F>> > = nullptr >
+	decltype(auto) operator%(F&& lm)
   {
     std::call_once(once, [&] { start = std::chrono::high_resolution_clock::now(); });
 
     methods.emplace_back(std::async(std::launch::async, // !explicit specified async
-			[&, f = make_test_method(std::move(lm.f_), lm.label_).index(++index)]() mutable->test_status
-      {
-				f.exe();
-				auto_lock(mtx_), f.print(logger);
-				return f.status();
-			}));
-    return *this;
-  }
-
-  // operator for pushing test method with test method label
-  template <class F, enabler_t<is_callable_v<F(), test_result_t>> = nullptr>
-  decltype(auto) operator%(detail_::labeled_method<F> lm) &&
-  {
-    std::call_once(once, [&] { start = std::chrono::high_resolution_clock::now(); });
-
-    methods.emplace_back(std::async(std::launch::async, // !explicit specified async
-			[&, f = make_test_method(std::move(lm.f_), lm.label_).index(++index)]() mutable->test_status
+			[&, f = make_test_method(std::move(lm.f_), std::move(lm.label_)).index(++index)]() mutable->test_status
       {
 				f.exe();
 				auto_lock(mtx_), f.print(logger);
