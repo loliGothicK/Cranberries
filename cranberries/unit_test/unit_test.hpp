@@ -14,10 +14,10 @@
 #include <tuple>
 #include <utility>
 #include <vector>
-#include "_algorithm.hpp" /* origin >>> #include "../algorithm.hpp" */
-#include "concepts.hpp" /* origin >>> #include "../common/concepts.hpp" */
-#include "zip_with.hpp" /* origin >>> #include "../traversals/views/zip_with.hpp" */
-#include "__utility.hpp"
+#include "../algorithm.hpp"
+#include "../common/concepts.hpp"
+#include "../traversals/views/zip_with.hpp"
+#include "../utility/utility.hpp"
 #ifdef _WIN32
 #include <Windows.h>
 #endif
