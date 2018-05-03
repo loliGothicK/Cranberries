@@ -238,7 +238,8 @@ workflows:
       - clang_3_6_2
       - clang_3_7_0
       - clang_3_7_1
-      - clang_3_8_1
+      - clang_3_8_0
+      - clang_3_8_0
       - clang_3_9_0
       - clang_3_9_1    
       - clang_4_0_0
