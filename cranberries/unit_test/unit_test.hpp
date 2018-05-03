@@ -14,10 +14,10 @@
 #include <tuple>
 #include <utility>
 #include <vector>
-#include "../algorithm.hpp"
-#include "../common/concepts.hpp"
-#include "../traversals/views/zip_with.hpp"
-#include "../utility/utility.hpp"
+#include "_algorithm.hpp" /* origin >>> #include "../algorithm.hpp" */
+#include "concepts.hpp" /* origin >>> #include "../common/concepts.hpp" */
+#include "zip_with.hpp" /* origin >>> #include "../traversals/views/zip_with.hpp" */
+#include "__utility.hpp"
 #ifdef _WIN32
 #include <Windows.h>
 #endif
@@ -415,6 +415,7 @@ class UnitTestContainer
     }
 
     // Test Summry Infomations
+    ConsoleTestColor::Reset();
     logger << "Total Tests: " << index << " | ";
     ConsoleTestColor::Green();
     logger << "Passed: " << passed;
@@ -445,7 +446,7 @@ class UnitTestContainer
 
   // operator for pushing test method
   // Test method is executed in parallel as soon as pushing
-	template <class F, enabler_t<is_invocable_r_v<test_status, remove_cvr_t<F>>> = nullptr>
+	template <class F, enabler_t < !detail_::is_labeled_method_v<remove_cvr_t<F>> > = nullptr >
 	decltype(auto) operator%(F&& f)
   {
     std::call_once(once, [&] { start = std::chrono::high_resolution_clock::now(); });
