@@ -670,16 +670,16 @@ namespace cranberries {
 
 		// ====================== map ======================
 		template <typename F,
-			enabler_t<::cranberries::is_callable_v<F(const T&)>> = nullptr >
+			enabler_t<::cranberries::is_invocable_v<F,const T&>> = nullptr >
 			CRANBERRIES_CXX11_CONSTEXPR auto map(F &&f) const
 		{
 			using result_opt = optional<::cranberries::invoke_result_t< F, const T& >>;
-			return hasvalue ? result_opt{ f(storage.holder.get_ref()) } : result_opt{ nullopt };
+			return hasvalue ? result_opt{ f(storage.holder.get_ref()) } : result_opt{};
 		}
 
 		// ====================== map_or ======================
 		template <typename F, typename U,
-			enabler_t<std::is_convertible<::cranberries::invoke_result_t<F, const T&>, U>::value> = nullptr >
+			enabler_t<::cranberries::is_invocable_r_v<U, F, const T&>> = nullptr >
 		CRANBERRIES_CXX11_CONSTEXPR auto map_or(F &&f, U&& u) const
 		{
 			using result_opt = optional<::cranberries::invoke_result_t<F, const T&>>;

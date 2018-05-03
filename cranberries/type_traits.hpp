@@ -872,7 +872,7 @@ namespace _detail {
 }
 
 	template <class F, class... ArgTypes>
-	struct invoke_result : _detail::invoke_result_inject<_detail::invoke_result_impl<void, F, ArgTypes...>> {};
+	struct invoke_result : _detail::invoke_result_inject<typename _detail::invoke_result_impl<void, F, ArgTypes...>::type> {};
 
 	template < class F, class... ArgTypes >
 	struct is_invocable : _detail::is_invocable_impl<void, F, ArgTypes...> {};
