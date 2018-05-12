@@ -605,6 +605,62 @@ namespace cranberries_magic{
 	template < typename T, std::size_t N >
 	using generate_tuple_t = typename generate_tuple<T,N>::type;
 
+
+	namespace _detail {
+
+		template <class From, class To, bool =
+			::cranberries::disjunction<
+			std::is_void<From>, std::is_function<To>, std::is_array<To>
+			>::value
+		>
+			struct do_is_nothrow_convertible
+		{
+			using type = std::is_void<To>;
+		};
+
+		struct do_is_nothrow_convertible_impl
+		{
+			template <class To>
+			static void test_aux(To) noexcept;
+
+			template <class From, class To>
+			static std::bool_constant<noexcept(test_aux<To>(std::declval<From>()))>
+				test(int);
+
+			template <class, class>
+			static std::false_type
+				test(...);
+		};
+
+		template <class From, class To>
+		struct do_is_nothrow_convertible<From, To, false>
+		{
+			using type = decltype(do_is_nothrow_convertible_impl::test<From, To>(0));
+		};
+
+	} // _detail
+
+	template <class From, class To>
+	struct is_nothrow_convertible :
+		_detail::do_is_nothrow_convertible<From, To>::type
+	{ };
+
+	template <class From, class To>
+	constexpr bool is_nothrow_convertible_v
+		= is_nothrow_convertible<From, To>::value;
+
+	template <class T>
+	constexpr
+		std::enable_if_t<
+		std::is_convertible<T, std::decay_t<T>>::value,
+		std::decay_t<T>
+		>
+		decay_copy(T&& v) noexcept(is_nothrow_convertible_v<T, std::decay_t<T>>)
+	{
+		return std::forward<T>(v);
+	}
+
+
 namespace _detail {
  
 	template <class R, class Base, class T, class Derived, class... Args>
