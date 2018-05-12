@@ -938,32 +938,6 @@ namespace _detail {
 	template < class R, class F, class... ArgTypes >
 	struct is_nothrow_invocable_r : _detail::is_nothrow_invocable_impl<R, F, ArgTypes...> {};
 
-	template <class F, class... ArgTypes>
-	using invoke_result_t = typename invoke_result<F, ArgTypes...>::type;
-	template <class F, class... ArgTypes>
-	using invoke_result_t = typename invoke_result<F, ArgTypes...>::type;
-
-	template < class F, class... ArgTypes >
-	constexpr bool is_invocable_v = is_invocable<F, ArgTypes...>::value;
-	template < class F, class... ArgTypes >
-	constexpr bool is_invocable_v = is_invocable<F, ArgTypes...>::value;
-
-	template < class R, class F, class... ArgTypes >
-	constexpr bool is_invocable_r_v = is_invocable_r<R, F, ArgTypes...>::value;
-
-	template < class F, class... ArgTypes >
-	constexpr bool is_nothrow_invocable_v = is_nothrow_invocable<F, ArgTypes...>::value;
-	template < class R, class F, class... ArgTypes >
-	constexpr bool is_invocable_r_v = is_invocable_r<R, F, ArgTypes...>::value;
-
-	template < class R, class F, class... ArgTypes >
-	constexpr bool is_nothrow_invocable_r_v = is_nothrow_invocable_r<R, F, ArgTypes...>::value;
-	template < class F, class... ArgTypes >
-	constexpr bool is_nothrow_invocable_v = is_nothrow_invocable<F, ArgTypes...>::value;
-
-	template < class R, class F, class... ArgTypes >
-	constexpr bool is_nothrow_invocable_r_v = is_nothrow_invocable_r<R, F, ArgTypes...>::value;
-
 }
 
 #else
@@ -1020,6 +994,8 @@ struct is_nothrow_invocable : _detail::invoke_traits<void, F, ArgTypes...>::is_n
 template < class R, class F, class... ArgTypes >
 struct is_nothrow_invocable_r : _detail::invoke_traits<void, F, ArgTypes...>:: template is_nothrow_invocable_r_impl<R> {};
 
+}
+#endif
 
 template <class F, class... ArgTypes>
 using invoke_result_t = typename invoke_result<F, ArgTypes...>::type;
@@ -1036,7 +1012,5 @@ constexpr bool is_nothrow_invocable_v = is_nothrow_invocable<F, ArgTypes...>::va
 template < class R, class F, class... ArgTypes >
 constexpr bool is_nothrow_invocable_r_v = is_nothrow_invocable_r<R, F, ArgTypes...>::value;
 
-}
-#endif
 
 #endif // !CRANBERRIES_TYPE_TRAITS_HPP
