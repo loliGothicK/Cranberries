@@ -28,7 +28,7 @@ class ToMap
 	Pred pred_;
 public:
 	template < typename Range, typename ElemType = typename std::decay_t<Range>::value_type >
-	using requires
+	using requires_
 		= std::enable_if_t<
 		concepts::required_v<Range, concepts::iterable>
 		>;
@@ -53,7 +53,7 @@ class ToMap<Pred, map_flag::unordered, Container>
 	Pred pred_;
 public:
 	template < typename Range, typename ElemType = typename std::decay_t<Range>::value_type >
-	using requires
+	using requires_
 		= std::enable_if_t<
 		concepts::required_v<Range, concepts::iterable>
 		>;
@@ -78,7 +78,7 @@ class Partition
 	Pred pred_;
 public:
 	template < typename Range, typename ElemType = typename std::decay_t<Range>::value_type >
-	using requires
+	using requires_
 		= std::enable_if_t<
 		concepts::required_v<Range, concepts::iterable>
 		>;
@@ -257,7 +257,7 @@ public:
 	auto step(T1&& a, T2&& b) { return op(std::forward<T1>(a), std::forward<T2>(b)); }
 
 	template < class Traversable, typename ElemType = typename std::decay_t<Traversable>::value_type >
-	using requires
+	using requires_
 		= std::enable_if_t<conjunction_v<
 		concepts::required<Traversable, concepts::iterable>
 		>>;
@@ -282,7 +282,7 @@ public:
 	Sum() = default;
 
 	template < typename Range, typename ElemType = typename std::decay_t<Range>::value_type >
-	using requires
+	using requires_
 		= std::enable_if_t<conjunction_v<
 		concepts::required<Range, concepts::iterable>,
 		concepts::required<ElemType, concepts::regular_type>,
@@ -392,7 +392,7 @@ public:
 	bool comp(L&& l, R&& r) { return pred_(std::forward<L>(l), std::forward<R>(r)); }
 
 	template < typename Range, typename ElemType = typename std::decay_t<Range>::value_type >
-	using requires
+	using requires_
 		= std::enable_if_t<conjunction_v<
 		concepts::required<Range, concepts::iterable>,
 		concepts::required<ElemType, concepts::regular_type>
@@ -415,7 +415,7 @@ public:
 
 
 	template < typename Range, typename ElemType = typename std::decay_t<Range>::value_type >
-	using requires
+	using requires_
 		= std::enable_if_t<conjunction_v<
 		concepts::required<Range, concepts::iterable>,
 		concepts::required<ElemType, concepts::regular_type>

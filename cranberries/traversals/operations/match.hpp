@@ -26,7 +26,7 @@ public:
 	Match(Pred_&& pred) : pred{ std::forward<Pred_>(pred) } {}
 
 	template < typename Range, typename ElemType = typename std::decay_t<Range>::value_type >
-	using requires
+	using requires_
 		= std::enable_if_t<
 		concepts::required_v<Range, concepts::iterable>
 		>;
@@ -52,7 +52,7 @@ public:
 	Match(Pred_&& pred) : pred{ std::forward<Pred_>(pred) } {}
 
 	template < typename Range, typename ElemType = typename std::decay_t<Range>::value_type >
-	using requires
+	using requires_
 		= std::enable_if_t<
 		concepts::required_v<Range, concepts::iterable>
 		>;
@@ -78,7 +78,7 @@ public:
 	Match(Pred_&& pred) : pred{ std::forward<Pred_>(pred) } {}
 
 	template < typename Range, typename ElemType = typename std::decay_t<Range>::value_type >
-	using requires
+	using requires_
 		= std::enable_if_t<
 		concepts::required_v<Range, concepts::iterable>
 		>;
@@ -103,7 +103,7 @@ public:
 	Match(std::string regexp) : regexp{ regexp } {}
 
 	template < typename Range, typename ElemType = typename std::decay_t<Range>::value_type >
-	using requires
+	using requires_
 		= std::enable_if_t<conjunction_v<
 			concepts::required<Range, concepts::iterable>,
 			is_specialize_of<std::basic_string, ElemType>

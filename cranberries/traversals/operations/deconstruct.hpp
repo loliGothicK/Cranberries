@@ -31,8 +31,8 @@ public:
 	Deconstruct() = default;
 
 	template < class Traversable >
-	using requires
-		= concepts::iterable::requires<Traversable>;
+	using requires_
+		= concepts::iterable::requires_<Traversable>;
 
 	template < class SentinelRange >
 	decltype(auto)

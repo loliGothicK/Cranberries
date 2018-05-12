@@ -65,7 +65,7 @@ private:
 namespace _proxy {
 	struct RevX: private tag::adaptor_tag {
 		template < class Trav >
-		using requires = always_t<decltype(view_get::rev(std::declval<Trav&>()))>;
+		using requires_ = always_t<decltype(view_get::rev(std::declval<Trav&>()))>;
 
 		template < class Traversal >
 		auto operator()(Traversal&& trav) const {

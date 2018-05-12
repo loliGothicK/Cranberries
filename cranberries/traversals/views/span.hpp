@@ -132,7 +132,7 @@ struct SpanProxy {
 	size_t offset, count;
 
 	template < class Traversable >
-	using requires = concepts::iterable::requires<Traversable>;
+	using requires_ = concepts::iterable::requires_<Traversable>;
 
 	template < class Range >
 	Span<Range, concepts::required_v<Range, concepts::reverse_iterable>>

@@ -10,7 +10,7 @@ namespace concepts {
 
 	template < class T, class... Concepts >
 	struct required
-		: conjunction<is_satisfied<Concepts::template requires, T>...> {};
+		: conjunction<is_satisfied<Concepts::template requires_, T>...> {};
 
 	template < class T, class... Concepts >
 	constexpr bool required_v = required<T, Concepts...>::value;
@@ -40,36 +40,36 @@ namespace concepts {
 	template < template  < class > class Pred >
 	struct concept_ {
 		template < typename T >
-		using requires
+		using requires_
 			= std::enable_if_t<Pred<T>::value>;
 	};
 
 	template < class... Concepts >
 	struct combined_concept {
 		template < class T >
-		using requires
+		using requires_
 			= required<T, Concepts...>;
 	};
 
 	struct incrementable {
 		template < class T >
-		using requires = decltype(++std::declval<T&>());
+		using requires_ = decltype(++std::declval<T&>());
 	};
 
 	struct decrementable {
 		template < class T >
-		using requires = decltype(--std::declval<T&>());
+		using requires_ = decltype(--std::declval<T&>());
 	};
 
 	struct sized {
 		template < class T >
-		using requires
+		using requires_
 			= decltype(back_magic::size(std::declval<T&>()));
 	};
 
 	struct iterator_requirements {
 		template < class Iter > 
-		using requires
+		using requires_
 			= std::enable_if_t<
 				conjunction_v<
 					std::is_same<Iter, decltype(std::declval<Iter&>()++)>,
@@ -89,7 +89,7 @@ namespace concepts {
 
 	struct input_iterator_requirements {
 		template < class Iter >
-		using requires
+		using requires_
 			= std::enable_if_t<
 				conjunction_v<
 					required<Iter,iterator_requirements>,
@@ -101,7 +101,7 @@ namespace concepts {
 
 	struct output_iterator_requirements {
 		template < class Iter >
-		using requires
+		using requires_
 			= std::enable_if_t<
 				conjunction_v<
 					required<Iter, iterator_requirements>,
@@ -111,7 +111,7 @@ namespace concepts {
 
 	struct forward_iterator_requirements {
 		template < class Iter >
-		using requires
+		using requires_
 			= std::enable_if_t<
 				conjunction_v<
 					required<Iter, input_iterator_requirements>,
@@ -122,7 +122,7 @@ namespace concepts {
 
 	struct bidirectional_iterator_requirements {
 		template < class Iter >
-		using requires
+		using requires_
 			= std::enable_if_t<
 				conjunction_v<
 					std::is_same<Iter, decltype(std::declval<Iter&>()--)>,
@@ -133,7 +133,7 @@ namespace concepts {
 
 	struct random_access_iterator_requirements {
 		template < class Iter >
-		using requires
+		using requires_
 			= std::enable_if_t<
 				conjunction_v<
 					std::is_same<Iter, decltype(std::declval<const Iter&>() + 2)>,
@@ -150,7 +150,7 @@ namespace concepts {
 
 	struct four_arithmetic_requirements {
 		template < class T >
-		using requires
+		using requires_
 			= std::enable_if_t<
 				conjunction_v<
 					std::is_convertible<T, std::decay_t<decltype(std::declval<const T&>() + std::declval<const T&>())>>,
@@ -163,7 +163,7 @@ namespace concepts {
 	// U‚é•‘‚¢‚É‚Â‚¢‚Ä‚Í’è‹`‚ğM—Š‚·‚é
 	struct equality_requirements {
 		template < class T >
-		using requires
+		using requires_
 			= std::enable_if_t<
 				conjunction_v<
 					always_t<decltype(bool(std::declval<const T&>() == std::declval<const T&>()))>,
@@ -174,7 +174,7 @@ namespace concepts {
 	// U‚é•‘‚¢‚É‚Â‚¢‚Ä‚Í’è‹`‚ğM—Š‚·‚é
 	struct full_equivalence_requirements {
 		template < class T >
-		using requires
+		using requires_
 			= std::enable_if_t<
 				conjunction_v<
 					required<T, equality_requirements>,
@@ -187,7 +187,7 @@ namespace concepts {
 
 	struct minimal_equivalence_requirements {
 		template < class T >
-		using requires
+		using requires_
 			= std::enable_if_t<
 				std::is_constructible<
 					bool, decltype(std::declval<const T&>() < std::declval<const T&>())
@@ -234,40 +234,40 @@ namespace concepts {
 		using std::begin;
 		using std::end;
 		template < class T >
-		using Begin = iterator_requirements::requires<decltype(begin(std::declval<T&>()))>;
+		using Begin = iterator_requirements::requires_<decltype(begin(std::declval<T&>()))>;
 		template < class T >
-		using End = regular_type::requires<decltype(end(std::declval<T&>()))>;
+		using End = regular_type::requires_<decltype(end(std::declval<T&>()))>;
 	}
 
 	struct iterable {
 		template < class T >
-		using requires = required<T, concept_<_evil::Begin>, concept_<_evil::End>>;
+		using requires_ = required<T, concept_<_evil::Begin>, concept_<_evil::End>>;
 	};
 
 
 	struct reverse_iterable {
 		template < class T >
-		using Begin = iterator_requirements::requires<decltype(back_magic::rbegin(std::declval<T&>()))>;
+		using Begin = iterator_requirements::requires_<decltype(back_magic::rbegin(std::declval<T&>()))>;
 		template < class T >
-		using End = regular_type::requires<decltype(back_magic::rend(std::declval<T&>()))>;
+		using End = regular_type::requires_<decltype(back_magic::rend(std::declval<T&>()))>;
 
 		template < class T >
-		using requires = required<T, concept_<Begin>, concept_<End>>;
+		using requires_ = required<T, concept_<Begin>, concept_<End>>;
 	};
 
 	struct forward_iterable {
 		template < class T >
-		using requires = forward_iterator_requirements::requires<T>;
+		using requires_ = forward_iterator_requirements::requires_<T>;
 	};
 
 	struct random_access_iterable {
 		template < class T >
-		using requires = random_access_iterator_requirements::requires< T > ;
+		using requires_ = random_access_iterator_requirements::requires_< T > ;
 	};
 
 	struct bounded {
 		template < class T >
-		using requires = std::enable_if_t<
+		using requires_ = std::enable_if_t<
 			std::is_same<
 				decltype(back_magic::begin(std::declval<T&>())),
 				decltype(back_magic::end(std::declval<T&>()))
@@ -280,18 +280,18 @@ namespace concepts {
 		using is_unlimited = typename std::decay_t<T>::is_unlimited;
 
 		template < class T >
-		using requires = std::enable_if_t<is_satisfied_v<is_unlimited, T>>;
+		using requires_ = std::enable_if_t<is_satisfied_v<is_unlimited, T>>;
 	};
 
 
 	struct writable {
 		template < class T >
-		using requires = decltype(std::declval<T>() = std::declval<T>());
+		using requires_ = decltype(std::declval<T>() = std::declval<T>());
 	};
 
 	struct printable {
 		template < class T >
-		using requires = decltype(std::cout << std::declval<const T&>());
+		using requires_ = decltype(std::cout << std::declval<const T&>());
 	};
 
 }}

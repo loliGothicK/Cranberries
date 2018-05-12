@@ -21,7 +21,7 @@ public:
 	Converter() = default;
 
 	template < class Range >
-	using requires = typename concepts::iterable::template requires<Range>;
+	using requires_ = typename concepts::iterable::template requires_<Range>;
 
 	template < class Range >
 	decltype(auto)

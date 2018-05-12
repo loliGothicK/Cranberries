@@ -19,7 +19,7 @@ public:
 	Peek(F f) : f{ f } {}
 
 	template < typename Range, typename ElemType = typename std::decay_t<Range>::value_type >
-	using requires
+	using requires_
 		= std::enable_if_t<conjunction_v<
 		concepts::required<Range, concepts::iterable>,
 		always_t<decltype(std::declval<F>()(std::declval<const ElemType&>()))>

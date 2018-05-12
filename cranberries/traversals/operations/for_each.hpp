@@ -21,8 +21,8 @@ public:
 	ForEach(_F&& _f) noexcept : f{ std::forward<_F>(_f) } {}
 
 	template < class Traversable >
-	using requires
-		= typename concepts::iterable::template requires<Traversable>;
+	using requires_
+		= typename concepts::iterable::template requires_<Traversable>;
 
 
 	template < class Traversable >

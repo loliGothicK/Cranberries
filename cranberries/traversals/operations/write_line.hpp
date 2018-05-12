@@ -20,8 +20,8 @@ public:
 	explicit WriteLine(std::ostream& os) noexcept : os(os) {}
 
 	template < class Traversable >
-	using requires
-		= typename concepts::iterable::template requires<Traversable>;
+	using requires_
+		= typename concepts::iterable::template requires_<Traversable>;
 
 
 	template < class SentinelRange,

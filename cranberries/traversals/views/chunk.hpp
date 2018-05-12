@@ -194,8 +194,8 @@ namespace _proxy {
 		ChunkX() = default;
 
 		template < class Traversable >
-		using requires
-			= typename concepts::iterable::template requires<Traversable>;
+		using requires_
+			= typename concepts::iterable::template requires_<Traversable>;
 
 		template < class Traversal >
 		auto operator()(Traversal&& traversal) {
@@ -212,8 +212,8 @@ namespace _proxy {
 		ChunkX(size_t n) : n{ n } {}
 
 		template < class Traversable >
-		using requires
-			= typename concepts::iterable::template requires<Traversable>;
+		using requires_
+			= typename concepts::iterable::template requires_<Traversable>;
 
 		template < class Traversal >
 		auto operator()(Traversal&& traversal) {
