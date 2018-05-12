@@ -889,39 +889,39 @@ namespace _detail {
 
 #if defined(__clang__) && __clang_major__ == 3 && __clang_minor__ == 8
 namespace _detail {
+struct failure_t {};
+
+template <typename AlwaysVoid, typename, typename...>
+struct invoke_result_impl { using type = failure_t; };
+
+template <typename F, typename...Args>
+struct invoke_result_impl<decltype(void(INVOKE(std::declval<F>(), std::declval<Args>()...))),
+	F, Args...> {
+	using type = decltype(INVOKE(std::declval<F>(), std::declval<Args>()...));
 	struct failure_t {};
+	template < class T >
+	struct invoke_result_inject { using type = T; };
+	template < >
+	struct invoke_result_inject<failure_t> {};
 
-	template <typename AlwaysVoid, typename, typename...>
-	struct invoke_result_impl { using type = failure_t; };
+	template <class F, class... Args>
+	struct nothrow_invoke_result_impl< std::enable_if_t<noexcept(INVOKE(std::declval<F>(), std::declval<Args>()...)) >,
+		F, Args...> : invoke_result_impl<void, F, Args...> {};
 
-	template <typename F, typename...Args>
-	struct invoke_result_impl<decltype(void(INVOKE(std::declval<F>(), std::declval<Args>()...))),
-		F, Args...> {
-		using type = decltype(INVOKE(std::declval<F>(), std::declval<Args>()...));
-		struct failure_t {};
-		template < class T >
-		struct invoke_result_inject { using type = T; };
-		template < >
-		struct invoke_result_inject<failure_t> {};
+	template < class R, class F, class... ArgTypes >
+	struct is_invocable_impl
+		: disjunction<
+		bool_constant<std::is_void<R>::value && !std::is_same<typename invoke_result_impl<void, F, ArgTypes...>::type, failure_t>::value>,
+		std::is_convertible<typename invoke_result_impl<void, F, ArgTypes...>::type, R>
+		> {};
 
-		template <class F, class... Args>
-		struct nothrow_invoke_result_impl< std::enable_if_t<noexcept(INVOKE(std::declval<F>(), std::declval<Args>()...)) >,
-			F, Args...> : invoke_result_impl<void, F, Args...> {};
-
-		template < class R, class F, class... ArgTypes >
-		struct is_invocable_impl
-			: disjunction<
-			bool_constant<std::is_void<R>::value && !std::is_same<typename invoke_result_impl<void, F, ArgTypes...>::type, failure_t>::value>,
-			std::is_convertible<typename invoke_result_impl<void, F, ArgTypes...>::type, R>
-			> {};
-
-		template < class R, class F, class... ArgTypes >
-		struct is_nothrow_invocable_impl
-			: disjunction<
-			bool_constant<std::is_void<R>::value && !std::is_same<typename nothrow_invoke_result_impl<void, F, ArgTypes...>::type, failure_t>::value>,
-			std::is_convertible<typename nothrow_invoke_result_impl<void, F, ArgTypes...>::type, R>
-			> {};
-	}
+	template < class R, class F, class... ArgTypes >
+	struct is_nothrow_invocable_impl
+		: disjunction<
+		bool_constant<std::is_void<R>::value && !std::is_same<typename nothrow_invoke_result_impl<void, F, ArgTypes...>::type, failure_t>::value>,
+		std::is_convertible<typename nothrow_invoke_result_impl<void, F, ArgTypes...>::type, R>
+		> {};
+} // _detail
 
 	template <class F, class... ArgTypes>
 	struct invoke_result : _detail::invoke_result_inject<typename _detail::invoke_result_impl<void, F, ArgTypes...>::type> {};
@@ -977,7 +977,7 @@ namespace _detail {
 			::cranberries::disjunction<std::is_void<Rx>, ::cranberries::is_nothrow_convertible<type, Rx>>>;
 	};
 
-}
+} // _detail
 
 template <class F, class... ArgTypes>
 struct invoke_result : _detail::invoke_result_inject<typename _detail::invoke_traits<void, F, ArgTypes...>::type> {};
@@ -993,9 +993,7 @@ struct is_nothrow_invocable : _detail::invoke_traits<void, F, ArgTypes...>::is_n
 
 template < class R, class F, class... ArgTypes >
 struct is_nothrow_invocable_r : _detail::invoke_traits<void, F, ArgTypes...>:: template is_nothrow_invocable_r_impl<R> {};
-
-}
-#endif
+#endif 
 
 template <class F, class... ArgTypes>
 using invoke_result_t = typename invoke_result<F, ArgTypes...>::type;
@@ -1012,5 +1010,5 @@ constexpr bool is_nothrow_invocable_v = is_nothrow_invocable<F, ArgTypes...>::va
 template < class R, class F, class... ArgTypes >
 constexpr bool is_nothrow_invocable_r_v = is_nothrow_invocable_r<R, F, ArgTypes...>::value;
 
-
+} // cranberries
 #endif // !CRANBERRIES_TYPE_TRAITS_HPP
