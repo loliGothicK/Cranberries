@@ -624,7 +624,7 @@ namespace cranberries_magic{
 			static void test_aux(To) noexcept;
 
 			template <class From, class To>
-			static std::bool_constant<noexcept(test_aux<To>(std::declval<From>()))>
+			static ::cranberries::bool_constant<noexcept(test_aux<To>(std::declval<From>()))>
 				test(int);
 
 			template <class, class>
