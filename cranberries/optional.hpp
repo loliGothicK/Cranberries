@@ -703,8 +703,17 @@ namespace cranberries {
 		template < typename U >
 		CRANBERRIES_CXX11_CONSTEXPR optional<U> and_(const optional<U>& u) const
 		{
-			return hasvalue && u ? u : nullopt;
+			using result_opt = optional<U>;
+			return hasvalue && u ? u : result_opt{};
 		}
+
+		template < typename U >
+		CRANBERRIES_CXX11_CONSTEXPR optional<U> operator&&(const optional<U>& u) const
+		{
+			using result_opt = optional<U>;
+			return hasvalue && u ? u : result_opt{};
+		}
+
 
 		// ====================== and_then ======================
 		template < typename F, enabler_t<::cranberries::is_callable_v<F(T), T>> = nullptr >
@@ -721,6 +730,12 @@ namespace cranberries {
 		{
 			return hasvalue ? *this : x ? x : optional{};
 		}
+
+		CRANBERRIES_CXX11_CONSTEXPR optional operator||(const optional& x) const
+		{
+			return hasvalue ? *this : x ? x : optional{};
+		}
+
 
 		// ====================== or_else ======================
 		template < typename F,
