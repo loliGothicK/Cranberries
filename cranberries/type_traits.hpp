@@ -891,14 +891,18 @@ namespace _detail {
 namespace _detail {
 struct failure_t {};
 
-template <typename AlwaysVoid, typename, typename...>
-struct invoke_result_impl { using type = failure_t; };
+	template <typename AlwaysVoid, typename, typename...>
+	struct invoke_result_impl { using type = failure_t; };
 
-template <typename F, typename...Args>
-struct invoke_result_impl<decltype(void(INVOKE(std::declval<F>(), std::declval<Args>()...))),
-	F, Args...> {
-	using type = decltype(INVOKE(std::declval<F>(), std::declval<Args>()...));
+	template <typename F, typename...Args>
+	struct invoke_result_impl<decltype(void(INVOKE(std::declval<F>(), std::declval<Args>()...))),
+		F, Args...>
+	{
+		using type = decltype(INVOKE(std::declval<F>(), std::declval<Args>()...));
+	};
+
 	struct failure_t {};
+
 	template < class T >
 	struct invoke_result_inject { using type = T; };
 	template < >
