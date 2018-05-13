@@ -889,7 +889,12 @@ namespace _detail {
 
 #if defined(__clang__) && __clang_major__ == 3 && __clang_minor__ == 8
 namespace _detail {
-struct failure_t {};
+	struct failure_t {};
+
+	template < class T >
+	struct invoke_result_inject { using type = T; };
+	template < >
+	struct invoke_result_inject<failure_t> {};
 
 	template <typename AlwaysVoid, typename, typename...>
 	struct invoke_result_impl { using type = failure_t; };
@@ -900,13 +905,6 @@ struct failure_t {};
 	{
 		using type = decltype(INVOKE(std::declval<F>(), std::declval<Args>()...));
 	};
-
-	struct failure_t {};
-
-	template < class T >
-	struct invoke_result_inject { using type = T; };
-	template < >
-	struct invoke_result_inject<failure_t> {};
 
 	template <class F, class... Args>
 	struct nothrow_invoke_result_impl< std::enable_if_t<noexcept(INVOKE(std::declval<F>(), std::declval<Args>()...)) >,
