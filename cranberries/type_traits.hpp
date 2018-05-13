@@ -938,8 +938,6 @@ struct invoke_result_impl<decltype(void(INVOKE(std::declval<F>(), std::declval<A
 	template < class R, class F, class... ArgTypes >
 	struct is_nothrow_invocable_r : _detail::is_nothrow_invocable_impl<R, F, ArgTypes...> {};
 
-}
-
 #else
 
 namespace _detail {
