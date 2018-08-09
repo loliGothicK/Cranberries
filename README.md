@@ -32,8 +32,8 @@ These codes are licensed under CC0.
 - **Dual Number Library for AD(自動微分用の二重数ライブラリ)**
   - cranberries/dual_number.hpp
 
-- **Stream API Library(ストリームAPIライブラリ)**
-  - cranberries/stream.hpp
+- **Traversal Library(Range走査ライブラリ)**
+  - cranberries/traversal/**/**.hpp
 
 - **Type Traits Library（メタ関数ライブラリ）**
   - cranberries/type_traits.hpp
